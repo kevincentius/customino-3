@@ -13,9 +13,12 @@ console.log(new ExampleSharedClass().value);
 // Boilerplate for Express & SocketIO
 const app = express();
 app.use(cors({
-  origin: ['http://localhost:4200']
+  origin: [
+    process.env.DEPLOYMENT == 'LIVE' ? 'https://poc-c3-client.netlify.app' : 'http://localhost:4200',
+    process.env.DEPLOYMENT == 'LIVE' ? 'https://poc-c3-game-server.herokuapp.com' : 'http://localhost:3001',
+  ],
 }));
-app.options('*', cors());  // enable pre-flight
+app.options('*', cors());
 app.use(bodyParser.json());
 const http = require('http');
 const server = http.createServer(app);

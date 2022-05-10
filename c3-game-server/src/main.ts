@@ -1,6 +1,8 @@
 import { ExampleSharedClass } from "@shared/test-shared";
 import { ExampleImportClass } from "example-import";
 import { Socket } from "socket.io";
+import cors from 'cors';
+var bodyParser = require('body-parser');
 
 // debug to check that class imports work
 console.log(new ExampleImportClass().value);
@@ -9,6 +11,13 @@ console.log(new ExampleSharedClass().value);
 // Boilerplate for Express & SocketIO
 const express = require('express');
 const app = express();
+app.use(cors({
+  origin: [
+    process.env.DEPLOYMENT == 'LIVE' ? 'https://poc-c3-main-server.herokuapp.com' : 'http://localhost:3000',
+  ],
+}));
+app.options('*', cors());
+app.use(bodyParser.json());
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
@@ -21,6 +30,7 @@ const io = new Server(server, {
 });
 
 console.log('cors setup for', process.env.DEPLOYMENT == 'LIVE' ? 'https://poc-c3-client.netlify.app' : "http://localhost:4200")
+
 
 // SocketIO listeners
 io.on('connection', (socket: Socket) => {
