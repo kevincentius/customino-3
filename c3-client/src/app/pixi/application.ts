@@ -1,4 +1,4 @@
-import { Application, BitmapText, Graphics, Loader, Sprite } from "pixi.js";
+import { Application, Loader, Sprite } from "pixi.js";
 
 export class PixiApplication {
   app!: Application;
