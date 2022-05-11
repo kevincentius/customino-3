@@ -11,7 +11,7 @@ export const AppDataSource = new DataSource({
   entities: [
     SampleEntity
   ],
-  "ssl": process.env.DATABASE_URL ? true : false,
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
 })
 
 export async function initializeTypeOrm() {
