@@ -7,9 +7,9 @@ Live app:
 
 Github: https://github.com/Cultris-3/monorepo
 
-Main Server Heroku: https://dashboard.heroku.com/apps/poc-c3-main-server
+Main Server Heroku: https://dashboard.heroku.com/apps/poc-c3-main-server/logs
 
-Game Server Heroku: https://dashboard.heroku.com/apps/poc-c3-game-server
+Game Server Heroku: https://dashboard.heroku.com/apps/poc-c3-game-server/logs
 
 Web Client Netlify: https://app.netlify.com/sites/poc-c3-client/deploys
 
@@ -41,6 +41,7 @@ The `heroku-main-server` branch contains deploy config for the main server on He
 
 - merge into the `heroku-main-server` branch
 - `git checkout heroku-main-server`
+- `git pull`
 - `heroku git:remote -a poc-c3-main-server`
 - `heroku stack:set container -a poc-c3-main-server`
 - `git push heroku heroku-main-server:master`
@@ -61,6 +62,7 @@ Same thing as for main server. Branch is `heroku-game-server`.
 
 - merge into the `heroku-game-server` branch
 - `git checkout heroku-game-server`
+- `git pull`
 - `heroku git:remote -a poc-c3-game-server`
 - `heroku stack:set container -a poc-c3-game-server`
 - `git push heroku heroku-game-server:master`
@@ -72,4 +74,4 @@ Same thing as for main server. Branch is `heroku-game-server`.
 
 # Client Netlify Deployment
 
-Netlify is setup to publish the master branch, but automatic deployment is disabled to save build quota. Deployment must be triggered manually from the Netlify website.
+Netlify is setup to publish the master branch, but automatic deployment is disabled to save build quota. Deployment must be triggered manually from the Netlify website - https://app.netlify.com/sites/poc-c3-client/deploys
