@@ -25,8 +25,13 @@ Web Client Netlify: https://app.netlify.com/sites/poc-c3-client/deploys
 
 ## Actual setup steps
 - Install node.js LTS version - https://nodejs.org/en/download
+- Install postgres - https://www.postgresql.org/download
 - In each of the sub-projects, run `npm install` (this will download required libraries)
 - Run `npm start` in each sub-project to start them
+
+## Additional tools
+- SQL client may be needed for backend devs, e.g. pgAdmin: https://www.pgadmin.org
+  - Hint: production database credentials will be periodically changed by Heroku
 
 # Main Server Heroku Deployment
 

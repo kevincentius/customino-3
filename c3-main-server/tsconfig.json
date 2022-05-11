@@ -9,7 +9,10 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": [ "es6" ],
+
     "paths": {
       "@shared/*": ["../../c3-shared/src/*"],
     },
