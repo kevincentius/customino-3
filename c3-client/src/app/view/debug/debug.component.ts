@@ -7,11 +7,11 @@ import { firstValueFrom } from 'rxjs';
 import { io } from 'socket.io-client';
 
 @Component({
-  selector: 'app-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss']
+  selector: 'app-debug',
+  templateUrl: './debug.component.html',
+  styleUrls: ['./debug.component.scss']
 })
-export class MenuComponent implements OnInit {
+export class DebugComponent implements OnInit {
   example = new ExampleSharedClass();
 
   connected = false;
@@ -23,7 +23,7 @@ export class MenuComponent implements OnInit {
   ) { }
 
   async ngOnInit() {
-    const debugResponse = await firstValueFrom(this.httpClient.get(`${environment.mainServerUrl}/api/debug`)) as DebugResponse;
+    const debugResponse = await firstValueFrom(this.httpClient.get(`${environment.mainServerUrl}/api/debug/test`)) as DebugResponse;
     this.mainServerDebugMessage = debugResponse.debugMessage;
     
     const socket = io(debugResponse.gameServerUrl, { withCredentials: true });

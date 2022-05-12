@@ -1,9 +1,10 @@
+import { config } from "config/config";
 import { SampleEntity } from "entity/sample-entity";
 import { DataSource } from "typeorm";
 
 
 export const AppDataSource = new DataSource({
-  url: process.env.DATABASE_URL ?? 'postgres://postgres:password@localhost:5432/dev-c3',
+  url: config.databaseUrl,
   type: "postgres",
   synchronize: true,
   logging: false,
