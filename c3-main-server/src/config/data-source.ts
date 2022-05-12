@@ -12,7 +12,7 @@ export const AppDataSource = new DataSource({
   entities: [
     SampleEntity
   ],
-  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
+  ssl: process.env.DEPLOYMENT == 'LIVE' ? { rejectUnauthorized: false } : false,
 })
 
 export async function initializeTypeOrm() {
