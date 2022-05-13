@@ -1,7 +1,7 @@
 import { SampleDisplay } from "app/pixi/display/sample-display";
-import { Application, Loader, Sprite } from "pixi.js";
+import { Application, Loader, LoaderResource } from "pixi.js";
 
-export let resources: Partial<Record<string, PIXI.LoaderResource>>;
+export let resources: Partial<Record<string, LoaderResource>>;
 
 export class PixiApplication {
   app!: Application;
