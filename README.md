@@ -1,43 +1,45 @@
 
-Hint: on VS Code, press Ctrl+Shift+V to open this README in Preview Mode.
-
 # Portal
 
-Live app: 
+Live app: https://poc-c3-client.netlify.app
 
 Github: https://github.com/Cultris-3/monorepo
 
-Main Server Heroku: https://dashboard.heroku.com/apps/poc-c3-main-server/logs
+Heroku (main server): https://dashboard.heroku.com/apps/poc-c3-main-server/logs
 
-Game Server Heroku: https://dashboard.heroku.com/apps/poc-c3-game-server/logs
+Heroku (game server): https://dashboard.heroku.com/apps/poc-c3-game-server/logs
 
-Web Client Netlify: https://app.netlify.com/sites/poc-c3-client/deploys
+Netlify (client): https://app.netlify.com/sites/poc-c3-client/deploys
+
+
 
 # Project Setup
 
-## Hints
-- Suggested IDE - Visual Studio Code - https://code.visualstudio.com/Download
-- If using VS Code, install the following extensions:
-  - Angular Language Service
-  - SonarLint
-- Find out early how to open terminal using the IDE (Ctrl+` for VS Code on Windows)
-- I recommend opening each sub-project in a separate IDE window
-
-## Actual setup steps
+### Steps
 - Install node.js LTS version - https://nodejs.org/en/download
 - Install postgres - https://www.postgresql.org/download
-- In each of the sub-projects, run `npm install` (this will download required libraries)
-- Run `npm start` in each sub-project to start them
+  - Create a database called `dev-c3`
+- In each of the sub-projects, run `npm install` to download dependencies
+- In each of the sub-projects, run `npm start` to start them
 
-## Additional tools
-- SQL client may be needed for backend devs, e.g. pgAdmin: https://www.pgadmin.org
-  - Hint: production database credentials will be periodically changed by Heroku
+### Testing
+- Angular client will be served at http://localhost:4200
+- Main server will be served at http://localhost:3000
+- Game server will be served at http://localhost:3001
+
+### Recommendation
+- Visual Studio Code - https://code.visualstudio.com/Download
+- ... with the following extensions:
+  - Angular Language Service
+  - SonarLint
+
+
 
 # Main Server Heroku Deployment
 
 The `heroku-main-server` branch contains deploy config for the main server on Heroku. This branch must be pushed to the specific Heroku App's master branch for deployment.
 
-## Deploy steps
+### Deploy steps
 
 - merge into the `heroku-main-server` branch
 - `git checkout heroku-main-server`
@@ -49,16 +51,18 @@ The `heroku-main-server` branch contains deploy config for the main server on He
 
 These steps can be replaced with branch deployments later when Heroku fixes their github security bug...
 
-## Required config vars in Heroku:
+### Required config vars in Heroku:
 
 - DEPLOYMENT = LIVE
 - GAME_SERVER_URL = (link to the game server, e.g. `https://poc-c3-game-server.herokuapp.com`)
+
+
 
 # Game Server Heroku Deployment
 
 Same thing as for main server. Branch is `heroku-game-server`.
 
-## Deploy steps
+### Deploy steps
 
 - merge into the `heroku-game-server` branch
 - `git checkout heroku-game-server`
@@ -68,7 +72,7 @@ Same thing as for main server. Branch is `heroku-game-server`.
 - `git push heroku heroku-game-server:master`
 - switch back to your branch (don't commit anything in the heroku branch)
 
-## Required config vars in Heroku:
+### Required config vars in Heroku:
 
 - DEPLOYMENT = LIVE
 
