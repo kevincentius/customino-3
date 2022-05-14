@@ -1,5 +1,8 @@
+import TetrisMove from "@shared/TetrisMove";
 import { SampleDisplay } from "app/pixi/display/sample-display";
 import { Application, Loader, Sprite } from "pixi.js";
+
+import Keyboard from './Keyboard'
 
 export let resources: Partial<Record<string, PIXI.LoaderResource>>;
 
@@ -8,9 +11,7 @@ export class PixiApplication {
 
   loaded = false;
 
-  constructor(
-    private canvas: HTMLCanvasElement
-  ) {
+  constructor(private canvas: HTMLCanvasElement) {
     this.app = new Application({
       view: this.canvas,
       resizeTo: window,
@@ -29,5 +30,49 @@ export class PixiApplication {
     
       this.app.stage.addChild(new SampleDisplay());
     });
+
+    const keyCode = (char: string)=>char.toUpperCase().charCodeAt(0);
+
+    let a = new Keyboard;
+
+    a.Enable();
+    a.Bind(TetrisMove.Left, keyCode('A'));
+    a.Bind(TetrisMove.Right, keyCode('D'));
+    a.Bind(TetrisMove.SoftDrop, 12);
+    a.Bind(TetrisMove.RCCW, 37);
+    a.Bind(TetrisMove.RCW, 39);
+    a.Bind(TetrisMove.Flip, 38);
+    a.Bind(TetrisMove.HardDrop, 32);
+
+
+    this.app.ticker.add(()=>{
+      let dt = this.app.ticker.deltaMS;
+      
+      a.Update(dt);
+
+      let out = a.GetOutput();
+      if (out.length > 0){
+        console.log(out);
+      }
+
+      a.Clear();
+    });
+
+    // // Main Loop
+    // let time = Date.now();
+    // let dt = 0;
+
+    // function main(frameTime: number){
+    //   // Calculate Delta Time
+    //   dt = frameTime - time;
+    //   time = frameTime;
+      
+    //   window.requestAnimationFrame(main);
+    // }
+
+    // main(0);
+
+
+  
   }
 }
