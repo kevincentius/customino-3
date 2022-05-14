@@ -1,10 +1,10 @@
-import TetrisMove from "@shared/TetrisMove";
 import { SampleDisplay } from "app/pixi/display/sample-display";
-import { Application, Loader, Sprite } from "pixi.js";
+import { Application, Loader, LoaderResource } from "pixi.js";
 
+import TetrisMove from "@shared/TetrisMove";
 import Keyboard from './Keyboard'
 
-export let resources: Partial<Record<string, PIXI.LoaderResource>>;
+export let resources: Partial<Record<string, LoaderResource>>;
 
 export class PixiApplication {
   app!: Application;
@@ -57,22 +57,5 @@ export class PixiApplication {
 
       a.Clear();
     });
-
-    // // Main Loop
-    // let time = Date.now();
-    // let dt = 0;
-
-    // function main(frameTime: number){
-    //   // Calculate Delta Time
-    //   dt = frameTime - time;
-    //   time = frameTime;
-      
-    //   window.requestAnimationFrame(main);
-    // }
-
-    // main(0);
-
-
-  
   }
 }
