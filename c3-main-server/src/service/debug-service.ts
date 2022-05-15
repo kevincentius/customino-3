@@ -37,10 +37,10 @@ export class DebugService {
     }
   }
 
-  async debugGameServerRestApi() {
-    this.httpService.get('http://localhost:3000/cats')
-     config.gameServerUrl
-  }
+  // async debugGameServerRestApi() {
+  //   this.httpService.get('http://localhost:3000/cats')
+  //   config.gameServerUrl
+  // }
 }
 
 // export const debugService = new DebugService();

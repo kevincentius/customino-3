@@ -28,7 +28,7 @@
       "@shared/*": ["../../c3-shared/src/*"],
     },
     "typeRoots": ["../node_modules/@types"],
-    "types": ["offscreencanvas"],
+    "types": ["offscreencanvas", "node"],
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

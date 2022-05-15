@@ -1,9 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { DebugResponse } from '@shared/debug-response';
 import { ExampleSharedClass } from '@shared/test-shared';
-import { environment } from 'environments/environment';
-import { firstValueFrom } from 'rxjs';
+import { DebugService } from 'app/core/api/v1/api/debug.service';
 import { io } from 'socket.io-client';
 
 @Component({
@@ -19,11 +16,11 @@ export class DebugComponent implements OnInit {
   gameServerDebugMessage?: string;
 
   constructor(
-    private httpClient: HttpClient,
+    private debugService: DebugService,
   ) { }
 
   async ngOnInit() {
-    const debugResponse = await firstValueFrom(this.httpClient.get(`${environment.mainServerUrl}/api/debug/test`)) as DebugResponse;
+    const debugResponse = await this.debugService.test();
     this.mainServerDebugMessage = debugResponse.debugMessage;
     
     const socket = io(debugResponse.gameServerUrl, { withCredentials: true });
