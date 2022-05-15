@@ -12,8 +12,8 @@
   ],
   "extraResources": [
     {
-      "from": "dist",
-      "to": "app",
+      "from": "angular-build",
+      "to": "electron-app",
       "filter": [
         "**/*"
       ]

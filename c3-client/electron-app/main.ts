@@ -25,6 +25,8 @@ function createWindow(): BrowserWindow {
     },
   });
 
+  win.setMenu(null);
+
   if (serve) {
     const debug = require('electron-debug');
     debug();

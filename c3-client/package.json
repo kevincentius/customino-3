@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
-  "main": "app/main.js",
+  "main": "electron-app/main.js",
   "private": true,
   "dependencies": {
     "@angular/animations": "~13.3.0",
@@ -47,7 +47,25 @@
     "appId": "c3-client",
     "files": [
       "angular-build/**/*",
-      "app/main.js"
-    ]
+      "electron-app/main.js"
+    ],
+    "win": {
+      "icon": "./angular-build/assets/img/icon.png",
+      "target": [
+        "portable"
+      ]
+    },
+    "mac": {
+      "icon": "./angular-build/assets/img/icon.png",
+      "target": [
+        "dmg"
+      ]
+    },
+    "linux": {
+      "icon": "./angular-build/assets/img/icon.png",
+      "target": [
+        "AppImage"
+      ]
+    }
   }
 }

@@ -21,6 +21,7 @@ function createWindow() {
             contextIsolation: false, // false if you want to run e2e test with Spectron
         },
     });
+    win.setMenu(null);
     if (serve) {
         var debug = require('electron-debug');
         debug();
