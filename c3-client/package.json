@@ -4,11 +4,11 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "npm run-script api:generate-from-existing-spec && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "api:download-and-generate": "ts-node ./openapi/download-api-spec.ts && npm run-script api:generate-from-existing-spec",
-    "api:generate-from-existing-spec": "npx rimraf src/app/core/api/v1 && openapi-generator-cli generate -i ./openapi/api-spec.json -g typescript-angular -o src/app/core/api/v1 -c openapi/openapi-generator.yaml"
+    "api:generate-from-existing-spec": "npx rimraf src/app/main-server/api/v1 && openapi-generator-cli generate -i ./openapi/api-spec.json -g typescript-angular -o src/app/main-server/api/v1 -c openapi/openapi-generator.yaml"
   },
   "main": "electron-app/main.js",
   "private": true,
