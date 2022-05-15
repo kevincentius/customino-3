@@ -5,9 +5,9 @@
 
 # Build desktop standalone
 
-Currently only Windows build on Windows machine
+Currently only tested on Windows (will build for Windows on Windows). Should build for Mac on Mac, or for Linux on Linux, but completely untested.
 
-Build steps (to do: wrap this in an npm script):
+Build steps:
 - Build angular app (will generate `angular-build` folder)
   - `npm run build`
 - Compile electron app script:
