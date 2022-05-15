@@ -16,16 +16,23 @@ You have to install these packages locally, because listing them in devDependenc
 
 ### Test the electron app locally
 
-- `npm exec electron .`
+- Build angular app (will build the web app in `angular-build` folder)
+  - `npm run build`
+- Run electron app locally
+  - `npm exec electron .`
 
 ### Build the standalone
 
 - Build angular app (will build the web app in `angular-build` folder)
   - `npm run build`
+- Install electron temporarily (electron-builder needs to know the electron verseion, but leaving it installed will cause Netlify problem for now)
+  - `npm install --save-dev electron`
 - Compile electron app script:
   - `npx tsc -p tsconfig.electron.json`
 - Build electron app (will build the desktop app in `dist` folder):
   - `npm exec electron-builder`
+- Remove electron from devDependencies again (leaving it installed will cause Netlify problem for now)
+  - `npm uninstall --save-dev electron`
 
 # Open API
 
