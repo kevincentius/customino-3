@@ -1,7 +1,15 @@
+import { HttpService } from "@nestjs/axios";
+import { Injectable } from "@nestjs/common";
+import { config } from "config/config";
 import { AppDataSource } from "config/data-source";
 import { SampleEntity } from "entity/sample-entity";
 
-class DebugService {
+@Injectable()
+export class DebugService {
+  constructor(
+    private httpService: HttpService
+  ) {}
+
   async debugDatabase() {
     const sampleRepository = AppDataSource.getRepository(SampleEntity);
   
@@ -28,6 +36,11 @@ class DebugService {
       console.log('Sample entity has been deleted from the database.');
     }
   }
+
+  async debugGameServerRestApi() {
+    this.httpService.get('http://localhost:3000/cats')
+     config.gameServerUrl
+  }
 }
 
-export const debugService = new DebugService();
+// export const debugService = new DebugService();
