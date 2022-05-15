@@ -6,7 +6,9 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "api:download-and-generate": "ts-node ./openapi/download-api-spec.ts && npm run-script api:generate-from-existing-spec",
+    "api:generate-from-existing-spec": "npx rimraf src/app/core/api/v1 && openapi-generator-cli generate -i ./openapi/api-spec.json -g typescript-angular -o src/app/core/api/v1 -c openapi/openapi-generator.yaml"
   },
   "main": "electron-app/main.js",
   "private": true,
@@ -31,16 +33,19 @@
     "@angular-devkit/build-angular": "~13.3.0",
     "@angular/cli": "~13.3.0",
     "@angular/compiler-cli": "~13.3.0",
+    "@openapitools/openapi-generator-cli": "^2.5.1",
     "@types/jasmine": "~3.10.0",
-    "@types/node": "^12.11.1",
-    "electron-builder": "^23.0.3",
+    "@types/node": "^12.20.52",
     "electron": "^18.2.3",
+    "electron-builder": "^23.0.3",
     "jasmine-core": "~4.0.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.1.0",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "~1.7.0",
+    "rimraf": "^3.0.2",
+    "tsconfig-paths": "^4.0.0",
     "typescript": "~4.6.2"
   },
   "build": {

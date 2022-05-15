@@ -17,3 +17,7 @@ Build the standalone:
 - Build electron app (will build the desktop app in `dist` folder):
   - `npm exec electron-builder`
 
+# Open API
+
+- `npx ts-node ./src/app/main-server/download-api-spec.ts`
+- `npx openapi --input ./src/app/main-server/api-spec.json --output ./src/app/main-server/generated`
