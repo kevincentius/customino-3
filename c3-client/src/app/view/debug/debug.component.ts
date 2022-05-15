@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ExampleSharedClass } from '@shared/test-shared';
-import { DebugService } from 'app/core/api/v1/api/debug.service';
+import { DebugService } from 'app/main-server/api/v1';
 import { io } from 'socket.io-client';
 
 @Component({

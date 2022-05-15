@@ -42,5 +42,3 @@ export class DebugService {
   //   config.gameServerUrl
   // }
 }
-
-// export const debugService = new DebugService();
