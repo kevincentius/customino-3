@@ -53,7 +53,6 @@ export class Room {
 
   destroy() {
     // destroy game instance
-    console.log('room destroyed');
   }
 
   private broadcastRoomInfo() {

@@ -44,7 +44,6 @@ export class RoomService {
 
     session.roomId = room.id;
 
-    console.log('create', session.roomId);
     return room;
   }
   
@@ -56,11 +55,9 @@ export class RoomService {
    * Remove the client from any room he is in, if any.
    */
   leave(session: Session) {
-    console.log('leave', session.roomId);
     if (session.roomId) {
       const room = this.getRoom(session.roomId);
       room.leave(session);
-      console.log(room.getRoomInfo());
       if (room.isEmpty()) {
         room.destroy();
         this.roomMap.delete(room.id);
