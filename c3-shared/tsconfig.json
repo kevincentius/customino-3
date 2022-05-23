@@ -15,6 +15,10 @@
     "rootDir": ".",
     "composite": true,
 
+    "paths": {
+      "@shared/*": ["*"],
+    },
+
     "outFile": "./dist/shared.ts",
   },
   "include": ["src/**/*", "test/**/*"],
