@@ -8,6 +8,9 @@ import { MainComponent } from 'app/view/main/main.component';
 import { PixiComponent } from 'app/view/pixi/pixi.component';
 import { environment } from 'environments/environment';
 import { ApiModule, Configuration, ConfigurationParameters } from 'app/main-server/api/v1';
+import { LobbyComponent } from './view/menu/lobby/lobby.component';
+import { RoomComponent } from './view/menu/room/room.component';
+import { AppComponent } from './app.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -18,9 +21,12 @@ export function apiConfigFactory(): Configuration {
 
 @NgModule({
   declarations: [
+    AppComponent,
     MainComponent,
     PixiComponent,
     DebugComponent,
+    LobbyComponent,
+    RoomComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),
@@ -29,6 +35,6 @@ export function apiConfigFactory(): Configuration {
     HttpClientModule,
   ],
   providers: [],
-  bootstrap: [MainComponent],
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

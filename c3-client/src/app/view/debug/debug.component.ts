@@ -30,26 +30,10 @@ export class DebugComponent implements OnInit {
     socket.on('connect', () => {
       this.connected = true;
       socket.emit('debugMessage', 'Hello from a client.');
-
-      socket.emit(LobbyEvent.GET_ROOMS, (response: RoomInfo[]) => {
-        console.log('Get rooms result:', response);
-
-        socket.emit(LobbyEvent.CREATE_ROOM, (response: any) => {
-          console.log('Create room result:', response);
-
-          socket.emit(LobbyEvent.GET_ROOMS, (response: RoomInfo[]) => {
-            console.log('Get rooms result:', response)
-          });
-        });
-      });
     });
 
     socket.on('debugMessage', data => {
       this.gameServerDebugMessage = data;
-    });
-
-    socket.on(LobbyEvent.ROOM_INFO, (roomInfo: RoomInfo) => {
-      console.log('Room Info updated:', roomInfo);
     });
   }
 }
