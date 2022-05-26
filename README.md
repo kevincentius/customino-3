@@ -1,20 +1,28 @@
 
 # Project setup
 
-### Required softwares
-- Install node.js LTS version - https://nodejs.org/en/download (just click next, no need to select any option)
-- Install postgres - https://www.postgresql.org/download
-  - use `password` as your password for the postgres user!
-  - Create a database called `dev-c3`
-- Install Java (required for OpenAPI)
+## Install required softwares
 
-### Recommended
-- Visual Studio Code - https://code.visualstudio.com/Download
-- ... with the following extensions:
+Please choose LTS versions and make sure the softwares are included in your PATH variable.
+
+- **node.js** - https://nodejs.org/en/download (just click next, no need to select any option)
+- **Postgres** - https://www.postgresql.org/download
+  - During installation, please use `password` literally as your password for the postgres user!
+    - otherwise you will have to define `DATABASE_URL` in your environment variable - for example `postgres://YourUsernameHere:YourPasswordHere@localhost:5432/dev-c3`
+  - Create a database called `dev-c3`. You can use an SQL client or CLI as follows:
+    - `psql -U postgres`
+    - (enter password)
+    - `create database dev-c3;`
+
+- **Java** (required for OpenAPI, not runtime dependency) - https://www.java.com/en/download
+
+## Recommended
+- Install **Visual Studio Code** - https://code.visualstudio.com/Download
+- Install these extensions from within Visual Studio Code:
   - Angular Language Service
   - SonarLint
 
-### Next steps
+## Next steps
 
 - Clone the repository
 - Follow the "Project Setup" section in the README in each of the subprojects:
