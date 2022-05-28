@@ -1,8 +1,12 @@
 
 <div class="full-screen-overlay">
+  <app-lobby #lobby
+    (enterRoom)="onEnterRoom($event)"
+  ></app-lobby>
   
-  <app-debug></app-debug>
+  <app-room #room
+
+  ></app-room>
 </div>
 
-<app-pixi></app-pixi>
-
+<app-pixi [hidden]="true"></app-pixi>

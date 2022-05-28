@@ -35,4 +35,10 @@ export class LobbyGateway {
     const session = this.sessionService.getSession(socket);
     return this.roomService.join(session, roomId);
   }
+
+  @SubscribeMessage(LobbyEvent.GET_ROOM_INFO)
+  getRoomInfo(socket: Socket, roomId: number) {
+    return this.roomService.getRoom(roomId).getRoomInfo();
+  }
+
 }

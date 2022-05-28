@@ -1,0 +1,16 @@
+
+<div style="background: #f003;">
+  <div>
+    Room Component
+  </div>
+
+  <ng-container *ngIf="roomInfo">
+    <div>Room ID: {{roomInfo.id}}</div>
+    <div>Room name: {{roomInfo.name}}</div>
+    <div>Host: {{roomInfo.host.username}}</div>
+    <div *ngFor="let slot of roomInfo.slots">
+      {{slot.player.username}}
+    </div>
+  </ng-container>
+
+</div>

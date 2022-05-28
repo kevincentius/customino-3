@@ -70,7 +70,7 @@ export class RoomService {
    * If the client was already in the room, nothing happens.
    * If the client was in another room, he will be removed from that other room.
    */
-  join(session: Session, roomId: number) {
+  join(session: Session, roomId: number): RoomInfo | null {
     const room = this.roomMap.get(roomId);
     if (room) {
       if (session.roomId != room.id) {
