@@ -41,4 +41,12 @@ export class LobbyGateway {
     return this.roomService.getRoom(roomId).getRoomInfo();
   }
 
+  @SubscribeMessage(LobbyEvent.START_GAME)
+  startGame(socket: Socket) {
+    const session = this.sessionService.getSession(socket);
+    const room = this.roomService.getRoom(session.roomId!);
+    if (room) {
+      room.startGame(session);
+    }
+  }
 }

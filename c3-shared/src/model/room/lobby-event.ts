@@ -6,6 +6,7 @@ export enum LobbyEvent {
   JOIN_ROOM     = 'lobby.joinRoom',
 
   GET_ROOM_INFO = 'room.getRoomInfo',
+  START_GAME    = 'room.startGame', // also by server
 
   // events fired by the server
   ROOM_INFO     = 'room.roomInfo',
