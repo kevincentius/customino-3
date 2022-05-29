@@ -29,7 +29,7 @@ export abstract class Player {
 
   protected runFrame() {
     this.frame++;
-    this.debugSubject.next((this.frame % 10).toString());
+    this.debugSubject.next('abcdefghij'.charAt(this.frame % 10));
   }
 
   protected runEvent(event: GameEvent) {

@@ -32,8 +32,6 @@ export class LocalPlayer extends Player {
   }
 
   handleEvent(localEvents: GameEvent[]) {
-    console.log('local player', localEvents);
-
     localEvents.forEach(event => {
       if (event.frame != this.frame + 1) {
         throw new Error(`Sanity check failed! Local event for frame ${event.frame}, but the player is on frame ${this.frame}.`);

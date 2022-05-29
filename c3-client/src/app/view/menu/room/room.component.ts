@@ -34,6 +34,10 @@ export class RoomComponent implements OnInit, OnDestroy {
       }),
 
       this.roomService.startGameSubject.subscribe((startGameData: StartGameData) => {
+        if (this.game) {
+          this.game.destroy();
+        }
+        
         this.game = new Game(startGameData);
         this.game.start();
         this.mainService.pixi.bindGame(this.game);

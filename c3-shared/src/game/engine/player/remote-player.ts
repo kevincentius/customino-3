@@ -7,6 +7,7 @@ export class RemotePlayer extends Player {
   private lastReceivedFrame?: number;
 
   update(): void {
+    super.runFrame();
     if (this.lastReceivedFrame && this.lastReceivedFrame > this.frame) {
 
       // remoteEventBuffer is an array but used as a FIFO which may be inefficient. But the buffer should be small anyways.
