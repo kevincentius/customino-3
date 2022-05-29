@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { LobbyEvent } from '@shared/model/room/lobby-event';
+import { RoomInfo } from '@shared/model/room/room-info';
 import { ExampleSharedClass } from '@shared/test-shared';
 import { DebugService } from 'app/main-server/api/v1';
 import { io } from 'socket.io-client';
