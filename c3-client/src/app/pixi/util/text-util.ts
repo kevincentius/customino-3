@@ -7,7 +7,7 @@ class TextUtil {
     strokeThickness: 2,
     fill: "white",
   }, {
-    chars: [['a', 'z'], ['A', 'Z'], ['0', '9'], "!@#$%^&*()~{}[] .,:;'\"`"]
+    chars: [['a', 'z'], ['A', 'Z'], ['0', '9'], "!@#$%^&*()_-+=~{}[] .,:;'\"`"]
   });
 
   create(text: string, fontSize=24, fontName="default") {

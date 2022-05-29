@@ -1,6 +1,6 @@
 
 import { Logger } from '@nestjs/common';
-import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { OnGatewayDisconnect, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { ClientEvent } from '@shared/game/network/model/event/client-event';
 import { LobbyEvent } from '@shared/model/room/lobby-event';
 import { websocketGatewayOptions } from 'config/config';
@@ -9,7 +9,7 @@ import { SessionService } from 'service/session/session-service';
 import { Socket } from 'socket.io';
 
 @WebSocketGateway(websocketGatewayOptions)
-export class LobbyGateway {
+export class LobbyGateway implements OnGatewayDisconnect {
 
   constructor(
     private roomService: RoomService,
@@ -57,6 +57,19 @@ export class LobbyGateway {
     const room = this.roomService.getRoom(session.roomId!);
     if (room) {
       room.recvClientEvent(session, clientEvent);
+    }
+  }
+  
+  handleDisconnect(socket: Socket) {
+    try {
+      const session = this.sessionService.getSession(socket);
+      const room = this.roomService.getRoom(session.roomId!);
+
+      if (room) {
+        room.leave(session);
+      }
+    } catch (error) {
+      this.logger.error(error);
     }
   }
 }

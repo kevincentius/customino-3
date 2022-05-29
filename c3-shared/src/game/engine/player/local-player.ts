@@ -29,7 +29,6 @@ export class LocalPlayer extends Player {
   }
 
   private flush() {
-    console.log('flush', this.eventBuffer.length);
     this.lastFlush = Date.now();
 
     this.eventsSubject.next({

@@ -16,9 +16,13 @@ export abstract class Player {
   alive = true;
   private debugCount = 0;
 
+  // settings
+  private mspf = 50;
+  private maxCatchUpRate = 10;
+
   constructor(
     // reference
-    private game: Game,
+    protected game: Game,
 
     // state
     private clientInfo: ClientInfo,
@@ -40,7 +44,7 @@ export abstract class Player {
   abstract init(): void;
 
   protected runFrame() {
-    this.debugSubject.next('a....b....c....d....'.charAt(this.frame % 20));
+    this.debugSubject.next('a_.-^b_.-^c_.-^d_.-^'.charAt(this.frame % 20));
     this.frame++;
   }
 
