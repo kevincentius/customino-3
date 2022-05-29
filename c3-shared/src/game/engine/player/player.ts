@@ -1,3 +1,4 @@
+import { Game } from "@shared/game/engine/game/game";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent, GameEventType } from "@shared/game/network/model/event/game-event";
 import { InputEvent } from "@shared/game/network/model/event/input-event";
@@ -16,6 +17,9 @@ export abstract class Player {
   private debugCount = 0;
 
   constructor(
+    // reference
+    private game: Game,
+
     // state
     private clientInfo: ClientInfo,
   ) {
@@ -59,5 +63,9 @@ export abstract class Player {
 
   canMove(move: InputKey) {
     return this.alive && true;
+  }
+
+  isRunning() {
+    return this.game.running;
   }
 }

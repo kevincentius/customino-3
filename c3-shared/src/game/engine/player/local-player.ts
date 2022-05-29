@@ -1,3 +1,4 @@
+import { Game } from "@shared/game/engine/game/game";
 import { Player } from "@shared/game/engine/player/player";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent } from "@shared/game/network/model/event/game-event";
@@ -13,15 +14,8 @@ export class LocalPlayer extends Player {
   private lastFlush: number = Date.now();
   private flushInterval = 100;
 
-  constructor(
-    clientInfo: ClientInfo,
-  ) {
-    super(clientInfo);
-  }
-
   init() {
     this.gameOverSubject.subscribe(() => setTimeout(() => {
-      console.log('gos', this.frame);
       this.flush();
     }));
   }

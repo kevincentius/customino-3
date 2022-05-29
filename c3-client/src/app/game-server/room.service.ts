@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { GameResult } from "@shared/game/engine/game/game-result";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { ServerEvent } from "@shared/game/network/model/event/server-event";
 import { StartGameData } from "@shared/game/network/model/start-game-data";
@@ -13,6 +14,7 @@ import { Subject } from "rxjs";
 export class RoomService {
   roomInfoSubject = new Subject<RoomInfo>();
   startGameSubject = new Subject<StartGameData>();
+  gameOverSubject = new Subject<GameResult>();
   serverEventSubject = new Subject<ServerEvent>();
 
   constructor(
@@ -28,7 +30,11 @@ export class RoomService {
 
     this.socketService.on(LobbyEvent.SERVER_EVENT, (serverEvent: ServerEvent) => {
       this.serverEventSubject.next(serverEvent);
-    })
+    });
+
+    this.socketService.on(LobbyEvent.GAME_OVER, (gameResult: GameResult) => {
+      this.gameOverSubject.next(gameResult);
+    });
   }
 
   async getRoomInfo(roomId: number): Promise<RoomInfo | null> {

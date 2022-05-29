@@ -29,8 +29,8 @@ export class Game {
 
     this.players = startGameData.players.map(
       (clientInfo, index) => index == startGameData.localPlayerIndex
-        ? new LocalPlayer(clientInfo)
-        : new RemotePlayer(clientInfo));
+        ? new LocalPlayer(this, clientInfo)
+        : new RemotePlayer(this, clientInfo));
 
     this.players.forEach(player => player.gameOverSubject.subscribe(this.checkGameOver.bind(this)));
   }
@@ -70,7 +70,10 @@ export class Game {
     }
 
     const sleepTime = Math.max(0, this.lastUpdate + this.mspf - Date.now());
-    this.mainLoopTimeout = setTimeout(this.mainLoop.bind(this), sleepTime);
+
+    if (this.mainLoopTimeout) {
+      this.mainLoopTimeout = setTimeout(this.mainLoop.bind(this), sleepTime);
+    }
   }
   
   destroy() {
@@ -81,6 +84,7 @@ export class Game {
     if (this.players.filter(p => p.alive).length <= 1) {
       console.log('GAME OVER');
       clearTimeout(this.mainLoopTimeout);
+      this.mainLoopTimeout = null;
       this.running = false;
       this.gameOverSubject.next({
         test: 'test result',

@@ -57,6 +57,12 @@ export class Room {
         localPlayerIndex: null,
       });
 
+      this.game.gameOverSubject.subscribe(gameResult => {
+        for (const slot of this.slots) {
+          slot.session.socket.emit(LobbyEvent.GAME_OVER, gameResult);
+        }
+      });
+
       this.game.start();
     }
   }

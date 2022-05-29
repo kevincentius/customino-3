@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Game } from '@shared/game/engine/game/game';
+import { GameResult } from '@shared/game/engine/game/game-result';
 import { LocalPlayer } from '@shared/game/engine/player/local-player';
 import { ServerEvent } from '@shared/game/network/model/event/server-event';
 import { StartGameData } from '@shared/game/network/model/start-game-data';
@@ -37,6 +38,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
       this.roomService.startGameSubject.subscribe(this.onRecvStartGame.bind(this)),
       this.roomService.serverEventSubject.subscribe(this.onRecvServerEvent.bind(this)),
+      this.roomService.gameOverSubject.subscribe(this.onRecvGameOver.bind(this)),
     ]);
   }
 
@@ -68,6 +70,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     if (startGameData.localPlayerIndex != null) {
       const localPlayer = this.game.players[startGameData.localPlayerIndex] as LocalPlayer;
       localPlayer.eventsSubject.subscribe(clientEvent => this.roomService.flushGameEvents(clientEvent));
+      localPlayer.gameOverSubject.subscribe(() => this.onLocalPlayerDeath());
       this.mainService.pixi.keyboard.bindToPlayer(localPlayer);
       this.mainService.pixi.keyboard.enabled = true;
     }
@@ -80,5 +83,14 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.game.players[playerEvent.playerIndex].handleEvent(playerEvent.clientEvent);
       }
     }
+  }
+
+  onRecvGameOver(gameResult: GameResult) {
+    this.mainService.displayGui = true;
+    this.mainService.pixi.keyboard.enabled = false;
+  }
+
+  onLocalPlayerDeath() {
+    this.mainService.pixi.keyboard.enabled = false;
   }
 }

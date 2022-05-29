@@ -105,7 +105,7 @@ export class Keyboard {
   }
 
   private tryMove(key: InputKey) {
-    if (this.player.canMove(key)) {
+    if (this.player.isRunning() && this.player.canMove(key)) {
       const inputEvent = {
         frame: this.player.frame,
         key: key,
