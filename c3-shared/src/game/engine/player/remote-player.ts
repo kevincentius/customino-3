@@ -1,14 +1,14 @@
 import { Player } from "@shared/game/engine/player/player";
+import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent } from "@shared/game/network/model/event/game-event";
 
 export class RemotePlayer extends Player {
   // events will be buffered and executed later during update(). If lastReceivedFrame is behind, the update has to be paused (lag).
   private remoteEventBuffer: GameEvent[] = [];
-  private lastReceivedFrame?: number;
+  private lastReceivedFrame = -1;
 
   update(): void {
-    super.runFrame();
-    if (this.lastReceivedFrame && this.lastReceivedFrame > this.frame) {
+    if (this.lastReceivedFrame && this.lastReceivedFrame >= this.frame) {
 
       // remoteEventBuffer is an array but used as a FIFO which may be inefficient. But the buffer should be small anyways.
       while (this.remoteEventBuffer.length > 0 && this.remoteEventBuffer[0].frame == this.frame) {
@@ -23,9 +23,10 @@ export class RemotePlayer extends Player {
     }
   }
 
-  handleEvent(remoteEvents: GameEvent[]) {
-    console.log('remote player', remoteEvents);
+  handleEvent(clientEvent: ClientEvent) {
+    console.log('remote player', clientEvent);
 
-    this.remoteEventBuffer.push(...remoteEvents);
+    this.remoteEventBuffer.push(...clientEvent.gameEvents);
+    this.lastReceivedFrame = clientEvent.frame!;
   }
 }

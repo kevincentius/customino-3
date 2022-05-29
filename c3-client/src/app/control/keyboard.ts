@@ -19,8 +19,8 @@ export class Keyboard {
   player!: Player;
 
   // Settings
-  private das: number = 500;
-  private arr: number = 100;
+  private das: number = 1000;
+  private arr: number = 400;
   private softDropArr: number = 250;
 
   constructor() {
@@ -104,13 +104,13 @@ export class Keyboard {
   private tryMove(key: InputKey) {
     if (this.player.canMove(key)) {
       const inputEvent = {
-        frame: this.player.frame + 1,
+        frame: this.player.frame,
         key: key,
         timestamp: -1,
         type: GameEventType.INPUT,
       };
   
-      this.player.handleEvent([inputEvent]);
+      this.player.handleEvent({ gameEvents: [inputEvent] });
       return true;
     } else {
       return false;

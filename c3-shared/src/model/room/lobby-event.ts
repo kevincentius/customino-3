@@ -8,6 +8,9 @@ export enum LobbyEvent {
   GET_ROOM_INFO = 'room.getRoomInfo',
   START_GAME    = 'room.startGame', // also by server
 
+  GAME_EVENTS   = 'game.gameEvents',
+
   // events fired by the server
   ROOM_INFO     = 'room.roomInfo',
+  SERVER_EVENT  = 'game.serverEvents',
 }

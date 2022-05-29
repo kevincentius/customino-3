@@ -1,3 +1,4 @@
+import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent, GameEventType } from "@shared/game/network/model/event/game-event";
 import { InputEvent } from "@shared/game/network/model/event/input-event";
 import { InputKey } from "@shared/game/network/model/input-key";
@@ -9,7 +10,7 @@ export abstract class Player {
   debugSubject = new Subject<string>();
 
   // state
-  public frame = -1;
+  public frame = 0;
 
   constructor(
     // state
@@ -25,11 +26,11 @@ export abstract class Player {
    * 
    * In remote player, the events be buffered to be executed later during update loop when the remote simulation catches up.
    */
-  abstract handleEvent(event: GameEvent[]): void;
+  abstract handleEvent(clientEvent: ClientEvent): void;
 
   protected runFrame() {
-    this.frame++;
     this.debugSubject.next('abcdefghij'.charAt(this.frame % 10));
+    this.frame++;
   }
 
   protected runEvent(event: GameEvent) {

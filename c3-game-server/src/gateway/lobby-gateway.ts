@@ -1,6 +1,7 @@
 
 import { Logger } from '@nestjs/common';
-import { OnGatewayDisconnect, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { ClientEvent } from '@shared/game/network/model/event/client-event';
 import { LobbyEvent } from '@shared/model/room/lobby-event';
 import { websocketGatewayOptions } from 'config/config';
 import { RoomService } from 'service/room/room-service';
@@ -47,6 +48,15 @@ export class LobbyGateway {
     const room = this.roomService.getRoom(session.roomId!);
     if (room) {
       room.startGame(session);
+    }
+  }
+
+  @SubscribeMessage(LobbyEvent.GAME_EVENTS)
+  flushGameEvents(socket: Socket, clientEvent: ClientEvent) {
+    const session = this.sessionService.getSession(socket);
+    const room = this.roomService.getRoom(session.roomId!);
+    if (room) {
+      room.recvClientEvent(session, clientEvent);
     }
   }
 }

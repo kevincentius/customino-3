@@ -1,5 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Game } from '@shared/game/engine/game/game';
+import { LocalPlayer } from '@shared/game/engine/player/local-player';
+import { ServerEvent } from '@shared/game/network/model/event/server-event';
 import { StartGameData } from '@shared/game/network/model/start-game-data';
 import { RoomInfo } from '@shared/model/room/room-info';
 import { RoomService } from 'app/game-server/room.service';
@@ -33,20 +35,8 @@ export class RoomComponent implements OnInit, OnDestroy {
         }
       }),
 
-      this.roomService.startGameSubject.subscribe((startGameData: StartGameData) => {
-        if (this.game) {
-          this.game.destroy();
-        }
-        
-        this.game = new Game(startGameData);
-        this.game.start();
-        this.mainService.pixi.bindGame(this.game);
-        if (startGameData.localPlayerIndex != null) {
-          this.mainService.pixi.keyboard.enabled = true;
-          this.mainService.pixi.keyboard.bindToPlayer(this.game.players[startGameData.localPlayerIndex!]);
-        }
-        this.mainService.displayGui = false;
-      }),
+      this.roomService.startGameSubject.subscribe(this.onRecvStartGame.bind(this)),
+      this.roomService.serverEventSubject.subscribe(this.onRecvServerEvent.bind(this)),
     ]);
   }
 
@@ -65,5 +55,33 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   isRunning() {
     return !!(this.game?.running);
+  }
+
+  onRecvStartGame(startGameData: StartGameData) {
+    if (this.game) {
+      this.game.destroy();
+    }
+    
+    this.game = new Game(startGameData);
+    this.game.start();
+    this.mainService.pixi.bindGame(this.game);
+    if (startGameData.localPlayerIndex != null) {
+      const localPlayer = this.game.players[startGameData.localPlayerIndex] as LocalPlayer;
+      localPlayer.eventsSubject.subscribe(gameEvents => this.roomService.flushGameEvents({
+        frame: localPlayer.frame,
+        gameEvents: gameEvents,
+      }));
+      this.mainService.pixi.keyboard.bindToPlayer(localPlayer);
+      this.mainService.pixi.keyboard.enabled = true;
+    }
+    this.mainService.displayGui = false;
+  }
+
+  onRecvServerEvent(serverEvent: ServerEvent) {
+    if (this.roomId == serverEvent.roomId) {
+      for (const playerEvent of serverEvent.playerEvents) {
+        this.game.players[playerEvent.playerIndex].handleEvent(playerEvent.clientEvent);
+      }
+    }
   }
 }
