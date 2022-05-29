@@ -25,11 +25,12 @@ Please choose LTS versions and make sure the softwares are included in your PATH
 ## Next steps
 
 - Clone the repository
-- Follow the "Project Setup" section in the README in each of the subprojects:
+- Follow the "Project Setup" section in the README in each of the subprojects in the following order:
   - c3-main-server
   - c3-game-server
   - c3-client
 
+- When all projects are started, a debug page can be opened at http://localhost:4200/debug
 
 
 # Links

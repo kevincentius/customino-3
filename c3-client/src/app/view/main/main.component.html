@@ -1,5 +1,5 @@
 
-<div class="full-screen-overlay">
+<div class="full-screen-overlay" [hidden]="!mainService.displayGui">
   <app-lobby #lobby
     (enterRoom)="onEnterRoom($event)"
   ></app-lobby>
@@ -9,4 +9,4 @@
   ></app-room>
 </div>
 
-<app-pixi [hidden]="true"></app-pixi>
+<app-pixi #pixi [hidden]="!pixiEnabled"></app-pixi>
