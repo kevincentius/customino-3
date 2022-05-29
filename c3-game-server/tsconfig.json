@@ -10,6 +10,7 @@
     "strict": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     
     "paths": {
       "@shared/*": ["../../c3-shared/src/*"],

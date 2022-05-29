@@ -1,10 +1,16 @@
 
-<p>Angular debug component works.</p>
+<app-pixi></app-pixi>
 
-<p>{{example.value}}</p>
+<div class="full-screen-overlay">
+    
+  <p>Angular debug component works.</p>
 
-<p *ngIf="mainServerDebugMessage">Retrieved debug message from the main server's REST API: <span style="font-weight: bold;">{{mainServerDebugMessage}}</span></p>
+  <p>{{example.value}}</p>
 
-<p *ngIf="connected">SocketIO is connected to the game server!</p>
+  <p *ngIf="mainServerDebugMessage">Retrieved debug message from the main server's REST API: <span style="font-weight: bold;">{{mainServerDebugMessage}}</span></p>
 
-<p *ngIf="gameServerDebugMessage">Received debug message from the game server: <span style="font-weight: bold;">{{gameServerDebugMessage}}</span></p>
+  <p *ngIf="connected">SocketIO is connected to the game server!</p>
+
+  <p *ngIf="gameServerDebugMessage">Received debug message from the game server: <span style="font-weight: bold;">{{gameServerDebugMessage}}</span></p>
+
+</div>

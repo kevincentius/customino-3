@@ -6,5 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": ""
+  "author": "",
+  "dependencies": {
+    "rxjs": "^7.5.5"
+  }
 }
