@@ -13,21 +13,20 @@ export class RemotePlayer extends Player {
 
   update(): void {
     if (this.lastReceivedFrame && this.lastReceivedFrame > this.frame) {
-
-      // remoteEventBuffer is an array but used as a FIFO which may be inefficient. But the buffer should be small anyways.
-      while (this.remoteEventBuffer.length > 0 && this.remoteEventBuffer[0].frame == this.frame) {
-        super.runEvent(this.remoteEventBuffer.shift()!);
-      }
-
-      if (this.remoteEventBuffer.length > 0 && this.remoteEventBuffer[0].frame < this.frame) {
-        console.log(JSON.stringify(this.remoteEventBuffer));
-        console.log(this.frame);
-        throw new Error('Sanity check failed! Remote event should have been executed in previous frame.');
-      }
-
-      if (this.alive) {
-        super.runFrame();
-      }
+      do {
+        // remoteEventBuffer is an array but used as a FIFO which may be inefficient. But the buffer should be small anyways.
+        while (this.remoteEventBuffer.length > 0 && this.remoteEventBuffer[0].frame == this.frame) {
+          super.runEvent(this.remoteEventBuffer.shift()!);
+        }
+  
+        if (this.remoteEventBuffer.length > 0 && this.remoteEventBuffer[0].frame < this.frame) {
+          throw new Error('Sanity check failed! Remote event should have been executed in previous frame.');
+        }
+  
+        if (this.alive) {
+          super.runFrame();
+        }
+      } while (this.lastReceivedFrame > this.frame && this.frame < this.game.getTargetMinFrame());
     }
   }
 

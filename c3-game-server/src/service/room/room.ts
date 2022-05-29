@@ -1,5 +1,6 @@
 import { Game } from "@shared/game/engine/game/game";
 import { RemotePlayer } from "@shared/game/engine/player/remote-player";
+import { ServerPlayer } from "@shared/game/engine/player/server-player";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent } from "@shared/game/network/model/event/game-event";
 import { ServerEvent, ServerEventEntry } from "@shared/game/network/model/event/server-event";
@@ -55,7 +56,7 @@ export class Room {
       this.game = new Game({
         players: players,
         localPlayerIndex: null,
-      });
+      }, true);
 
       this.game.gameOverSubject.subscribe(gameResult => {
         for (const slot of this.slots) {
@@ -104,7 +105,7 @@ export class Room {
     const playerIndex = this.slots.findIndex(slot => slot.session == session);
 
     // simulate game immediately
-    (this.game!.players[playerIndex] as RemotePlayer).handleEvent(clientEvent);
+    (this.game!.players[playerIndex] as ServerPlayer).handleEvent(clientEvent);
 
     // broadcast server event
     const playerEvents: ServerEventEntry[] = [{
