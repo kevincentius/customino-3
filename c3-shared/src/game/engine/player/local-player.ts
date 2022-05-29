@@ -6,12 +6,12 @@ import { Subject } from "rxjs";
 
 export class LocalPlayer extends Player {
   // event emitters
-  eventsSubject = new Subject<GameEvent[]>();
+  eventsSubject = new Subject<ClientEvent>();
 
   // events will be buffered and delivered in batches to the server
   private eventBuffer: GameEvent[] = [];
   private lastFlush: number = Date.now();
-  private flushInterval = 1000;
+  private flushInterval = 100;
 
   constructor(
     clientInfo: ClientInfo,
@@ -19,17 +19,33 @@ export class LocalPlayer extends Player {
     super(clientInfo);
   }
 
-  update() {
-    super.runFrame();
+  init() {
+    this.gameOverSubject.subscribe(() => setTimeout(() => {
+      console.log('gos', this.frame);
+      this.flush();
+    }));
+  }
 
-    const now = Date.now();
-    if (now - this.lastFlush >= this.flushInterval) {
-      this.lastFlush = now;
-      
-      this.eventsSubject.next(this.eventBuffer);
-      console.log(this.eventBuffer);
-      this.eventBuffer = [];
+  update() {
+    if (this.alive) {
+      super.runFrame();
+  
+      if (Date.now() - this.lastFlush >= this.flushInterval) {
+        this.flush();
+      }
     }
+  }
+
+  private flush() {
+    console.log('flush', this.eventBuffer.length);
+    this.lastFlush = Date.now();
+
+    this.eventsSubject.next({
+      gameEvents: this.eventBuffer,
+      frame: this.frame + (this.alive ? 0 : 1), // if dead, allow remote to simulate one extra frame for the death
+    });
+    this.eventBuffer = [];
+
   }
 
   handleEvent(clientEvent: ClientEvent) {

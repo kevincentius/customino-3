@@ -46,11 +46,12 @@ export class Keyboard {
     // Ensure key event only affects game
     e.preventDefault();
 
+
     // Check what control the key corresponds to
     const control = this.keyMap.get(e.keyCode);
     if (!control)
       return;
-
+      
     control.pressedAt = e.timeStamp;
     control.down = true;
 
@@ -62,6 +63,8 @@ export class Keyboard {
       this.repeatTimer = this.das;
       this.repeatKey = control;
       
+      this.tryMove(control.move);
+    } else if (control) {
       this.tryMove(control.move);
     }
   }

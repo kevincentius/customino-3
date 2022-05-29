@@ -1,7 +1,9 @@
+import { GameResult } from "@shared/game/engine/game/game-result";
 import { LocalPlayer } from "@shared/game/engine/player/local-player";
 import { Player } from "@shared/game/engine/player/player";
 import { RemotePlayer } from "@shared/game/engine/player/remote-player";
 import { StartGameData } from "@shared/game/network/model/start-game-data";
+import { Subject } from "rxjs";
 
 export class Game {
 
@@ -18,7 +20,7 @@ export class Game {
   mainLoopTimeout: any;
 
   // event emitters
-  
+  gameOverSubject = new Subject<GameResult>();
 
   constructor(
     startGameData: StartGameData,
@@ -29,6 +31,8 @@ export class Game {
       (clientInfo, index) => index == startGameData.localPlayerIndex
         ? new LocalPlayer(clientInfo)
         : new RemotePlayer(clientInfo));
+
+    this.players.forEach(player => player.gameOverSubject.subscribe(this.checkGameOver.bind(this)));
   }
   
   start() {
@@ -66,10 +70,21 @@ export class Game {
     }
 
     const sleepTime = Math.max(0, this.lastUpdate + this.mspf - Date.now());
-    setTimeout(this.mainLoop.bind(this), sleepTime);
+    this.mainLoopTimeout = setTimeout(this.mainLoop.bind(this), sleepTime);
   }
   
   destroy() {
     this.stop();
+  }
+
+  checkGameOver() {
+    if (this.players.filter(p => p.alive).length <= 1) {
+      console.log('GAME OVER');
+      clearTimeout(this.mainLoopTimeout);
+      this.running = false;
+      this.gameOverSubject.next({
+        test: 'test result',
+      });
+    }
   }
 }

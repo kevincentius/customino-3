@@ -67,10 +67,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.mainService.pixi.bindGame(this.game);
     if (startGameData.localPlayerIndex != null) {
       const localPlayer = this.game.players[startGameData.localPlayerIndex] as LocalPlayer;
-      localPlayer.eventsSubject.subscribe(gameEvents => this.roomService.flushGameEvents({
-        frame: localPlayer.frame,
-        gameEvents: gameEvents,
-      }));
+      localPlayer.eventsSubject.subscribe(clientEvent => this.roomService.flushGameEvents(clientEvent));
       this.mainService.pixi.keyboard.bindToPlayer(localPlayer);
       this.mainService.pixi.keyboard.enabled = true;
     }

@@ -4,7 +4,7 @@ import { BitmapText, Container } from "pixi.js";
 
 export class PlayerDisplay extends Container {
 
-  private debugString = '....................................................................................................';
+  private debugString = '----------------------------------------------------------------------------------------------------';
   private debugPos = 0;
   
   private debugText: BitmapText = textUtil.create(this.debugString);
@@ -19,6 +19,10 @@ export class PlayerDisplay extends Container {
       this.debugPos = (this.debugPos + 1) % this.debugString.length;
       this.debugText.text = this.debugString;
     });
+
+    player.gameOverSubject.subscribe(() => {
+      this.debugText.text = this.debugString + ' - Game Over';
+    })
 
     this.addChild(this.debugText);
   }

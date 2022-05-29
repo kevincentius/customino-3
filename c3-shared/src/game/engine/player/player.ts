@@ -8,14 +8,19 @@ import { Subject } from 'rxjs';
 export abstract class Player {
   // event emitters
   debugSubject = new Subject<string>();
+  gameOverSubject = new Subject<void>();
 
   // state
-  public frame = 0;
+  frame = 0;
+  alive = true;
+  private debugCount = 0;
 
   constructor(
     // state
     private clientInfo: ClientInfo,
-  ) {}
+  ) {
+    this.init();
+  }
 
   abstract update(): void;
 
@@ -28,8 +33,10 @@ export abstract class Player {
    */
   abstract handleEvent(clientEvent: ClientEvent): void;
 
+  abstract init(): void;
+
   protected runFrame() {
-    this.debugSubject.next('abcdefghij'.charAt(this.frame % 10));
+    this.debugSubject.next('a....b....c....d....'.charAt(this.frame % 20));
     this.frame++;
   }
 
@@ -37,10 +44,20 @@ export abstract class Player {
     if (event.type == GameEventType.INPUT) {
       const inputEvent = event as InputEvent;
       this.debugSubject.next(inputEvent.key.toString());
+
+      this.debugCount++;
+      if (this.debugCount >= 10) {
+        this.die();
+      }
     }
   }
 
+  private die() {
+    this.alive = false;
+    this.gameOverSubject.next();
+  }
+
   canMove(move: InputKey) {
-    return true;
+    return this.alive && true;
   }
 }
