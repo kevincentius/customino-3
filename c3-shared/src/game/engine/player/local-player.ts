@@ -1,8 +1,6 @@
-import { Game } from "@shared/game/engine/game/game";
 import { Player } from "@shared/game/engine/player/player";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent } from "@shared/game/network/model/event/game-event";
-import { ClientInfo } from "@shared/model/session/client-info";
 import { Subject } from "rxjs";
 
 export class LocalPlayer extends Player {
