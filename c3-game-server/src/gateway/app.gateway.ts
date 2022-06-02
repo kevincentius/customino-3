@@ -2,6 +2,7 @@
 import { Logger } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { websocketGatewayOptions } from 'config/config';
+import { RoomService } from 'service/room/room-service';
 import { SessionService } from 'service/session/session-service';
 import { Socket } from 'socket.io';
 
@@ -13,6 +14,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 
   constructor(
     private sessionService: SessionService,
+    private roomService: RoomService,
   ) {}
 
   @SubscribeMessage('msgToServer')
@@ -24,11 +26,17 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     this.logger.log('Gateway initialized.');
   }
 
-  handleDisconnect(client: Socket) {
+  handleDisconnect(socket: Socket) {
     try {
-      this.logger.log(`Client disconnected: ${client.id}.`);
-      
-      this.sessionService.destroySession(client);
+      this.logger.log(`Client disconnected: ${socket.id}.`);
+
+      const session = this.sessionService.getSession(socket);
+
+      if (session.roomId) {
+        const room = session.roomId ? this.roomService.getRoom(session.roomId) : null;
+        room!.leave(session);
+      }
+      this.sessionService.destroySession(socket);
     } catch (error) {
       this.logger.error(error);
     }

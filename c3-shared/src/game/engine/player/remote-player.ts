@@ -5,14 +5,17 @@ import { GameEvent } from "@shared/game/network/model/event/game-event";
 export class RemotePlayer extends Player {
   // events will be buffered and executed later during update(). If lastReceivedFrame is behind, the update has to be paused (lag).
   private remoteEventBuffer: GameEvent[] = [];
-  private lastReceivedFrame = -1;
+  public lastReceivedFrame = -1;
 
   init() {
 
   }
 
   update(): void {
+    console.log(this.lastReceivedFrame, this.frame);
+
     if (this.lastReceivedFrame && this.lastReceivedFrame > this.frame) {
+
       do {
         // remoteEventBuffer is an array but used as a FIFO which may be inefficient. But the buffer should be small anyways.
         while (this.remoteEventBuffer.length > 0 && this.remoteEventBuffer[0].frame == this.frame) {

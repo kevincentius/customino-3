@@ -1,3 +1,4 @@
+import { LocalPlayer } from "@shared/game/engine/player/local-player";
 import { Player } from "@shared/game/engine/player/player";
 import { GameEventType } from "@shared/game/network/model/event/game-event";
 import { InputKey } from "@shared/game/network/model/input-key";
@@ -106,14 +107,7 @@ export class Keyboard {
 
   private tryMove(key: InputKey) {
     if (this.player.isRunning() && this.player.canMove(key)) {
-      const inputEvent = {
-        frame: this.player.frame,
-        key: key,
-        timestamp: -1,
-        type: GameEventType.INPUT,
-      };
-  
-      this.player.handleEvent({ gameEvents: [inputEvent] });
+      (this.player as LocalPlayer).handleInput(key);
       return true;
     } else {
       return false;

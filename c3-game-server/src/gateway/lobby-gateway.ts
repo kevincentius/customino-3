@@ -9,7 +9,7 @@ import { SessionService } from 'service/session/session-service';
 import { Socket } from 'socket.io';
 
 @WebSocketGateway(websocketGatewayOptions)
-export class LobbyGateway implements OnGatewayDisconnect {
+export class LobbyGateway {
 
   constructor(
     private roomService: RoomService,
@@ -57,19 +57,6 @@ export class LobbyGateway implements OnGatewayDisconnect {
     const room = this.roomService.getRoom(session.roomId!);
     if (room) {
       room.recvClientEvent(session, clientEvent);
-    }
-  }
-  
-  handleDisconnect(socket: Socket) {
-    try {
-      const session = this.sessionService.getSession(socket);
-      const room = this.roomService.getRoom(session.roomId!);
-
-      if (room) {
-        room.leave(session);
-      }
-    } catch (error) {
-      this.logger.error(error);
     }
   }
 }
