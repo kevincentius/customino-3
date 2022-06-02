@@ -17,7 +17,7 @@ export class Room {
   slots: RoomSlot[];
 
   // only for the current game session:
-  game?: Game;
+  game?: ServerGame;
 
   constructor(
     public id: number,
@@ -149,10 +149,10 @@ export class Room {
   }
   
   recvClientEvent(session: Session, clientEvent: ClientEvent) {
-    const playerIndex = this.slots.findIndex(slot => slot.session == session);
+    const playerIndex = this.game!.players.findIndex(player => player.session == session);
 
     // simulate game immediately
-    (this.game!.players[playerIndex] as ServerPlayer).handleEvent(clientEvent);
+    this.game!.players[playerIndex].handleEvent(clientEvent);
 
     // broadcast server event
     const playerEvents: ServerEventEntry[] = [{

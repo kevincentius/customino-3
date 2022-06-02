@@ -5,7 +5,7 @@ import { ServerPlayer } from "game/server-player";
 import { Session } from "service/session/session";
 
 export class ServerGame extends Game {
-
+  players!: ServerPlayer[];
 
   constructor(startGameData: StartGameData, private sessions: Session[]) {
     super();

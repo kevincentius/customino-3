@@ -21,7 +21,7 @@ export class ServerPlayer extends Player {
       this.frame = event.frame;
       super.runEvent(event);
     });
-    this.frame = clientEvent.frame!;
+    this.frame = clientEvent.frame;
   }
 
   init(): void {}

@@ -12,6 +12,7 @@ export class RemotePlayer extends Player {
   }
 
   update(): void {
+    console.log(this.lastReceivedFrame, this.frame);
 
     if (this.lastReceivedFrame && this.lastReceivedFrame > this.frame) {
 
