@@ -2,6 +2,7 @@ import { Game } from "@shared/game/engine/game/game";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent, GameEventType } from "@shared/game/network/model/event/game-event";
 import { InputEvent } from "@shared/game/network/model/event/input-event";
+import { SystemEvent } from "@shared/game/network/model/event/system-event";
 import { InputKey } from "@shared/game/network/model/input-key";
 import { ClientInfo } from "@shared/model/session/client-info";
 import { Subject } from 'rxjs';
@@ -25,7 +26,7 @@ export abstract class Player {
     protected game: Game,
 
     // state
-    private clientInfo: ClientInfo,
+    public clientInfo: ClientInfo,
   ) {
     this.init();
   }
@@ -57,12 +58,20 @@ export abstract class Player {
       if (this.debugCount >= 10) {
         this.die();
       }
+    } else if (event.type == GameEventType.SYSTEM) {
+      const inputEvent = event as SystemEvent;
+      
+      if (inputEvent.gameOver) {
+        this.die();
+      }
     }
   }
 
-  private die() {
-    this.alive = false;
-    this.gameOverSubject.next();
+  public die() {
+    if (this.alive) {
+      this.alive = false;
+      this.gameOverSubject.next();
+    }
   }
 
   canMove(move: InputKey) {

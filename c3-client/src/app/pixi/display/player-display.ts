@@ -1,4 +1,5 @@
 import { Player } from "@shared/game/engine/player/player";
+import { RemotePlayer } from "@shared/game/engine/player/remote-player";
 import { textUtil } from "app/pixi/util/text-util";
 import { BitmapText, Container } from "pixi.js";
 
@@ -17,7 +18,7 @@ export class PlayerDisplay extends Container {
     player.debugSubject.subscribe(char => {
       this.debugString = this.debugString.substring(0, this.debugPos) + char + this.debugString.substring(this.debugPos + 1);
       this.debugPos = (this.debugPos + 1) % this.debugString.length;
-      this.debugText.text = this.debugString;
+      this.debugText.text = this.player.frame + ' / ' + (this.player as RemotePlayer).lastReceivedFrame + ' / ' + this.player.alive + ' - ' + this.debugString;
     });
 
     player.gameOverSubject.subscribe(() => {

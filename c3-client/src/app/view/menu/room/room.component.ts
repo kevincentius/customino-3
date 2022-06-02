@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ClientGame } from '@shared/game/engine/game/client-game';
 import { Game } from '@shared/game/engine/game/game';
 import { GameResult } from '@shared/game/engine/game/game-result';
 import { LocalPlayer } from '@shared/game/engine/player/local-player';
@@ -64,7 +65,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.game.destroy();
     }
     
-    this.game = new Game(startGameData);
+    this.game = new ClientGame(startGameData);
     this.game.start();
     this.mainService.pixi.bindGame(this.game);
     if (startGameData.localPlayerIndex != null) {

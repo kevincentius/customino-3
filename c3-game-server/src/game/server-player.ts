@@ -1,7 +1,13 @@
+import { Game } from "@shared/game/engine/game/game";
 import { Player } from "@shared/game/engine/player/player";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
+import { Session } from "service/session/session";
 
 export class ServerPlayer extends Player {
+  constructor(game: Game, public session: Session) {
+    super(game, session.getClientInfo());
+  }
+
   update(): void {
     throw new Error('Server should not run update loop.');
   }
@@ -11,7 +17,11 @@ export class ServerPlayer extends Player {
       throw new Error('Sanity check failed! Remote event should have been executed in previous frame.');
     }
 
-    clientEvent.gameEvents.forEach(event => super.runEvent(event));
+    clientEvent.gameEvents.forEach(event => {
+      this.frame = event.frame;
+      super.runEvent(event);
+    });
+    this.frame = clientEvent.frame!;
   }
 
   init(): void {}

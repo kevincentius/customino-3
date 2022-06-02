@@ -1,20 +1,22 @@
 import { Game } from "@shared/game/engine/game/game";
-import { RemotePlayer } from "@shared/game/engine/player/remote-player";
-import { ServerPlayer } from "@shared/game/engine/player/server-player";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
-import { GameEvent } from "@shared/game/network/model/event/game-event";
 import { ServerEvent, ServerEventEntry } from "@shared/game/network/model/event/server-event";
 import { StartGameData } from "@shared/game/network/model/start-game-data";
 import { LobbyEvent } from "@shared/model/room/lobby-event";
 import { RoomInfo } from "@shared/model/room/room-info";
 import { RoomSlot } from "service/room/room-slot";
+import { ServerGame } from "game/server-game";
 import { Session } from "service/session/session";
+import { ServerPlayer } from "game/server-player";
+import { GameEventType } from "@shared/game/network/model/event/game-event";
+import { SystemEvent } from "@shared/game/network/model/event/system-event";
 
 export class Room {
   createdAt = Date.now();
   lastActivity = Date.now();
   slots: RoomSlot[];
 
+  // only for the current game session:
   game?: Game;
 
   constructor(
@@ -28,6 +30,31 @@ export class Room {
   leave(session: Session) {
     const prevSlotCount = this.slots.length;
     this.slots = this.slots.filter(slot => slot.session !== session);
+
+    if (this.isRunning()) {
+      this.game!.players.find(p => (p as ServerPlayer).session == session)?.die();
+
+      const playerIndex = this.game!.players.findIndex(p => (p as ServerPlayer).session == session);
+      const frame = this.game!.players[playerIndex].frame;
+      const serverEvent: ServerEvent = {
+        roomId: this.id,
+        playerEvents: [{
+          playerIndex: playerIndex,
+          clientEvent: {
+            gameEvents: [{
+              frame: frame,
+              timestamp: -1,
+              type: GameEventType.SYSTEM,
+              gameOver: true,
+            } as SystemEvent],
+            frame: frame + 1,
+          },
+        }]
+      };
+      this.slots.forEach(slot => {
+        slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
+      });
+    }
 
     if (this.slots.length != prevSlotCount) {
       this.broadcastRoomInfo();
@@ -44,20 +71,40 @@ export class Room {
 
   startGame(session: Session) {
     if (!this.isRunning() && this.creator == session && this.isInRoom(session)) {
-      const players = this.slots.map(slot => slot.session.getClientInfo());
-      this.slots.forEach((slot, index) => {
+      const playerSessions = this.slots
+        .filter(slot => slot.playing)
+        .map(slot => slot.session);
+
+      const spectatorSessions = this.slots
+        .filter(slot => !slot.playing)
+        .map(slot => slot.session);
+      
+      const players = playerSessions.map(player => player.getClientInfo());
+
+      // send startGameData to players
+      playerSessions.forEach((playerSession, index) => {
         const startGameData: StartGameData = {
           players: players,
           localPlayerIndex: index,
         }
-        slot.session.socket.emit(LobbyEvent.START_GAME, startGameData);
+        playerSession.socket.emit(LobbyEvent.START_GAME, startGameData);
       });
 
-      this.game = new Game({
+      // send startGameData to spectators
+      spectatorSessions.forEach((spectatorSession, index) => {
+        const startGameData: StartGameData = {
+          players: players,
+          localPlayerIndex: null,
+        }
+        spectatorSession.socket.emit(LobbyEvent.START_GAME, startGameData);
+      });
+
+      // start server game
+      this.game = new ServerGame({
         players: players,
         localPlayerIndex: null,
-      }, true);
-
+      }, playerSessions);
+      
       this.game.gameOverSubject.subscribe(gameResult => {
         for (const slot of this.slots) {
           slot.session.socket.emit(LobbyEvent.GAME_OVER, gameResult);

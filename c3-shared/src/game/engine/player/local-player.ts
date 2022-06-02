@@ -1,6 +1,8 @@
 import { Player } from "@shared/game/engine/player/player";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
-import { GameEvent } from "@shared/game/network/model/event/game-event";
+import { GameEvent, GameEventType } from "@shared/game/network/model/event/game-event";
+import { InputEvent } from "@shared/game/network/model/event/input-event";
+import { InputKey } from "@shared/game/network/model/input-key";
 import { Subject } from "rxjs";
 
 export class LocalPlayer extends Player {
@@ -36,7 +38,6 @@ export class LocalPlayer extends Player {
       frame: this.frame + (this.alive ? 0 : 1), // if dead, allow remote to simulate one extra frame for the death
     });
     this.eventBuffer = [];
-
   }
 
   handleEvent(clientEvent: ClientEvent) {
@@ -48,5 +49,19 @@ export class LocalPlayer extends Player {
 
     clientEvent.gameEvents.forEach(event => super.runEvent(event));
     this.eventBuffer.push(...clientEvent.gameEvents);
+  }
+
+  handleInput(key: InputKey) {
+    const inputEvent: InputEvent = {
+      frame: this.frame,
+      key: key,
+      timestamp: -1,
+      type: GameEventType.INPUT,
+    }
+
+    this.handleEvent({
+      frame: this.frame,
+      gameEvents: [inputEvent],
+    })
   }
 }
