@@ -21,6 +21,7 @@ export class PlayerRecorder {
     return {
       clientInfo: this.player.clientInfo,
       gameEvents: this.gameEvents,
+      alive: this.player.alive,
     }
   }
 }

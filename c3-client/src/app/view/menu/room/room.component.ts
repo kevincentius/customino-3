@@ -3,12 +3,16 @@ import { ClientGame } from '@shared/game/engine/game/client-game';
 import { Game } from '@shared/game/engine/game/game';
 import { GameResult } from '@shared/game/engine/game/game-result';
 import { LocalPlayer } from '@shared/game/engine/player/local-player';
+import { GameRecorder } from '@shared/game/engine/recorder/game-recorder';
+import { GameReplay } from '@shared/game/engine/recorder/game-replay';
 import { ServerEvent } from '@shared/game/network/model/event/server-event';
 import { StartGameData } from '@shared/game/network/model/start-game-data';
 import { RoomInfo } from '@shared/model/room/room-info';
 import { RoomService } from 'app/game-server/room.service';
 import { MainService } from 'app/view/main/main.service';
 import { Subscription } from 'rxjs';
+import {saveAs} from 'file-saver';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-room',
@@ -19,6 +23,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   private roomId!: number;
   roomInfo!: RoomInfo;
+  lastGameReplay?: GameReplay;
 
   private subscriptions: Subscription[] = [];
 
@@ -76,6 +81,9 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.mainService.pixi.keyboard.enabled = true;
     }
     this.mainService.displayGui = false;
+    
+    const recorder = new GameRecorder(this.game);
+    this.game.gameOverSubject.subscribe(r => this.lastGameReplay = recorder.asReplay());
   }
 
   onRecvServerEvent(serverEvent: ServerEvent) {
@@ -94,5 +102,10 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   onLocalPlayerDeath() {
     this.mainService.pixi.keyboard.enabled = false;
+  }
+
+  onDownloadLastReplayClick() {
+    console.log(JSON.stringify(this.lastGameReplay!));
+    saveAs(new Blob([JSON.stringify(this.lastGameReplay!)]), `C3-Replay-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
   }
 }

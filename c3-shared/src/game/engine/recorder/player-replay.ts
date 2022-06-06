@@ -4,4 +4,5 @@ import { ClientInfo } from "@shared/model/session/client-info";
 export interface PlayerReplay {
   clientInfo: ClientInfo;
   gameEvents: GameEvent[];
+  alive: boolean;
 }
