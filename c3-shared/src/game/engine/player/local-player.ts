@@ -26,6 +26,7 @@ export class LocalPlayer extends Player {
   
       if (Date.now() - this.lastFlush >= this.flushInterval) {
         this.flush();
+        this.flushInterval = Math.random() * 250 + 50; // DEBUG
       }
     }
   }

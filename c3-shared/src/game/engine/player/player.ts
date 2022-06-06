@@ -11,6 +11,7 @@ export abstract class Player {
   // event emitters
   debugSubject = new Subject<string>();
   gameOverSubject = new Subject<void>();
+  gameEventSubject = new Subject<GameEvent>();
 
   // state
   frame = 0;
@@ -50,6 +51,8 @@ export abstract class Player {
   }
 
   protected runEvent(event: GameEvent) {
+    this.gameEventSubject.next(event);
+
     if (event.type == GameEventType.INPUT) {
       const inputEvent = event as InputEvent;
       this.debugSubject.next(inputEvent.key.toString());

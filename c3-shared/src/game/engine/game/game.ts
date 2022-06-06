@@ -1,6 +1,7 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { GameResult } from "@shared/game/engine/game/game-result";
 import { Player } from "@shared/game/engine/player/player";
+import { GameRecorder } from "@shared/game/engine/recorder/game-recorder";
 import { StartGameData } from "@shared/game/network/model/start-game-data";
 import { Subject } from "rxjs";
 
@@ -24,6 +25,13 @@ export abstract class Game {
   init(startGameData: StartGameData) {
     this.players = this.createPlayers(startGameData);
     this.players.forEach(player => player.gameOverSubject.subscribe(this.checkGameOver.bind(this)));
+
+    // TODO: debug only
+    const rec = new GameRecorder(this);
+    this.gameOverSubject.subscribe(() => {
+      console.log(JSON.stringify(rec.asReplay()));
+      rec.destroy();
+    });
   }
   
   start() {
