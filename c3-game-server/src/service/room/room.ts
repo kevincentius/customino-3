@@ -10,14 +10,20 @@ import { Session } from "service/session/session";
 import { ServerPlayer } from "game/server-player";
 import { GameEventType } from "@shared/game/network/model/event/game-event";
 import { SystemEvent } from "@shared/game/network/model/event/system-event";
+import { GameReplay } from "@shared/game/engine/recorder/game-replay";
+import { GameRecorder } from "@shared/game/engine/recorder/game-recorder";
 
 export class Room {
   createdAt = Date.now();
   lastActivity = Date.now();
   slots: RoomSlot[];
 
+  provideReplay = true;
+  lastGameReplay?: GameReplay;
+
   // only for the current game session:
   game?: ServerGame;
+  
 
   constructor(
     public id: number,
@@ -110,6 +116,14 @@ export class Room {
           slot.session.socket.emit(LobbyEvent.GAME_OVER, gameResult);
         }
       });
+      
+      // debug replay
+      if (this.provideReplay) {
+        const recorder = new GameRecorder(this.game);
+        this.game.gameOverSubject.subscribe(gameResult => {
+          this.lastGameReplay = recorder.asReplay();
+        });
+      }
 
       this.game.start();
     }
@@ -135,6 +149,10 @@ export class Room {
 
       slots: this.slots.map(roomSlot => roomSlot.getRoomSlotInfo()),
     };
+  }
+
+  getLastGameReplay() {
+    return this.lastGameReplay ?? null;
   }
 
   destroy() {
