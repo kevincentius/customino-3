@@ -1,8 +1,11 @@
 import { Component, ViewChild } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { MainScreen } from "app/view/main/main-screen";
 import { MainService } from "app/view/main/main.service";
 import { LobbyComponent } from "app/view/menu/lobby/lobby.component";
 import { RoomComponent } from "app/view/menu/room/room.component";
 import { PixiComponent } from "app/view/pixi/pixi.component";
+import { ReplayComponent } from "app/view/replay/replay.component";
 
 @Component({
   selector: 'app-main',
@@ -11,6 +14,7 @@ import { PixiComponent } from "app/view/pixi/pixi.component";
   providers: [MainService],
 })
 export class MainComponent {
+  MainScreen = MainScreen;
 
   @ViewChild('lobby', { static: true })
   private lobby!: LobbyComponent;
@@ -18,15 +22,23 @@ export class MainComponent {
   @ViewChild('room', { static: true })
   private room!: RoomComponent;
   
+  @ViewChild('replay', { static: true })
+  private replay!: ReplayComponent;
+
   @ViewChild('pixi', { static: true })
   private pixi!: PixiComponent;
 
   // view model
-  pixiEnabled = false;
+  screen = MainScreen.PRELOADER;
 
   constructor(
     public mainService: MainService,
-  ) {}
+    private route: ActivatedRoute,
+  ) {
+    this.route.params.subscribe(params => {
+      this.screen = params['component'] ?? MainScreen.LOBBY;
+    });
+  }
 
   ngAfterViewInit() {
     this.mainService.pixi = this.pixi.pixiApplication;
@@ -35,6 +47,6 @@ export class MainComponent {
   onEnterRoom(roomId: number) {
     this.room.show(roomId);
 
-    this.pixiEnabled = true;
+    this.mainService.pixiEnabled = true;
   }
 }

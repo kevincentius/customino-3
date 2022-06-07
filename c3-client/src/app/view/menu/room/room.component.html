@@ -8,10 +8,11 @@
     <div>Room ID: {{roomInfo.id}}</div>
     <div>Room name: {{roomInfo.name}}</div>
     <div>Host: {{roomInfo.host.username}}</div>
+    <div *ngIf="lastGameReplay">Last game replay: <button (click)="onDownloadLastReplayClick()">Download</button></div>
+    <div *ngIf="lastGameReplay">Verify replay (debug): <button (click)="onVerifyLastReplayClick()">Verify</button></div>
     <div><button [disabled]="isRunning()" (click)="onStartGameClick()">Start game</button></div>
     <div *ngFor="let slot of roomInfo.slots">
       {{slot.player.username}}
     </div>
   </ng-container>
-
 </div>

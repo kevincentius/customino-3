@@ -1,6 +1,7 @@
 
 import { Logger } from '@nestjs/common';
 import { OnGatewayDisconnect, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { GameReplay } from '@shared/game/engine/recorder/game-replay';
 import { ClientEvent } from '@shared/game/network/model/event/client-event';
 import { LobbyEvent } from '@shared/model/room/lobby-event';
 import { websocketGatewayOptions } from 'config/config';
@@ -57,6 +58,17 @@ export class LobbyGateway {
     const room = this.roomService.getRoom(session.roomId!);
     if (room) {
       room.recvClientEvent(session, clientEvent);
+    }
+  }
+
+  @SubscribeMessage(LobbyEvent.GET_REPLAY)
+  getReplay(socket: Socket): GameReplay | null {
+    const session = this.sessionService.getSession(socket);
+    const room = this.roomService.getRoom(session.roomId!);
+    if (room) {
+      return room.getLastGameReplay();
+    } else {
+      return null;
     }
   }
 }

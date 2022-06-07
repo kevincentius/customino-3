@@ -4,6 +4,7 @@ import { PixiApplication } from 'app/pixi/application';
 @Injectable()
 export class MainService {
   pixi!: PixiApplication;
+  pixiEnabled = true;
   
   displayGui = true;
 

@@ -26,6 +26,7 @@ export class LocalPlayer extends Player {
   
       if (Date.now() - this.lastFlush >= this.flushInterval) {
         this.flush();
+        this.flushInterval = Math.random() * 250 + 50; // DEBUG
       }
     }
   }
@@ -57,11 +58,11 @@ export class LocalPlayer extends Player {
       key: key,
       timestamp: -1,
       type: GameEventType.INPUT,
-    }
+    };
 
     this.handleEvent({
       frame: this.frame,
       gameEvents: [inputEvent],
-    })
+    });
   }
 }

@@ -9,8 +9,9 @@ import { Subject } from 'rxjs';
 
 export abstract class Player {
   // event emitters
-  debugSubject = new Subject<string>();
+  debugSubject = new Subject<string | null>();
   gameOverSubject = new Subject<void>();
+  gameEventSubject = new Subject<GameEvent>();
 
   // state
   frame = 0;
@@ -45,11 +46,13 @@ export abstract class Player {
   abstract init(): void;
 
   protected runFrame() {
-    this.debugSubject.next('a_.-^b_.-^c_.-^d_.-^'.charAt(this.frame % 20));
+    this.debugSubject.next(null);
     this.frame++;
   }
 
   protected runEvent(event: GameEvent) {
+    this.gameEventSubject.next(event);
+
     if (event.type == GameEventType.INPUT) {
       const inputEvent = event as InputEvent;
       this.debugSubject.next(inputEvent.key.toString());

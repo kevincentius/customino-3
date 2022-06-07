@@ -1,12 +1,16 @@
 
 <div class="full-screen-overlay" [hidden]="!mainService.displayGui">
-  <app-lobby #lobby
+  <app-lobby #lobby [hidden]="screen!==MainScreen.LOBBY"
     (enterRoom)="onEnterRoom($event)"
   ></app-lobby>
   
-  <app-room #room
+  <app-room #room [hidden]="screen!==MainScreen.LOBBY"
 
   ></app-room>
+
+  <app-replay #replay [hidden]="screen!==MainScreen.REPLAY">
+
+  </app-replay>
 </div>
 
-<app-pixi #pixi [hidden]="!pixiEnabled"></app-pixi>
+<app-pixi #pixi [hidden]="!mainService.pixiEnabled"></app-pixi>

@@ -5,8 +5,7 @@ import { BitmapText, Container } from "pixi.js";
 
 export class PlayerDisplay extends Container {
 
-  private debugString = '--------------------------------------------------------------------------------------------------';
-  private debugPos = 0;
+  private debugString = '';
   
   private debugText: BitmapText = textUtil.create(this.debugString);
 
@@ -15,17 +14,22 @@ export class PlayerDisplay extends Container {
   ) {
     super();
 
-    player.debugSubject.subscribe(char => {
-      this.debugString = this.debugString.substring(0, this.debugPos) + char + this.debugString.substring(this.debugPos + 1);
-      this.debugPos = (this.debugPos + 1) % this.debugString.length;
-      this.debugText.text = this.player.frame + ' / ' + (this.player as RemotePlayer).lastReceivedFrame + ' / ' + this.player.alive + ' - ' + this.debugString;
+    this.player.debugSubject.subscribe(char => {
+      if (char != null) {
+        this.debugString += this.player.frame + ':' + char + '   ';
+      }
+
+      this.updateDebugText();
     });
 
-    player.gameOverSubject.subscribe(() => {
-      this.debugText.text = this.debugString + ' - Game Over';
-    })
+    this.player.gameOverSubject.subscribe(this.updateDebugText.bind(this));
 
     this.addChild(this.debugText);
+  }
+
+  private updateDebugText() {
+    this.debugText.text = `${this.player.frame} / ${(this.player as RemotePlayer).lastReceivedFrame} (${(this.player.alive ? 'alive' : 'dead')}) - ${this.debugString}`;
+    this.debugText.alpha = this.player.alive ? 1 : 0.5;
   }
 
   tick(dt: number) {
