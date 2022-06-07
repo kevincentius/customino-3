@@ -1,0 +1,15 @@
+
+<div style="height: 100%; display: flex; flex-direction: column;">
+  <div style="flex-grow: 1"></div>
+
+  <div *ngIf="replayer" style="display: flex; justify-content: center;">
+    <button *ngIf="!running" (click)="onResumeClick()">Resume</button>
+    <button *ngIf="running" (click)="onPauseClick()">Pause</button>
+  </div>
+
+  <div style="height: 50px;"></div>
+
+  <app-file-drop-area #fileDropArea
+    (fileChange)="onFileChange($event)"
+  ></app-file-drop-area>
+</div>

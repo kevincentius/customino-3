@@ -1,0 +1,64 @@
+import { MainService } from "app/view/main/main.service";
+
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { FileDropAreaComponent } from "app/view/common/file-drop-area/file-drop-area.component";
+import { GameReplay } from "@shared/game/engine/recorder/game-replay";
+import { Game } from "@shared/game/engine/game/game";
+import { ClientGame } from "@shared/game/engine/game/client-game";
+import { GameReplayer } from "@shared/game/engine/replayer/game-replayer";
+
+@Component({
+  selector: 'app-replay',
+  templateUrl: './replay.component.html',
+  styleUrls: ['./replay.component.scss']
+})
+export class ReplayComponent {
+
+  @ViewChild('fileDropArea')
+  fileDropArea!: FileDropAreaComponent;
+
+  replayer?: GameReplayer;
+
+  framesExecuted = 0;
+
+  running = false;
+
+  constructor(
+    private mainService: MainService
+  ) { }
+
+  onFileChange(files: any) {
+    if (files.length == 0) {
+      return;
+    }
+
+    this.fileDropArea.clear();
+    
+    let fileReader = new FileReader();
+    fileReader.onload = () => {
+      this.startReplay(fileReader.result as string);
+    }
+    fileReader.readAsText(files[0]);
+  }
+
+  private startReplay(replayString: string) {
+    const replay = JSON.parse(replayString);
+    
+    this.replayer = new GameReplayer(replay);
+    this.replayer.start();
+    this.running = true;
+    
+    this.mainService.pixi.bindGame(this.replayer.game);
+    this.mainService.pixiEnabled = true;
+  }
+
+  onResumeClick() {
+    this.replayer!.start();
+    this.running = true;
+  }
+
+  onPauseClick() {
+    this.replayer!.pause();
+    this.running = false;
+  }
+}

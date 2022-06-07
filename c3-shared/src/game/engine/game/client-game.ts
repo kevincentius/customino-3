@@ -41,12 +41,18 @@ export class ClientGame extends Game {
     this.stop();
   }
 
+  /** Stops the update loop. Can be used to end or pause the game. */
   stop() {
     if (this.mainLoopTimeout) {
       clearTimeout(this.mainLoopTimeout);
       this.mainLoopTimeout = null;
       this.running = false;
     }
+  }
+
+  /** Unpauses the game. Should only be called if the game has been started earlier. */
+  resume() {
+    this.startUpdateLoop();
   }
 
   update() {

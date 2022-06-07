@@ -58,11 +58,11 @@ export class LocalPlayer extends Player {
       key: key,
       timestamp: -1,
       type: GameEventType.INPUT,
-    }
+    };
 
     this.handleEvent({
       frame: this.frame,
       gameEvents: [inputEvent],
-    })
+    });
   }
 }

@@ -28,7 +28,8 @@ export class PlayerDisplay extends Container {
   }
 
   private updateDebugText() {
-    this.debugText.text = this.player.frame + ' / ' + (this.player as RemotePlayer).lastReceivedFrame + ' / ' + this.player.alive + ' - ' + this.debugString + (this.player.alive ? '' : ' Game Over');
+    this.debugText.text = `${this.player.frame} / ${(this.player as RemotePlayer).lastReceivedFrame} (${(this.player.alive ? 'alive' : 'dead')}) - ${this.debugString}`;
+    this.debugText.alpha = this.player.alive ? 1 : 0.5;
   }
 
   tick(dt: number) {
