@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 
 export abstract class Player {
   // event emitters
-  debugSubject = new Subject<string>();
+  debugSubject = new Subject<string | null>();
   gameOverSubject = new Subject<void>();
   gameEventSubject = new Subject<GameEvent>();
 
@@ -46,7 +46,7 @@ export abstract class Player {
   abstract init(): void;
 
   protected runFrame() {
-    this.debugSubject.next('a_.-^b_.-^c_.-^d_.-^'.charAt(this.frame % 20));
+    this.debugSubject.next(null);
     this.frame++;
   }
 
