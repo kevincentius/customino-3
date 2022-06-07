@@ -50,7 +50,7 @@ export class ClientGame extends Game {
     }
   }
 
-  /** Unpauses the game. Should only be called if the game has been started earlier. */
+  /** Unpauses the game. Should only be called if the game has been started earlier, because this does not emit the "startGame" signal. */
   resume() {
     this.startUpdateLoop();
   }

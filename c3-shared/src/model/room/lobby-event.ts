@@ -12,6 +12,7 @@ export enum LobbyEvent {
   GET_REPLAY    = '7',
 
   // events fired by the server
+  SESSION_INFO = '10',
   ROOM_INFO     = '7',
   SERVER_EVENT  = '8',
   GAME_OVER     = '9',
