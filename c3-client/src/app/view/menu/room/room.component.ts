@@ -89,7 +89,6 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   onRecvServerEvent(serverEvent: ServerEvent) {
-    console.log(JSON.stringify(serverEvent));
     if (this.roomId == serverEvent.roomId) {
       for (const playerEvent of serverEvent.playerEvents) {
         this.game.players[playerEvent.playerIndex].handleEvent(playerEvent.clientEvent);
