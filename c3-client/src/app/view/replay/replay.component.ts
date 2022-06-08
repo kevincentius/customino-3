@@ -1,10 +1,7 @@
 import { MainService } from "app/view/main/main.service";
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FileDropAreaComponent } from "app/view/common/file-drop-area/file-drop-area.component";
-import { GameReplay } from "@shared/game/engine/recorder/game-replay";
-import { Game } from "@shared/game/engine/game/game";
-import { ClientGame } from "@shared/game/engine/game/client-game";
 import { GameReplayer } from "@shared/game/engine/replayer/game-replayer";
 
 @Component({
