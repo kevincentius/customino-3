@@ -23,8 +23,10 @@ export class RemotePlayer extends Player {
           throw new Error('Sanity check failed! Remote event should have been executed in previous frame.');
         }
   
-        super.runFrame();
-      } while (this.lastReceivedFrame > this.frame && this.frame < this.game.getTargetMinFrame());
+        if (this.alive) {
+          super.runFrame();
+        }
+      } while (this.alive && this.lastReceivedFrame > this.frame && this.frame < this.game.getTargetMinFrame());
     }
   }
 

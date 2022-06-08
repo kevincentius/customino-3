@@ -3,6 +3,7 @@ import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { LocalPlayer } from "@shared/game/engine/player/local-player";
 import { Player } from "@shared/game/engine/player/player";
 import { RemotePlayer } from "@shared/game/engine/player/remote-player";
+import { GameState } from "@shared/game/engine/serialization/game-state";
 import { StartGameData } from "@shared/game/network/model/start-game-data";
 
 /**
@@ -31,6 +32,13 @@ export class ClientGame extends Game {
         index == this.localPlayerIndex
           ? new LocalPlayer(this, clientInfo)
           : new RemotePlayer(this, clientInfo));
+  }
+
+  /** The startGameData will be ignored here as it should already be passed in the constructor. */
+  load(gameState: GameState) {
+    for (let i = 0; i < this.players.length; i++) {
+      this.players[i].load(gameState.players[i]);
+    }
   }
   
   destroy() {

@@ -1,4 +1,5 @@
 import { Game } from "@shared/game/engine/game/game";
+import { PlayerState } from "@shared/game/engine/serialization/player-state";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent, GameEventType } from "@shared/game/network/model/event/game-event";
 import { InputEvent } from "@shared/game/network/model/event/input-event";
@@ -45,6 +46,12 @@ export abstract class Player {
 
   abstract init(): void;
 
+  load(playerState: PlayerState) {
+    this.alive = playerState.alive;
+    this.debugCount = playerState.debugCount;
+    this.frame = playerState.frame;
+  }
+
   protected runFrame() {
     this.debugSubject.next(null);
     this.frame++;
@@ -83,5 +90,14 @@ export abstract class Player {
 
   isRunning() {
     return this.game.running;
+  }
+  
+  serialize(): PlayerState {
+    return {
+      clientInfo: this.clientInfo,
+      frame: this.frame,
+      alive: this.alive,
+      debugCount: this.debugCount,
+    };
   }
 }
