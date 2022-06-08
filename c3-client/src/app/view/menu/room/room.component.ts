@@ -57,6 +57,12 @@ export class RoomComponent implements OnInit, OnDestroy {
   async show(roomId: number) {
     this.roomId = roomId;
     this.roomInfo = (await this.roomService.getRoomInfo(roomId))!;
+    if (this.roomInfo.gameState?.running) {
+      const game = new ClientGame(this.roomInfo.gameState.startGameData, undefined);
+      game.load(this.roomInfo.gameState);
+      this.game = game;
+      this.startGame();
+    }
   }
 
   onStartGameClick() {
@@ -76,9 +82,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     // start new game
     const localPlayerIndex = startGameData.players.findIndex(p => p.sessionId == this.mainService.sessionInfo.sessionId);
     this.game = new ClientGame(startGameData, localPlayerIndex);
-    this.game.start();
-    this.mainService.pixi.bindGame(this.game);
-    this.mainService.displayGui = false;
+    this.startGame();
 
     // if not spectator, setup local player
     if (localPlayerIndex != -1) {
@@ -92,6 +96,12 @@ export class RoomComponent implements OnInit, OnDestroy {
     // record game replay
     const recorder = new GameRecorder(this.game);
     this.game.gameOverSubject.subscribe(r => this.lastGameReplay = recorder.asReplay());
+  }
+
+  private startGame() {
+    this.game.start();
+    this.mainService.pixi.bindGame(this.game);
+    this.mainService.displayGui = false;
   }
 
   onRecvServerEvent(serverEvent: ServerEvent) {

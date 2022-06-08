@@ -38,28 +38,32 @@ export class Room {
     this.slots = this.slots.filter(slot => slot.session !== session);
 
     if (this.isRunning()) {
-      this.game!.players.find(p => (p as ServerPlayer).clientInfo.sessionId == session.sessionId)?.die();
+      const playerIndex = this.game!.players.findIndex(p => p.clientInfo.sessionId == session.sessionId);
+      
+      // if a player leaves, treat him as dead in the game
+      if (playerIndex != -1) {
+        this.game!.players[playerIndex].die();
 
-      const playerIndex = this.game!.players.findIndex(p => (p as ServerPlayer).clientInfo.sessionId == session.sessionId);
-      const frame = this.game!.players[playerIndex].frame;
-      const serverEvent: ServerEvent = {
-        roomId: this.id,
-        playerEvents: [{
-          playerIndex: playerIndex,
-          clientEvent: {
-            gameEvents: [{
-              frame: frame,
-              timestamp: -1,
-              type: GameEventType.SYSTEM,
-              gameOver: true,
-            } as SystemEvent],
-            frame: frame + 1,
-          },
-        }]
-      };
-      this.slots.forEach(slot => {
-        slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
-      });
+        const frame = this.game!.players[playerIndex].frame;
+        const serverEvent: ServerEvent = {
+          roomId: this.id,
+          playerEvents: [{
+            playerIndex: playerIndex,
+            clientEvent: {
+              gameEvents: [{
+                frame: frame,
+                timestamp: -1,
+                type: GameEventType.SYSTEM,
+                gameOver: true,
+              } as SystemEvent],
+              frame: frame + 1,
+            },
+          }]
+        };
+        this.slots.forEach(slot => {
+          slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
+        });
+      }
     }
 
     if (this.slots.length != prevSlotCount) {
@@ -125,6 +129,7 @@ export class Room {
       host: this.creator.getClientInfo(),
 
       slots: this.slots.map(roomSlot => roomSlot.getRoomSlotInfo()),
+      gameState: this.game?.serialize() ?? null,
     };
   }
 
