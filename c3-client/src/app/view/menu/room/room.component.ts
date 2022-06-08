@@ -68,22 +68,28 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   onRecvStartGame(startGameData: StartGameData) {
+    // destroy last game
     if (this.game) {
       this.game.destroy();
     }
     
-    this.game = new ClientGame(startGameData);
+    // start new game
+    const localPlayerIndex = startGameData.players.findIndex(p => p.sessionId == this.mainService.sessionInfo.sessionId);
+    this.game = new ClientGame(startGameData, localPlayerIndex);
     this.game.start();
     this.mainService.pixi.bindGame(this.game);
-    if (startGameData.localPlayerIndex != null) {
-      const localPlayer = this.game.players[startGameData.localPlayerIndex] as LocalPlayer;
+    this.mainService.displayGui = false;
+
+    // if not spectator, setup local player
+    if (localPlayerIndex != -1) {
+      const localPlayer = this.game.players[localPlayerIndex] as LocalPlayer;
       localPlayer.eventsSubject.subscribe(clientEvent => this.roomService.flushGameEvents(clientEvent));
       localPlayer.gameOverSubject.subscribe(() => this.onLocalPlayerDeath());
       this.mainService.pixi.keyboard.bindToPlayer(localPlayer);
       this.mainService.pixi.keyboard.enabled = true;
     }
-    this.mainService.displayGui = false;
     
+    // record game replay
     const recorder = new GameRecorder(this.game);
     this.game.gameOverSubject.subscribe(r => this.lastGameReplay = recorder.asReplay());
   }

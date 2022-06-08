@@ -8,7 +8,6 @@ export class GameReplayer {
     private replay: GameReplay
   ) {
     this.game = new ClientGame({
-      localPlayerIndex: null,
       players: this.replay.playerReplays.map(pr => pr.clientInfo),
     });
 

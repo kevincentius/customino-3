@@ -9,18 +9,14 @@ import { StartGameData } from "@shared/game/network/model/start-game-data";
  * In addition to extending Game, this class handles the update loop.
  */
 export class ClientGame extends Game {
-  private localPlayerIndex: number | null;
-
   private lastUpdate!: number;
   private mainLoopTimeout: any;
 
-  constructor(startGameData: StartGameData) {
+  constructor(startGameData: StartGameData, private localPlayerIndex?: number) {
     super();
 
     this.init(startGameData);
     
-    this.localPlayerIndex = startGameData.localPlayerIndex;
-
     this.gameStartSubject.subscribe(() => this.startUpdateLoop());
 
     this.gameOverSubject.subscribe(() => {
@@ -32,7 +28,7 @@ export class ClientGame extends Game {
   createPlayers(startGameData: StartGameData): Player[] {
     return startGameData.players.map(
       (clientInfo, index) => 
-        index == startGameData.localPlayerIndex
+        index == this.localPlayerIndex
           ? new LocalPlayer(this, clientInfo)
           : new RemotePlayer(this, clientInfo));
   }
