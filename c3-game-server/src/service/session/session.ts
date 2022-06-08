@@ -13,7 +13,7 @@ export class Session {
   
   getClientInfo(): ClientInfo {
     return {
-      id: this.sessionId,
+      sessionId: this.sessionId,
       userId: this.userId,
       username: this.username,
     };

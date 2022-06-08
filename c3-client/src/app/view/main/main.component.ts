@@ -1,5 +1,6 @@
 import { Component, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { LobbyService } from "app/game-server/lobby.service";
 import { MainScreen } from "app/view/main/main-screen";
 import { MainService } from "app/view/main/main.service";
 import { LobbyComponent } from "app/view/menu/lobby/lobby.component";
@@ -33,11 +34,14 @@ export class MainComponent {
 
   constructor(
     public mainService: MainService,
+    private lobbyService: LobbyService,
     private route: ActivatedRoute,
   ) {
     this.route.params.subscribe(params => {
       this.screen = params['component'] ?? MainScreen.LOBBY;
     });
+
+    this.lobbyService.clientInfoSubject.subscribe(sessionInfo => this.mainService.sessionInfo = sessionInfo);
   }
 
   ngAfterViewInit() {

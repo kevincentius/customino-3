@@ -1,6 +1,8 @@
 
 import { Logger } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { LobbyEvent } from '@shared/model/room/lobby-event';
+import { SessionInfo } from '@shared/model/session/session-info';
 import { websocketGatewayOptions } from 'config/config';
 import { RoomService } from 'service/room/room-service';
 import { SessionService } from 'service/session/session-service';
@@ -48,7 +50,12 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   
       client.emit('debugMessage', 'Hello from the server.');
   
-      this.sessionService.createSession(client);
+      const session = this.sessionService.createSession(client);
+
+      const sessionInfo: SessionInfo = {
+        sessionId: session.sessionId,
+      }
+      session.socket.emit(LobbyEvent.SESSION_INFO, sessionInfo);
     } catch (error) {
       this.logger.error(error);
     }

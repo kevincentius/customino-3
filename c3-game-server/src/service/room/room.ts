@@ -38,9 +38,9 @@ export class Room {
     this.slots = this.slots.filter(slot => slot.session !== session);
 
     if (this.isRunning()) {
-      this.game!.players.find(p => (p as ServerPlayer).session == session)?.die();
+      this.game!.players.find(p => (p as ServerPlayer).clientInfo.sessionId == session.sessionId)?.die();
 
-      const playerIndex = this.game!.players.findIndex(p => (p as ServerPlayer).session == session);
+      const playerIndex = this.game!.players.findIndex(p => (p as ServerPlayer).clientInfo.sessionId == session.sessionId);
       const frame = this.game!.players[playerIndex].frame;
       const serverEvent: ServerEvent = {
         roomId: this.id,
@@ -77,39 +77,16 @@ export class Room {
 
   startGame(session: Session) {
     if (!this.isRunning() && this.creator == session && this.isInRoom(session)) {
-      const playerSessions = this.slots
+      const players = this.slots
         .filter(slot => slot.playing)
-        .map(slot => slot.session);
+        .map(slot => slot.session.getClientInfo());
+      const startGameData: StartGameData = { players: players }
 
-      const spectatorSessions = this.slots
-        .filter(slot => !slot.playing)
-        .map(slot => slot.session);
-      
-      const players = playerSessions.map(player => player.getClientInfo());
-
-      // send startGameData to players
-      playerSessions.forEach((playerSession, index) => {
-        const startGameData: StartGameData = {
-          players: players,
-          localPlayerIndex: index,
-        }
-        playerSession.socket.emit(LobbyEvent.START_GAME, startGameData);
-      });
-
-      // send startGameData to spectators
-      spectatorSessions.forEach((spectatorSession, index) => {
-        const startGameData: StartGameData = {
-          players: players,
-          localPlayerIndex: null,
-        }
-        spectatorSession.socket.emit(LobbyEvent.START_GAME, startGameData);
-      });
+      // broadcast the start of game
+      this.slots.forEach(slot => slot.session.socket.emit(LobbyEvent.START_GAME, startGameData));
 
       // start server game
-      this.game = new ServerGame({
-        players: players,
-        localPlayerIndex: null,
-      }, playerSessions);
+      this.game = new ServerGame(startGameData, players);
       
       this.game.gameOverSubject.subscribe(gameResult => {
         for (const slot of this.slots) {
@@ -167,7 +144,7 @@ export class Room {
   }
   
   recvClientEvent(session: Session, clientEvent: ClientEvent) {
-    const playerIndex = this.game!.players.findIndex(player => player.session == session);
+    const playerIndex = this.game!.players.findIndex(player => player.clientInfo.sessionId == session.sessionId);
 
     // simulate game immediately
     this.game!.players[playerIndex].handleEvent(clientEvent);
