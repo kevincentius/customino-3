@@ -40,13 +40,13 @@ export class PixiApplication {
 
   private initKeyboard() {
     const keyCode = (char: string) => char.toUpperCase().charCodeAt(0);
-    this.keyboard.bind(InputKey.LEFT, keyCode('A'));
-    this.keyboard.bind(InputKey.RIGHT, keyCode('D'));
-    this.keyboard.bind(InputKey.SOFT_DROP, 12);
-    this.keyboard.bind(InputKey.RCCW, 37);
-    this.keyboard.bind(InputKey.RCW, 39);
-    this.keyboard.bind(InputKey.FLIP, 38);
-    this.keyboard.bind(InputKey.HARD_DROP, 32);
+    this.keyboard.bind(InputKey.LEFT, keyCode('J'));
+    this.keyboard.bind(InputKey.RIGHT, keyCode('K'));
+    this.keyboard.bind(InputKey.SOFT_DROP, 32);
+    this.keyboard.bind(InputKey.RCCW, keyCode('D'));
+    this.keyboard.bind(InputKey.RCW, keyCode('L'));
+    this.keyboard.bind(InputKey.R180, 186);
+    this.keyboard.bind(InputKey.HARD_DROP, 70);
   }
 
   private loadResources() {
