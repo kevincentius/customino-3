@@ -8,7 +8,7 @@ export class Keyboard {
   // State
   public enabled = false;
 
-  private keyMap = new Map<number, Control>();
+  private keyMap = new Map<string, Control>();
   private moveMap = new Map<InputKey, Control>();
   private repeatKey?: Control;
 
@@ -19,9 +19,9 @@ export class Keyboard {
   player!: Player;
 
   // Settings
-  private das: number = 1000;
-  private arr: number = 400;
-  private softDropArr: number = 20;
+  private das: number = 150;
+  private arr: number = 50
+  private softDropArr: number = 50;
 
   constructor() {
     window.addEventListener('keydown', this.onKeyDown.bind(this));
@@ -34,10 +34,10 @@ export class Keyboard {
     this.moveMap.forEach((control, key) => control.down = false);
   }
 
-  bind(move: InputKey, keycode: number) {
+  bind(move: InputKey, code: string) {
     const control = new Control(move);
     this.moveMap.set(move, control);
-    this.keyMap.set(keycode, control);
+    this.keyMap.set(code, control);
   }
 
   // Event Handling
@@ -50,8 +50,7 @@ export class Keyboard {
 
 
     // Check what control the key corresponds to
-    console.log(e.keyCode);
-    const control = this.keyMap.get(e.keyCode);
+    const control = this.keyMap.get(e.code);
     if (!control)
       return;
       
@@ -80,7 +79,7 @@ export class Keyboard {
     e.preventDefault();
 
     // Check what control the key corresponds to
-    let control = this.keyMap.get(e.keyCode);
+    let control = this.keyMap.get(e.code);
     if (!control)
       return;
 
