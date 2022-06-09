@@ -1,6 +1,5 @@
 import { LocalPlayer } from "@shared/game/engine/player/local-player";
 import { Player } from "@shared/game/engine/player/player";
-import { GameEventType } from "@shared/game/network/model/event/game-event";
 import { InputKey } from "@shared/game/network/model/input-key";
 import { Control } from "app/control/control";
 
@@ -22,7 +21,7 @@ export class Keyboard {
   // Settings
   private das: number = 1000;
   private arr: number = 400;
-  private softDropArr: number = 250;
+  private softDropArr: number = 20;
 
   constructor() {
     window.addEventListener('keydown', this.onKeyDown.bind(this));
@@ -31,6 +30,8 @@ export class Keyboard {
 
   bindToPlayer(player: Player) {
     this.player = player;
+
+    this.moveMap.forEach((control, key) => control.down = false);
   }
 
   bind(move: InputKey, keycode: number) {
@@ -49,6 +50,7 @@ export class Keyboard {
 
 
     // Check what control the key corresponds to
+    console.log(e.keyCode);
     const control = this.keyMap.get(e.keyCode);
     if (!control)
       return;
