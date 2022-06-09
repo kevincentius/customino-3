@@ -12,5 +12,5 @@ export enum InputKey {
 
   RCW = 5,
   RCCW = 6,
-  FLIP = 7,
+  R180 = 7,
 }
