@@ -17,7 +17,7 @@ export class GameDisplay extends Container {
 
     this.game.players.forEach((player, index) => {
       const playerDisplay = new PlayerDisplay(player);
-      playerDisplay.position.y = index * 40;
+      playerDisplay.position.x = index * 300;
       this.players.push(playerDisplay);
       this.addChild(playerDisplay);
     });

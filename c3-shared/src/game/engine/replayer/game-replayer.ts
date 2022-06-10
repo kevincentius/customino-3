@@ -7,9 +7,7 @@ export class GameReplayer {
   constructor(
     private replay: GameReplay
   ) {
-    this.game = new ClientGame({
-      players: this.replay.playerReplays.map(pr => pr.clientInfo),
-    });
+    this.game = new ClientGame(this.replay.startGameData);
 
     const frames = Math.max(...this.replay.playerReplays.map(p => p.gameEvents.length == 0 ? 0 : p.gameEvents[p.gameEvents.length - 1].frame));
 

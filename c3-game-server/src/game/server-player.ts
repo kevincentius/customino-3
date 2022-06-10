@@ -1,11 +1,11 @@
 import { Game } from "@shared/game/engine/game/game";
 import { Player } from "@shared/game/engine/player/player";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
-import { ClientInfo } from "@shared/model/session/client-info";
+import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
 
 export class ServerPlayer extends Player {
-  constructor(game: Game, public clientInfo: ClientInfo) {
-    super(game, clientInfo);
+  constructor(game: Game, public startPlayerData: StartPlayerData) {
+    super(game, startPlayerData);
   }
 
   update(): void {

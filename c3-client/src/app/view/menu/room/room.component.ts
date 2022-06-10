@@ -6,7 +6,6 @@ import { LocalPlayer } from '@shared/game/engine/player/local-player';
 import { GameRecorder } from '@shared/game/engine/recorder/game-recorder';
 import { GameReplay } from '@shared/game/engine/recorder/game-replay';
 import { ServerEvent } from '@shared/game/network/model/event/server-event';
-import { StartGameData } from '@shared/game/network/model/start-game-data';
 import { RoomInfo } from '@shared/model/room/room-info';
 import { RoomService } from 'app/game-server/room.service';
 import { MainService } from 'app/view/main/main.service';
@@ -14,6 +13,7 @@ import { Subscription } from 'rxjs';
 import {saveAs} from 'file-saver';
 import { format } from 'date-fns';
 import { environment } from 'environments/environment';
+import { StartGameData } from '@shared/game/network/model/start-game/start-game-data';
 
 @Component({
   selector: 'app-room',
@@ -80,7 +80,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
     
     // start new game
-    const localPlayerIndex = startGameData.players.findIndex(p => p.sessionId == this.mainService.sessionInfo.sessionId);
+    const localPlayerIndex = startGameData.players.findIndex(p => p.clientInfo.sessionId == this.mainService.sessionInfo.sessionId);
     this.game = new ClientGame(startGameData, localPlayerIndex);
     this.startGame();
 

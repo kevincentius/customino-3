@@ -20,6 +20,7 @@ export class GameRecorder {
   asReplay(): GameReplay {
     return {
       playerReplays: this.players.map(player => player.asReplay()),
+      startGameData: this.game.startGameData,
     }
   }
 }

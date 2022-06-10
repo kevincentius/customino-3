@@ -1,17 +1,16 @@
-import { Game } from "@shared/game/engine/game/game";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { ServerEvent, ServerEventEntry } from "@shared/game/network/model/event/server-event";
-import { StartGameData } from "@shared/game/network/model/start-game-data";
 import { LobbyEvent } from "@shared/model/room/lobby-event";
 import { RoomInfo } from "@shared/model/room/room-info";
 import { RoomSlot } from "service/room/room-slot";
 import { ServerGame } from "game/server-game";
 import { Session } from "service/session/session";
-import { ServerPlayer } from "game/server-player";
 import { GameEventType } from "@shared/game/network/model/event/game-event";
 import { SystemEvent } from "@shared/game/network/model/event/system-event";
 import { GameReplay } from "@shared/game/engine/recorder/game-replay";
 import { GameRecorder } from "@shared/game/engine/recorder/game-recorder";
+import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
+import { RandomGen } from "@shared/game/engine/util/random-gen";
 
 export class Room {
   createdAt = Date.now();
@@ -23,7 +22,7 @@ export class Room {
 
   // only for the current game session:
   game?: ServerGame;
-  
+  r = new RandomGen();
 
   constructor(
     public id: number,
@@ -38,7 +37,7 @@ export class Room {
     this.slots = this.slots.filter(slot => slot.session !== session);
 
     if (this.isRunning()) {
-      const playerIndex = this.game!.players.findIndex(p => p.clientInfo.sessionId == session.sessionId);
+      const playerIndex = this.game!.players.findIndex(p => p.startPlayerData.clientInfo.sessionId == session.sessionId);
       
       // if a player leaves, treat him as dead in the game
       if (playerIndex != -1) {
@@ -84,7 +83,16 @@ export class Room {
       const players = this.slots
         .filter(slot => slot.playing)
         .map(slot => slot.session.getClientInfo());
-      const startGameData: StartGameData = { players: players }
+      
+      const globalSeed = this.r.int();
+      
+      const startGameData: StartGameData = {
+        players: players.map(p => ({
+          clientInfo: p,
+          randomSeed: globalSeed,
+        })),
+        randomSeed: this.r.int(),
+      }
 
       // broadcast the start of game
       this.slots.forEach(slot => slot.session.socket.emit(LobbyEvent.START_GAME, startGameData));
@@ -149,7 +157,7 @@ export class Room {
   }
   
   recvClientEvent(session: Session, clientEvent: ClientEvent) {
-    const playerIndex = this.game!.players.findIndex(player => player.clientInfo.sessionId == session.sessionId);
+    const playerIndex = this.game!.players.findIndex(player => player.startPlayerData.clientInfo.sessionId == session.sessionId);
 
     // simulate game immediately
     this.game!.players[playerIndex].handleEvent(clientEvent);
