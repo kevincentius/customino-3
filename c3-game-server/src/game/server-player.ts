@@ -17,11 +17,29 @@ export class ServerPlayer extends Player {
       throw new Error('Sanity check failed! Remote event should have been executed in previous frame.');
     }
 
-    clientEvent.gameEvents.forEach(event => {
-      this.frame = event.frame;
-      super.runEvent(event);
-    });
-    this.frame = clientEvent.frame;
+    let i = 0;
+    while (i < clientEvent.gameEvents.length) {
+      const gameEvent = clientEvent.gameEvents[i];
+
+      // catch up frames with no gameEvents
+      while (this.frame < gameEvent.frame) {
+        this.runFrame();
+      }
+
+      // run actual frame of the gameEvent
+      this.runEvent(gameEvent);
+      this.runFrame();
+      i++;
+    }
+
+    // catch up frames with no gameEvents
+    while (this.frame <= clientEvent.frame) {
+      this.runFrame();
+    }
+
+    if (this.frame != clientEvent.frame + 1) {
+      throw new Error(`Sanity check failed! Frame count does not match: ${this.frame} - ${clientEvent.frame}`);
+    }
   }
 
   init(): void {}

@@ -2,7 +2,7 @@ import { Board, PlaceTileEvent } from "@shared/game/engine/player/board";
 import { MinoDisplay } from "app/pixi/display/mino-display";
 import { BoardLayout } from "app/pixi/layout/board-layout";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
-import { Container, Loader, Sprite } from "pixi.js";
+import { Container } from "pixi.js";
 
 
 export class BoardDisplay extends Container {
@@ -22,6 +22,18 @@ export class BoardDisplay extends Container {
     this.minos = Array.from(Array(this.board.tiles.length), () => Array(this.board.tiles[0].length));
 
     this.board.placeTileSubject.subscribe(e => this.onPlaceTile(e));
+
+    for (let i = 0; i < this.board.tiles.length; i++) {
+      for (let j = 0; j < this.board.tiles[i].length; j++) {
+        if(this.board.tiles[i][j] != null) {
+          this.onPlaceTile({
+            y: i,
+            x: j,
+            tile: this.board.tiles[i][j],
+          });
+        }
+      }
+    }
   }
 
   onPlaceTile(e: PlaceTileEvent) {
@@ -38,7 +50,5 @@ export class BoardDisplay extends Container {
     );
     this.addChild(mino);
     this.minos[e.y][e.x] = mino;
-
-    console.log(mino.x, mino.y);
   }
 }

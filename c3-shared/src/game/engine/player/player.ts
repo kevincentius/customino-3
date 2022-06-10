@@ -57,7 +57,8 @@ export abstract class Player {
       frame: this.frame,
       alive: this.alive,
       debugCount: this.debugCount,
-      randomState: this.r.serialize(),
+      randomState: JSON.stringify(this.r.serialize()),
+      board: this.board.serialize(),
     };
   }
 
@@ -65,7 +66,8 @@ export abstract class Player {
     this.alive = playerState.alive;
     this.debugCount = playerState.debugCount;
     this.frame = playerState.frame;
-    this.r = new RandomGen(undefined, playerState.randomState);
+    this.r = new RandomGen(undefined, JSON.parse(playerState.randomState));
+    this.board.load(playerState.board);
   }
 
   protected runFrame() {
@@ -74,9 +76,9 @@ export abstract class Player {
     
     // debug: set random tiles on the board
     const rule = playerRule;
-    for (let i = 0; i < 4; i++) {
+    // for (let i = 0; i < 4; i++) {
       this.board.placeTile(this.r.int(rule.height + rule.invisibleHeight), this.r.int(rule.width), { color: this.r.int(7), type: TileType.FILLED });
-    }
+    // }
   }
 
   protected runEvent(event: GameEvent) {
