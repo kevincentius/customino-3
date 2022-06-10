@@ -1,5 +1,6 @@
 import { Player } from "@shared/game/engine/player/player";
 import { RemotePlayer } from "@shared/game/engine/player/remote-player";
+import { BoardDisplay } from "app/pixi/display/board-display";
 import { textUtil } from "app/pixi/util/text-util";
 import { BitmapText, Container, Loader, Sprite, Spritesheet } from "pixi.js";
 
@@ -9,10 +10,14 @@ export class PlayerDisplay extends Container {
   
   private debugText: BitmapText = textUtil.create(this.debugString);
 
+  private board: BoardDisplay;
+
   constructor(
     private player: Player,
   ) {
     super();
+
+    this.board = new BoardDisplay(player.board);
 
     this.player.debugSubject.subscribe(char => {
       if (char != null) {
@@ -24,12 +29,9 @@ export class PlayerDisplay extends Container {
 
     this.player.gameOverSubject.subscribe(this.updateDebugText.bind(this));
 
-    this.addChild(this.debugText);
-
+    this.addChild(this.board);
     
-    let spritesheet = Loader.shared.resources['gameSpritesheet'].spritesheet!;
-    const debugMino = new Sprite(spritesheet.textures["0.png"]);
-    this.addChild(debugMino);
+    this.addChild(this.debugText);
   }
 
   private updateDebugText() {
