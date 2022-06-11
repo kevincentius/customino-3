@@ -20,6 +20,7 @@ export class MatUtil {
         }
       }
     }
+    return 0;
   }
 
   static countEmptyRowsTop(matrix: any[][]) {
@@ -30,5 +31,6 @@ export class MatUtil {
         }
       }
     }
+    return 0;
   }
 }

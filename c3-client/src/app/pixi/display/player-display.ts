@@ -17,7 +17,7 @@ export class PlayerDisplay extends Container {
   ) {
     super();
 
-    this.board = new BoardDisplay(player.board);
+    this.board = new BoardDisplay(player.board, player.activePiece);
 
     this.player.debugSubject.subscribe(char => {
       if (char != null) {

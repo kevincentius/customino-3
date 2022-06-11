@@ -1,32 +1,32 @@
-import { Board, PlaceTileEvent } from "@shared/game/engine/player/board";
-import { MinoDisplay } from "app/pixi/display/mino-display";
-import { BoardLayout } from "app/pixi/layout/board-layout";
-import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
+import { ActivePiece } from "@shared/game/engine/player/active-piece";
+import { Board } from "@shared/game/engine/player/board";
+import { ActivePieceDisplay } from "app/pixi/display/active-piece-display";
+import { MinoGridDisplay } from "app/pixi/display/mino-grid-display";
 import { Container } from "pixi.js";
 
 
 export class BoardDisplay extends Container {
-  // helpers
-  spritesheet = new GameSpritesheet();
-  layout;
-  
   // children
-  minos: MinoDisplay[][];
+  minoGridDisplay: MinoGridDisplay;
+  activePieceDisplay: ActivePieceDisplay;
 
   constructor(
-    private board: Board
+    private board: Board,
+    private activePiece: ActivePiece,
   ) {
     super();
 
-    this.layout = new BoardLayout(500, 900, this.board.visibleHeight, this.board.tiles[0].length);
-    this.minos = Array.from(Array(this.board.tiles.length), () => Array(this.board.tiles[0].length));
+    this.activePieceDisplay = new ActivePieceDisplay(this.activePiece);
+    this.minoGridDisplay = new MinoGridDisplay(500, 900, this.board.tiles, this.board.visibleHeight);
 
-    this.board.placeTileSubject.subscribe(e => this.onPlaceTile(e));
+    this.addChild(this.minoGridDisplay);
+
+    this.board.placeTileSubject.subscribe(e => this.minoGridDisplay.placeTile(e));
 
     for (let i = 0; i < this.board.tiles.length; i++) {
       for (let j = 0; j < this.board.tiles[i].length; j++) {
         if(this.board.tiles[i][j] != null) {
-          this.onPlaceTile({
+          this.minoGridDisplay.placeTile({
             y: i,
             x: j,
             tile: this.board.tiles[i][j],
@@ -34,21 +34,5 @@ export class BoardDisplay extends Container {
         }
       }
     }
-  }
-
-  onPlaceTile(e: PlaceTileEvent) {
-    if (this.minos[e.y][e.x] != null) {
-      this.removeChild(this.minos[e.y][e.x]!);
-      this.minos[e.y][e.x] = null!;
-    }
-
-    const mino = new MinoDisplay(this.spritesheet, e.tile);
-    mino.scale.set(this.layout.minoScale);
-    mino.position.set(
-      this.layout.offsetX + this.layout.minoSize * e.x,
-      this.layout.offsetY - this.layout.minoSize * (e.y + 1),
-    );
-    this.addChild(mino);
-    this.minos[e.y][e.x] = mino;
   }
 }

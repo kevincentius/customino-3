@@ -1,8 +1,9 @@
 import { Game } from "@shared/game/engine/game/game";
-import { playerRule } from "@shared/game/engine/model/rule/player-rule";
 import { TileType } from "@shared/game/engine/model/tile-type";
+import { ActivePiece } from "@shared/game/engine/player/active-piece";
 import { Board } from "@shared/game/engine/player/board";
 import { PlayerState } from "@shared/game/engine/serialization/player-state";
+import { MemoryPieceGen, PieceGen } from "@shared/game/engine/util/piece-factory/piece-gen";
 import { RandomGen } from "@shared/game/engine/util/random-gen";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent, GameEventType } from "@shared/game/network/model/event/game-event";
@@ -26,6 +27,8 @@ export abstract class Player {
   // composition
   private r: RandomGen;
   public board: Board;
+  private pieceGen: PieceGen;
+  public activePiece: ActivePiece;
 
   constructor(
     // reference
@@ -37,6 +40,10 @@ export abstract class Player {
 
     this.r = new RandomGen(startPlayerData.randomSeed);
     this.board = new Board();
+    this.pieceGen = new MemoryPieceGen(this.r, [{ size: 4 }], 1);
+    this.activePiece = new ActivePiece(this.board);
+
+    this.activePiece.spawn(this.pieceGen.next());
   }
 
   abstract update(): void;
@@ -73,12 +80,8 @@ export abstract class Player {
   protected runFrame() {
     this.debugSubject.next(null);
     this.frame++;
-    
-    // debug: set random tiles on the board
-    const rule = playerRule;
-    // for (let i = 0; i < 4; i++) {
-      this.board.placeTile(this.r.int(rule.height + rule.invisibleHeight), this.r.int(rule.width), { color: this.r.int(7), type: TileType.FILLED });
-    // }
+
+    this.board.placeTile(this.r.int(10), this.r.int(10), { color: this.r.int(8), type: TileType.FILLED });
   }
 
   protected runEvent(event: GameEvent) {
