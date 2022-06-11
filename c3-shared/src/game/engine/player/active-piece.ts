@@ -1,3 +1,4 @@
+import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { Board } from "@shared/game/engine/player/board";
 import { Piece } from "@shared/game/engine/player/piece";
 import { MatUtil } from "@shared/game/engine/util/mat-util";
@@ -21,8 +22,19 @@ export class ActivePiece {
   y = 2;
   isLastMoveRotation = false;
 
+  gravityFrameCount = 0;
+  gravity = 5; // tiles per second
+
+  lockDelayFrameCount = 0;
+
+  // config
+  readonly gravityCap = 18;
+  readonly gravityAccel = 0.0; // tiles per second^2
+  readonly lockDelay = 0.5; // seconds
+
   constructor(
-    private board: Board
+    private board: Board,
+    private onLockDelayExhausted: () => void,
   ) {
 
   }
@@ -33,6 +45,11 @@ export class ActivePiece {
       x: this.x,
       y: this.y,
       isLastMoveRotation: this.isLastMoveRotation,
+      
+      gravityFrameCount: this.gravityFrameCount,
+      gravity: this.gravity,
+
+      lockDelayFrameCount: this.lockDelayFrameCount,
     }
   }
 
@@ -41,12 +58,19 @@ export class ActivePiece {
     this.x = state.x;
     this.y = state.y;
     this.isLastMoveRotation = state.isLastMoveRotation;
+
+    this.gravityFrameCount = state.gravityFrameCount;
+    this.gravity = state.gravity;
+
+    this.lockDelayFrameCount = state.lockDelayFrameCount;
   }
 
   spawn(piece: Piece) {
     this.piece = piece;
     this.x = 3;
     this.y = this.board.invisibleHeight;
+    this.gravityFrameCount = 0;
+    this.lockDelayFrameCount = 0;
 
     this.spawnSubject.next(null);
   }
@@ -95,5 +119,27 @@ export class ActivePiece {
       }
     }
     return false;
+  }
+  
+  runFrame() {
+    // gravity
+    this.gravity += this.gravityAccel;
+    this.gravityFrameCount++;
+    const framesPerG = 1 / (this.gravity * gameLoopRule.mspf / 1000);
+    while (this.gravityFrameCount >= framesPerG) {
+      this.gravityFrameCount -= framesPerG;
+      this.attemptMove(1, 0, 0);
+    }
+
+    // lock delay
+    this.y++;
+    const grounded = this.checkCollision();
+    this.y--;
+    if (grounded) {
+      this.lockDelayFrameCount++;
+      if (this.lockDelayFrameCount >= this.lockDelay * 1000 / gameLoopRule.mspf) {
+        this.onLockDelayExhausted();
+      }
+    }
   }
 }

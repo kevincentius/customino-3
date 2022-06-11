@@ -51,7 +51,7 @@ export abstract class Player {
     this.r = new RandomGen(startPlayerData.randomSeed);
     this.board = new Board();
     this.pieceGen = new MemoryPieceGen(this.r, this.pieceList, 1);
-    this.activePiece = new ActivePiece(this.board);
+    this.activePiece = new ActivePiece(this.board, () => this.onHardDrop());
 
     this.activePiece.spawn(this.pieceGen.next());
   }
@@ -90,6 +90,7 @@ export abstract class Player {
   }
 
   protected runFrame() {
+    this.activePiece.runFrame();
     this.frame++;
   }
 
@@ -145,7 +146,6 @@ export abstract class Player {
     
     this.board.placePiece(this.activePiece.piece, this.activePiece.y, this.activePiece.x);
     const linesCleared = this.board.checkLineClear(this.activePiece.y, this.activePiece.y + this.activePiece.piece.tiles.length);
-    console.log(linesCleared);
     this.board.clearLines(linesCleared);
     this.activePiece.spawn(this.pieceGen.next());
 
