@@ -1,0 +1,35 @@
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 200px 0;
+  box-sizing: border-box;
+  gap: 30px;
+  width: 600px;
+  
+  .menu-title-container {
+    padding: 0 100px;
+
+    .menu-title {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: solid 2px #fff8;
+      font-size: 48px;
+    }
+  }
+
+  .menu-item {
+    transition: 200ms;
+    font-size: 36px;
+    padding: 20px 70px;
+    background: #fff5;
+    
+    cursor: pointer;
+
+    &:hover {
+      transition: 50ms;
+      background: #fffa;
+    }
+  }
+}

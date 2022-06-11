@@ -4,6 +4,8 @@
     Lobby Component
   </div>
 
+  <button (click)="onBackClick()">Back</button>
+
   <ng-container *ngIf="rooms">
     <div *ngFor="let room of rooms" class="room" (click)="onRoomClick(room)">
       <div>Room: {{room.name}}</div>

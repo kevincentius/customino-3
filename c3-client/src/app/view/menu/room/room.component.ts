@@ -14,6 +14,7 @@ import {saveAs} from 'file-saver';
 import { format } from 'date-fns';
 import { environment } from 'environments/environment';
 import { StartGameData } from '@shared/game/network/model/start-game/start-game-data';
+import { MainScreen } from 'app/view/main/main-screen';
 
 @Component({
   selector: 'app-room',
@@ -67,6 +68,10 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   onStartGameClick() {
     this.roomService.startGame();
+  }
+
+  onBackClick() {
+    this.mainService.openScreen(MainScreen.LOBBY);
   }
 
   isRunning() {

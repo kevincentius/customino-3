@@ -4,6 +4,8 @@
     Room Component
   </div>
 
+  <button (click)="onBackClick()">Back</button>
+
   <ng-container *ngIf="roomInfo">
     <div>Room ID: {{roomInfo.id}}</div>
     <div>Room name: {{roomInfo.name}}</div>

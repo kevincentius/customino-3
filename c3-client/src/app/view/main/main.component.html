@@ -4,13 +4,21 @@
     (enterRoom)="onEnterRoom($event)"
   ></app-lobby>
   
-  <app-room #room [hidden]="screen!==MainScreen.LOBBY"
+  <app-menu #menu [hidden]="screen!==MainScreen.MENU"
+
+  ></app-menu>
+
+  <app-room #room [hidden]="screen!==MainScreen.ROOM"
 
   ></app-room>
 
   <app-replay #replay [hidden]="screen!==MainScreen.REPLAY">
 
   </app-replay>
+
+  <app-controls #controls [hidden]="screen!==MainScreen.CONTROLS">
+
+  </app-controls>
 </div>
 
 <app-pixi #pixi [hidden]="!mainService.pixiEnabled"></app-pixi>

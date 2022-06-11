@@ -15,6 +15,9 @@ import { AppComponent } from './app.component';
 import { ReplayComponent } from './view/replay/replay.component';
 import { FileDropAreaComponent } from 'app/view/common/file-drop-area/file-drop-area.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MenuComponent } from './view/menu/menu/menu.component';
+import { ControlsComponent } from './view/menu/controls/controls.component';
+import { BackgroundComponent } from './view/common/background/background.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -33,6 +36,9 @@ export function apiConfigFactory(): Configuration {
     RoomComponent,
     ReplayComponent,
     FileDropAreaComponent,
+    MenuComponent,
+    ControlsComponent,
+    BackgroundComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),
