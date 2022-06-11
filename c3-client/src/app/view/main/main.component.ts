@@ -42,7 +42,7 @@ export class MainComponent {
     private route: ActivatedRoute,
   ) {
     this.route.params.subscribe(params => {
-      this.screen = params['component'] ?? MainScreen.CONTROLS;
+      this.screen = params['component'] ?? MainScreen.MENU;
     });
 
     this.mainService.init(this);

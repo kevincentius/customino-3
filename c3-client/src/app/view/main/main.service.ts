@@ -27,6 +27,6 @@ export class MainService {
   openScreen(screen: MainScreen) {
     this.main.openScreen(screen);
     
-    this.bgIndex = this.r.int(4);
+    // this.bgIndex = this.r.int(4);
   }
 }

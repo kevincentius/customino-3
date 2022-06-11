@@ -13,7 +13,7 @@ export class ControlsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.mainService.pixi.keyboard);
+    // console.log(this.mainService.pixi.keyboard);
   }
 
 }

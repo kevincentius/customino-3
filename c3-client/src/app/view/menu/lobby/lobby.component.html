@@ -1,22 +1,26 @@
 
-<div style="background: #0f03;">
-  <div>
-    Lobby Component
-  </div>
+<div class="full-size">  
+  <app-background></app-background>
 
-  <button (click)="onBackClick()">Back</button>
+  <div style="background: #0f03;">
+    <div>
+      Lobby Component
+    </div>
 
-  <ng-container *ngIf="rooms">
-    <div *ngFor="let room of rooms" class="room" (click)="onRoomClick(room)">
-      <div>Room: {{room.name}}</div>
-      <div>
-        <div *ngFor="let slot of room.slots">
-          {{slot.player.username}}
+    <button (click)="onBackClick()">Back</button>
+
+    <ng-container *ngIf="rooms">
+      <div *ngFor="let room of rooms" class="room" (click)="onRoomClick(room)">
+        <div>Room: {{room.name}}</div>
+        <div>
+          <div *ngFor="let slot of room.slots">
+            {{slot.player.username}}
+          </div>
         </div>
       </div>
-    </div>
-  </ng-container>
-  
-  <button (click)="onCreateRoom()">Create Room</button>
-  <button (click)="onRefresh()">Refresh</button>
+    </ng-container>
+    
+    <button (click)="onCreateRoom()">Create Room</button>
+    <button (click)="onRefresh()">Refresh</button>
+  </div>
 </div>
