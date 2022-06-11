@@ -17,6 +17,6 @@ export class BoardLayout {
     this.minoSize = Math.min(this.width / this.cols, this.height / this.rows);
     this.minoScale = this.minoSize / spritesheet.mino[0].width;
     this.offsetX = (this.width - this.minoSize * cols) / 2;
-    this.offsetY = this.height;
+    this.offsetY = this.height - (this.minoSize * rows);
   }
 }

@@ -12,7 +12,7 @@ export class MinoGridDisplay extends Container {
   // children
   minos: MinoDisplay[][];
 
-  constructor(private tiles: Tile[][], private minoSize: number) {
+  constructor(private tiles: Tile[][], private minoSize: number, private invisibleHeight=0) {
     super();
 
     this.minos = Array.from(Array(this.tiles.length), () => Array(this.tiles[0].length));
@@ -37,10 +37,8 @@ export class MinoGridDisplay extends Container {
     }
 
     const mino = new MinoDisplay(this.spritesheet, e.tile, this.minoSize);
-    mino.position.set(
-      this.minoSize * e.x,
-      -this.minoSize * (e.y + 1),
-    );
+    const {x, y} = this.calcMinoPos(e.y, e.x);
+    mino.position.set(x, y);
     this.addChild(mino);
     this.minos[e.y][e.x] = mino;
   }
@@ -49,12 +47,11 @@ export class MinoGridDisplay extends Container {
     for (let i = 0; i < (drot + 400000) % 4; i++) {
       this.minos = MatUtil.rotate(this.minos);
     }
-    console.log('drot', drot, this.minos);
 
     for (let i = 0; i < this.minos.length; i++) {
       for (let j = 0; j < this.minos[i].length; j++) {
         if(this.minos[i][j] != null) {
-          const {x, y} = this.calcMinoPos(i + 1, j);
+          const {x, y} = this.calcMinoPos(i, j);
           this.minos[i][j].position.set(x, y);
         }
       }
@@ -64,7 +61,7 @@ export class MinoGridDisplay extends Container {
   calcMinoPos(row: number, col: number) {
     return {
       x: col * this.minoSize,
-      y: -row * this.minoSize,
+      y: (row - this.invisibleHeight) * this.minoSize,
     }
   }
 }

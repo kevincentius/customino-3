@@ -21,18 +21,18 @@ export class ActivePiece {
   y = 2;
   isLastMoveRotation = false;
 
-  constructor(private board: Board) {
+  constructor(
+    private board: Board
+  ) {
 
   }
 
   spawn(piece: Piece) {
     this.piece = piece;
     this.x = 3;
-    this.y = 14;
+    this.y = this.board.invisibleHeight;
 
     this.spawnSubject.next(null);
-    
-    // TODO: check collision
   }
 
   attemptMove(dy: number, dx: number, drot: number) {
@@ -61,7 +61,7 @@ export class ActivePiece {
     }
   }
 
-  private checkCollision() {
+  checkCollision() {
     if (this.piece == null) {
       return false;
     }

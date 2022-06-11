@@ -9,10 +9,9 @@ export class MinoDisplay extends Container {
   constructor(private spritesheet: GameSpritesheet, private tile: Tile, private minoSize: number) {
     super();
     
-    this.scale.set(this.minoSize / this.spritesheet.mino[0].width);
-
     if (this.tile.type == TileType.FILLED) {
       this.sprite = new Sprite(this.spritesheet.mino[this.tile.color]);
+      this.sprite.scale.set(this.minoSize / this.spritesheet.mino[0].width);
     } else {
       throw new Error('Unknown tile type.');
     }

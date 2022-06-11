@@ -1,5 +1,4 @@
 import { Game } from "@shared/game/engine/game/game";
-import { TileType } from "@shared/game/engine/model/tile-type";
 import { ActivePiece } from "@shared/game/engine/player/active-piece";
 import { Board } from "@shared/game/engine/player/board";
 import { PlayerState } from "@shared/game/engine/serialization/player-state";
@@ -29,10 +28,10 @@ export abstract class Player {
   public activePiece: ActivePiece;
 
   // configs
-  private actionMap: Map<InputKey, () => void> = new Map([
+  private actionMap: Map<InputKey, () => any> = new Map([
     [InputKey.LEFT, () => this.onAttemptMove(0, -1, 0)],
     [InputKey.RIGHT, () => this.onAttemptMove(0, 1, 0)],
-    [InputKey.SOFT_DROP, () => this.onAttemptMove(-1, 0, 0)],
+    [InputKey.SOFT_DROP, () => this.onAttemptMove(1, 0, 0)],
     [InputKey.HARD_DROP, () => this.onHardDrop()],
     [InputKey.SONIC_DROP, () => this.onSonicDrop()],
     [InputKey.RCW, () => this.onAttemptMove(0, 0, 1)],
@@ -126,7 +125,7 @@ export abstract class Player {
 
   onSonicDrop() {
     let success = false;
-    while (this.activePiece.attemptMove(-1, 0, 0)) {
+    while (this.activePiece.attemptMove(1, 0, 0)) {
       success = true;
     }
     return success;
@@ -141,6 +140,10 @@ export abstract class Player {
     
     this.board.placePiece(this.activePiece.piece, this.activePiece.y, this.activePiece.x);
     this.activePiece.spawn(this.pieceGen.next());
+
+    if (this.activePiece.checkCollision()) {
+      this.die();
+    }
     return true;
   }
 }

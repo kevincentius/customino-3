@@ -22,6 +22,7 @@ export class PixiApplication {
     this.app = new Application({
       view: this.canvas,
       resizeTo: window,
+      backgroundColor: 0x111111,
     });
 
     this.loadResources();
@@ -54,8 +55,6 @@ export class PixiApplication {
       .add('sample', 'assets/img/sample.png')
       .add('gameSpritesheet', 'assets/spritesheet/game/texture.json')
       .load((loader, res) => {
-        console.log('PIXI loader is finished!');
-
         resources = res;
 
         this.loaded = true;

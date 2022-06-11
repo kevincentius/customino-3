@@ -13,11 +13,13 @@ export class Board {
 
   // state
   tiles: Tile[][];
+  invisibleHeight: number;
   visibleHeight: number;
 
   constructor() {
     const rule = playerRule;
     this.tiles = Array.from(Array(rule.height + rule.invisibleHeight), () => Array(rule.width));
+    this.invisibleHeight = rule.invisibleHeight;
     this.visibleHeight = rule.height;
   }
 
@@ -29,6 +31,7 @@ export class Board {
 
   load(s: BoardState) {
     const rule = playerRule;
+    this.invisibleHeight = rule.invisibleHeight;
     this.visibleHeight = rule.height;
     this.tiles = JSON.parse(s.tiles);
   }
