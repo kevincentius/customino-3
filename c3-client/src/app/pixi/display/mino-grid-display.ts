@@ -36,11 +36,9 @@ export class MinoGridDisplay extends Container {
       this.minos[e.y][e.x] = null!;
     }
 
-    const mino = new MinoDisplay(this.spritesheet, e.tile, this.minoSize);
-    const {x, y} = this.calcMinoPos(e.y, e.x);
-    mino.position.set(x, y);
-    this.addChild(mino);
-    this.minos[e.y][e.x] = mino;
+    this.minos[e.y][e.x] = new MinoDisplay(this.spritesheet, e.tile, this.minoSize);
+    this.updateMinoPosition(e.y, e.x);
+    this.addChild(this.minos[e.y][e.x]);
   }
 
   rotate(drot: number) {
@@ -50,18 +48,42 @@ export class MinoGridDisplay extends Container {
 
     for (let i = 0; i < this.minos.length; i++) {
       for (let j = 0; j < this.minos[i].length; j++) {
-        if(this.minos[i][j] != null) {
-          const {x, y} = this.calcMinoPos(i, j);
-          this.minos[i][j].position.set(x, y);
-        }
+        this.updateMinoPosition(i, j);
       }
     }
   }
   
+  private updateMinoPosition(i: number, j: number) {
+    if(this.minos[i][j] == null) {
+      return;
+    }
+    
+    const { x, y } = this.calcMinoPos(i, j);
+    this.minos[i][j].position.set(x, y);
+  }
+
   calcMinoPos(row: number, col: number) {
     return {
       x: col * this.minoSize,
       y: (row - this.invisibleHeight) * this.minoSize,
+    }
+  }
+  
+  clearLines(rows: number[]): void {
+    for (let row of rows) {
+      for (let mino of this.minos[row]) {
+        if (mino != null) {
+          this.removeChild(mino);
+        }
+      }
+    }
+
+    MatUtil.clearLines(this.minos, rows);
+
+    for (let i = rows[rows.length - 1]; i >= rows.length; i--) {
+      for (let j = 0; j < this.minos[i].length; j++) {
+        this.updateMinoPosition(i, j);
+      }
     }
   }
 }

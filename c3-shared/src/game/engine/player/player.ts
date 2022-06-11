@@ -139,6 +139,9 @@ export abstract class Player {
     this.onSonicDrop();
     
     this.board.placePiece(this.activePiece.piece, this.activePiece.y, this.activePiece.x);
+    const linesCleared = this.board.checkLineClear(this.activePiece.y, this.activePiece.y + this.activePiece.piece.tiles.length);
+    console.log(linesCleared);
+    this.board.clearLines(linesCleared);
     this.activePiece.spawn(this.pieceGen.next());
 
     if (this.activePiece.checkCollision()) {
