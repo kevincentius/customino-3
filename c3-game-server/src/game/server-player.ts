@@ -14,7 +14,7 @@ export class ServerPlayer extends Player {
 
   handleEvent(clientEvent: ClientEvent): void {
     if (clientEvent.gameEvents.length > 0 && clientEvent.gameEvents[0].frame < this.frame) {
-      throw new Error('Sanity check failed! Remote event should have been executed in previous frame.');
+      throw new Error(`Sanity check failed! Remote event should have been executed in previous frame. ${this.frame} - ${clientEvent.gameEvents[0].frame}`);
     }
 
     let i = 0;

@@ -22,12 +22,12 @@ export class LocalPlayer extends Player {
 
   update() {
     if (this.alive) {
-      super.runFrame();
-  
       if (Date.now() - this.lastFlush >= this.flushInterval) {
         this.flush();
         this.flushInterval = Math.random() * 250 + 50; // DEBUG
       }
+
+      super.runFrame();
     }
   }
 

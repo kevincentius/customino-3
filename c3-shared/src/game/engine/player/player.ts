@@ -81,6 +81,7 @@ export abstract class Player {
     this.debugSubject.next(null);
     this.frame++;
 
+    // debug: place random tiles
     this.board.placeTile(this.r.int(10), this.r.int(10), { color: this.r.int(8), type: TileType.FILLED });
   }
 

@@ -1,6 +1,6 @@
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 
-export class MinoGridLayout {
+export class BoardLayout {
   public minoSize: number;
   public offsetX: number;
   public offsetY: number;
