@@ -8,6 +8,8 @@
   },
   "author": "",
   "dependencies": {
-    "rxjs": "^7.5.5"
+    "@types/seedrandom": "^3.0.2",
+    "rxjs": "^7.5.5",
+    "seedrandom": "^3.0.5"
   }
 }

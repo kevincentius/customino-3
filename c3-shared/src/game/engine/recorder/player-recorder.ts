@@ -19,7 +19,6 @@ export class PlayerRecorder {
 
   asReplay(): PlayerReplay {
     return {
-      clientInfo: this.player.clientInfo,
       gameEvents: this.gameEvents,
       alive: this.player.alive,
     }

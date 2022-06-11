@@ -1,8 +1,10 @@
-import { ClientInfo } from "@shared/model/session/client-info";
+import { BoardState } from "@shared/game/engine/serialization/board-state";
 
 export interface PlayerState {
-  clientInfo: ClientInfo;
   frame: number;
   alive: boolean;
-  debugCount: number;
+  randomState: string;
+  board: BoardState;
+  pieceGen: any;
+  activePiece: any;
 }

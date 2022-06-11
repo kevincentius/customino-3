@@ -7,12 +7,16 @@ export class RemotePlayer extends Player {
   private remoteEventBuffer: GameEvent[] = [];
   public lastReceivedFrame = -1;
 
+  // settings
+  private maxCatchUpRate = 10;
+
   init() {
 
   }
 
   update(): void {
     if (this.lastReceivedFrame && this.lastReceivedFrame > this.frame) {
+      let framesRun = 0;
       do {
         // remoteEventBuffer is an array but used as a FIFO which may be inefficient. But the buffer should be small anyways.
         while (this.remoteEventBuffer.length > 0 && this.remoteEventBuffer[0].frame == this.frame) {
@@ -26,7 +30,8 @@ export class RemotePlayer extends Player {
         if (this.alive) {
           super.runFrame();
         }
-      } while (this.alive && this.lastReceivedFrame > this.frame && this.frame < this.game.getTargetMinFrame());
+        framesRun++;
+      } while (this.alive && this.lastReceivedFrame > this.frame && this.frame < this.game.getTargetMinFrame() && framesRun < this.maxCatchUpRate);
     }
   }
 

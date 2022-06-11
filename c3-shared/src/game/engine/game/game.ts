@@ -1,7 +1,7 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { GameResult } from "@shared/game/engine/game/game-result";
 import { Player } from "@shared/game/engine/player/player";
-import { StartGameData } from "@shared/game/network/model/start-game-data";
+import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
 import { Subject } from "rxjs";
 
 export abstract class Game {
@@ -11,6 +11,7 @@ export abstract class Game {
 
   // state
   running = false;
+  startGameData!: StartGameData;
 
   protected startMs!: number;
 
@@ -22,6 +23,7 @@ export abstract class Game {
   abstract destroy(): void;
 
   init(startGameData: StartGameData) {
+    this.startGameData = startGameData;
     this.players = this.createPlayers(startGameData);
     this.players.forEach(player => player.gameOverSubject.subscribe(this.checkGameOver.bind(this)));
   }

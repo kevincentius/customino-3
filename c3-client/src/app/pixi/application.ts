@@ -4,7 +4,6 @@ import { Keyboard } from "app/control/keyboard";
 import { InputKey } from "@shared/game/network/model/input-key";
 import { Game } from "@shared/game/engine/game/game";
 import { GameDisplay } from "app/pixi/display/game-display";
-import { textUtil } from "app/pixi/util/text-util";
 
 export let resources: Partial<Record<string, LoaderResource>>;
 
@@ -23,6 +22,7 @@ export class PixiApplication {
     this.app = new Application({
       view: this.canvas,
       resizeTo: window,
+      backgroundColor: 0x111111,
     });
 
     this.loadResources();
@@ -53,9 +53,8 @@ export class PixiApplication {
 
     loader
       .add('sample', 'assets/img/sample.png')
+      .add('gameSpritesheet', 'assets/spritesheet/game/texture.json')
       .load((loader, res) => {
-        console.log('PIXI loader is finished!');
-
         resources = res;
 
         this.loaded = true;

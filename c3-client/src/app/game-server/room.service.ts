@@ -3,7 +3,7 @@ import { GameResult } from "@shared/game/engine/game/game-result";
 import { GameReplay } from "@shared/game/engine/recorder/game-replay";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { ServerEvent } from "@shared/game/network/model/event/server-event";
-import { StartGameData } from "@shared/game/network/model/start-game-data";
+import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
 import { LobbyEvent } from "@shared/model/room/lobby-event";
 import { RoomInfo } from "@shared/model/room/room-info";
 import { SocketService } from "app/service/socket.service";

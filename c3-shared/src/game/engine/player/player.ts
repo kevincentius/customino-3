@@ -1,36 +1,59 @@
 import { Game } from "@shared/game/engine/game/game";
+import { ActivePiece } from "@shared/game/engine/player/active-piece";
+import { Board } from "@shared/game/engine/player/board";
 import { PlayerState } from "@shared/game/engine/serialization/player-state";
+import { loadPieceGen, MemoryPieceGen, PieceGen } from "@shared/game/engine/util/piece-factory/piece-gen";
+import { RandomGen } from "@shared/game/engine/util/random-gen";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent, GameEventType } from "@shared/game/network/model/event/game-event";
 import { InputEvent } from "@shared/game/network/model/event/input-event";
 import { SystemEvent } from "@shared/game/network/model/event/system-event";
 import { InputKey } from "@shared/game/network/model/input-key";
-import { ClientInfo } from "@shared/model/session/client-info";
+import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
 import { Subject } from 'rxjs';
 
 export abstract class Player {
   // event emitters
-  debugSubject = new Subject<string | null>();
   gameOverSubject = new Subject<void>();
   gameEventSubject = new Subject<GameEvent>();
 
   // state
   frame = 0;
   alive = true;
-  private debugCount = 0;
+  
+  // composition
+  private r: RandomGen;
+  public board: Board;
+  private pieceGen: PieceGen;
+  public activePiece: ActivePiece;
 
-  // settings
-  private mspf = 50;
-  private maxCatchUpRate = 10;
+  // configs
+  private actionMap: Map<InputKey, () => any> = new Map([
+    [InputKey.LEFT, () => this.onAttemptMove(0, -1, 0)],
+    [InputKey.RIGHT, () => this.onAttemptMove(0, 1, 0)],
+    [InputKey.SOFT_DROP, () => this.onAttemptMove(1, 0, 0)],
+    [InputKey.HARD_DROP, () => this.onHardDrop()],
+    [InputKey.SONIC_DROP, () => this.onSonicDrop()],
+    [InputKey.RCW, () => this.onAttemptMove(0, 0, 1)],
+    [InputKey.RCCW, () => this.onAttemptMove(0, 0, 3)],
+    [InputKey.R180, () => this.onAttemptMove(0, 0, 2)],
+  ]);
+  pieceList = [{ size: 4 }];
 
   constructor(
     // reference
     protected game: Game,
 
-    // state
-    public clientInfo: ClientInfo,
+    startPlayerData: StartPlayerData,
   ) {
     this.init();
+
+    this.r = new RandomGen(startPlayerData.randomSeed);
+    this.board = new Board();
+    this.pieceGen = new MemoryPieceGen(this.r, this.pieceList, 1);
+    this.activePiece = new ActivePiece(this.board, () => this.onHardDrop());
+
+    this.activePiece.spawn(this.pieceGen.next());
   }
 
   abstract update(): void;
@@ -46,14 +69,28 @@ export abstract class Player {
 
   abstract init(): void;
 
+  serialize(): PlayerState {
+    return {
+      frame: this.frame,
+      alive: this.alive,
+      randomState: JSON.stringify(this.r.serialize()),
+      board: this.board.serialize(),
+      pieceGen: this.pieceGen.serialize(),
+      activePiece: this.activePiece.serialize(),
+    };
+  }
+
   load(playerState: PlayerState) {
     this.alive = playerState.alive;
-    this.debugCount = playerState.debugCount;
     this.frame = playerState.frame;
+    this.r = new RandomGen(undefined, JSON.parse(playerState.randomState));
+    this.board.load(playerState.board);
+    this.pieceGen = loadPieceGen(this.r, this.pieceList, playerState.pieceGen);
+    this.activePiece.load(playerState.activePiece);
   }
 
   protected runFrame() {
-    this.debugSubject.next(null);
+    this.activePiece.runFrame();
     this.frame++;
   }
 
@@ -62,12 +99,8 @@ export abstract class Player {
 
     if (event.type == GameEventType.INPUT) {
       const inputEvent = event as InputEvent;
-      this.debugSubject.next(inputEvent.key.toString());
-
-      this.debugCount++;
-      if (this.debugCount >= 10) {
-        this.die();
-      }
+      
+      this.actionMap.get(inputEvent.key)!();
     } else if (event.type == GameEventType.SYSTEM) {
       const inputEvent = event as SystemEvent;
       
@@ -91,13 +124,34 @@ export abstract class Player {
   isRunning() {
     return this.game.running;
   }
-  
-  serialize(): PlayerState {
-    return {
-      clientInfo: this.clientInfo,
-      frame: this.frame,
-      alive: this.alive,
-      debugCount: this.debugCount,
-    };
+
+  onAttemptMove(dy: number, dx: number, drot: number) {
+    return this.activePiece.attemptMove(dy, dx, drot);
+  }
+
+  onSonicDrop() {
+    let success = false;
+    while (this.activePiece.attemptMove(1, 0, 0)) {
+      success = true;
+    }
+    return success;
+  }
+
+  onHardDrop() {
+    if (!this.activePiece.piece) {
+      return false;
+    }
+
+    this.onSonicDrop();
+    
+    this.board.placePiece(this.activePiece.piece, this.activePiece.y, this.activePiece.x);
+    const linesCleared = this.board.checkLineClear(this.activePiece.y, this.activePiece.y + this.activePiece.piece.tiles.length);
+    this.board.clearLines(linesCleared);
+    this.activePiece.spawn(this.pieceGen.next());
+
+    if (this.activePiece.checkCollision()) {
+      this.die();
+    }
+    return true;
   }
 }

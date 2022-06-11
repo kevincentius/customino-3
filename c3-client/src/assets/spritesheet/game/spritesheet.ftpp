@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "version": "0.6.7"
+  },
+  "savePath": "",
+  "images": [
+    {
+      "name": "0.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/0.png",
+      "folder": ""
+    },
+    {
+      "name": "1.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/1.png",
+      "folder": ""
+    },
+    {
+      "name": "2.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/2.png",
+      "folder": ""
+    },
+    {
+      "name": "3.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/3.png",
+      "folder": ""
+    },
+    {
+      "name": "4.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/4.png",
+      "folder": ""
+    },
+    {
+      "name": "5.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/5.png",
+      "folder": ""
+    },
+    {
+      "name": "6.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/6.png",
+      "folder": ""
+    },
+    {
+      "name": "7.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/7.png",
+      "folder": ""
+    },
+    {
+      "name": "8.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/8.png",
+      "folder": ""
+    }
+  ],
+  "folders": [],
+  "packOptions": {
+    "textureName": "texture",
+    "textureFormat": "png",
+    "removeFileExtension": false,
+    "prependFolderName": true,
+    "base64Export": false,
+    "tinify": false,
+    "tinifyKey": "",
+    "scale": 1,
+    "filter": "none",
+    "exporter": "JSON (hash)",
+    "fileName": "pack-result",
+    "savePath": "",
+    "width": 2048,
+    "height": 2048,
+    "fixedSize": false,
+    "powerOfTwo": true,
+    "padding": 0,
+    "extrude": 0,
+    "allowRotation": true,
+    "allowTrim": true,
+    "trimMode": "trim",
+    "alphaThreshold": "0",
+    "detectIdentical": true,
+    "packer": "MaxRectsBin",
+    "packerMethod": "BestAreaFit"
+  }
+}
