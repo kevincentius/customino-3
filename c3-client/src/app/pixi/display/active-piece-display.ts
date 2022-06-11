@@ -27,6 +27,8 @@ export class ActivePieceDisplay extends Container {
     if (this.activePiece.piece) {
       this.minoGridDisplay = new MinoGridDisplay(this.activePiece.piece.tiles, this.minoSize);
       this.addChild(this.minoGridDisplay);
+      this.updatePosition();
+      console.log('onSpawn', this.activePiece.y);
     }
   }
 
@@ -36,6 +38,7 @@ export class ActivePieceDisplay extends Container {
         this.minoGridDisplay.rotate(e.drot);
       }
       this.updatePosition();
+      console.log('onMove', this.activePiece.y);
     }
   }
 

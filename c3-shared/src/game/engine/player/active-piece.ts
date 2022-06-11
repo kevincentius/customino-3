@@ -27,12 +27,11 @@ export class ActivePiece {
 
   spawn(piece: Piece) {
     this.piece = piece;
-    this.spawnSubject.next(null);
-
-    // TODO: set position
     this.x = 3;
-    this.y = 16;
+    this.y = 14;
 
+    this.spawnSubject.next(null);
+    
     // TODO: check collision
   }
 

@@ -87,9 +87,6 @@ export abstract class Player {
 
   protected runFrame() {
     this.frame++;
-
-    // debug: place random tiles
-    this.board.placeTile(this.r.int(10), this.r.int(10), { color: this.r.int(8), type: TileType.FILLED });
   }
 
   protected runEvent(event: GameEvent) {
@@ -136,7 +133,14 @@ export abstract class Player {
   }
 
   onHardDrop() {
+    if (!this.activePiece.piece) {
+      return false;
+    }
+
     this.onSonicDrop();
-    // TODO: lock down piece
+    
+    this.board.placePiece(this.activePiece.piece, this.activePiece.y, this.activePiece.x);
+    this.activePiece.spawn(this.pieceGen.next());
+    return true;
   }
 }
