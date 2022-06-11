@@ -28,7 +28,7 @@ export class Piece {
   rotate(drot: number) {
     drot = (drot + 400000) % 4;
     for (let i = 0; i < drot; i++) {
-      MatUtil.rotate(this.tiles);
+      this.tiles = MatUtil.rotate(this.tiles);
     }
   }
 }

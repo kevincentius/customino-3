@@ -8,15 +8,12 @@ import { Container } from "pixi.js";
 export class MinoGridDisplay extends Container {
   // helpers
   spritesheet = new GameSpritesheet();
-  private minoScale: number;
   
   // children
   minos: MinoDisplay[][];
 
   constructor(private tiles: Tile[][], private minoSize: number) {
     super();
-
-    this.minoScale = this.minoSize / this.spritesheet.mino[0].width;
 
     this.minos = Array.from(Array(this.tiles.length), () => Array(this.tiles[0].length));
 
@@ -39,8 +36,7 @@ export class MinoGridDisplay extends Container {
       this.minos[e.y][e.x] = null!;
     }
 
-    const mino = new MinoDisplay(this.spritesheet, e.tile);
-    mino.scale.set(this.minoScale);
+    const mino = new MinoDisplay(this.spritesheet, e.tile, this.minoSize);
     mino.position.set(
       this.minoSize * e.x,
       -this.minoSize * (e.y + 1),

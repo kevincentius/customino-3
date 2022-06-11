@@ -12,7 +12,7 @@ export class MatUtil {
     for (let i = 0; i < m.length; i++) {
       m[i] = new Array(matrix.length);
       for (let j = 0; j < m[i].length; j++) {
-        m[i][j] = matrix[matrix.length - 1 - j][i];
+        m[i][j] = matrix[j][matrix[0].length - 1 - i];
       }
     }
     return m;

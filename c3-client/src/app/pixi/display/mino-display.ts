@@ -6,11 +6,13 @@ import { Container, Sprite } from "pixi.js";
 export class MinoDisplay extends Container {
   sprite: Sprite;
 
-  constructor(private spritesheet: GameSpritesheet, private tile: Tile) {
+  constructor(private spritesheet: GameSpritesheet, private tile: Tile, private minoSize: number) {
     super();
     
-    if (tile.type == TileType.FILLED) {
-      this.sprite = new Sprite(this.spritesheet.mino[tile.color]);
+    this.scale.set(this.minoSize / this.spritesheet.mino[0].width);
+
+    if (this.tile.type == TileType.FILLED) {
+      this.sprite = new Sprite(this.spritesheet.mino[this.tile.color]);
     } else {
       throw new Error('Unknown tile type.');
     }
