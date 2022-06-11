@@ -130,14 +130,14 @@ export class Room {
     return !!(this.game?.running);
   }
 
-  getRoomInfo(): RoomInfo {
+  getRoomInfo(gameState=false): RoomInfo {
     return {
       id: this.id,
       name: this.name,
       host: this.creator.getClientInfo(),
 
       slots: this.slots.map(roomSlot => roomSlot.getRoomSlotInfo()),
-      gameState: this.game?.serialize() ?? null,
+      gameState: gameState ? this.game?.serialize() ?? null : null,
     };
   }
 

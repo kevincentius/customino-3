@@ -80,7 +80,7 @@ export class RoomService {
       session.roomId = room.id;
       room.join(session);
 
-      return room.getRoomInfo();
+      return room.getRoomInfo(true);
     } else {
       return null;
     }

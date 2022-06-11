@@ -40,7 +40,7 @@ export class LobbyGateway {
 
   @SubscribeMessage(LobbyEvent.GET_ROOM_INFO)
   getRoomInfo(socket: Socket, roomId: number) {
-    return this.roomService.getRoom(roomId).getRoomInfo();
+    return this.roomService.getRoom(roomId).getRoomInfo(true);
   }
 
   @SubscribeMessage(LobbyEvent.START_GAME)
