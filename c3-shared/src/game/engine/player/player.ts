@@ -15,20 +15,30 @@ import { Subject } from 'rxjs';
 
 export abstract class Player {
   // event emitters
-  debugSubject = new Subject<string | null>();
   gameOverSubject = new Subject<void>();
   gameEventSubject = new Subject<GameEvent>();
 
   // state
   frame = 0;
   alive = true;
-  private debugCount = 0;
   
   // composition
   private r: RandomGen;
   public board: Board;
   private pieceGen: PieceGen;
   public activePiece: ActivePiece;
+
+  // configs
+  private actionMap: Map<InputKey, () => void> = new Map([
+    [InputKey.LEFT, () => this.onAttemptMove(0, -1, 0)],
+    [InputKey.RIGHT, () => this.onAttemptMove(0, 1, 0)],
+    [InputKey.SOFT_DROP, () => this.onAttemptMove(-1, 0, 0)],
+    [InputKey.HARD_DROP, () => this.onHardDrop()],
+    [InputKey.SONIC_DROP, () => this.onSonicDrop()],
+    [InputKey.RCW, () => this.onAttemptMove(0, 0, 1)],
+    [InputKey.RCCW, () => this.onAttemptMove(0, 0, 3)],
+    [InputKey.R180, () => this.onAttemptMove(0, 0, 2)],
+  ]);
 
   constructor(
     // reference
@@ -63,7 +73,6 @@ export abstract class Player {
     return {
       frame: this.frame,
       alive: this.alive,
-      debugCount: this.debugCount,
       randomState: JSON.stringify(this.r.serialize()),
       board: this.board.serialize(),
     };
@@ -71,18 +80,16 @@ export abstract class Player {
 
   load(playerState: PlayerState) {
     this.alive = playerState.alive;
-    this.debugCount = playerState.debugCount;
     this.frame = playerState.frame;
     this.r = new RandomGen(undefined, JSON.parse(playerState.randomState));
     this.board.load(playerState.board);
   }
 
   protected runFrame() {
-    this.debugSubject.next(null);
     this.frame++;
 
     // debug: place random tiles
-    this.board.placeTile(this.r.int(10), this.r.int(10), { color: this.r.int(8), type: TileType.FILLED });
+    // this.board.placeTile(this.r.int(10), this.r.int(10), { color: this.r.int(8), type: TileType.FILLED });
   }
 
   protected runEvent(event: GameEvent) {
@@ -90,12 +97,8 @@ export abstract class Player {
 
     if (event.type == GameEventType.INPUT) {
       const inputEvent = event as InputEvent;
-      this.debugSubject.next(inputEvent.key.toString());
-
-      this.debugCount++;
-      if (this.debugCount >= 10) {
-        this.die();
-      }
+      
+      this.actionMap.get(inputEvent.key)!();
     } else if (event.type == GameEventType.SYSTEM) {
       const inputEvent = event as SystemEvent;
       
@@ -118,5 +121,22 @@ export abstract class Player {
 
   isRunning() {
     return this.game.running;
+  }
+
+  onAttemptMove(dy: number, dx: number, drot: number) {
+    return this.activePiece.attemptMove(dy, dx, drot);
+  }
+
+  onSonicDrop() {
+    let success = false;
+    while (this.activePiece.attemptMove(-1, 0, 0)) {
+      success = true;
+    }
+    return success;
+  }
+
+  onHardDrop() {
+    this.onSonicDrop();
+    // TODO: lock down piece
   }
 }

@@ -1,5 +1,6 @@
 import { Tile } from "@shared/game/engine/model/tile";
 import { PlaceTileEvent } from "@shared/game/engine/player/board";
+import { MatUtil } from "@shared/game/engine/util/mat-util";
 import { MinoDisplay } from "app/pixi/display/mino-display";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { Container } from "pixi.js";
@@ -47,8 +48,24 @@ export class MinoGridDisplay extends Container {
     this.addChild(mino);
     this.minos[e.y][e.x] = mino;
   }
+
+  rotate(drot: number) {
+    for (let i = 0; i < (drot + 400000) % 4; i++) {
+      this.minos = MatUtil.rotate(this.minos);
+    }
+    console.log('drot', drot, this.minos);
+
+    for (let i = 0; i < this.minos.length; i++) {
+      for (let j = 0; j < this.minos[i].length; j++) {
+        if(this.minos[i][j] != null) {
+          const {x, y} = this.calcMinoPos(i + 1, j);
+          this.minos[i][j].position.set(x, y);
+        }
+      }
+    }
+  }
   
-  toLocalPos(row: number, col: number) {
+  calcMinoPos(row: number, col: number) {
     return {
       x: col * this.minoSize,
       y: -row * this.minoSize,

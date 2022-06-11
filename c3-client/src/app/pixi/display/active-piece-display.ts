@@ -25,23 +25,23 @@ export class ActivePieceDisplay extends Container {
     }
 
     if (this.activePiece.piece) {
-      console.log('this.', this.activePiece.piece);
       this.minoGridDisplay = new MinoGridDisplay(this.activePiece.piece.tiles, this.minoSize);
       this.addChild(this.minoGridDisplay);
     }
   }
 
   onMove(e: PieceMoveEvent) {
-    if (e.drot != 0) {
-      // TODO: rotate mino grid
+    if (this.minoGridDisplay) {
+      if (e.drot != 0) {
+        this.minoGridDisplay.rotate(e.drot);
+      }
+      this.updatePosition();
     }
-    this.updatePosition();
   }
 
   private updatePosition() {
     if (this.minoGridDisplay) {
-      const pos = this.boardMinoGridDisplay.toLocalPos(this.activePiece.y, this.activePiece.x);
-      console.log(pos);
+      const pos = this.boardMinoGridDisplay.calcMinoPos(this.activePiece.y, this.activePiece.x);
       this.minoGridDisplay.position.set(pos.x, pos.y);
     }
   }

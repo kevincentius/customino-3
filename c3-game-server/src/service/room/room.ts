@@ -157,7 +157,14 @@ export class Room {
   }
   
   recvClientEvent(session: Session, clientEvent: ClientEvent) {
+    if (!this.game) {
+      return;
+    }
+
     const playerIndex = this.game!.players.findIndex(player => player.startPlayerData.clientInfo.sessionId == session.sessionId);
+    if (playerIndex == -1) {
+      return;
+    }
 
     // simulate game immediately
     this.game!.players[playerIndex].handleEvent(clientEvent);

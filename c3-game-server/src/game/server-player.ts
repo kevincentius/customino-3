@@ -28,7 +28,6 @@ export class ServerPlayer extends Player {
 
       // run actual frame of the gameEvent
       this.runEvent(gameEvent);
-      this.runFrame();
       i++;
     }
 
