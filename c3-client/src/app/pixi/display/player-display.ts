@@ -2,7 +2,7 @@ import { Player } from "@shared/game/engine/player/player";
 import { RemotePlayer } from "@shared/game/engine/player/remote-player";
 import { BoardDisplay } from "app/pixi/display/board-display";
 import { textUtil } from "app/pixi/util/text-util";
-import { BitmapText, Container, Loader, Sprite, Spritesheet } from "pixi.js";
+import { BitmapText, Container } from "pixi.js";
 
 export class PlayerDisplay extends Container {
 
@@ -15,7 +15,7 @@ export class PlayerDisplay extends Container {
   ) {
     super();
 
-    this.board = new BoardDisplay(player.board, player.activePiece);
+    this.board = new BoardDisplay(player);
 
     this.player.gameOverSubject.subscribe(this.updateDebugText.bind(this));
 
