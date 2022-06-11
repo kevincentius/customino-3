@@ -1,5 +1,4 @@
 
 build:
   docker:
-    web: server.dockerfile
-
+    web: main-server.dockerfile
