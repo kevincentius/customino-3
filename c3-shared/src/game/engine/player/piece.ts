@@ -25,6 +25,10 @@ export class Piece {
     return [this.size, this.pieceId, this.rotation];
   }
 
+  static from(state: number[]) {
+    return new Piece(state[0], state[1], state[2]);
+  }
+
   rotate(drot: number) {
     drot = (drot + 400000) % 4;
     for (let i = 0; i < drot; i++) {

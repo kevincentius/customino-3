@@ -27,6 +27,22 @@ export class ActivePiece {
 
   }
 
+  serialize() {
+    return {
+      piece: this.piece?.serialize(),
+      x: this.x,
+      y: this.y,
+      isLastMoveRotation: this.isLastMoveRotation,
+    }
+  }
+
+  load(state: any) {
+    this.piece = Piece.from(state.piece);
+    this.x = state.x;
+    this.y = state.y;
+    this.isLastMoveRotation = state.isLastMoveRotation;
+  }
+
   spawn(piece: Piece) {
     this.piece = piece;
     this.x = 3;

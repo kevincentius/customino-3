@@ -2,7 +2,7 @@ import { Game } from "@shared/game/engine/game/game";
 import { ActivePiece } from "@shared/game/engine/player/active-piece";
 import { Board } from "@shared/game/engine/player/board";
 import { PlayerState } from "@shared/game/engine/serialization/player-state";
-import { MemoryPieceGen, PieceGen } from "@shared/game/engine/util/piece-factory/piece-gen";
+import { loadPieceGen, MemoryPieceGen, PieceGen } from "@shared/game/engine/util/piece-factory/piece-gen";
 import { RandomGen } from "@shared/game/engine/util/random-gen";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent, GameEventType } from "@shared/game/network/model/event/game-event";
@@ -38,6 +38,7 @@ export abstract class Player {
     [InputKey.RCCW, () => this.onAttemptMove(0, 0, 3)],
     [InputKey.R180, () => this.onAttemptMove(0, 0, 2)],
   ]);
+  pieceList = [{ size: 4 }];
 
   constructor(
     // reference
@@ -49,7 +50,7 @@ export abstract class Player {
 
     this.r = new RandomGen(startPlayerData.randomSeed);
     this.board = new Board();
-    this.pieceGen = new MemoryPieceGen(this.r, [{ size: 4 }], 1);
+    this.pieceGen = new MemoryPieceGen(this.r, this.pieceList, 1);
     this.activePiece = new ActivePiece(this.board);
 
     this.activePiece.spawn(this.pieceGen.next());
@@ -74,6 +75,8 @@ export abstract class Player {
       alive: this.alive,
       randomState: JSON.stringify(this.r.serialize()),
       board: this.board.serialize(),
+      pieceGen: this.pieceGen.serialize(),
+      activePiece: this.activePiece.serialize(),
     };
   }
 
@@ -82,6 +85,8 @@ export abstract class Player {
     this.frame = playerState.frame;
     this.r = new RandomGen(undefined, JSON.parse(playerState.randomState));
     this.board.load(playerState.board);
+    this.pieceGen = loadPieceGen(this.r, this.pieceList, playerState.pieceGen);
+    this.activePiece.load(playerState.activePiece);
   }
 
   protected runFrame() {

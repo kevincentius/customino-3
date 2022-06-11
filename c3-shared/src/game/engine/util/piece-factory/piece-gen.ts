@@ -12,6 +12,25 @@ export interface PieceList {
 export interface PieceGen {
   next(): Piece;
   nextId(): number[]; // like next() but returns only the piece size + id
+
+  serialize(): any;
+  load(state: any): void;
+}
+
+export enum PieceGenType { RANDOM, MEMORY, BAG }
+
+export function loadPieceGen(r: RandomGen, pieceList: PieceList[], state: any) {
+  const pieceGen = (() => {
+    switch (state.type) {
+      case PieceGenType.RANDOM: return new RandomPieceGen(r, pieceList);
+      case PieceGenType.MEMORY: return new MemoryPieceGen(r, pieceList, 0);
+      case PieceGenType.BAG: return new BagPieceGen(r, pieceList);
+      default: throw new Error();
+    }
+  })();
+
+  pieceGen.load(state);
+  return pieceGen;
 }
 
 function getBag(pieceList: PieceList[]) {
@@ -40,6 +59,14 @@ export class RandomPieceGen implements PieceGen {
   ) {
     this.bag = getBag(pieceList);
   }
+
+  serialize() {
+    return {
+      type: PieceGenType.RANDOM,
+    };
+  }
+
+  load(state: any) {}
 
   next(): Piece {
     let [size, id] = this.nextId();
@@ -71,6 +98,21 @@ export class MemoryPieceGen implements PieceGen {
     this.mem = this.bag.splice(this.bag.length - memSize);
   }
 
+  serialize() {
+    return {
+      type: PieceGenType.MEMORY,
+      bag: JSON.stringify(this.bag),
+      mem: JSON.stringify(this.mem),
+      nextMemId: this.nextMemId,
+    };
+  }
+
+  load(state: any) {
+    this.bag = JSON.parse(state.bag);
+    this.mem = JSON.parse(state.mem);
+    this.nextMemId = state.nextMemId;
+  }
+
   next(): Piece {
     let [size, id] = this.nextId();
     return new Piece(size, id);
@@ -97,6 +139,17 @@ export class BagPieceGen implements PieceGen {
     private r: RandomGen,
     private pieceList: PieceList[]
   ) { }
+
+  serialize() {
+    return {
+      type: PieceGenType.BAG,
+      bag: JSON.stringify(this.bag),
+    };
+  }
+
+  load(state: any) {
+    this.bag = JSON.parse(state.bag);
+  }
 
   next(): Piece {
     let [size, id] = this.nextId();

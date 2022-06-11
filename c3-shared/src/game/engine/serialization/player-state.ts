@@ -5,4 +5,6 @@ export interface PlayerState {
   alive: boolean;
   randomState: string;
   board: BoardState;
+  pieceGen: any;
+  activePiece: any;
 }
