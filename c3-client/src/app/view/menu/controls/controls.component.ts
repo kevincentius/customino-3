@@ -30,6 +30,7 @@ export class ControlsComponent {
 
   async load() {
     this.controlSettings = await this.idbService.getControlSettings() ?? this.createDefaultSettings();
+    this.save();
     this.rows.forEach(row => row.mappings = this.controlSettings.keyMap.get(row.inputKey)!);
   }
 

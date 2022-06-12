@@ -17,3 +17,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   display: block;
   height: 100%;
 }
+
+.screen-title-container {
+  padding-left: 30px;
+  padding-top: 30px;
+  
+  .screen-title {
+    font-size: $screen-title-size;
+    border-bottom: solid 1px #fff8;
+    padding: 0 40px;
+  }
+}
