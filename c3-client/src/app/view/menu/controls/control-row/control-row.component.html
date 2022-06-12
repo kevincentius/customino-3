@@ -3,10 +3,16 @@
   <div class="control-name">{{getControlName()}}</div>
   <div class="control-key">
     <div class="mapping-list">
-      <div class="mapping-item" [class.edit-mode]="editMode" *ngFor="let mapping of data.mappings; let i=index;">
-        <div>{{editMode ? 'Choosing...' : mapping}}</div>
-        <div style="flex-grow: 1"></div>
-      </div>
+      <ng-container *ngIf="data">
+        <div class="mapping-item" [class.edit-mode]="editMode" *ngFor="let mapping of data.mappings; let i=index;">
+          <div>{{editMode ? 'Choosing...' : mapping}}</div>
+          <div style="flex-grow: 1"></div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="!data">
+        <input class="value-input" [(ngModel)]="value" (blur)="onInputBlur()"/>
+      </ng-container>
     </div>
   </div>
 </div>

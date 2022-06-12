@@ -17,5 +17,25 @@
       [editMode]="i==this.editIndex"
       (click)="onRowClick(i)"
     ></app-control-row>
+
+    <ng-container *ngIf="controlSettings">
+      <app-control-row
+        [name]="'DAS (auto-repeat delay)'"
+        [value]="controlSettings.das"
+        (inputBlur)="onDasUpdated($event)"
+      ></app-control-row>
+      
+      <app-control-row
+        [name]="'ARR (auto-repeat rate)'"
+        [value]="controlSettings.arr"
+        (inputBlur)="onArrUpdated($event)"
+      ></app-control-row>
+      
+      <app-control-row
+        [name]="'Soft drop speed'"
+        [value]="controlSettings.sdr"
+        (inputBlur)="onSdrUpdated($event)"
+      ></app-control-row>
+    </ng-container>
   </div>
 </div>

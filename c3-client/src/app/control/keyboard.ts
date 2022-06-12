@@ -19,9 +19,9 @@ export class Keyboard {
   player!: Player;
 
   // Settings
-  private das: number = 150;
-  private arr: number = 50
-  private softDropArr: number = 50;
+  public das: number = 150;
+  public arr: number = 50
+  public sdr: number = 50;
 
   constructor() {
     window.addEventListener('keydown', this.onKeyDown.bind(this));
@@ -63,7 +63,7 @@ export class Keyboard {
     control.down = true;
 
     if (control.move == InputKey.SOFT_DROP) {
-      this.dropRepeatTimer = this.softDropArr;
+      this.dropRepeatTimer = this.sdr;
 
       this.tryMove(control.move);
     } else if (control.move == InputKey.LEFT || control.move == InputKey.RIGHT) {
@@ -95,7 +95,7 @@ export class Keyboard {
     if (this.moveMap.get(InputKey.SOFT_DROP)!.down) {
       this.dropRepeatTimer -= dt;
       while (this.dropRepeatTimer <= 0 && this.tryMove(InputKey.SOFT_DROP)) {
-        this.dropRepeatTimer += this.softDropArr;
+        this.dropRepeatTimer += this.sdr;
 
         break; // todo: remove this break when player.canMove is actually implemented
       }
