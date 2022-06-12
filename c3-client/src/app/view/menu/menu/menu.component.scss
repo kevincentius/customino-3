@@ -1,4 +1,6 @@
 
+@import 'palette';
+
 .menu {
   display: flex;
   flex-direction: column;
@@ -23,13 +25,13 @@
     transition: 200ms;
     font-size: 36px;
     padding: 20px 70px;
-    background: #fff5;
+    background: $button-bg;
     
     cursor: pointer;
 
     &:hover {
       transition: 50ms;
-      background: #fffa;
+      background: $button-hover;
     }
   }
 }

@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import {MatIconModule} from '@angular/material/icon';
+import {MatChipsModule} from '@angular/material/chips';
 
 import { DebugComponent } from 'app/view/debug/debug.component';
 import { MainComponent } from 'app/view/main/main.component';
@@ -18,6 +19,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MenuComponent } from './view/menu/menu/menu.component';
 import { ControlsComponent } from './view/menu/controls/controls.component';
 import { BackgroundComponent } from './view/common/background/background.component';
+import { ControlRowComponent } from './view/menu/controls/control-row/control-row.component';
+import { MenuButtonComponent } from './view/common/menu-button/menu-button.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -39,6 +42,8 @@ export function apiConfigFactory(): Configuration {
     MenuComponent,
     ControlsComponent,
     BackgroundComponent,
+    ControlRowComponent,
+    MenuButtonComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),
@@ -47,6 +52,7 @@ export function apiConfigFactory(): Configuration {
     HttpClientModule,
     MatIconModule,
     BrowserAnimationsModule,
+    MatChipsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

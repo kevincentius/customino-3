@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { RandomGen } from '@shared/game/engine/util/random-gen';
 import { SessionInfo } from '@shared/model/session/session-info';
 import { PixiApplication } from 'app/pixi/application';
+import { IdbService } from 'app/service/idb.service';
 import { MainScreen } from 'app/view/main/main-screen';
 import { MainComponent } from 'app/view/main/main.component';
 
@@ -18,10 +19,15 @@ export class MainService {
 
   private main!: MainComponent;
 
-  constructor() { }
+  constructor(
+    private idbService: IdbService,
+  ) { }
 
-  init(main: MainComponent) {
-    this.main = main;
+  async init(main: MainComponent) {
+    return new Promise(resolve => {
+      this.main = main;
+      this.idbService.asyncInit(() => resolve(undefined));
+    })
   }
 
   openScreen(screen: MainScreen) {

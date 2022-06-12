@@ -1,5 +1,11 @@
 import { InputKey } from "@shared/game/network/model/input-key";
 
+export enum MenuKey {
+  BACK,
+  LOBBY,
+  
+}
+
 export interface InputKeyData {
   inputKey?: InputKey;
   name: string;

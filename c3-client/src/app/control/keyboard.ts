@@ -34,6 +34,11 @@ export class Keyboard {
     this.moveMap.forEach((control, key) => control.down = false);
   }
 
+  unbindAllKeys() {
+    this.moveMap.clear();
+    this.keyMap.clear();
+  }
+
   bind(move: InputKey, code: string) {
     const control = new Control(move);
     this.moveMap.set(move, control);

@@ -1,0 +1,14 @@
+
+.menu-button {
+  transition: 500ms;
+  display: inline-block;
+  width: 100px;
+  text-align: center;
+  cursor: pointer;
+
+  &:hover {
+    transition: 50ms;
+    background: #fff6;
+  }
+}
+
