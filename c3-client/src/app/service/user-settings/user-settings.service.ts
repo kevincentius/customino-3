@@ -32,7 +32,6 @@ export class UserSettingsService {
       this.save();
     }
 
-    console.log('calling on loads');
     this.onLoadCallbacks.forEach(c => c());
     this.onLoadCallbacks = [];
     this.settingsChangedSubject.next(this.localSettings);

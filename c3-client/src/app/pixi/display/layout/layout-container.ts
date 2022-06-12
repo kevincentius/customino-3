@@ -38,8 +38,6 @@ export class LayoutContainer extends Container implements LayoutNode {
       }
 
       pos += this.gap;
-
-      console.log(node.position);
     }
 
     if (this.axis == 0) {
