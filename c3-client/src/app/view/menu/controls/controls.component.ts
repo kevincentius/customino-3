@@ -43,6 +43,9 @@ export class ControlsComponent {
 
     return {
       keyMap,
+      arr: 100,
+      das: 250,
+      sdr: 100,
     }
   }
 
@@ -61,7 +64,7 @@ export class ControlsComponent {
       const inputKey = this.rows[this.editIndex].inputKey;
       this.controlSettings.keyMap.set(inputKey, [event.code]);
       this.rows[this.editIndex].mappings = this.controlSettings.keyMap.get(inputKey)!;
-      this.idbService.setControlSettings(this.controlSettings);
+      this.save();
       this.editIndex++;
 
       if (this.editIndex >= this.rows.length) {
@@ -69,4 +72,24 @@ export class ControlsComponent {
       }
     }
   }
+
+  onDasUpdated(value: number) {
+    this.controlSettings.das = Math.max(10, Math.min(1000, value));
+    this.save();
+  }
+  
+  onArrUpdated(value: number) {
+    this.controlSettings.arr = Math.max(0, Math.min(1000, value));
+    this.save();
+  }
+  
+  onSdrUpdated(value: number) {
+    this.controlSettings.sdr = Math.max(0, Math.min(1000, value));
+    this.save();
+  }
+
+  private save() {
+    this.idbService.setControlSettings(this.controlSettings);
+  }
+
 }

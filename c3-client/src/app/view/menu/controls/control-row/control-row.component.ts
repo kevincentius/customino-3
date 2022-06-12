@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { InputKey } from '@shared/game/network/model/input-key';
 import { inputKeyDataArray } from 'app/view/menu/controls/input-key-data';
 
@@ -12,20 +12,19 @@ export interface ControlRowModel {
   templateUrl: './control-row.component.html',
   styleUrls: ['./control-row.component.scss']
 })
-export class ControlRowComponent implements OnInit {
-  @Input() data!: ControlRowModel;
+export class ControlRowComponent {
+  @Input() data?: ControlRowModel;
   @Input() editMode = false;
+  @Input() value?: number;
+
+  @Input() name?: string;
+  @Output() inputBlur = new EventEmitter<number>();
   
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
   getControlName() {
-    return inputKeyDataArray.find(d => d.inputKey == this.data.inputKey)!.name;
+    return this.name ?? inputKeyDataArray.find(d => d.inputKey == this.data!.inputKey)!.name;
   }
-  
-  remove(index: number) {
-    this.data.mappings.splice(index, 1);
+
+  onInputBlur() {
+    this.inputBlur.emit(this.value);
   }
 }

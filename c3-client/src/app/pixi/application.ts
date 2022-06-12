@@ -39,9 +39,12 @@ export class PixiApplication {
   }
 
   public async updateKeyBindings() {
-    const c = await this.idbService.getControlSettings()!;
+    const c = (await this.idbService.getControlSettings())!;
     this.keyboard.unbindAllKeys();
-    c?.keyMap.forEach((mappings, inputKey) => mappings.forEach(mapping => this.keyboard.bind(inputKey, mapping)));
+    c.keyMap.forEach((mappings, inputKey) => mappings.forEach(mapping => this.keyboard.bind(inputKey, mapping)));
+    this.keyboard.das = c.das;
+    this.keyboard.arr = c.arr;
+    this.keyboard.sdr = c.sdr;
   }
 
   private loadResources() {
