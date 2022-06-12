@@ -5,6 +5,8 @@ import { RoomInfo } from '@shared/model/room/room-info';
 import { LobbyService } from 'app/game-server/lobby.service';
 import { DebugService } from 'app/main-server/api/v1';
 import { SocketService } from 'app/service/socket.service';
+import { MainScreen } from 'app/view/main/main-screen';
+import { MainService } from 'app/view/main/main.service';
 
 @Component({
   selector: 'app-lobby',
@@ -20,6 +22,7 @@ export class LobbyComponent implements OnInit {
     private socketService: SocketService,
     private lobbyService: LobbyService,
     private debugService: DebugService,
+    private mainService: MainService,
 
     private location: Location,
     private router: Router,
@@ -31,6 +34,10 @@ export class LobbyComponent implements OnInit {
     await this.socketService.connect(debugResponse.gameServerUrl);
 
     this.rooms = await this.lobbyService.getRooms();
+  }
+
+  onBackClick() {
+    this.mainService.openScreen(MainScreen.MENU);
   }
 
   onJoinRoom(roomId: number) {

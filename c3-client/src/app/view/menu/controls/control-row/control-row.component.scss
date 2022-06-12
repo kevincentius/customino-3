@@ -1,0 +1,38 @@
+
+@import 'palette';
+
+.control-row {
+  transition: 100ms;
+  font-size: 24px;
+  display: flex;
+  cursor: pointer;
+  padding: 0px 40px;
+  margin: 5px 0;
+  
+  &:hover {
+    transition: 0;
+    background: #fff3;
+  }
+  
+  .control-name {
+    width: 500px;
+  }
+
+  .mapping-list {
+    display: flex;
+    gap: 10px;
+  }
+
+  .mapping-item {
+    width: 200px;
+    background: #fff3;
+    border-radius: 3px;
+    padding-left: 15px;
+    display: flex;
+
+    &.edit-mode {
+      background: #6c6;
+    }
+  }
+}
+

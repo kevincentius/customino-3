@@ -5,7 +5,7 @@ export class RandomGen {
 
   constructor(seed?: number, state?: object) {
     this.r = state ? seedrandom.alea(undefined, { state: state })
-           : seedrandom.alea(seed == null ? undefined : seed.toString(), { state: true });
+           : seedrandom.alea(seed == null ? Math.random().toString() : seed.toString(), { state: true });
   }
 
   int(max: number = Number.MAX_SAFE_INTEGER) {

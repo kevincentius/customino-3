@@ -4,6 +4,7 @@ import { Keyboard } from "app/control/keyboard";
 import { InputKey } from "@shared/game/network/model/input-key";
 import { Game } from "@shared/game/engine/game/game";
 import { GameDisplay } from "app/pixi/display/game-display";
+import { IdbService } from "app/service/idb.service";
 
 export let resources: Partial<Record<string, LoaderResource>>;
 
@@ -18,7 +19,7 @@ export class PixiApplication {
 
   keyboard: Keyboard = new Keyboard();
 
-  constructor(private canvas: HTMLCanvasElement) {
+  constructor(private canvas: HTMLCanvasElement, private idbService: IdbService) {
     this.app = new Application({
       view: this.canvas,
       resizeTo: window,
@@ -26,7 +27,6 @@ export class PixiApplication {
     });
 
     this.loadResources();
-    this.initKeyboard();
 
     this.app.ticker.add(() => {
       let dt = this.app.ticker.deltaMS;
@@ -38,14 +38,10 @@ export class PixiApplication {
     });
   }
 
-  private initKeyboard() {
-    this.keyboard.bind(InputKey.LEFT, 'KeyJ');
-    this.keyboard.bind(InputKey.RIGHT, 'KeyK');
-    this.keyboard.bind(InputKey.SOFT_DROP, 'Space');
-    this.keyboard.bind(InputKey.RCCW, 'KeyD');
-    this.keyboard.bind(InputKey.RCW, 'KeyL');
-    this.keyboard.bind(InputKey.R180, 'KeyS');
-    this.keyboard.bind(InputKey.HARD_DROP, 'KeyF');
+  public async updateKeyBindings() {
+    const c = await this.idbService.getControlSettings()!;
+    this.keyboard.unbindAllKeys();
+    c?.keyMap.forEach((mappings, inputKey) => mappings.forEach(mapping => this.keyboard.bind(inputKey, mapping)));
   }
 
   private loadResources() {
@@ -63,6 +59,7 @@ export class PixiApplication {
 
   bindGame(game: Game) {
     this.game = game;
+    this.updateKeyBindings();
 
     if (this.gameDisplay) {
       this.app.stage.removeChild(this.gameDisplay);
