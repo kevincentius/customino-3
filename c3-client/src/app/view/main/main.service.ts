@@ -15,7 +15,7 @@ export class MainService {
   displayGui = true;
 
   private r = new RandomGen();
-  bgIndex = this.r.int(4);
+  bgIndex = this.r.int(2);
 
   private main!: MainComponent;
 
@@ -29,7 +29,5 @@ export class MainService {
 
   openScreen(screen: MainScreen) {
     this.main.openScreen(screen);
-    
-    // this.bgIndex = this.r.int(4);
   }
 }

@@ -23,7 +23,7 @@ export class ActivePiece {
   isLastMoveRotation = false;
 
   gravityFrameCount = 0;
-  gravity = 5; // tiles per second
+  gravity = 0; // tiles per second
 
   lockDelayFrameCount = 0;
 
@@ -40,6 +40,7 @@ export class ActivePiece {
   }
 
   serialize() {
+    console.log('serialize piece', this.piece?.serialize());
     return {
       piece: this.piece?.serialize(),
       x: this.x,
@@ -79,6 +80,8 @@ export class ActivePiece {
     if (!this.piece) {
       return false;
     }
+
+    console.log(this.piece);
 
     const prevY = this.y;
     const prevX = this.x;

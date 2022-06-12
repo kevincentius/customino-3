@@ -4,6 +4,8 @@ export class BoardLayout {
   public minoSize: number;
   public offsetX: number;
   public offsetY: number;
+  public innerWidth: number;
+  public innerHeight: number;
   public minoScale: number;
 
   constructor(
@@ -18,5 +20,7 @@ export class BoardLayout {
     this.minoScale = this.minoSize / spritesheet.mino[0].width;
     this.offsetX = (this.width - this.minoSize * cols) / 2;
     this.offsetY = this.height - (this.minoSize * rows);
+    this.innerWidth = this.minoSize * cols;
+    this.innerHeight = this.minoSize * rows;
   }
 }

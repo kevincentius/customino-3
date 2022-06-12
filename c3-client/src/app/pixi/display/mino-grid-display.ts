@@ -1,19 +1,26 @@
 import { Tile } from "@shared/game/engine/model/tile";
 import { PlaceTileEvent } from "@shared/game/engine/player/board";
 import { MatUtil } from "@shared/game/engine/util/mat-util";
+import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { MinoDisplay } from "app/pixi/display/mino-display";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { Container } from "pixi.js";
 
-export class MinoGridDisplay extends Container {
+export class MinoGridDisplay extends Container implements LayoutChild {
   // helpers
   spritesheet = new GameSpritesheet();
   
   // children
   minos: MinoDisplay[][];
 
+  public layoutWidth: number;
+  public layoutHeight: number;
+
   constructor(private tiles: Tile[][], private minoSize: number, private invisibleHeight=0) {
     super();
+
+    this.layoutWidth = this.minoSize * tiles[0].length;
+    this.layoutHeight = this.minoSize * tiles.length;
 
     this.minos = Array.from(Array(this.tiles.length), () => Array(this.tiles[0].length));
 

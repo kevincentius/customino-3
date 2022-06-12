@@ -34,5 +34,6 @@ export class Piece {
     for (let i = 0; i < drot; i++) {
       this.tiles = MatUtil.rotate(this.tiles);
     }
+    this.rotation = (this.rotation + drot) % 4;
   }
 }

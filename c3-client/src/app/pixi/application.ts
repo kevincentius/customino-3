@@ -1,10 +1,8 @@
-import { Application, Loader, LoaderResource } from "pixi.js";
+import { Application, Loader, LoaderResource, SCALE_MODES, settings } from "pixi.js";
 
 import { Keyboard } from "app/control/keyboard";
-import { InputKey } from "@shared/game/network/model/input-key";
 import { Game } from "@shared/game/engine/game/game";
 import { GameDisplay } from "app/pixi/display/game-display";
-import { IdbService } from "app/service/idb.service";
 import { UserSettingsService } from "app/service/user-settings/user-settings.service";
 import { ControlSettings } from "app/service/user-settings/control-settings";
 
@@ -22,6 +20,8 @@ export class PixiApplication {
   keyboard: Keyboard = new Keyboard();
 
   constructor(private canvas: HTMLCanvasElement, private userSettingsService: UserSettingsService) {
+    settings.SCALE_MODE = SCALE_MODES.NEAREST;
+
     this.app = new Application({
       view: this.canvas,
       resizeTo: window,
@@ -43,7 +43,6 @@ export class PixiApplication {
   }
 
   public updateKeyBindings(c: ControlSettings) {
-    console.log('update', c);
     this.keyboard.unbindAllKeys();
     c.keyMap.forEach((mappings, inputKey) => mappings.forEach(mapping => this.keyboard.bind(inputKey, mapping)));
     this.keyboard.das = c.das;
