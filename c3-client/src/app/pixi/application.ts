@@ -5,6 +5,8 @@ import { InputKey } from "@shared/game/network/model/input-key";
 import { Game } from "@shared/game/engine/game/game";
 import { GameDisplay } from "app/pixi/display/game-display";
 import { IdbService } from "app/service/idb.service";
+import { UserSettingsService } from "app/service/user-settings/user-settings.service";
+import { ControlSettings } from "app/service/user-settings/control-settings";
 
 export let resources: Partial<Record<string, LoaderResource>>;
 
@@ -19,7 +21,7 @@ export class PixiApplication {
 
   keyboard: Keyboard = new Keyboard();
 
-  constructor(private canvas: HTMLCanvasElement, private idbService: IdbService) {
+  constructor(private canvas: HTMLCanvasElement, private userSettingsService: UserSettingsService) {
     this.app = new Application({
       view: this.canvas,
       resizeTo: window,
@@ -36,10 +38,12 @@ export class PixiApplication {
         this.keyboard.tick(dt);
       }
     });
+    
+    this.userSettingsService.settingsChangedSubject.subscribe(localSettings => this.updateKeyBindings(localSettings.control));
   }
 
-  public async updateKeyBindings() {
-    const c = (await this.idbService.getControlSettings())!;
+  public updateKeyBindings(c: ControlSettings) {
+    console.log('update', c);
     this.keyboard.unbindAllKeys();
     c.keyMap.forEach((mappings, inputKey) => mappings.forEach(mapping => this.keyboard.bind(inputKey, mapping)));
     this.keyboard.das = c.das;
@@ -62,7 +66,6 @@ export class PixiApplication {
 
   bindGame(game: Game) {
     this.game = game;
-    this.updateKeyBindings();
 
     if (this.gameDisplay) {
       this.app.stage.removeChild(this.gameDisplay);

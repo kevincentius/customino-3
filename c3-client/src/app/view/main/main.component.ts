@@ -52,11 +52,10 @@ export class MainComponent {
 
     this.lobbyService.clientInfoSubject.subscribe(sessionInfo => this.mainService.sessionInfo = sessionInfo);
 
-    this.mainService.init(this).then(() => {
-      this.controls.load();
-      this.openScreen(MainScreen.MENU);
-      // this.openScreen(MainScreen.CONTROLS);
-    });
+    this.mainService.init(this);
+    
+    this.openScreen(MainScreen.MENU);
+    // this.openScreen(MainScreen.CONTROLS);
   }
 
   ngAfterViewInit() {

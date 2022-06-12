@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ControlSettings } from 'app/view/menu/controls/control-settings';
+import { LocalSettings } from 'app/service/user-settings/local-settings';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,10 @@ export class IdbService {
 
   private resetEverytime = false;
 
-  asyncInit(callback: any) {
+  private onLoadCallbacks: (() => void)[] = [];
+  private loaded = false;
+
+  constructor() {
     let request = window.indexedDB.open(IdbService.DB_NAME, 1);
     request.onupgradeneeded = function (e) {
       let db = (e.target as any).result;
@@ -24,7 +27,18 @@ export class IdbService {
         console.log('RESETTING IDB');
         this.clear();
       }
-      callback();
+
+      this.loaded = true;
+      this.onLoadCallbacks.forEach(c => c());
+      this.onLoadCallbacks = [];
+    }
+  }
+  
+  async waitForInit(): Promise<void> {
+    if (this.loaded) {
+      return Promise.resolve();
+    } else {
+      return new Promise(resolve => this.onLoadCallbacks.push(resolve));
     }
   }
 
@@ -35,40 +49,46 @@ export class IdbService {
       .clear();
   }
 
-  private get(key: string, defaultValue: any = null): Promise<any> {
-    return new Promise(resolve => {
-      let request = this.db.transaction([IdbService.DB_NAME])
-        .objectStore(IdbService.DB_NAME)
-        .get(key);
-      request.onerror = function (event: any) {
-        console.error('Failed to load ' + key);
-        console.error(event);
-        resolve(null);
-      }
+  private async get(key: string, defaultValue: any = null): Promise<any> {
+    await this.waitForInit();
+    
+    let request = this.db.transaction([IdbService.DB_NAME])
+      .objectStore(IdbService.DB_NAME)
+      .get(key);
+    request.onerror = function (event: any) {
+      console.error('Failed to load ' + key);
+      console.error(event);
+      return null;
+    }
+    return new Promise<any>(resolve => {
       request.onsuccess = function () {
-        let data = request.result == null ? defaultValue : request.result.value;
-        resolve(data);
+        resolve(request.result == null ? defaultValue : request.result.value);
       }
     });
   }
 
-  private set(key: string, value: any, onsuccess = () => { }) {
+  private async set(key: string, value: any) {
+    await this.waitForInit();
+
     let transaction = this.db.transaction([IdbService.DB_NAME], "readwrite");
     let request = transaction.objectStore(IdbService.DB_NAME).put({ key: key, value: value });
     request.onerror = function (event: any) {
       console.log('Failed to save ' + key);
       console.log(event);
     }
-    transaction.oncomplete = function () {
-      onsuccess();
-    };
+
+    return new Promise<void>(resolve => {
+      transaction.oncomplete = function () {
+        resolve();
+      };
+    })
   }
 
-  async getControlSettings(): Promise<ControlSettings | undefined> {
-    return this.get('control-settings');
+  async getLocalSettings(): Promise<LocalSettings | undefined> {
+    return this.get('local-settings');
   }
 
-  setControlSettings(controlSettings: ControlSettings) {
-    this.set('control-settings', controlSettings);
+  async setLocalSettings(localSettings: LocalSettings) {
+    return this.set('local-settings', localSettings);
   }
 }

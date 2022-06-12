@@ -23,11 +23,8 @@ export class MainService {
     private idbService: IdbService,
   ) { }
 
-  async init(main: MainComponent) {
-    return new Promise(resolve => {
-      this.main = main;
-      this.idbService.asyncInit(() => resolve(undefined));
-    })
+  init(main: MainComponent) {
+    this.main = main;
   }
 
   openScreen(screen: MainScreen) {
