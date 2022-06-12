@@ -23,7 +23,7 @@ export class ActivePiece {
   isLastMoveRotation = false;
 
   gravityFrameCount = 0;
-  gravity = 5; // tiles per second
+  gravity = 0; // tiles per second
 
   lockDelayFrameCount = 0;
 
