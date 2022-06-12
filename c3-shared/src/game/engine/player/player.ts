@@ -78,6 +78,7 @@ export abstract class Player {
     return {
       frame: this.frame,
       alive: this.alive,
+      pieceQueue: this.pieceQueue.map(p => p.serialize()),
       randomState: JSON.stringify(this.r.serialize()),
       board: this.board.serialize(),
       pieceGen: this.pieceGen.serialize(),
@@ -86,8 +87,9 @@ export abstract class Player {
   }
 
   load(playerState: PlayerState) {
-    this.alive = playerState.alive;
     this.frame = playerState.frame;
+    this.alive = playerState.alive;
+    this.pieceQueue = playerState.pieceQueue.map(p => Piece.from(p));
     this.r = new RandomGen(undefined, JSON.parse(playerState.randomState));
     this.board.load(playerState.board);
     this.pieceGen = loadPieceGen(this.r, this.pieceList, playerState.pieceGen);
