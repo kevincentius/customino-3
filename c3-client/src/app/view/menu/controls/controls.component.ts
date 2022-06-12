@@ -1,10 +1,11 @@
 import { Component, HostListener } from '@angular/core';
 import { InputKey } from '@shared/game/network/model/input-key';
 import { IdbService } from 'app/service/idb.service';
+import { UserSettingsService } from 'app/service/user-settings/user-settings.service';
 import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
 import { ControlRowModel } from 'app/view/menu/controls/control-row/control-row.component';
-import { ControlSettings } from 'app/view/menu/controls/control-settings';
+import { ControlSettings } from 'app/service/user-settings/control-settings';
 import { inputKeyDataArray } from 'app/view/menu/controls/input-key-data';
 
 @Component({
@@ -14,8 +15,6 @@ import { inputKeyDataArray } from 'app/view/menu/controls/input-key-data';
 })
 export class ControlsComponent {
 
-  controlSettings!: ControlSettings;
-
   // view model
   rows: ControlRowModel[] = inputKeyDataArray
     .filter(d => d.inputKey != null)
@@ -23,31 +22,19 @@ export class ControlsComponent {
 
   editIndex: number | null = null;
 
+  controlSettings!: ControlSettings;
+
   constructor(
+    private userSettingsService: UserSettingsService,
     private mainService: MainService,
     private idbService: IdbService,
   ) { }
 
-  async load() {
-    this.controlSettings = await this.idbService.getControlSettings() ?? this.createDefaultSettings();
-    this.save();
-    this.rows.forEach(row => row.mappings = this.controlSettings.keyMap.get(row.inputKey)!);
-  }
-
-  private createDefaultSettings(): ControlSettings {
-    const keyMap = new Map<InputKey, string[]>();
-    for (const inputKeyData of inputKeyDataArray) {
-      if (inputKeyData.inputKey != null) {
-        keyMap.set(inputKeyData.inputKey, [inputKeyData.default]);
-      }
-    }
-
-    return {
-      keyMap,
-      arr: 100,
-      das: 250,
-      sdr: 100,
-    }
+  ngOnInit() {
+    this.userSettingsService.onLoad(() => {
+      this.controlSettings = this.userSettingsService.localSettings.control;
+      this.rows.forEach(row => row.mappings = this.controlSettings.keyMap.get(row.inputKey)!);
+    });
   }
 
   onBackClick() {
@@ -65,7 +52,7 @@ export class ControlsComponent {
       const inputKey = this.rows[this.editIndex].inputKey;
       this.controlSettings.keyMap.set(inputKey, [event.code]);
       this.rows[this.editIndex].mappings = this.controlSettings.keyMap.get(inputKey)!;
-      this.save();
+      this.userSettingsService.save();
       this.editIndex++;
 
       if (this.editIndex >= this.rows.length) {
@@ -76,21 +63,16 @@ export class ControlsComponent {
 
   onDasUpdated(value: number) {
     this.controlSettings.das = Math.max(10, Math.min(1000, value));
-    this.save();
+    this.userSettingsService.save();
   }
   
   onArrUpdated(value: number) {
     this.controlSettings.arr = Math.max(0, Math.min(1000, value));
-    this.save();
+    this.userSettingsService.save();
   }
   
   onSdrUpdated(value: number) {
     this.controlSettings.sdr = Math.max(0, Math.min(1000, value));
-    this.save();
+    this.userSettingsService.save();
   }
-
-  private save() {
-    this.idbService.setControlSettings(this.controlSettings);
-  }
-
 }

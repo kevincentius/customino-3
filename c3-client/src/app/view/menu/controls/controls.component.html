@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <div style="display: flex; flex-direction: column; padding: 0 100px">
+  <div *ngIf="controlSettings" style="display: flex; flex-direction: column; padding: 0 100px">
     <app-control-row *ngFor="let row of rows; let i=index"
       [data]="row"
       [editMode]="i==this.editIndex"
