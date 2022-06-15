@@ -9,7 +9,9 @@ import { loadPieceGen, MemoryPieceGen, PieceGen } from "@shared/game/engine/util
 import { RandomGen } from "@shared/game/engine/util/random-gen";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent, GameEventType } from "@shared/game/network/model/event/game-event";
+import { GarbageAcknowledgement as GarbageAcknowledgementEvent } from "@shared/game/network/model/event/garbage-acknowledgement";
 import { InputEvent } from "@shared/game/network/model/event/input-event";
+import { ServerPlayerEvent } from "@shared/game/network/model/event/server-event";
 import { SystemEvent } from "@shared/game/network/model/event/system-event";
 import { InputKey } from "@shared/game/network/model/input-key";
 import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
@@ -110,6 +112,9 @@ export abstract class Player {
       const inputEvent = event as InputEvent;
       
       this.actionMap.get(inputEvent.key)!();
+    } else if (event.type == GameEventType.GARBAGE_ACKNOWLEDGMENT) {
+      const gbEvent = event as GarbageAcknowledgementEvent;
+      console.log('Player receives garbage', gbEvent);
     } else if (event.type == GameEventType.SYSTEM) {
       const inputEvent = event as SystemEvent;
       
@@ -161,7 +166,7 @@ export abstract class Player {
       clearedLines,
       clearedGarbageLines,
       
-      attackPower: [Math.max(0, clearedLines.length - 1)],
+      attackPower: [Math.max(0, clearedLines.length - 1)].filter(atk => atk > 0),
     });
 
     // spawn next piece

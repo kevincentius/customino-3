@@ -7,7 +7,9 @@ import { ServerGame } from "game/server-game";
 import { Subject } from "rxjs";
 
 export class ServerPlayer extends Player {
-  serverPlayerEventSubject = new Subject<ServerPlayerEvent>();
+
+  // maps playerIndex to server event that should be sent to them. -1 means spectators.
+  serverEventSubject = new Subject<Map<number, ServerPlayerEvent>>();
 
   garbageOutgoingBuffer: GarbageDistribution[] = [];
 
@@ -22,14 +24,14 @@ export class ServerPlayer extends Player {
     });
   }
 
-  init(): void {
+  override init(): void {
   }
 
-  update(): void {
+  override update(): void {
     throw new Error('Server should not run update loop.');
   }
 
-  handleEvent(clientEvent: ClientEvent): void {
+  override handleEvent(clientEvent: ClientEvent): void {
     if (clientEvent.gameEvents.length > 0 && clientEvent.gameEvents[0].frame < this.frame) {
       throw new Error(`Sanity check failed! Remote event should have been executed in previous frame. ${this.frame} - ${clientEvent.gameEvents[0].frame}`);
     }
@@ -57,15 +59,51 @@ export class ServerPlayer extends Player {
       throw new Error(`Sanity check failed! Frame count does not match: ${this.frame} - ${clientEvent.frame}`);
     }
 
-    // flush ServerEvent
-    const serverPlayerEvent: ServerPlayerEvent = {
+    this.emitServerPlayerEvent(clientEvent);
+  }
+
+  private emitServerPlayerEvent(clientEvent: ClientEvent) {
+    const serverEventMap = new Map<number, ServerPlayerEvent>();
+
+    // spectators
+    const specEvent = {
       playerIndex: this.playerIndex,
       clientEvent: clientEvent,
     };
-    if (this.garbageOutgoingBuffer.length > 0) {
-      serverPlayerEvent.garbageDistribution = this.garbageOutgoingBuffer;
-      this.garbageOutgoingBuffer.length = 0;
+    serverEventMap.set(-1, specEvent);
+
+    for (let playerIndex = 0; playerIndex < this.game.players.length; playerIndex++) {
+      let send = false;
+
+      const serverEvent: ServerPlayerEvent = {
+        playerIndex: this.playerIndex,
+      };
+
+      // remote players
+      if (playerIndex != this.playerIndex) {
+        serverEvent.clientEvent = clientEvent;
+        send = true;
+      }
+
+      // garbage receivers
+      const garbageDistributions = this.garbageOutgoingBuffer.filter(gb => gb.playerIndex == playerIndex);
+      if (garbageDistributions.length > 0) {
+        if (!serverEvent.serverEvent) {
+          serverEvent.serverEvent = {};
+        }
+        serverEvent.serverEvent.garbageDistribution = garbageDistributions.map(gb => ({
+          playerIndex: playerIndex,
+          attackPower: gb.attackPower,
+        }));
+        send = true;
+      }
+
+      if (send) {
+        serverEventMap.set(playerIndex, serverEvent);
+      }
     }
-    this.serverPlayerEventSubject.next(serverPlayerEvent);
+    
+    this.garbageOutgoingBuffer = [];
+    this.serverEventSubject.next(serverEventMap);
   }
 }

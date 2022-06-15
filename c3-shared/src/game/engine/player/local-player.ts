@@ -1,7 +1,9 @@
 import { Player } from "@shared/game/engine/player/player";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent, GameEventType } from "@shared/game/network/model/event/game-event";
+import { GarbageAcknowledgement } from "@shared/game/network/model/event/garbage-acknowledgement";
 import { InputEvent } from "@shared/game/network/model/event/input-event";
+import { GarbageDistribution, ServerEvent, ServerPlayerEvent } from "@shared/game/network/model/event/server-event";
 import { InputKey } from "@shared/game/network/model/input-key";
 import { Subject } from "rxjs";
 
@@ -41,7 +43,7 @@ export class LocalPlayer extends Player {
     this.eventBuffer = [];
   }
 
-  handleEvent(clientEvent: ClientEvent) {
+  override handleEvent(clientEvent: ClientEvent) {
     clientEvent.gameEvents.forEach(event => {
       if (event.frame != this.frame) {
         throw new Error(`Sanity check failed! Local event for frame ${event.frame}, but the player is on frame ${this.frame}.`);
@@ -64,5 +66,21 @@ export class LocalPlayer extends Player {
       frame: this.frame,
       gameEvents: [inputEvent],
     });
+  }
+
+  handleGarbage(garbageDistribution: GarbageDistribution) {
+    console.log('local player accepting garbgae', garbageDistribution);
+
+    const gameEvent: GarbageAcknowledgement = {
+      frame: this.frame,
+      timestamp: -1,
+      type: GameEventType.GARBAGE_ACKNOWLEDGMENT,
+      garbageDistribution: garbageDistribution,
+    };
+
+    this.handleEvent({
+      frame: null!,
+      gameEvents: [gameEvent],
+    })
   }
 }

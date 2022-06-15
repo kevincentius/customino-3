@@ -80,9 +80,11 @@ export class Room {
 
   startGame(session: Session) {
     if (!this.isRunning() && this.creator == session && this.isInRoom(session)) {
-      const players = this.slots
-        .filter(slot => slot.playing)
-        .map(slot => slot.session.getClientInfo());
+      const playerSlots = this.slots.filter(slot => slot.playing);
+      this.slots.forEach(slot => slot.playerIndex = null);
+      playerSlots.forEach((playerSlot, index) => playerSlot.playerIndex = index);
+
+      const players = playerSlots.map(slot => slot.session.getClientInfo());
       
       const globalSeed = this.r.int();
       
@@ -107,18 +109,28 @@ export class Room {
       });
 
       for (const player of this.game.players) {
-        player.serverPlayerEventSubject.subscribe(e => {
-          // broadcast server event
-          console.log('broadcasting event from ', this.slots.findIndex(slot => slot.session == session));
-          for (const slot of this.slots) {
-            if (slot.session.sessionId == this.game?.clientInfos[e.playerIndex].sessionId) continue;
-  
-            const serverEvent: ServerEvent = {
-              roomId: this.id,
-              playerEvents: [e],
-            };
-            slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
+        player.serverEventSubject.subscribe(map => {
+          if (Array.from(map.values()).find(v => v.serverEvent)) {
+            console.log('sending', map);
           }
+          
+          this.slots.forEach(slot => {
+            const serverPlayerEvent = map.get(slot.playerIndex == null ? -1 : slot.playerIndex);
+            if (serverPlayerEvent) {
+              const serverEvent: ServerEvent = {
+                roomId: this.id,
+                playerEvents: [ serverPlayerEvent ]
+              }
+              slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
+            }
+          })
+        });
+      }
+
+      for (const player of this.game.players) {
+        player.serverEventSubject.subscribe(e => {
+          // send garbage to receiver
+          
         });
       }
       

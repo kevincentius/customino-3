@@ -4,6 +4,7 @@ import { LocalPlayer } from "@shared/game/engine/player/local-player";
 import { Player } from "@shared/game/engine/player/player";
 import { RemotePlayer } from "@shared/game/engine/player/remote-player";
 import { GameState } from "@shared/game/engine/serialization/game-state";
+import { ServerEvent } from "@shared/game/network/model/event/server-event";
 import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
 
 /**
@@ -85,6 +86,22 @@ export class ClientGame extends Game {
 
     if (this.mainLoopTimeout) {
       this.mainLoopTimeout = setTimeout(this.updateLoop.bind(this), sleepTime);
+    }
+  }
+
+  handleServerEvent(serverEvent: ServerEvent) {
+    for (const playerEvent of serverEvent.playerEvents) {
+      if (playerEvent.clientEvent) {
+        this.players[playerEvent.playerIndex].handleEvent(playerEvent.clientEvent);
+      }
+
+      if (playerEvent.serverEvent?.garbageDistribution) {
+        for (const garbageDistribution of playerEvent.serverEvent.garbageDistribution) {
+          if (this.players[garbageDistribution.playerIndex] instanceof LocalPlayer) {
+            (this.players[garbageDistribution.playerIndex] as LocalPlayer).handleGarbage(garbageDistribution);
+          }
+        }
+      }
     }
   }
 }

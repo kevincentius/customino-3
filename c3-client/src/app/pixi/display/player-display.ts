@@ -24,7 +24,7 @@ export class PlayerDisplay extends Container {
 
     this.board = new BoardDisplay(this.player);
     this.pieceQueue = new PieceQueueDisplay(this.player, this.board.getMinoSize());
-    this.pieceQueue.position.x = 600;
+    // this.pieceQueue.position.x = 600;
 
     this.player.gameOverSubject.subscribe(this.updateDebugText.bind(this));
 
@@ -33,15 +33,13 @@ export class PlayerDisplay extends Container {
     
     this.rowLayout.addNode(this.board);
     this.rowLayout.addNode(this.rightColumnLayout);
+    this.rowLayout.updateLayout();
 
     this.rightColumnLayout.addNode(this.pieceQueue);
 
-    // this.addChild(this.board);
-    // this.addChild(this.pieceQueue);
-    
-    this.addChild(this.debugText);
-
     this.addChild(this.layout);
+
+    this.addChild(this.debugText);
   }
 
   private updateDebugText() {

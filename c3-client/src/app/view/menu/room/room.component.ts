@@ -30,7 +30,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
-  private game!: Game;
+  private game!: ClientGame;
 
   constructor(
     private roomService: RoomService,
@@ -111,9 +111,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   onRecvServerEvent(serverEvent: ServerEvent) {
     if (this.roomId == serverEvent.roomId) {
-      for (const playerEvent of serverEvent.playerEvents) {
-        this.game.players[playerEvent.playerIndex].handleEvent(playerEvent.clientEvent);
-      }
+      this.game.handleServerEvent(serverEvent);
     }
   }
 
