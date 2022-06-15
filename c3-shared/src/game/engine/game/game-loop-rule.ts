@@ -1,6 +1,6 @@
 
 export const gameLoopRule = {
-  mspf: 50,
+  mspf: 100,
   maxCatchUpRate: 10,
   maxDelay: 500,
 }

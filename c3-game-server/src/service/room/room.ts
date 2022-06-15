@@ -1,5 +1,5 @@
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
-import { ServerEvent, ServerEventEntry } from "@shared/game/network/model/event/server-event";
+import { ServerEvent, ServerPlayerEvent } from "@shared/game/network/model/event/server-event";
 import { LobbyEvent } from "@shared/model/room/lobby-event";
 import { RoomInfo } from "@shared/model/room/room-info";
 import { RoomSlot } from "service/room/room-slot";
@@ -105,6 +105,22 @@ export class Room {
           slot.session.socket.emit(LobbyEvent.GAME_OVER, gameResult);
         }
       });
+
+      for (const player of this.game.players) {
+        player.serverPlayerEventSubject.subscribe(e => {
+          // broadcast server event
+          console.log('broadcasting event from ', this.slots.findIndex(slot => slot.session == session));
+          for (const slot of this.slots) {
+            if (slot.session.sessionId == this.game?.clientInfos[e.playerIndex].sessionId) continue;
+  
+            const serverEvent: ServerEvent = {
+              roomId: this.id,
+              playerEvents: [e],
+            };
+            slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
+          }
+        });
+      }
       
       // debug replay
       if (this.provideReplay) {
@@ -168,21 +184,5 @@ export class Room {
 
     // simulate game immediately
     this.game!.players[playerIndex].handleEvent(clientEvent);
-
-    // broadcast server event
-    const playerEvents: ServerEventEntry[] = [{
-      playerIndex: playerIndex,
-      clientEvent: clientEvent,
-    }];
-
-    for (const slot of this.slots) {
-      if (slot.session == session) continue;
-
-      const serverEvent: ServerEvent = {
-        roomId: this.id,
-        playerEvents: playerEvents
-      };
-      slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
-    }
   }
 }

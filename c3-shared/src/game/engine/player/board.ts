@@ -1,5 +1,6 @@
 import { playerRule } from "@shared/game/engine/model/rule/player-rule";
 import { Tile } from "@shared/game/engine/model/tile";
+import { TileType } from "@shared/game/engine/model/tile-type";
 import { Piece } from "@shared/game/engine/player/piece";
 import { BoardState } from "@shared/game/engine/serialization/board-state";
 import { MatUtil } from "@shared/game/engine/util/mat-util";
@@ -80,11 +81,20 @@ export class Board {
   }
 
   private isRowCleared(row: number) {
-    for (let j = 0; j < this.tiles[row].length; j++) {
-      if (this.tiles[row][j] == null) {
+    for (let cell of this.tiles[row]) {
+      if (cell == null) {
         return false;
       }
     }
     return true;
+  }
+
+  isGarbage(row: number) {
+    for (let cell of this.tiles[row]) {
+      if (cell != null && (cell.type == TileType.GARBAGE || cell.type == TileType.CHEESE)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

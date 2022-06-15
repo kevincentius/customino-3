@@ -33,11 +33,10 @@ export class PieceQueueDisplay extends Container implements LayoutChild {
         this.updateLayout();
       }
     });
-    
   }
 
   private pushNewPieceDisplay(newPiece: Piece) {
-    const pieceDisplay = new PieceDisplay(newPiece, this.minoSize, this.minoSize * 2.5);
+    const pieceDisplay = new PieceDisplay(newPiece, this.minoSize, this.minoSize * 2);
     this.pieceDisplays.push(pieceDisplay);
     this.layout.addNode(pieceDisplay);
   }

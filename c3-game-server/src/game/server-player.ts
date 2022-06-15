@@ -1,11 +1,28 @@
-import { Game } from "@shared/game/engine/game/game";
+
 import { Player } from "@shared/game/engine/player/player";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
+import { GarbageDistribution, ServerPlayerEvent } from "@shared/game/network/model/event/server-event";
 import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
+import { ServerGame } from "game/server-game";
+import { Subject } from "rxjs";
 
 export class ServerPlayer extends Player {
-  constructor(game: Game, public startPlayerData: StartPlayerData) {
+  serverPlayerEventSubject = new Subject<ServerPlayerEvent>();
+
+  garbageOutgoingBuffer: GarbageDistribution[] = [];
+
+  constructor(protected game: ServerGame, public startPlayerData: StartPlayerData, private playerIndex: number) {
     super(game, startPlayerData);
+    
+    this.pieceLockSubject.subscribe(lockResult => {
+      const garbageDistribution = this.game.applyAttack(this, lockResult.attackPower);
+      if (garbageDistribution) {
+        this.garbageOutgoingBuffer.push(...garbageDistribution);
+      }
+    });
+  }
+
+  init(): void {
   }
 
   update(): void {
@@ -39,7 +56,16 @@ export class ServerPlayer extends Player {
     if (this.frame != clientEvent.frame + 1) {
       throw new Error(`Sanity check failed! Frame count does not match: ${this.frame} - ${clientEvent.frame}`);
     }
-  }
 
-  init(): void {}
+    // flush ServerEvent
+    const serverPlayerEvent: ServerPlayerEvent = {
+      playerIndex: this.playerIndex,
+      clientEvent: clientEvent,
+    };
+    if (this.garbageOutgoingBuffer.length > 0) {
+      serverPlayerEvent.garbageDistribution = this.garbageOutgoingBuffer;
+      this.garbageOutgoingBuffer.length = 0;
+    }
+    this.serverPlayerEventSubject.next(serverPlayerEvent);
+  }
 }

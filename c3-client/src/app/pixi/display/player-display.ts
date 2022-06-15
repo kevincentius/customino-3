@@ -39,7 +39,7 @@ export class PlayerDisplay extends Container {
     // this.addChild(this.board);
     // this.addChild(this.pieceQueue);
     
-    // this.addChild(this.debugText);
+    this.addChild(this.debugText);
 
     this.addChild(this.layout);
   }

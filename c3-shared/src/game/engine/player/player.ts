@@ -2,6 +2,7 @@ import { Game } from "@shared/game/engine/game/game";
 import { playerRule } from "@shared/game/engine/model/rule/player-rule";
 import { ActivePiece } from "@shared/game/engine/player/active-piece";
 import { Board } from "@shared/game/engine/player/board";
+import { LockResult } from "@shared/game/engine/player/lock-result";
 import { Piece } from "@shared/game/engine/player/piece";
 import { PlayerState } from "@shared/game/engine/serialization/player-state";
 import { loadPieceGen, MemoryPieceGen, PieceGen } from "@shared/game/engine/util/piece-factory/piece-gen";
@@ -18,6 +19,7 @@ export abstract class Player {
   // event emitters
   gameOverSubject = new Subject<void>();
   gameEventSubject = new Subject<GameEvent>();
+  pieceLockSubject = new Subject<LockResult>();
   pieceSpawnSubject = new Subject<void>();
 
   // state
@@ -36,8 +38,8 @@ export abstract class Player {
     [InputKey.LEFT, () => this.attemptMove(0, -1, 0)],
     [InputKey.RIGHT, () => this.attemptMove(0, 1, 0)],
     [InputKey.SOFT_DROP, () => this.attemptMove(1, 0, 0)],
-    [InputKey.HARD_DROP, () => this.onHardDrop()],
-    [InputKey.SONIC_DROP, () => this.onSonicDrop()],
+    [InputKey.HARD_DROP, () => this.hardDrop()],
+    [InputKey.SONIC_DROP, () => this.sonicDrop()],
     [InputKey.RCW, () => this.attemptMove(0, 0, 1)],
     [InputKey.RCCW, () => this.attemptMove(0, 0, 3)],
     [InputKey.R180, () => this.attemptMove(0, 0, 2)],
@@ -55,7 +57,7 @@ export abstract class Player {
     this.r = new RandomGen(startPlayerData.randomSeed);
     this.board = new Board();
     this.pieceGen = new MemoryPieceGen(this.r, this.pieceList, 1);
-    this.activePiece = new ActivePiece(this.board, () => this.onHardDrop());
+    this.activePiece = new ActivePiece(this.board, () => this.hardDrop());
     this.pieceQueue.push(...Array.from(Array(playerRule.previews)).map(() => this.pieceGen.next()));
 
     this.spawnPiece();
@@ -132,7 +134,7 @@ export abstract class Player {
     return this.game.running;
   }
 
-  private onSonicDrop() {
+  private sonicDrop() {
     let success = false;
     while (this.activePiece.attemptMove(1, 0, 0)) {
       success = true;
@@ -140,16 +142,29 @@ export abstract class Player {
     return success;
   }
 
-  private onHardDrop() {
+  private hardDrop() {
     if (!this.activePiece.piece) {
       return false;
     }
 
-    this.onSonicDrop();
-    
+    // lock piece
+    this.sonicDrop();
     this.board.placePiece(this.activePiece.piece, this.activePiece.y, this.activePiece.x);
-    const linesCleared = this.board.checkLineClear(this.activePiece.y, this.activePiece.y + this.activePiece.piece.tiles.length);
-    this.board.clearLines(linesCleared);
+    
+    // check line clear
+    const clearedLines = this.board.checkLineClear(this.activePiece.y, this.activePiece.y + this.activePiece.piece.tiles.length);
+    this.board.clearLines(clearedLines);
+
+    // calculate and apply move result
+    const clearedGarbageLines = clearedLines.filter(line => this.board.isGarbage(line));
+    this.pieceLockSubject.next({
+      clearedLines,
+      clearedGarbageLines,
+      
+      attackPower: [Math.max(0, clearedLines.length - 1)],
+    });
+
+    // spawn next piece
     this.spawnPiece();
 
     if (this.activePiece.checkCollision()) {
