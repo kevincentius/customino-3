@@ -1,3 +1,4 @@
+import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { QueuedAttack } from "@shared/game/engine/model/queued-attack";
 import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { cloneTile, Tile } from "@shared/game/engine/model/tile";
@@ -8,6 +9,8 @@ import { Attack, AttackType } from "@shared/game/network/model/event/server-even
 
 export class GarbageGen {
   frameCount = 0;
+
+  cleanRow: (Tile | null)[] | null = null;
 
   constructor(
     private r: RandomGen,
@@ -22,21 +25,37 @@ export class GarbageGen {
   }
 
   runFrame(attackQueue: QueuedAttack[]) {
-    console.log('runFrame', attackQueue.length);
     if (attackQueue.length > 0) {
-      console.log('runFrame', JSON.stringify(attackQueue));
+      this.frameCount++;
+
+      let spawnAmount = 0;
+      while (this.frameCount > this.playerRule.garbageSpawnDelay * gameLoopRule.fps) {
+        this.frameCount -= gameLoopRule.fps / this.playerRule.garbageSpawnRate;
+        spawnAmount++;
+      }
+
+      let spawnLeft = spawnAmount;
+      while (spawnLeft > 0 && attackQueue.length > 0) {
+        const rows: (Tile | null)[][] = [];
+        
+        const attack = attackQueue[0];
+        if (spawnLeft >= attack.powerLeft) {
+          rows.push(...this.copyRows(this.cleanRow ?? this.generateRow(attack.attack), attack.powerLeft));
+          this.cleanRow = null;
+          spawnLeft -= attack.powerLeft;
+          attackQueue.shift();
+        } else {
+          this.cleanRow = this.cleanRow ?? this.generateRow(attack.attack);
+          rows.push(...this.copyRows(this.cleanRow, spawnLeft));
+          attack.powerLeft -= spawnLeft;
+          spawnLeft = 0;
+        }
+        
+        this.board.addBottomRows(rows);
+      }
+    } else {
+      this.frameCount = 0;
     }
-    const rows: (Tile | null)[][] = [];
-    // test - just spawn all immediately for now
-    for (const attack of attackQueue) {
-      rows.push(...this.copyRows(this.generateRow(attack.attack), attack.powerLeft));
-    }
-    attackQueue.splice(0, attackQueue.length);
-    
-    if (rows.length > 0) {
-      console.log(JSON.stringify(rows));
-    }
-    this.board.addBottomRows(rows);
   }
 
   generateRow(attack: Attack): (Tile | null)[] {
@@ -48,7 +67,6 @@ export class GarbageGen {
           row[j] = this.createTile(TileType.GARBAGE);
         }
       }
-      console.log('generateRow', JSON.stringify(row));
       return row;
     } else {
       throw new Error();
@@ -61,7 +79,6 @@ export class GarbageGen {
       ret.push(row.map(tile => tile == null ? null : cloneTile(tile)));
     }
     
-    console.log('copyRows', JSON.stringify(ret));
     return ret;
   }
 }

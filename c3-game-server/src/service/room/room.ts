@@ -117,9 +117,6 @@ export class Room {
                 roomId: this.id,
                 playerEvents: [ serverPlayerEvent ],
               };
-              if (serverEvent.playerEvents.find(p => p.serverEvent)) {
-                console.log(serverEvent);
-              }
               slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
             }
           })
