@@ -1,3 +1,4 @@
+import { Tile } from "@shared/game/engine/model/tile";
 
 export class MatUtil {
   static isInside(i: number, j: number, matrix: any[][]) {
@@ -54,6 +55,16 @@ export class MatUtil {
     // create new empty rows
     for (let i = 0; i < rows.length; i++) {
       matrix[i] = Array(matrix[i].length);
+    }
+  }
+
+  static addBottomRows(matrix: any[][], rows: any[][]) {
+    for (let i = 0; i < matrix.length - rows.length; i++) {
+      matrix[i] = matrix[i + rows.length];
+    }
+    
+    for (let i = 0; i < rows.length; i++) {
+      matrix[i + matrix.length - rows.length] = rows[i];
     }
   }
 }

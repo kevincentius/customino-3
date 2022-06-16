@@ -95,10 +95,11 @@ export class ClientGame extends Game {
         this.players[playerEvent.playerIndex].handleEvent(playerEvent.clientEvent);
       }
 
-      if (playerEvent.serverEvent?.garbageDistribution) {
-        for (const garbageDistribution of playerEvent.serverEvent.garbageDistribution) {
-          if (this.players[garbageDistribution.playerIndex] instanceof LocalPlayer) {
-            (this.players[garbageDistribution.playerIndex] as LocalPlayer).handleGarbage(garbageDistribution);
+      if (playerEvent.serverEvent?.attackDistributions) {
+        console.log('attack distribution received');
+        for (const attackDistribution of playerEvent.serverEvent.attackDistributions) {
+          if (this.players[attackDistribution.playerIndex] instanceof LocalPlayer) {
+            (this.players[attackDistribution.playerIndex] as LocalPlayer).recvAttack(attackDistribution);
           }
         }
       }

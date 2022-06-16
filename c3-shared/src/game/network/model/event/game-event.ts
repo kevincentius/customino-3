@@ -1,7 +1,7 @@
 
 export enum GameEventType {
   INPUT,
-  GARBAGE_ACKNOWLEDGMENT,
+  ATTACK_ACK,
   SYSTEM,
 }
 

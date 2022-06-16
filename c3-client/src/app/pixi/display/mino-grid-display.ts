@@ -11,12 +11,12 @@ export class MinoGridDisplay extends Container implements LayoutChild {
   spritesheet = new GameSpritesheet();
   
   // children
-  minos: MinoDisplay[][];
+  minos: (MinoDisplay | null)[][];
 
   public layoutWidth: number;
   public layoutHeight: number;
 
-  constructor(private tiles: Tile[][], private minoSize: number, private invisibleHeight=0) {
+  constructor(private tiles: (Tile | null)[][], private minoSize: number, private invisibleHeight=0) {
     super();
 
     this.layoutWidth = this.minoSize * tiles[0].length;
@@ -43,9 +43,11 @@ export class MinoGridDisplay extends Container implements LayoutChild {
       this.minos[e.y][e.x] = null!;
     }
 
-    this.minos[e.y][e.x] = new MinoDisplay(this.spritesheet, e.tile, this.minoSize);
-    this.updateMinoPosition(e.y, e.x);
-    this.addChild(this.minos[e.y][e.x]);
+    if (e.tile != null) {
+      this.minos[e.y][e.x] = new MinoDisplay(this.spritesheet, e.tile, this.minoSize);
+      this.updateMinoPosition(e.y, e.x);
+      this.addChild(this.minos[e.y][e.x]!);
+    }
   }
 
   rotate(drot: number) {
@@ -66,7 +68,10 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     }
     
     const { x, y } = this.calcMinoPos(i, j);
-    this.minos[i][j].position.set(x, y);
+
+    if (this.minos[i][j]) {
+      this.minos[i][j]!.position.set(x, y);
+    }
   }
 
   calcMinoPos(row: number, col: number) {
@@ -88,6 +93,37 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     MatUtil.clearLines(this.minos, rows);
 
     for (let i = rows[rows.length - 1]; i >= rows.length; i--) {
+      for (let j = 0; j < this.minos[i].length; j++) {
+        this.updateMinoPosition(i, j);
+      }
+    }
+  }
+
+  onRowsAdded(numRows: number) {
+    for (let i = 0; i < numRows; i++) {
+      for (let mino of this.minos[i]) {
+        if (mino != null) {
+          this.removeChild(mino);
+        }
+      }
+    }
+
+    let rows: (MinoDisplay | null)[][] = [];
+    for (let i = 0; i < numRows; i++) {
+      rows.push(this.tiles[this.tiles.length - numRows + i].map(tile => {
+        if (tile != null) {
+          const minoDisplay = new MinoDisplay(this.spritesheet, tile, this.minoSize);
+          this.addChild(minoDisplay);
+          return minoDisplay;
+        } else {
+          return null;
+        }
+      }));
+    }
+
+    MatUtil.addBottomRows(this.minos, rows);
+
+    for (let i = 0; i < this.minos.length; i++) {
       for (let j = 0; j < this.minos[i].length; j++) {
         this.updateMinoPosition(i, j);
       }

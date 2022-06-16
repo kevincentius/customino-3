@@ -1,7 +1,7 @@
 
 import { Player } from "@shared/game/engine/player/player";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
-import { GarbageDistribution, ServerPlayerEvent } from "@shared/game/network/model/event/server-event";
+import { AttackDistribution, ServerPlayerEvent } from "@shared/game/network/model/event/server-event";
 import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
 import { ServerGame } from "game/server-game";
 import { Subject } from "rxjs";
@@ -11,15 +11,15 @@ export class ServerPlayer extends Player {
   // maps playerIndex to server event that should be sent to them. -1 means spectators.
   serverEventSubject = new Subject<Map<number, ServerPlayerEvent>>();
 
-  garbageOutgoingBuffer: GarbageDistribution[] = [];
+  attackOutgoingBuffer: AttackDistribution[] = [];
 
   constructor(protected game: ServerGame, public startPlayerData: StartPlayerData, private playerIndex: number) {
     super(game, startPlayerData);
     
     this.pieceLockSubject.subscribe(lockResult => {
-      const garbageDistribution = this.game.applyAttack(this, lockResult.attackPower);
-      if (garbageDistribution) {
-        this.garbageOutgoingBuffer.push(...garbageDistribution);
+      const attackDistribution = this.game.distributeAttacks(this, lockResult.attacks);
+      if (attackDistribution) {
+        this.attackOutgoingBuffer.push(...attackDistribution);
       }
     });
   }
@@ -85,16 +85,13 @@ export class ServerPlayer extends Player {
         send = true;
       }
 
-      // garbage receivers
-      const garbageDistributions = this.garbageOutgoingBuffer.filter(gb => gb.playerIndex == playerIndex);
-      if (garbageDistributions.length > 0) {
+      // attack receivers
+      const attackDistributions = this.attackOutgoingBuffer.filter(gb => gb.playerIndex == playerIndex);
+      if (attackDistributions.length > 0) {
         if (!serverEvent.serverEvent) {
           serverEvent.serverEvent = {};
         }
-        serverEvent.serverEvent.garbageDistribution = garbageDistributions.map(gb => ({
-          playerIndex: playerIndex,
-          attackPower: gb.attackPower,
-        }));
+        serverEvent.serverEvent.attackDistributions = attackDistributions;
         send = true;
       }
 
@@ -103,7 +100,7 @@ export class ServerPlayer extends Player {
       }
     }
     
-    this.garbageOutgoingBuffer = [];
+    this.attackOutgoingBuffer = [];
     this.serverEventSubject.next(serverEventMap);
   }
 }

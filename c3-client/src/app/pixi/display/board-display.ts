@@ -56,6 +56,7 @@ export class BoardDisplay extends Container implements LayoutChild {
 
     this.board.placeTileSubject.subscribe(e => this.minoGridDisplay.placeTile(e));
     this.board.lineClearSubject.subscribe(e => this.minoGridDisplay.clearLines(e));
+    this.board.addRowsSubject.subscribe(e => this.minoGridDisplay.onRowsAdded(e));
     this.player.gameOverSubject.subscribe(r => this.overlayDisplay.show(this.player.alive ? 'Winner' : 'Game Over', '2nd Place'))
   }
 

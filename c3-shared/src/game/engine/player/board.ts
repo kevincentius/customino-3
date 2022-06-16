@@ -6,16 +6,17 @@ import { BoardState } from "@shared/game/engine/serialization/board-state";
 import { MatUtil } from "@shared/game/engine/util/mat-util";
 import { Subject } from "rxjs";
 
-export interface PlaceTileEvent { y: number, x: number, tile: Tile };
+export interface PlaceTileEvent { y: number, x: number, tile: (Tile | null) }
 
 export class Board {
   // events
   resetSubject = new Subject<number[]>();
   placeTileSubject = new Subject<PlaceTileEvent>();
   lineClearSubject = new Subject<number[]>();
+  addRowsSubject = new Subject<number>();
 
   // state
-  tiles: Tile[][];
+  tiles: (Tile | null)[][];
   invisibleHeight: number;
   visibleHeight: number;
 
@@ -96,5 +97,10 @@ export class Board {
       }
     }
     return false;
+  }
+
+  addBottomRows(rows: (Tile | null)[][]) {
+    MatUtil.addBottomRows(this.tiles, rows);
+    this.addRowsSubject.next(rows.length);
   }
 }

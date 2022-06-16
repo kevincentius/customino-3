@@ -2,6 +2,7 @@ import { Game } from "@shared/game/engine/game/game";
 import { playerRule } from "@shared/game/engine/model/rule/player-rule";
 import { ActivePiece } from "@shared/game/engine/player/active-piece";
 import { Board } from "@shared/game/engine/player/board";
+import { GarbageGen } from "@shared/game/engine/player/garbage-gen";
 import { LockResult } from "@shared/game/engine/player/lock-result";
 import { Piece } from "@shared/game/engine/player/piece";
 import { PlayerState } from "@shared/game/engine/serialization/player-state";
@@ -9,13 +10,14 @@ import { loadPieceGen, MemoryPieceGen, PieceGen } from "@shared/game/engine/util
 import { RandomGen } from "@shared/game/engine/util/random-gen";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent, GameEventType } from "@shared/game/network/model/event/game-event";
-import { GarbageAcknowledgement as GarbageAcknowledgementEvent } from "@shared/game/network/model/event/garbage-acknowledgement";
 import { InputEvent } from "@shared/game/network/model/event/input-event";
-import { ServerPlayerEvent } from "@shared/game/network/model/event/server-event";
 import { SystemEvent } from "@shared/game/network/model/event/system-event";
 import { InputKey } from "@shared/game/network/model/input-key";
 import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
 import { Subject } from 'rxjs';
+import { AttackType } from "@shared/game/network/model/event/server-event";
+import { AttackAckEvent } from "@shared/game/network/model/event/attack-ack";
+import { QueuedAttack } from "@shared/game/engine/model/queued-attack";
 
 export abstract class Player {
   // event emitters
@@ -28,12 +30,14 @@ export abstract class Player {
   frame = 0;
   alive = true;
   pieceQueue: Piece[] = [];
+  attackQueue: QueuedAttack[] = [];
   
   // composition
   private r: RandomGen;
   public board: Board;
   private pieceGen: PieceGen;
   public activePiece: ActivePiece;
+  private garbageGen: GarbageGen;
 
   // configs
   private actionMap: Map<InputKey, () => any> = new Map([
@@ -61,6 +65,7 @@ export abstract class Player {
     this.pieceGen = new MemoryPieceGen(this.r, this.pieceList, 1);
     this.activePiece = new ActivePiece(this.board, () => this.hardDrop());
     this.pieceQueue.push(...Array.from(Array(playerRule.previews)).map(() => this.pieceGen.next()));
+    this.garbageGen = new GarbageGen(this.r, this.board, playerRule);
 
     this.spawnPiece();
   }
@@ -102,6 +107,7 @@ export abstract class Player {
 
   protected runFrame() {
     this.activePiece.runFrame();
+    this.garbageGen.runFrame(this.attackQueue);
     this.frame++;
   }
 
@@ -112,9 +118,9 @@ export abstract class Player {
       const inputEvent = event as InputEvent;
       
       this.actionMap.get(inputEvent.key)!();
-    } else if (event.type == GameEventType.GARBAGE_ACKNOWLEDGMENT) {
-      const gbEvent = event as GarbageAcknowledgementEvent;
-      console.log('Player receives garbage', gbEvent);
+    } else if (event.type == GameEventType.ATTACK_ACK) {
+      const gbEvent = event as AttackAckEvent;
+      this.attackQueue.push(...gbEvent.attackDistribution.attacks.map(attack => ({ attack: attack, powerLeft: attack.power })));
     } else if (event.type == GameEventType.SYSTEM) {
       const inputEvent = event as SystemEvent;
       
@@ -166,7 +172,7 @@ export abstract class Player {
       clearedLines,
       clearedGarbageLines,
       
-      attackPower: [Math.max(0, clearedLines.length - 1)].filter(atk => atk > 0),
+      attacks: [Math.max(0, clearedLines.length - 1)].filter(atk => atk > 0).map(power => ({ type: AttackType.HOLE_1, power: power })),
     });
 
     // spawn next piece

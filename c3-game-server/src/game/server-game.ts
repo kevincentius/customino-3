@@ -2,7 +2,7 @@ import { Game } from "@shared/game/engine/game/game";
 import { Player } from "@shared/game/engine/player/player";
 import { GameState } from "@shared/game/engine/serialization/game-state";
 import { RandomGen } from "@shared/game/engine/util/random-gen";
-import { GarbageDistribution } from "@shared/game/network/model/event/server-event";
+import { Attack, AttackDistribution } from "@shared/game/network/model/event/server-event";
 import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
 import { ClientInfo } from "@shared/model/session/client-info";
 import { ServerPlayer } from "game/server-player";
@@ -33,19 +33,22 @@ export class ServerGame extends Game {
     };
   }
 
-  applyAttack(player: ServerPlayer, attackPower: number[]): GarbageDistribution[] {
-    const ret: GarbageDistribution[] = [];
+  distributeAttacks(player: ServerPlayer, attacks: Attack[]): AttackDistribution[] {
+    const map = new Map<number, Attack[]>();
     const attackerIndex = this.players.indexOf(player);
-    for (let attack of attackPower) {
+    for (let attack of attacks) {
       const receiverIndex = this.chooseAttackTarget(attackerIndex);
       if (receiverIndex != null) {
-        ret.push({
-          playerIndex: receiverIndex,
-          attackPower: [attack],
-        });
+        let arr = map.get(receiverIndex);
+        if (!arr) {
+          arr = [];
+          map.set(receiverIndex, arr);
+        }
+        arr.push(attack);
       }
     }
-    return ret;
+
+    return Array.from(map.entries()).map(([key, value]) => ({ playerIndex: key, attacks: value }));
   }
 
   private chooseAttackTarget(attackerIndex: number): number | null {

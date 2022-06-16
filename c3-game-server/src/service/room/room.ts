@@ -110,27 +110,19 @@ export class Room {
 
       for (const player of this.game.players) {
         player.serverEventSubject.subscribe(map => {
-          if (Array.from(map.values()).find(v => v.serverEvent)) {
-            console.log('sending', map);
-          }
-          
           this.slots.forEach(slot => {
             const serverPlayerEvent = map.get(slot.playerIndex == null ? -1 : slot.playerIndex);
             if (serverPlayerEvent) {
               const serverEvent: ServerEvent = {
                 roomId: this.id,
-                playerEvents: [ serverPlayerEvent ]
+                playerEvents: [ serverPlayerEvent ],
+              };
+              if (serverEvent.playerEvents.find(p => p.serverEvent)) {
+                console.log(serverEvent);
               }
               slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
             }
           })
-        });
-      }
-
-      for (const player of this.game.players) {
-        player.serverEventSubject.subscribe(e => {
-          // send garbage to receiver
-          
         });
       }
       

@@ -1,9 +1,9 @@
 import { Player } from "@shared/game/engine/player/player";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent, GameEventType } from "@shared/game/network/model/event/game-event";
-import { GarbageAcknowledgement } from "@shared/game/network/model/event/garbage-acknowledgement";
+import { AttackAckEvent } from "@shared/game/network/model/event/attack-ack";
 import { InputEvent } from "@shared/game/network/model/event/input-event";
-import { GarbageDistribution, ServerEvent, ServerPlayerEvent } from "@shared/game/network/model/event/server-event";
+import { AttackDistribution } from "@shared/game/network/model/event/server-event";
 import { InputKey } from "@shared/game/network/model/input-key";
 import { Subject } from "rxjs";
 
@@ -68,19 +68,17 @@ export class LocalPlayer extends Player {
     });
   }
 
-  handleGarbage(garbageDistribution: GarbageDistribution) {
-    console.log('local player accepting garbgae', garbageDistribution);
-
-    const gameEvent: GarbageAcknowledgement = {
+  recvAttack(attackDistribution: AttackDistribution) {
+    const gameEvent: AttackAckEvent = {
       frame: this.frame,
       timestamp: -1,
-      type: GameEventType.GARBAGE_ACKNOWLEDGMENT,
-      garbageDistribution: garbageDistribution,
+      type: GameEventType.ATTACK_ACK,
+      attackDistribution: attackDistribution,
     };
 
     this.handleEvent({
       frame: null!,
       gameEvents: [gameEvent],
-    })
+    });
   }
 }
