@@ -6,12 +6,16 @@ import { MinoGridDisplay } from "app/pixi/display/mino-grid-display";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { BoardLayout as BoardLayout } from "app/pixi/layout/board-layout";
 import { Container, Sprite, Texture } from "pixi.js";
+import { playerRule } from "@shared/game/engine/model/rule/player-rule";
+import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 
 
 export class BoardDisplay extends Container implements LayoutChild {
 
   layoutWidth = 500;
   layoutHeight = 800;
+
+  lastGarbageRateSpawn: number | null = null;
 
   // children
   private layout: BoardLayout;
@@ -57,10 +61,19 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.board.placeTileSubject.subscribe(e => this.minoGridDisplay.placeTile(e));
     this.board.lineClearSubject.subscribe(e => this.minoGridDisplay.clearLines(e));
     this.board.addRowsSubject.subscribe(e => this.minoGridDisplay.onRowsAdded(e));
+    this.player.garbageGen.garbageRateSpawnSubject.subscribe(e => this.lastGarbageRateSpawn = Date.now());
     this.player.gameOverSubject.subscribe(r => this.overlayDisplay.show(this.player.alive ? 'Winner' : 'Game Over', '2nd Place'))
   }
 
   getMinoSize() {
     return this.layout.minoSize;
+  }
+
+  tick() {
+    if (this.lastGarbageRateSpawn != null) {
+      const p = 1 - Math.min(1, (Date.now() - this.lastGarbageRateSpawn) / 1000 / (playerRule.garbageSpawnRate));
+      this.minoGridDisplay.position.y = this.getMinoSize() * p;
+      
+    }
   }
 }

@@ -4,8 +4,10 @@ export interface PlayerState {
   frame: number;
   alive: boolean;
   pieceQueue: number[][];
+  attackQueue: string;
   randomState: string;
   board: BoardState;
   pieceGen: any;
   activePiece: any;
+  garbageGen: any;
 }

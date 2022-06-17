@@ -49,5 +49,6 @@ export class PlayerDisplay extends Container {
 
   tick(dt: number) {
     this.updateDebugText();
+    this.board.tick();
   }
 }

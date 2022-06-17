@@ -6,9 +6,12 @@ import { TileType } from "@shared/game/engine/model/tile-type";
 import { Board } from "@shared/game/engine/player/board";
 import { RandomGen } from "@shared/game/engine/util/random-gen";
 import { Attack, AttackType } from "@shared/game/network/model/event/server-event";
+import { Subject } from "rxjs";
 
 export class GarbageGen {
-  frameCount = 0;
+  private spawnRateFrameCounter = 0;
+
+  garbageRateSpawnSubject = new Subject<void>();
 
   cleanRow: (Tile | null)[] | null = null;
 
@@ -16,45 +19,67 @@ export class GarbageGen {
     private r: RandomGen,
     private board: Board,
     private playerRule: PlayerRule,
+    private attackQueue: QueuedAttack[],
   ) {
     
+  }
+
+  serialize() {
+    return {
+      frameCount: this.spawnRateFrameCounter,
+      cleanRow: JSON.stringify(this.cleanRow),
+    }
+  }
+
+  load(state: any) {
+    this.spawnRateFrameCounter = state.frameCount;
+    this.cleanRow = JSON.parse(state.cleanRow);
   }
 
   createTile(type: TileType): Tile | null {
     return type == null ? null : { color: -1, type: type };
   }
 
-  runFrame(attackQueue: QueuedAttack[]) {
-    if (attackQueue.length > 0) {
-      this.frameCount++;
+  runFrame() {
+    if (this.attackQueue.length > 0) {
+      this.spawnRateFrameCounter--;
 
       let spawnAmount = 0;
-      while (this.frameCount > this.playerRule.garbageSpawnDelay * gameLoopRule.fps) {
-        this.frameCount -= gameLoopRule.fps / this.playerRule.garbageSpawnRate;
+      while (this.spawnRateFrameCounter <= 0) {
+        this.spawnRateFrameCounter += gameLoopRule.fps / this.playerRule.garbageSpawnRate;
         spawnAmount++;
       }
 
-      let spawnLeft = spawnAmount;
-      while (spawnLeft > 0 && attackQueue.length > 0) {
-        const rows: (Tile | null)[][] = [];
-        
-        const attack = attackQueue[0];
-        if (spawnLeft >= attack.powerLeft) {
-          rows.push(...this.copyRows(this.cleanRow ?? this.generateRow(attack.attack), attack.powerLeft));
-          this.cleanRow = null;
-          spawnLeft -= attack.powerLeft;
-          attackQueue.shift();
-        } else {
-          this.cleanRow = this.cleanRow ?? this.generateRow(attack.attack);
-          rows.push(...this.copyRows(this.cleanRow, spawnLeft));
-          attack.powerLeft -= spawnLeft;
-          spawnLeft = 0;
-        }
-        
-        this.board.addBottomRows(rows);
+      console.log(spawnAmount);
+      
+      if (spawnAmount > 0) {
+        this.spawnGarbage(spawnAmount, this.attackQueue);
+        this.garbageRateSpawnSubject.next();
       }
     } else {
-      this.frameCount = 0;
+      this.spawnRateFrameCounter = this.playerRule.garbageSpawnDelay * gameLoopRule.fps;
+    }
+  }
+
+  private spawnGarbage(spawnAmount: number, attackQueue: QueuedAttack[]) {
+    let spawnLeft = spawnAmount;
+    while (spawnLeft > 0 && attackQueue.length > 0) {
+      const rows: (Tile | null)[][] = [];
+
+      const attack = attackQueue[0];
+      if (spawnLeft >= attack.powerLeft) {
+        rows.push(...this.copyRows(this.cleanRow ?? this.generateRow(attack.attack), attack.powerLeft));
+        this.cleanRow = null;
+        spawnLeft -= attack.powerLeft;
+        attackQueue.shift();
+      } else {
+        this.cleanRow = this.cleanRow ?? this.generateRow(attack.attack);
+        rows.push(...this.copyRows(this.cleanRow, spawnLeft));
+        attack.powerLeft -= spawnLeft;
+        spawnLeft = 0;
+      }
+
+      this.board.addBottomRows(rows);
     }
   }
 

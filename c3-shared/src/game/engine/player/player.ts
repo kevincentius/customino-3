@@ -37,7 +37,7 @@ export abstract class Player {
   public board: Board;
   private pieceGen: PieceGen;
   public activePiece: ActivePiece;
-  private garbageGen: GarbageGen;
+  public garbageGen: GarbageGen;
 
   // configs
   private actionMap: Map<InputKey, () => any> = new Map([
@@ -65,7 +65,7 @@ export abstract class Player {
     this.pieceGen = new MemoryPieceGen(this.r, this.pieceList, 1);
     this.activePiece = new ActivePiece(this.board, () => this.hardDrop());
     this.pieceQueue.push(...Array.from(Array(playerRule.previews)).map(() => this.pieceGen.next()));
-    this.garbageGen = new GarbageGen(this.r, this.board, playerRule);
+    this.garbageGen = new GarbageGen(this.r, this.board, playerRule, this.attackQueue);
 
     this.spawnPiece();
   }
@@ -88,26 +88,35 @@ export abstract class Player {
       frame: this.frame,
       alive: this.alive,
       pieceQueue: this.pieceQueue.map(p => p.serialize()),
+      attackQueue: JSON.stringify(this.attackQueue),
+
       randomState: JSON.stringify(this.r.serialize()),
       board: this.board.serialize(),
       pieceGen: this.pieceGen.serialize(),
       activePiece: this.activePiece.serialize(),
+      garbageGen: this.garbageGen.serialize(),
     };
   }
 
   load(playerState: PlayerState) {
     this.frame = playerState.frame;
     this.alive = playerState.alive;
-    this.pieceQueue = playerState.pieceQueue.map(p => Piece.from(p));
+    this.pieceQueue.splice(0, this.pieceQueue.length, ...playerState.pieceQueue.map(p => Piece.from(p)));
+    this.attackQueue.splice(0, this.attackQueue.length,...JSON.parse(playerState.attackQueue));
+
     this.r = new RandomGen(undefined, JSON.parse(playerState.randomState));
     this.board.load(playerState.board);
     this.pieceGen = loadPieceGen(this.r, this.pieceList, playerState.pieceGen);
     this.activePiece.load(playerState.activePiece);
+    this.garbageGen.load(playerState.garbageGen);
+
+    console.log(JSON.stringify(this.attackQueue));
+    console.log(JSON.stringify(this.garbageGen.cleanRow));
   }
 
   protected runFrame() {
     this.activePiece.runFrame();
-    this.garbageGen.runFrame(this.attackQueue);
+    this.garbageGen.runFrame();
     this.frame++;
   }
 
