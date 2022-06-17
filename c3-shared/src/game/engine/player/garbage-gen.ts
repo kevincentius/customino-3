@@ -4,6 +4,7 @@ import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { cloneTile, Tile } from "@shared/game/engine/model/tile";
 import { TileType } from "@shared/game/engine/model/tile-type";
 import { Board } from "@shared/game/engine/player/board";
+import { Player } from "@shared/game/engine/player/player";
 import { RandomGen } from "@shared/game/engine/util/random-gen";
 import { Attack, AttackType } from "@shared/game/network/model/event/server-event";
 import { Subject } from "rxjs";
@@ -16,10 +17,8 @@ export class GarbageGen {
   cleanRow: (Tile | null)[] | null = null;
 
   constructor(
-    private r: RandomGen,
-    private board: Board,
+    private player: Player,
     private playerRule: PlayerRule,
-    private attackQueue: QueuedAttack[],
   ) {
     
   }
@@ -41,7 +40,7 @@ export class GarbageGen {
   }
 
   runFrame() {
-    if (this.attackQueue.length > 0) {
+    if (this.player.attackQueue.length > 0) {
       this.spawnRateFrameCounter--;
 
       let spawnAmount = 0;
@@ -51,7 +50,7 @@ export class GarbageGen {
       }
 
       if (spawnAmount > 0) {
-        this.spawnGarbage(spawnAmount, this.attackQueue);
+        this.spawnGarbage(spawnAmount, this.player.attackQueue);
         this.garbageRateSpawnSubject.next();
       }
     } else {
@@ -77,13 +76,21 @@ export class GarbageGen {
         spawnLeft = 0;
       }
 
-      this.board.addBottomRows(rows);
+      this.player.board.addBottomRows(rows);
+
+      for (const row of rows) {
+        this.player.activePiece.attemptMove(-1, 0, 0);
+      }
+
+      if (this.player.activePiece.checkCollision()) {
+        this.player.die();
+      }
     }
   }
 
   generateRow(attack: Attack): (Tile | null)[] {
     if (attack.type == AttackType.HOLE_1) {
-      const holePos = this.r.int(this.playerRule.width);
+      const holePos = this.player.r.int(this.playerRule.width);
       let row: (Tile | null)[] = [];
       for (let j = 0; j < this.playerRule.width; j++) {
         if (j != holePos) {

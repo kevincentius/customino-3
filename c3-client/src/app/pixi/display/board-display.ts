@@ -5,7 +5,7 @@ import { BoardOverlayDisplay } from "app/pixi/display/board-overlay-display";
 import { MinoGridDisplay } from "app/pixi/display/mino-grid-display";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { BoardLayout as BoardLayout } from "app/pixi/layout/board-layout";
-import { Container, Sprite, Texture } from "pixi.js";
+import { Container, Graphics, Sprite, Texture } from "pixi.js";
 import { playerRule } from "@shared/game/engine/model/rule/player-rule";
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 
@@ -49,6 +49,13 @@ export class BoardDisplay extends Container implements LayoutChild {
     // mino grid
     this.minoGridDisplay = new MinoGridDisplay(this.board.tiles, this.layout.minoSize, this.board.tiles.length - this.board.visibleHeight);
     this.offsetContainer.addChild(this.minoGridDisplay);
+
+    const maskGraphics = new Graphics();
+    maskGraphics.beginFill();
+    maskGraphics.drawRect(0, 0, this.layout.width, this.layout.height);
+    maskGraphics.endFill();
+    this.addChild(maskGraphics);
+    this.minoGridDisplay.mask = maskGraphics;
 
     // active piece
     this.activePieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.player.activePiece, this.layout.minoSize);

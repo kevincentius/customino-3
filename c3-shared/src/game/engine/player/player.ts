@@ -33,9 +33,9 @@ export abstract class Player {
   attackQueue: QueuedAttack[] = [];
   
   // composition
-  private r: RandomGen;
+  public r: RandomGen;
   public board: Board;
-  private pieceGen: PieceGen;
+  public pieceGen: PieceGen;
   public activePiece: ActivePiece;
   public garbageGen: GarbageGen;
 
@@ -65,7 +65,7 @@ export abstract class Player {
     this.pieceGen = new MemoryPieceGen(this.r, this.pieceList, 1);
     this.activePiece = new ActivePiece(this.board, () => this.hardDrop());
     this.pieceQueue.push(...Array.from(Array(playerRule.previews)).map(() => this.pieceGen.next()));
-    this.garbageGen = new GarbageGen(this.r, this.board, playerRule, this.attackQueue);
+    this.garbageGen = new GarbageGen(this, playerRule);
 
     this.spawnPiece();
   }

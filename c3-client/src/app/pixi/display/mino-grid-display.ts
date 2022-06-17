@@ -4,7 +4,7 @@ import { MatUtil } from "@shared/game/engine/util/mat-util";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { MinoDisplay } from "app/pixi/display/mino-display";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
-import { Container } from "pixi.js";
+import { Container, Graphics } from "pixi.js";
 
 export class MinoGridDisplay extends Container implements LayoutChild {
   // helpers
