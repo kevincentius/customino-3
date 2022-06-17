@@ -67,8 +67,8 @@ export class ActivePiece {
 
   spawn(piece: Piece) {
     this.piece = piece;
-    this.x = 3;
-    this.y = this.board.invisibleHeight;
+    this.x = Math.floor((this.board.tiles[0].length - piece.tiles[0].length) / 2);
+    this.y = this.board.invisibleHeight - piece.tiles.length + MatUtil.countEmptyRowsBottom(piece.tiles);
     this.gravityFrameCount = 0;
     this.lockDelayFrameCount = 0;
 
