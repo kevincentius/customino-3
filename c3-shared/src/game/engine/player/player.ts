@@ -109,9 +109,6 @@ export abstract class Player {
     this.pieceGen = loadPieceGen(this.r, this.pieceList, playerState.pieceGen);
     this.activePiece.load(playerState.activePiece);
     this.garbageGen.load(playerState.garbageGen);
-
-    console.log(JSON.stringify(this.attackQueue));
-    console.log(JSON.stringify(this.garbageGen.cleanRow));
   }
 
   protected runFrame() {

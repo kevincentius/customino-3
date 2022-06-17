@@ -96,7 +96,6 @@ export class ClientGame extends Game {
       }
 
       if (playerEvent.serverEvent?.attackDistributions) {
-        console.log('attack distribution received');
         for (const attackDistribution of playerEvent.serverEvent.attackDistributions) {
           if (this.players[attackDistribution.playerIndex] instanceof LocalPlayer) {
             (this.players[attackDistribution.playerIndex] as LocalPlayer).recvAttack(attackDistribution);

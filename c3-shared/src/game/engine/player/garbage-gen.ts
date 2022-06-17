@@ -50,8 +50,6 @@ export class GarbageGen {
         spawnAmount++;
       }
 
-      console.log(spawnAmount);
-      
       if (spawnAmount > 0) {
         this.spawnGarbage(spawnAmount, this.attackQueue);
         this.garbageRateSpawnSubject.next();
