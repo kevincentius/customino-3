@@ -112,7 +112,7 @@ export class Keyboard {
   }
 
   private tryMove(key: InputKey) {
-    if (this.player.isRunning() && this.player.canMove(key)) {
+    if (this.player.isRunning()) {
       (this.player as LocalPlayer).handleInput(key);
       return true;
     } else {
