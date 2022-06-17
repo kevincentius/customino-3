@@ -61,6 +61,8 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.activePieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.player.activePiece, this.layout.minoSize);
     this.offsetContainer.addChild(this.activePieceDisplay);
 
+    
+
     // overlay
     this.overlayDisplay = new BoardOverlayDisplay(this.layoutWidth, this.layoutHeight);
     this.addChild(this.overlayDisplay);

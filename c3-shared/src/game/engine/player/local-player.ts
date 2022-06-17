@@ -50,8 +50,12 @@ export class LocalPlayer extends Player {
       }
     });
 
-    clientEvent.gameEvents.forEach(event => super.runEvent(event));
-    this.eventBuffer.push(...clientEvent.gameEvents);
+    clientEvent.gameEvents.forEach(event => {
+      const success = super.runEvent(event);
+      if (success) {
+        this.eventBuffer.push(event);
+      }
+    });
   }
 
   handleInput(key: InputKey) {

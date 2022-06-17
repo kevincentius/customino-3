@@ -40,7 +40,7 @@ export abstract class Player {
   public garbageGen: GarbageGen;
 
   // configs
-  private actionMap: Map<InputKey, () => any> = new Map([
+  private actionMap: Map<InputKey, () => boolean> = new Map([
     [InputKey.LEFT, () => this.attemptMove(0, -1, 0)],
     [InputKey.RIGHT, () => this.attemptMove(0, 1, 0)],
     [InputKey.SOFT_DROP, () => this.attemptMove(1, 0, 0)],
@@ -117,22 +117,28 @@ export abstract class Player {
     this.frame++;
   }
 
-  protected runEvent(event: GameEvent) {
+  protected runEvent(event: GameEvent): boolean {
     this.gameEventSubject.next(event);
 
     if (event.type == GameEventType.INPUT) {
       const inputEvent = event as InputEvent;
       
-      this.actionMap.get(inputEvent.key)!();
+      return this.actionMap.get(inputEvent.key)!();
     } else if (event.type == GameEventType.ATTACK_ACK) {
       const gbEvent = event as AttackAckEvent;
       this.attackQueue.push(...gbEvent.attackDistribution.attacks.map(attack => ({ attack: attack, powerLeft: attack.power })));
+      
+      return true;
     } else if (event.type == GameEventType.SYSTEM) {
       const inputEvent = event as SystemEvent;
       
       if (inputEvent.gameOver) {
         this.die();
       }
+      
+      return true;
+    } else {
+      throw new Error('Unknown event type: ' + JSON.stringify(event));
     }
   }
 
