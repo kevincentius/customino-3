@@ -46,16 +46,19 @@ export class MainComponent {
     private lobbyService: LobbyService,
     private route: ActivatedRoute,
   ) {
+    this.openScreen(MainScreen.PRELOADER);
+
     this.route.params.subscribe(params => {
-      this.screen = params['component'] ?? MainScreen.PRELOADER;
+      console.log(params);
+      // this.screen = params['component'] ?? MainScreen.PRELOADER;
+      
+      this.openScreen(params['component'] ?? MainScreen.MENU);
+      // this.openScreen(MainScreen.CONTROLS);
     });
 
     this.lobbyService.clientInfoSubject.subscribe(sessionInfo => this.mainService.sessionInfo = sessionInfo);
 
     this.mainService.init(this);
-    
-    this.openScreen(MainScreen.MENU);
-    // this.openScreen(MainScreen.CONTROLS);
   }
 
   ngAfterViewInit() {
