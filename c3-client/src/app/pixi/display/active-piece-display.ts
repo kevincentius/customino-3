@@ -4,13 +4,19 @@ import { Container } from "pixi.js";
 
 export class ActivePieceDisplay extends Container {
   minoGridDisplay?: MinoGridDisplay;
+  ghostDistance = 0;
 
   constructor(
     private boardMinoGridDisplay: MinoGridDisplay,
     private activePiece: ActivePiece,
     private minoSize: number,
+    private ghost=false,
   ) {
     super();
+
+    if (this.ghost) {
+      this.alpha = 0.3;
+    }
 
     this.activePiece.spawnSubject.subscribe(this.onSpawn.bind(this));
     this.activePiece.moveSubject.subscribe(this.onMove.bind(this));
@@ -41,8 +47,12 @@ export class ActivePieceDisplay extends Container {
   }
 
   private updatePosition() {
+    if (this.ghost) {
+      this.ghostDistance = this.activePiece.calcGhostDistance();
+    }
+
     if (this.minoGridDisplay) {
-      const pos = this.boardMinoGridDisplay.calcMinoPos(this.activePiece.y, this.activePiece.x);
+      const pos = this.boardMinoGridDisplay.calcMinoPos(this.activePiece.y + this.ghostDistance, this.activePiece.x);
       this.minoGridDisplay.position.set(pos.x, pos.y);
     }
   }

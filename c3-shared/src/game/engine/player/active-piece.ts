@@ -101,7 +101,7 @@ export class ActivePiece {
     }
   }
 
-  checkCollision() {
+  checkCollision(di=0, dj=0) {
     if (this.piece == null) {
       return false;
     }
@@ -110,8 +110,8 @@ export class ActivePiece {
     for (let i = 0; i < tiles.length; i++) {
       for (let j = 0; j < tiles[i].length; j++) {
         if (tiles[i][j] != null) {
-          const ty = this.y + i;
-          const tx = this.x + j;
+          const ty = this.y + i + di;
+          const tx = this.x + j + dj;
           if (!MatUtil.isInside(ty, tx, this.board.tiles) || this.board.tiles[ty][tx] != null) {
             return true;
           }
@@ -141,5 +141,14 @@ export class ActivePiece {
         this.onLockDelayExhausted();
       }
     }
+  }
+
+  calcGhostDistance() {
+    for (let i = 1; i < this.board.tiles.length; i++) {
+      if (this.checkCollision(i, 0)) {
+        return i - 1;
+      }
+    }
+    throw new Error();
   }
 }

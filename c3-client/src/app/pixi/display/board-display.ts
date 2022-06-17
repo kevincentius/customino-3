@@ -7,7 +7,6 @@ import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { BoardLayout as BoardLayout } from "app/pixi/layout/board-layout";
 import { Container, Graphics, Sprite, Texture } from "pixi.js";
 import { playerRule } from "@shared/game/engine/model/rule/player-rule";
-import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 
 
 export class BoardDisplay extends Container implements LayoutChild {
@@ -20,9 +19,12 @@ export class BoardDisplay extends Container implements LayoutChild {
   // children
   private layout: BoardLayout;
   private offsetContainer: Container;
+  private maskContainer: Container;
+  private spawnRateOffsetContainer: Container;
   private background: Sprite;
   private minoGridDisplay: MinoGridDisplay;
   private activePieceDisplay: ActivePieceDisplay;
+  private ghostPieceDisplay: ActivePieceDisplay;
   overlayDisplay: BoardOverlayDisplay;
 
   // reference
@@ -35,33 +37,44 @@ export class BoardDisplay extends Container implements LayoutChild {
 
     this.board = player.board;
     this.layout = new BoardLayout(this.layoutWidth, this.layoutHeight, this.board.visibleHeight, this.board.tiles[0].length);
-    
+
+    // offset container: auto size and auto center board in case the board dimensions do no match layout dimensions
     this.offsetContainer = new Container();
     this.offsetContainer.position.set(this.layout.offsetX, this.layout.offsetY);
     this.addChild(this.offsetContainer);
-
+    
+    // board background
     this.background = Sprite.from(Texture.WHITE);
     this.background.tint = 0x000000;
     this.background.width = this.layout.innerWidth;
     this.background.height = this.layout.innerHeight;
     this.offsetContainer.addChild(this.background);
-    
-    // mino grid
-    this.minoGridDisplay = new MinoGridDisplay(this.board.tiles, this.layout.minoSize, this.board.tiles.length - this.board.visibleHeight);
-    this.offsetContainer.addChild(this.minoGridDisplay);
 
+    // mask container: stencil effect
+    this.maskContainer = new Container();
     const maskGraphics = new Graphics();
     maskGraphics.beginFill();
     maskGraphics.drawRect(0, 0, this.layout.width, this.layout.height);
     maskGraphics.endFill();
     this.addChild(maskGraphics);
-    this.minoGridDisplay.mask = maskGraphics;
+    this.maskContainer.mask = maskGraphics;
+    this.offsetContainer.addChild(this.maskContainer);
 
+    // spawn rate offset: shifts the board overtime to animate garbage entering the field.
+    this.spawnRateOffsetContainer = new Container();
+    this.maskContainer.addChild(this.spawnRateOffsetContainer);
+
+    // mino grid
+    this.minoGridDisplay = new MinoGridDisplay(this.board.tiles, this.layout.minoSize, this.board.tiles.length - this.board.visibleHeight);
+    this.spawnRateOffsetContainer.addChild(this.minoGridDisplay);
+
+    // ghost piece
+    this.ghostPieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.player.activePiece, this.layout.minoSize, true);
+    this.spawnRateOffsetContainer.addChild(this.ghostPieceDisplay);
+    
     // active piece
     this.activePieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.player.activePiece, this.layout.minoSize);
-    this.offsetContainer.addChild(this.activePieceDisplay);
-
-    
+    this.spawnRateOffsetContainer.addChild(this.activePieceDisplay);
 
     // overlay
     this.overlayDisplay = new BoardOverlayDisplay(this.layoutWidth, this.layoutHeight);
@@ -81,8 +94,7 @@ export class BoardDisplay extends Container implements LayoutChild {
   tick() {
     if (this.lastGarbageRateSpawn != null) {
       const p = 1 - Math.min(1, (Date.now() - this.lastGarbageRateSpawn) / 1000 / (playerRule.garbageSpawnRate));
-      this.minoGridDisplay.position.y = this.getMinoSize() * p;
-      
+      this.spawnRateOffsetContainer.position.y = this.getMinoSize() * p;
     }
   }
 }
