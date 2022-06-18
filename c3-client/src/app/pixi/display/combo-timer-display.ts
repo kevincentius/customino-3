@@ -1,5 +1,6 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { ComboTimer } from "@shared/game/engine/player/combo-timer";
+import { Player } from "@shared/game/engine/player/player";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { textUtil } from "app/pixi/util/text-util";
 import { Container, Graphics } from "pixi.js";
@@ -18,6 +19,7 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
   comboStartMs?: number;
 
   constructor(
+    private player: Player,
     private comboTimer: ComboTimer,
     diameter: number,
   ) {
@@ -33,6 +35,8 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     this.text.anchor.set(0.5, 0.5);
 
     this.comboTimer.comboStartSubject.subscribe(() => this.comboStartMs = Date.now());
+
+    this.comboStartMs = Date.now() - gameLoopRule.mspf * (this.player.frame - this.comboTimer.comboStartFrame);
   }
 
   tick() {

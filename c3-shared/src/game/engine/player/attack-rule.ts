@@ -14,6 +14,18 @@ export class AttackRule {
     }
   }
 
+  serialize() {
+    return {
+      comboTimer: this.comboTimer ? this.comboTimer.serialize() : null,
+    };
+  }
+
+  load(state: any) {
+    if (state.comboTimer) {
+      this.comboTimer.load(state.comboTimer);
+    }
+  }
+
   calcAttacks(l: LockIntermediateResult): Attack[] {
     let ret: Attack[] = [];
 

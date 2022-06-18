@@ -14,6 +14,20 @@ export class ComboTimer {
     private player: Player,
   ) { }
 
+  serialize() {
+    return {
+      combo: this.combo,
+      comboStartFrame: this.comboStartFrame,
+      comboAccumulatedFrames: this.comboAccumulatedFrames,
+    };
+  }
+
+  load(state: any) {
+    this.combo = state.combo;
+    this.comboStartFrame = state.comboStartFrame;
+    this.comboAccumulatedFrames = state.comboAccumulatedFrames;
+  }
+
   /**
    *  Returns number of lines that should be sent due to combo (not including other bonuses).
    *  This method must be called on every lock down, even if no lines were cleared,

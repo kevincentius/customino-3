@@ -15,7 +15,6 @@ import { SystemEvent } from "@shared/game/network/model/event/system-event";
 import { InputKey } from "@shared/game/network/model/input-key";
 import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
 import { Subject } from 'rxjs';
-import { AttackType } from "@shared/game/network/model/event/server-event";
 import { AttackAckEvent } from "@shared/game/network/model/event/attack-ack";
 import { QueuedAttack } from "@shared/game/engine/model/queued-attack";
 import { createRotationSystem, RotationSystem } from "@shared/game/engine/player/rotation/rotation-system";
@@ -34,16 +33,17 @@ export abstract class Player {
   alive = true;
   pieceQueue: Piece[] = [];
   attackQueue: QueuedAttack[] = [];
+  attackRule: AttackRule;
   
-  // composition
-  public r: RandomGen;
-  public board: Board;
-  public pieceGen: PieceGen;
-  public activePiece: ActivePiece;
-  public rotationSystem: RotationSystem;
-  public garbageGen: GarbageGen;
-  public attackRule: AttackRule;
-
+  // stateful composition
+  r: RandomGen;
+  board: Board;
+  pieceGen: PieceGen;
+  activePiece: ActivePiece;
+  garbageGen: GarbageGen;
+  
+  // stateless
+  rotationSystem: RotationSystem;
 
   // configs
   private actionMap: Map<InputKey, () => boolean> = new Map([
@@ -99,6 +99,7 @@ export abstract class Player {
       alive: this.alive,
       pieceQueue: this.pieceQueue.map(p => p.serialize()),
       attackQueue: JSON.stringify(this.attackQueue),
+      attackRule: this.attackRule.serialize(),
 
       randomState: JSON.stringify(this.r.serialize()),
       board: this.board.serialize(),
@@ -113,6 +114,7 @@ export abstract class Player {
     this.alive = playerState.alive;
     this.pieceQueue.splice(0, this.pieceQueue.length, ...playerState.pieceQueue.map(p => Piece.from(p)));
     this.attackQueue.splice(0, this.attackQueue.length,...JSON.parse(playerState.attackQueue));
+    this.attackRule.load(playerState.attackRule);
 
     this.r = new RandomGen(undefined, JSON.parse(playerState.randomState));
     this.board.load(playerState.board);

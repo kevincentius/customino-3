@@ -39,7 +39,7 @@ export class PlayerDisplay extends Container {
 
     this.rightColumnLayout.addNode(this.pieceQueue);
     if (this.player.playerRule.useComboTimer) {
-      this.comboTimer = new ComboTimerDisplay(this.player.attackRule.comboTimer, 100);
+      this.comboTimer = new ComboTimerDisplay(this.player, this.player.attackRule.comboTimer, 100);
       this.rightColumnLayout.addNode(this.comboTimer);
     }
     this.rightColumnLayout.updateLayout();

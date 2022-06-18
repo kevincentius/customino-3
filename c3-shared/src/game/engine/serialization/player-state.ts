@@ -5,6 +5,7 @@ export interface PlayerState {
   alive: boolean;
   pieceQueue: number[][];
   attackQueue: string;
+  attackRule: any;
   randomState: string;
   board: BoardState;
   pieceGen: any;
