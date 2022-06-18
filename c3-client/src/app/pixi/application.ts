@@ -34,7 +34,7 @@ export class PixiApplication {
       let dt = this.app.ticker.deltaMS;
 
       if (this.gameDisplay) {
-        this.gameDisplay.tick(dt);
+        this.gameDisplay.tick();
         this.keyboard.tick(dt);
       }
     });

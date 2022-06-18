@@ -3,9 +3,7 @@ import { QueuedAttack } from "@shared/game/engine/model/queued-attack";
 import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { cloneTile, Tile } from "@shared/game/engine/model/tile";
 import { TileType } from "@shared/game/engine/model/tile-type";
-import { Board } from "@shared/game/engine/player/board";
 import { Player } from "@shared/game/engine/player/player";
-import { RandomGen } from "@shared/game/engine/util/random-gen";
 import { Attack, AttackType } from "@shared/game/network/model/event/server-event";
 import { Subject } from "rxjs";
 
