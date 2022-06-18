@@ -1,11 +1,10 @@
-import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { ComboTimer } from "@shared/game/engine/player/combo-timer";
 import { LockIntermediateResult } from "@shared/game/engine/player/lock-result";
 import { Player } from "@shared/game/engine/player/player";
 import { Attack, AttackType } from "@shared/game/network/model/event/server-event";
 
 export class AttackRule {
-  private comboTimer!: ComboTimer;
+  public comboTimer!: ComboTimer;
 
   constructor(
     private player: Player,

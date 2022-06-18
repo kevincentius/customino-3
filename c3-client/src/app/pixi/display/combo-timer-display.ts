@@ -1,59 +1,73 @@
-import { Container, Graphics, Text, TextStyle } from "pixi.js";
+import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
+import { ComboTimer } from "@shared/game/engine/player/combo-timer";
+import { LayoutChild } from "app/pixi/display/layout/layout-child";
+import { textUtil } from "app/pixi/util/text-util";
+import { Container, Graphics } from "pixi.js";
 
 const colors = [0xff0000, 0xffff00, 0x00ff00, 0x00ffff, 0x0000ff, 0xff00ff];
 
-export class ComboTimerPixi {
-  container = new Container();
+export class ComboTimerDisplay extends Container implements LayoutChild {
   diameter: number;
 
   graphics = new Graphics();
-  text = new Text('', new TextStyle({ align: 'center', fontSize: 144, fill: 0xffffff }));
+  text = textUtil.create48('0');
 
-  constructor(x: number, y: number, diameter: number, private playerEngine: PlayerEngine) {
-    this.container.position.set(x, y);
+  layoutWidth: number;
+  layoutHeight: number;
+
+  comboStartMs?: number;
+
+  constructor(
+    private comboTimer: ComboTimer,
+    diameter: number,
+  ) {
+    super();
+    
     this.diameter = diameter;
+    this.layoutWidth = this.diameter;
+    this.layoutHeight = this.diameter;
 
-    this.container.addChild(this.graphics);
-
-    this.container.addChild(this.text);
+    this.addChild(this.graphics);
+    this.addChild(this.text);
+    this.text.position.set(this.diameter / 2, this.diameter / 2);
     this.text.anchor.set(0.5, 0.5);
+
+    this.comboTimer.comboStartSubject.subscribe(() => this.comboStartMs = Date.now());
   }
 
-  getPixi() {
-    return this.container;
-  }
-
-  tick(dt: number, ct: number) {
-    let s = this.playerEngine.getComboTimeLeft(ct);
+  tick() {
+    let s = 0;
+    if (this.comboStartMs != null) {
+      const msSinceComboStart = Date.now() - this.comboStartMs;
+      const comboAccumulatedTime = this.comboTimer.comboAccumulatedFrames / gameLoopRule.fps;
+      s = comboAccumulatedTime - (msSinceComboStart / 1000);
+    }
 
     this.graphics.clear();
 
-    if (s != null) {
-      let sc = pixiUtil.scaleReso(this.container);
+    if (s <= 0) {
+      return;
+    }
 
-      let r = this.diameter * 0.5 * sc;
-      this.text.position.set(r, r);
-      this.text.text = this.playerEngine.sideData.combo.toString();
-      this.text.scale.set(1 * sc / 6);
+    let r = this.diameter * 0.5;
+    this.text.text = this.comboTimer.combo.toString();
 
-      let seconds = Math.floor(s);
-      let subseconds = s - Math.floor(s);
-      // this.playerEngine.sideData.combo;
+    let seconds = Math.floor(s);
+    let subseconds = s - Math.floor(s);
 
-      // render sub second
+    // render sub second
+    this.graphics
+      .beginFill(colors[seconds % colors.length])
+      .arc(r, r, r, Math.PI * (-0.5), Math.PI * (-0.5 + subseconds * 2))
+      .lineTo(r, r)
+      .closePath();
+
+    if (seconds > 0) {
       this.graphics
-        .beginFill(colors[seconds % colors.length])
-        .arc(r, r, r, Math.PI * (-0.5), Math.PI * (-0.5 + subseconds * 2))
+        .beginFill(colors[(seconds - 1) % colors.length])
+        .arc(r, r, r, Math.PI * (-0.5 + subseconds * 2), Math.PI * (1.5))
         .lineTo(r, r)
         .closePath();
-
-      if (seconds > 0) {
-        this.graphics
-          .beginFill(colors[(seconds - 1) % colors.length])
-          .arc(r, r, r, Math.PI * (-0.5 + subseconds * 2), Math.PI * (1.5))
-          .lineTo(r, r)
-          .closePath();
-      }
     }
   }
 }

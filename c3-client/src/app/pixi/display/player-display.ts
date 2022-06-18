@@ -1,6 +1,8 @@
+import { ComboTimer } from "@shared/game/engine/player/combo-timer";
 import { Player } from "@shared/game/engine/player/player";
 import { RemotePlayer } from "@shared/game/engine/player/remote-player";
 import { BoardDisplay } from "app/pixi/display/board-display";
+import { ComboTimerDisplay } from "app/pixi/display/combo-timer-display";
 import { LayoutContainer } from "app/pixi/display/layout/layout-container";
 import { PieceQueueDisplay } from "app/pixi/display/piece-queue-display";
 import { textUtil } from "app/pixi/util/text-util";
@@ -12,6 +14,7 @@ export class PlayerDisplay extends Container {
 
   private board: BoardDisplay;
   private pieceQueue: PieceQueueDisplay;
+  private comboTimer?: ComboTimerDisplay;
 
   private layout = new LayoutContainer(1);
   private rowLayout = new LayoutContainer();
@@ -24,7 +27,6 @@ export class PlayerDisplay extends Container {
 
     this.board = new BoardDisplay(this.player);
     this.pieceQueue = new PieceQueueDisplay(this.player, this.board.getMinoSize());
-    // this.pieceQueue.position.x = 600;
 
     this.player.gameOverSubject.subscribe(this.updateDebugText.bind(this));
 
@@ -36,6 +38,11 @@ export class PlayerDisplay extends Container {
     this.rowLayout.updateLayout();
 
     this.rightColumnLayout.addNode(this.pieceQueue);
+    if (this.player.playerRule.useComboTimer) {
+      this.comboTimer = new ComboTimerDisplay(this.player.attackRule.comboTimer, 100);
+      this.rightColumnLayout.addNode(this.comboTimer);
+    }
+    this.rightColumnLayout.updateLayout();
 
     this.addChild(this.layout);
 
@@ -47,8 +54,9 @@ export class PlayerDisplay extends Container {
     this.debugText.alpha = this.player.alive ? 1 : 0.5;
   }
 
-  tick(dt: number) {
+  tick() {
     this.updateDebugText();
     this.board.tick();
+    this.comboTimer?.tick();
   }
 }

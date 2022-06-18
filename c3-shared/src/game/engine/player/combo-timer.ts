@@ -1,12 +1,14 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
-import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { LockIntermediateResult } from "@shared/game/engine/player/lock-result";
 import { Player } from "@shared/game/engine/player/player";
+import { Subject } from "rxjs";
 
 export class ComboTimer {
   combo = 0;
   comboStartFrame = 0;
   comboAccumulatedFrames = 0;
+
+  comboStartSubject = new Subject<void>();
 
   constructor(
     private player: Player,
@@ -21,14 +23,18 @@ export class ComboTimer {
     // reset combo if time runs out
     if (this.player.frame > this.comboStartFrame + this.comboAccumulatedFrames) {
       this.combo = 0;
-      this.comboStartFrame = this.player.frame;
-      this.comboAccumulatedFrames = 0;
     }
 
     // increment combo
     const isCombo = l.clearedLines.length > 0;
     if (isCombo) {
       this.combo++;
+
+      if (this.combo == 1) {
+        this.comboStartFrame = this.player.frame;
+        this.comboAccumulatedFrames = 0;
+        this.comboStartSubject.next();
+      }
     }
 
     // add time bonus/penalty

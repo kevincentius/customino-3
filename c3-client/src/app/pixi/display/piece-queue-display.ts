@@ -46,5 +46,6 @@ export class PieceQueueDisplay extends Container implements LayoutChild {
 
     this.layoutWidth = this.layout.layoutWidth;
     this.layoutHeight = this.layout.layoutHeight;
+
   }
 }
