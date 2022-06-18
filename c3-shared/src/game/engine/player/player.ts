@@ -3,7 +3,7 @@ import { PlayerRule, playerRule } from "@shared/game/engine/model/rule/player-ru
 import { ActivePiece } from "@shared/game/engine/player/active-piece";
 import { Board } from "@shared/game/engine/player/board";
 import { GarbageGen } from "@shared/game/engine/player/garbage-gen";
-import { LockResult } from "@shared/game/engine/player/lock-result";
+import { LockIntermediateResult, LockResult } from "@shared/game/engine/player/lock-result";
 import { Piece } from "@shared/game/engine/player/piece";
 import { PlayerState } from "@shared/game/engine/serialization/player-state";
 import { loadPieceGen, MemoryPieceGen, PieceGen } from "@shared/game/engine/util/piece-factory/piece-gen";
@@ -19,6 +19,7 @@ import { AttackType } from "@shared/game/network/model/event/server-event";
 import { AttackAckEvent } from "@shared/game/network/model/event/attack-ack";
 import { QueuedAttack } from "@shared/game/engine/model/queued-attack";
 import { createRotationSystem, RotationSystem } from "@shared/game/engine/player/rotation/rotation-system";
+import { AttackRule } from "@shared/game/engine/player/attack-rule";
 
 export abstract class Player {
   // event emitters
@@ -41,6 +42,8 @@ export abstract class Player {
   public activePiece: ActivePiece;
   public rotationSystem: RotationSystem;
   public garbageGen: GarbageGen;
+  public attackRule: AttackRule;
+
 
   // configs
   private actionMap: Map<InputKey, () => boolean> = new Map([
@@ -72,6 +75,7 @@ export abstract class Player {
     this.rotationSystem = createRotationSystem(this.playerRule.rotationSystem);
     this.pieceQueue.push(...Array.from(Array(this.playerRule.previews)).map(() => this.pieceGen.next()));
     this.garbageGen = new GarbageGen(this, this.playerRule);
+    this.attackRule = new AttackRule(this);
 
     this.spawnPiece();
   }
@@ -186,12 +190,16 @@ export abstract class Player {
 
     // calculate and apply move result
     const clearedGarbageLines = clearedLines.filter(line => this.board.isGarbage(line));
-    this.pieceLockSubject.next({
+    const lockResult: LockIntermediateResult = {
       clearedLines,
       clearedGarbageLines,
-      
-      attacks: [Math.max(0, clearedLines.length - 1)].filter(atk => atk > 0).map(power => ({ type: AttackType.HOLE_1, power: power })),
-    });
+    }
+    
+    const attackResult: LockResult = {
+      ...lockResult,
+      attacks: this.attackRule.calcAttacks(lockResult),
+    }
+    this.pieceLockSubject.next(attackResult);
 
     // spawn next piece
     this.spawnPiece();
