@@ -1,5 +1,5 @@
 import { Game } from "@shared/game/engine/game/game";
-import { playerRule } from "@shared/game/engine/model/rule/player-rule";
+import { PlayerRule, playerRule } from "@shared/game/engine/model/rule/player-rule";
 import { ActivePiece } from "@shared/game/engine/player/active-piece";
 import { Board } from "@shared/game/engine/player/board";
 import { GarbageGen } from "@shared/game/engine/player/garbage-gen";
@@ -18,6 +18,7 @@ import { Subject } from 'rxjs';
 import { AttackType } from "@shared/game/network/model/event/server-event";
 import { AttackAckEvent } from "@shared/game/network/model/event/attack-ack";
 import { QueuedAttack } from "@shared/game/engine/model/queued-attack";
+import { createRotationSystem, RotationSystem } from "@shared/game/engine/player/rotation/rotation-system";
 
 export abstract class Player {
   // event emitters
@@ -27,6 +28,7 @@ export abstract class Player {
   pieceSpawnSubject = new Subject<void>();
 
   // state
+  playerRule: PlayerRule;
   frame = 0;
   alive = true;
   pieceQueue: Piece[] = [];
@@ -37,6 +39,7 @@ export abstract class Player {
   public board: Board;
   public pieceGen: PieceGen;
   public activePiece: ActivePiece;
+  public rotationSystem: RotationSystem;
   public garbageGen: GarbageGen;
 
   // configs
@@ -60,12 +63,15 @@ export abstract class Player {
   ) {
     this.init();
 
+    this.playerRule = playerRule;
+
     this.r = new RandomGen(startPlayerData.randomSeed);
-    this.board = new Board();
+    this.board = new Board(this.playerRule);
     this.pieceGen = new MemoryPieceGen(this.r, this.pieceList, 1);
     this.activePiece = new ActivePiece(this.board, () => this.hardDrop());
-    this.pieceQueue.push(...Array.from(Array(playerRule.previews)).map(() => this.pieceGen.next()));
-    this.garbageGen = new GarbageGen(this, playerRule);
+    this.rotationSystem = createRotationSystem(this.playerRule.rotationSystem);
+    this.pieceQueue.push(...Array.from(Array(this.playerRule.previews)).map(() => this.pieceGen.next()));
+    this.garbageGen = new GarbageGen(this, this.playerRule);
 
     this.spawnPiece();
   }
@@ -197,11 +203,12 @@ export abstract class Player {
   }
   
   private attemptMove(dy: number, dx: number, drot: number) {
-    return this.activePiece.attemptMove(dy, dx, drot);
+    const kickTable = this.rotationSystem.getKickTable(this.activePiece.piece!, drot);
+    return this.activePiece.attemptMove(dy, dx, drot, kickTable);
   }
 
   private spawnPiece() {
-    if (playerRule.previews == 0) {
+    if (this.playerRule.previews == 0) {
       this.activePiece.spawn(this.pieceGen.next());
     } else {
       this.activePiece.spawn(this.pieceQueue.shift()!);

@@ -1,4 +1,4 @@
-import { playerRule } from "@shared/game/engine/model/rule/player-rule";
+import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { Tile } from "@shared/game/engine/model/tile";
 import { TileType } from "@shared/game/engine/model/tile-type";
 import { Piece } from "@shared/game/engine/player/piece";
@@ -20,8 +20,10 @@ export class Board {
   invisibleHeight: number;
   visibleHeight: number;
 
-  constructor() {
-    const rule = playerRule;
+  constructor(
+    private playerRule: PlayerRule,
+  ) {
+    const rule = this.playerRule;
     this.tiles = Array.from(Array(rule.height + rule.invisibleHeight), () => Array(rule.width));
     this.invisibleHeight = rule.invisibleHeight;
     this.visibleHeight = rule.height;
@@ -34,9 +36,8 @@ export class Board {
   }
 
   load(s: BoardState) {
-    const rule = playerRule;
-    this.invisibleHeight = rule.invisibleHeight;
-    this.visibleHeight = rule.height;
+    this.invisibleHeight = this.playerRule.invisibleHeight;
+    this.visibleHeight = this.playerRule.height;
     this.tiles = JSON.parse(s.tiles);
   }
 

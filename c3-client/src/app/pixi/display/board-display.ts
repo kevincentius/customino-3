@@ -6,8 +6,6 @@ import { MinoGridDisplay } from "app/pixi/display/mino-grid-display";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { BoardLayout as BoardLayout } from "app/pixi/layout/board-layout";
 import { Container, Graphics, Sprite, Texture } from "pixi.js";
-import { playerRule } from "@shared/game/engine/model/rule/player-rule";
-
 
 export class BoardDisplay extends Container implements LayoutChild {
 
@@ -93,7 +91,7 @@ export class BoardDisplay extends Container implements LayoutChild {
 
   tick() {
     if (this.lastGarbageRateSpawn != null) {
-      const p = 1 - Math.min(1, (Date.now() - this.lastGarbageRateSpawn) / 1000 / (playerRule.garbageSpawnRate));
+      const p = 1 - Math.min(1, (Date.now() - this.lastGarbageRateSpawn) / 1000 / (this.player.playerRule.garbageSpawnRate));
       this.spawnRateOffsetContainer.position.y = this.getMinoSize() * p;
     }
   }
