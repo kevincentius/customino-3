@@ -75,30 +75,38 @@ export class ActivePiece {
     this.spawnSubject.next(null);
   }
 
-  attemptMove(dy: number, dx: number, drot: number) {
+  attemptMove(dy: number, dx: number, drot: number, kickTable: number[][]=[]) {
     if (!this.piece) {
       return false;
     }
 
-    const prevY = this.y;
-    const prevX = this.x;
-
-    this.y += dy;
-    this.x += dx;
     this.piece.rotate(drot);
 
-    if (this.checkCollision()) {
-      // TODO: attempt kicks
-
-      // failed. Undo move
-      this.piece.rotate(-drot);
-      this.x = prevX;
-      this.y = prevY;
-      return false;
-    } else {
+    // try without kicks
+    if (!this.checkCollision(dy, dx)) {
+      this.x += dx;
+      this.y += dy;
       this.moveSubject.next({ dy, dx, drot, kick: false });
       return true;
     }
+
+    // try kicks
+    if ((drot + 4000) % 4 != 0) {
+      for (const kick of kickTable) {
+        const ky = dy + kick[0];
+        const kx = dx + kick[1];
+        if (!this.checkCollision(ky, kx)) {
+          this.x += kx;
+          this.y += ky;
+          this.moveSubject.next({ dx: kx, dy: ky, drot: drot, kick: true });
+          return true;
+        }
+      }
+    }
+
+    // failed. Undo move
+    this.piece.rotate(-drot);
+    return false;
   }
 
   checkCollision(di=0, dj=0) {

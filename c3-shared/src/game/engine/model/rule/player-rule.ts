@@ -1,3 +1,4 @@
+import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
 
 export interface PlayerRule {
   width: number;
@@ -5,6 +6,7 @@ export interface PlayerRule {
   invisibleHeight: number;
 
   previews: number;
+  rotationSystem: RotationSystemType;
 
   garbageSpawnDelay: number;
   garbageSpawnRate: number;
@@ -19,6 +21,7 @@ export const playerRule: PlayerRule = {
   invisibleHeight: 18,
 
   previews: 5,
+  rotationSystem: RotationSystemType.NEAREST,
 
   garbageSpawnDelay: 1,
   garbageSpawnRate: 1,

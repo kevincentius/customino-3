@@ -7,7 +7,7 @@ export class Piece {
   tiles: Tile[][];
 
   // rotation = total number of clockwise rotations from spawn orientation (0 - 3)
-  constructor(private size: number, private pieceId: number, private rotation=0) {
+  constructor(public size: number, public pieceId: number, public rotation=0) {
     let p = pieceDataArray[size - 1][pieceId];
 
     this.tiles = Array.from(Array(p.matSize), () => Array(p.matSize));
