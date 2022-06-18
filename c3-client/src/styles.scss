@@ -6,7 +6,7 @@
 
 body {
   margin: 0;
-  color: white;
+  color: #fffd;
   background: #333;
 }
 
@@ -27,4 +27,47 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     border-bottom: solid 1px #fff8;
     padding: 0 40px;
   }
+}
+
+.screen-body-container {
+  padding-left: 100px;
+}
+
+.gui-button-row {
+  display: flex;
+}
+
+.gui-button {
+  box-sizing: border-box;
+  transition: 200ms;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  color: #fffd;
+  border: solid #0000 2px;
+  border-radius: 2px;
+
+  &:hover {
+    transition: 50ms;
+    color: #fff;
+    background: #fff6;
+    border: solid #fff2 2px;
+  }
+
+  &.gui-button-main {
+    color: #ff0d;
+    
+    &:hover {
+      color: #ff0;
+    }
+  
+  }
+}
+
+.mat-icon {
+  line-height: 23px;
 }
