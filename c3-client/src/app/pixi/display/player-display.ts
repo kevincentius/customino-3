@@ -18,7 +18,7 @@ export class PlayerDisplay extends Container {
 
   private layout = new LayoutContainer(1);
   private rowLayout = new LayoutContainer();
-  private rightColumnLayout = new LayoutContainer(1);
+  private rightColumnLayout = new LayoutContainer(1, 200, undefined, 40);
 
   constructor(
     private player: Player,

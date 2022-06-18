@@ -30,7 +30,7 @@ export const playerRule: PlayerRule = {
   height: 20,
   invisibleHeight: 18,
 
-  previews: 5,
+  previews: 2,
   rotationSystem: RotationSystemType.NEAREST,
 
   garbageSpawnDelay: 1,

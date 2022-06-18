@@ -35,6 +35,9 @@ export class LayoutContainer extends Container implements LayoutNode {
       } else {
         node.position.y = pos;
         pos += node.layoutHeight;
+        
+
+        console.log('y', node.position.y);
       }
 
       pos += this.gap;
