@@ -20,7 +20,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .screen-title-container {
   padding-left: 30px;
+  padding-right: 30px;
   padding-top: 30px;
+  margin-bottom: 30px;
   
   .screen-title {
     font-size: $screen-title-size;
@@ -31,10 +33,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .screen-body-container {
   padding-left: 100px;
+  padding-right: 30px;
 }
 
 .gui-button-row {
   display: flex;
+  margin-bottom: 30px;
 }
 
 .gui-button {
@@ -68,6 +72,31 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   }
 }
 
+.gui-button[disabled] {
+  color: #aaad;
+  cursor: unset;
+
+  &:hover {
+    color: #aaad;
+    background: none;
+    border: solid #0000 2px;
+    border-radius: 2px;
+  }
+}
+
 .mat-icon {
   line-height: 23px;
+}
+
+.section {
+  padding: 20px;
+  padding-left: 60px;
+  background: #000b;
+  border: solid #fff2 1px;
+  border-radius: 3px;
+
+  .section-title {
+    font-size: 24px;
+    padding: 10px 0;
+  }
 }
