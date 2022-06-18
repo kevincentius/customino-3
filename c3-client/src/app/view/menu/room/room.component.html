@@ -9,18 +9,28 @@
     </div>
   </div>
 
-  <ng-container *ngIf="roomInfo">
-    <div>Room ID: {{roomInfo.id}}</div>
-    <div>Room name: {{roomInfo.name}}</div>
-    <div>Host: {{roomInfo.host.username}}</div>
-    <div *ngIf="lastGameReplay">Last game replay: <button (click)="onDownloadLastReplayClick()">Download</button></div>
-    <div *ngIf="debug">Debug:
-      <button *ngIf="lastGameReplay" (click)="onVerifyLastReplayClick()">Verify replay</button>
-      <button (click)="onDownloadGameStateClick()">Download debug state</button>
+  <div class="screen-body-container">
+    <ng-container *ngIf="roomInfo">
+      <div class="gui-button-row">
+        <button *ngIf="lastGameReplay" class="gui-button" (click)="onDownloadLastReplayClick()">Replay</button>
+        <button class="gui-button gui-button-main" [disabled]="isRunning() || !isHost()" (click)="onStartGameClick()">Start game</button>
+        
+        <ng-container *ngIf="debug">
+          <button *ngIf="lastGameReplay" class="gui-button" (click)="onVerifyLastReplayClick()">Verify replay</button>
+          <button class="gui-button" (click)="onDownloadGameStateClick()">Download debug state</button>
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <div class="section" *ngIf="roomInfo">
+      <div class="section-title">Players</div>
+      <div class="section-body">
+        <div class="slots-container">
+          <div *ngFor="let slot of roomInfo.slots" class="slot" [class.spectator]="!slot.playing">
+            <div class="slot-player-name">{{slot.player.username}}</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div><button [disabled]="isRunning()" (click)="onStartGameClick()">Start game</button></div>
-    <div *ngFor="let slot of roomInfo.slots">
-      {{slot.player.username}}
-    </div>
-  </ng-container>
+  </div>
 </div>

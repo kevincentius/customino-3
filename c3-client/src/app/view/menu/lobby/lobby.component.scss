@@ -1,6 +1,24 @@
 
+.room-container {
+ display: flex;
+ flex-direction: column;
+ gap: 15px;
+}
+
 .room {
-  background: #00f4;
-  margin: 30px 0;
   cursor: pointer;
+  display: flex;
+  background: #fff6;
+  padding: 20px 50px;
+  font-size: 24px;
+
+  .room-name {
+    width: 400px;
+  }
+
+  .room-player-count {
+    display: flex;
+    align-items: center;
+    width: 80px;
+  }
 }

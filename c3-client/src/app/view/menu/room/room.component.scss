@@ -1,0 +1,17 @@
+
+.slots-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  font-size: 18px;
+
+  &.spectator {
+    opacity: 0.5;
+  }
+
+  .slot {
+    display: flex;
+    flex-direction: row;
+  }
+}

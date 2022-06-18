@@ -9,17 +9,20 @@
     </div>
   </div>
 
-  <ng-container *ngIf="rooms">
-    <div *ngFor="let room of rooms" class="room" (click)="onRoomClick(room)">
-      <div>Room: {{room.name}}</div>
-      <div>
-        <div *ngFor="let slot of room.slots">
-          {{slot.player.username}}
-        </div>
+  <div class="screen-body-container" *ngIf="rooms">
+    <div class="gui-button-row">
+      <button (click)="onCreateRoom()" class="gui-button gui-button-main"><mat-icon>add</mat-icon><span style="width: 7px"></span>New room</button>
+      <button (click)="onRefresh()" class="gui-button"><mat-icon>refresh</mat-icon><span style="width: 7px"></span>Refresh</button>
+    </div>
+    
+    <div style="height: 30px;"></div>
+
+    <div class="room-container">
+      <div *ngFor="let room of rooms" class="room" (click)="onRoomClick(room)">
+        <div class="room-player-count"><mat-icon>person</mat-icon>{{room.slots.length}}</div>
+        <div class="room-name">{{room.name}}</div>
       </div>
     </div>
-  </ng-container>
+  </div>
   
-  <button (click)="onCreateRoom()">Create Room</button>
-  <button (click)="onRefresh()">Refresh</button>
 </div>

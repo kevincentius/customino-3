@@ -156,4 +156,8 @@ export class RoomComponent implements OnInit, OnDestroy {
   private downloadServerReplay() {
     saveAs(new Blob([JSON.stringify(this.lastGameReplay)]), `C3-Server-Replay-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
   }
+
+  isHost() {
+    return this.mainService.sessionInfo.sessionId == this.roomInfo.host.sessionId;
+  }
 }
