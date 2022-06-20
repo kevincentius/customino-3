@@ -16,7 +16,6 @@ import { InputKey } from "@shared/game/network/model/input-key";
 import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
 import { Subject } from 'rxjs';
 import { AttackAckEvent } from "@shared/game/network/model/event/attack-ack";
-import { QueuedAttack } from "@shared/game/engine/model/queued-attack";
 import { createRotationSystem, RotationSystem } from "@shared/game/engine/player/rotation/rotation-system";
 import { AttackRule } from "@shared/game/engine/player/attack-rule";
 
@@ -32,7 +31,6 @@ export abstract class Player {
   frame = 0;
   alive = true;
   pieceQueue: Piece[] = [];
-  attackQueue: QueuedAttack[] = [];
   attackRule: AttackRule;
   
   // stateful composition
@@ -98,7 +96,6 @@ export abstract class Player {
       frame: this.frame,
       alive: this.alive,
       pieceQueue: this.pieceQueue.map(p => p.serialize()),
-      attackQueue: JSON.stringify(this.attackQueue),
       attackRule: this.attackRule.serialize(),
 
       randomState: JSON.stringify(this.r.serialize()),
@@ -113,7 +110,6 @@ export abstract class Player {
     this.frame = playerState.frame;
     this.alive = playerState.alive;
     this.pieceQueue.splice(0, this.pieceQueue.length, ...playerState.pieceQueue.map(p => Piece.from(p)));
-    this.attackQueue.splice(0, this.attackQueue.length,...JSON.parse(playerState.attackQueue));
     this.attackRule.load(playerState.attackRule);
 
     this.r = new RandomGen(undefined, JSON.parse(playerState.randomState));
@@ -138,7 +134,7 @@ export abstract class Player {
       return this.actionMap.get(inputEvent.key)!();
     } else if (event.type == GameEventType.ATTACK_ACK) {
       const gbEvent = event as AttackAckEvent;
-      this.attackQueue.push(...gbEvent.attackDistribution.attacks.map(attack => ({ attack: attack, powerLeft: attack.power })));
+      this.garbageGen.queueAttack(gbEvent.attackDistribution.attacks);
       
       return true;
     } else if (event.type == GameEventType.SYSTEM) {

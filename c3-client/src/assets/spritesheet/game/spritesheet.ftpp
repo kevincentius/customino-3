@@ -48,6 +48,51 @@
       "name": "8.png",
       "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/8.png",
       "folder": ""
+    },
+    {
+      "name": "garbage-indicator-bottom-0.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-bottom-0.png",
+      "folder": ""
+    },
+    {
+      "name": "garbage-indicator-bottom-1.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-bottom-1.png",
+      "folder": ""
+    },
+    {
+      "name": "garbage-indicator-bottom-2.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-bottom-2.png",
+      "folder": ""
+    },
+    {
+      "name": "garbage-indicator-middle-0.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-middle-0.png",
+      "folder": ""
+    },
+    {
+      "name": "garbage-indicator-middle-1.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-middle-1.png",
+      "folder": ""
+    },
+    {
+      "name": "garbage-indicator-middle-2.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-middle-2.png",
+      "folder": ""
+    },
+    {
+      "name": "garbage-indicator-top-0.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-top-0.png",
+      "folder": ""
+    },
+    {
+      "name": "garbage-indicator-top-1.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-top-1.png",
+      "folder": ""
+    },
+    {
+      "name": "garbage-indicator-top-2.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-top-2.png",
+      "folder": ""
     }
   ],
   "folders": [],
@@ -75,7 +120,7 @@
     "trimMode": "trim",
     "alphaThreshold": "0",
     "detectIdentical": true,
-    "packer": "MaxRectsBin",
-    "packerMethod": "BestAreaFit"
+    "packer": "MaxRectsPacker",
+    "packerMethod": "Smart"
   }
 }

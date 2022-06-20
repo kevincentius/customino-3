@@ -61,8 +61,6 @@ export class ComboTimer {
     let timeBonus = timeBonusFlat > 0 ? timeBonusFlat * timeBonusMult : timeBonusFlat;
     this.comboAccumulatedFrames += timeBonus * gameLoopRule.fps;
 
-    console.log('combo', this.combo);
-
     // return attack power
     return isCombo ? rule.comboAttackTable[Math.min(rule.comboAttackTable.length - 1, this.combo)] : 0;
   }

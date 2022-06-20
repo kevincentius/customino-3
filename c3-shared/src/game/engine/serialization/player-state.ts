@@ -4,7 +4,6 @@ export interface PlayerState {
   frame: number;
   alive: boolean;
   pieceQueue: number[][];
-  attackQueue: string;
   attackRule: any;
   randomState: string;
   board: BoardState;

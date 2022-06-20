@@ -8,7 +8,7 @@ export interface PlayerRule {
   previews: number;
   rotationSystem: RotationSystemType;
 
-  garbageSpawnDelay: number;
+  garbageSpawnDelayTable: number[];
   garbageSpawnRate: number;
   garbageCleanlinessBetween: number;
   garbageCleanlinessWithin: number;
@@ -33,7 +33,7 @@ export const playerRule: PlayerRule = {
   previews: 2,
   rotationSystem: RotationSystemType.NEAREST,
 
-  garbageSpawnDelay: 1,
+  garbageSpawnDelayTable: [0, 5],
   garbageSpawnRate: 1,
   garbageCleanlinessBetween: 0,
   garbageCleanlinessWithin: 100,
