@@ -50,7 +50,7 @@ export class GarbageGen {
       attack: attack,
       powerLeft: attack.power,
       frameQueued: this.player.frame,
-      frameReady: this.player.frame + this.playerRule.garbageSpawnDelayTable[Math.min(this.playerRule.garbageSpawnDelayTable.length - 1, Math.floor(attack.power))],
+      frameReady: this.player.frame + (gameLoopRule.fps * this.playerRule.garbageSpawnDelayTable[Math.min(this.playerRule.garbageSpawnDelayTable.length - 1, Math.floor(attack.power))]),
     }));
     this.attackReceivedSubject.next(receivedAttacks);
 
@@ -63,8 +63,6 @@ export class GarbageGen {
 
   runFrame() {
     if (this.attackQueue.length > 0 && this.attackQueue[0].frameReady <= this.player.frame) {
-      this.spawnRateFrameCounter--;
-
       let spawnAmount = 0;
       while (this.spawnRateFrameCounter <= 0) {
         this.spawnRateFrameCounter += gameLoopRule.fps / this.playerRule.garbageSpawnRate;
@@ -75,8 +73,10 @@ export class GarbageGen {
         this.spawnGarbage(spawnAmount, this.attackQueue);
         this.garbageRateSpawnSubject.next();
       }
+      
+      this.spawnRateFrameCounter--;
     } else {
-      this.spawnRateFrameCounter = this.playerRule.garbageSpawnDelayTable[1] * gameLoopRule.fps;
+      this.spawnRateFrameCounter = 0;
     }
   }
 

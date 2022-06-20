@@ -20,6 +20,10 @@ export class MenuComponent implements OnInit {
     this.mainService.openScreen(MainScreen.LOBBY);
   }
 
+  onReplayClick() {
+    this.mainService.openScreen(MainScreen.REPLAY);
+  }
+
   onControlsClick() {
     this.mainService.openScreen(MainScreen.CONTROLS);
   }

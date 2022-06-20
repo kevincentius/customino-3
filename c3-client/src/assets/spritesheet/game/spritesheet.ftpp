@@ -65,6 +65,11 @@
       "folder": ""
     },
     {
+      "name": "garbage-indicator-bottom-3.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-bottom-3.png",
+      "folder": ""
+    },
+    {
       "name": "garbage-indicator-middle-0.png",
       "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-middle-0.png",
       "folder": ""
@@ -80,6 +85,11 @@
       "folder": ""
     },
     {
+      "name": "garbage-indicator-middle-3.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-middle-3.png",
+      "folder": ""
+    },
+    {
       "name": "garbage-indicator-top-0.png",
       "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-top-0.png",
       "folder": ""
@@ -92,6 +102,11 @@
     {
       "name": "garbage-indicator-top-2.png",
       "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-top-2.png",
+      "folder": ""
+    },
+    {
+      "name": "garbage-indicator-top-3.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-top-3.png",
       "folder": ""
     }
   ],

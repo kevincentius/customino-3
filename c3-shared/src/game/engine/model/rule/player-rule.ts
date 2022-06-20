@@ -33,7 +33,7 @@ export const playerRule: PlayerRule = {
   previews: 2,
   rotationSystem: RotationSystemType.NEAREST,
 
-  garbageSpawnDelayTable: [0, 5],
+  garbageSpawnDelayTable: [0, 1],
   garbageSpawnRate: 1,
   garbageCleanlinessBetween: 0,
   garbageCleanlinessWithin: 100,
