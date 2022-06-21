@@ -26,6 +26,10 @@ export class PixiApplication {
       view: this.canvas,
       resizeTo: window,
       backgroundColor: 0x111111,
+      
+      antialias: true,
+      autoDensity: true, // !!!
+      resolution: 2,
     });
 
     this.loadResources();

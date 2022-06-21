@@ -8,7 +8,7 @@ export interface PlayerRule {
   previews: number;
   rotationSystem: RotationSystemType;
 
-  garbageSpawnDelay: number;
+  garbageSpawnDelayTable: number[];
   garbageSpawnRate: number;
   garbageCleanlinessBetween: number;
   garbageCleanlinessWithin: number;
@@ -27,13 +27,13 @@ export interface PlayerRule {
 
 export const playerRule: PlayerRule = {
   width: 10,
-  height: 20,
+  height: 18,
   invisibleHeight: 18,
 
   previews: 2,
   rotationSystem: RotationSystemType.NEAREST,
 
-  garbageSpawnDelay: 1,
+  garbageSpawnDelayTable: [0, 1],
   garbageSpawnRate: 1,
   garbageCleanlinessBetween: 0,
   garbageCleanlinessWithin: 100,
@@ -42,7 +42,7 @@ export const playerRule: PlayerRule = {
   useComboTimer: true,
   comboAttackTable: [0, 0, 1, 1, 1, 2, 2, 2, 3],
   comboTimerInitial: 1,
-  comboTimerMultiClearBonus: [-0.2, 10, 13, 16, 20, 25],
+  comboTimerMultiClearBonus: [-0.2, 1, 1.3, 1.6, 2, 2.5],
   comboTimerSpinBonus: [0, 1.5, 2, 2.5],
   comboTimerTimeBonusMultiplierTable: [1, 0.8, 0.6, 0.4, 0.3, 0.2, 0.1],
 

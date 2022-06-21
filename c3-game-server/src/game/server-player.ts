@@ -1,7 +1,8 @@
 
 import { Player } from "@shared/game/engine/player/player";
+import { AttackDistribution } from "@shared/game/network/model/attack/attack-distribution";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
-import { AttackDistribution, ServerPlayerEvent } from "@shared/game/network/model/event/server-event";
+import { ServerPlayerEvent } from "@shared/game/network/model/event/server-event";
 import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
 import { ServerGame } from "game/server-game";
 import { Subject } from "rxjs";

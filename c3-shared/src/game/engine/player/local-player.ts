@@ -3,7 +3,7 @@ import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent, GameEventType } from "@shared/game/network/model/event/game-event";
 import { AttackAckEvent } from "@shared/game/network/model/event/attack-ack";
 import { InputEvent } from "@shared/game/network/model/event/input-event";
-import { AttackDistribution } from "@shared/game/network/model/event/server-event";
+import { AttackDistribution } from "@shared/game/network/model/attack/attack-distribution";
 import { InputKey } from "@shared/game/network/model/input-key";
 import { Subject } from "rxjs";
 

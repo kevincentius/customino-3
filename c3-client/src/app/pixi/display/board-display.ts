@@ -6,24 +6,28 @@ import { MinoGridDisplay } from "app/pixi/display/mino-grid-display";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { BoardLayout as BoardLayout } from "app/pixi/layout/board-layout";
 import { Container, Graphics, Sprite, Texture } from "pixi.js";
+import { GarbageIndicatorDisplay } from "app/pixi/display/garbage-indicator-display";
 
 export class BoardDisplay extends Container implements LayoutChild {
 
-  layoutWidth = 500;
+  layoutWidth = 520;
   layoutHeight = 800;
+  garbageIndicatorWidth = 20;
 
   lastGarbageRateSpawn: number | null = null;
 
   // children
   private layout: BoardLayout;
   private offsetContainer: Container;
+  private garbageIndicator: GarbageIndicatorDisplay;
+  private fieldContainer: Container;
   private maskContainer: Container;
   private spawnRateOffsetContainer: Container;
   private background: Sprite;
   private minoGridDisplay: MinoGridDisplay;
   private activePieceDisplay: ActivePieceDisplay;
   private ghostPieceDisplay: ActivePieceDisplay;
-  overlayDisplay: BoardOverlayDisplay;
+  private overlayDisplay: BoardOverlayDisplay;
 
   // reference
   board: Board;
@@ -34,19 +38,29 @@ export class BoardDisplay extends Container implements LayoutChild {
     super();
 
     this.board = player.board;
-    this.layout = new BoardLayout(this.layoutWidth, this.layoutHeight, this.board.visibleHeight, this.board.tiles[0].length);
+    this.layout = new BoardLayout(this.layoutWidth - this.garbageIndicatorWidth, this.layoutHeight, this.board.visibleHeight, this.board.tiles[0].length);
 
-    // offset container: auto size and auto center board in case the board dimensions do no match layout dimensions
+    // offset container: auto size and auto center board in case the board dimensions do no match layout dimensions.
+    //  Contains the field including the garbage indicator.
     this.offsetContainer = new Container();
     this.offsetContainer.position.set(this.layout.offsetX, this.layout.offsetY);
     this.addChild(this.offsetContainer);
-    
+
+    // garbage indicator
+    this.garbageIndicator = new GarbageIndicatorDisplay(this.player, this.garbageIndicatorWidth, this.layout.height, this.layout.minoSize);
+    this.offsetContainer.addChild(this.garbageIndicator);
+
+    // field container: contains the field but excluding the garbage indicator
+    this.fieldContainer = new Container();
+    this.fieldContainer.position.x = this.garbageIndicatorWidth;
+    this.offsetContainer.addChild(this.fieldContainer);
+
     // board background
     this.background = Sprite.from(Texture.WHITE);
     this.background.tint = 0x000000;
     this.background.width = this.layout.innerWidth;
     this.background.height = this.layout.innerHeight;
-    this.offsetContainer.addChild(this.background);
+    this.fieldContainer.addChild(this.background);
 
     // mask container: stencil effect
     this.maskContainer = new Container();
@@ -56,7 +70,7 @@ export class BoardDisplay extends Container implements LayoutChild {
     maskGraphics.endFill();
     this.addChild(maskGraphics);
     this.maskContainer.mask = maskGraphics;
-    this.offsetContainer.addChild(this.maskContainer);
+    this.fieldContainer.addChild(this.maskContainer);
 
     // spawn rate offset: shifts the board overtime to animate garbage entering the field.
     this.spawnRateOffsetContainer = new Container();
@@ -90,9 +104,13 @@ export class BoardDisplay extends Container implements LayoutChild {
   }
 
   tick() {
+    let garbageRateShift = 0;
     if (this.lastGarbageRateSpawn != null) {
       const p = 1 - Math.min(1, (Date.now() - this.lastGarbageRateSpawn) / 1000 / (this.player.playerRule.garbageSpawnRate));
-      this.spawnRateOffsetContainer.position.y = this.getMinoSize() * p;
+      garbageRateShift = this.getMinoSize() * p;
+      this.spawnRateOffsetContainer.position.y = garbageRateShift;
     }
+
+    this.garbageIndicator.tick(garbageRateShift);
   }
 }

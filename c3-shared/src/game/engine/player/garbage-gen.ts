@@ -4,15 +4,25 @@ import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { cloneTile, Tile } from "@shared/game/engine/model/tile";
 import { TileType } from "@shared/game/engine/model/tile-type";
 import { Player } from "@shared/game/engine/player/player";
-import { Attack, AttackType } from "@shared/game/network/model/event/server-event";
+import { Attack } from "@shared/game/network/model/attack/attack";
+import { AttackType } from "@shared/game/network/model/attack/attack-type";
 import { Subject } from "rxjs";
 
 export class GarbageGen {
-  private spawnRateFrameCounter = 0;
-
+  
   garbageRateSpawnSubject = new Subject<void>();
+  attackReceivedSubject = new Subject<QueuedAttack[]>();
+  
+  // will be emitted whenever a queued attack is fully spawned into the board. Can be called multiple times in a single lock down.
+  fullSpawnSubject = new Subject<void>();
 
-  cleanRow: (Tile | null)[] | null = null;
+  // will be emitted whenever a queued attack is only partially spawned due to garbage cap or spawn rate.
+  queuedAttackUpdateSubject = new Subject<number>();
+  
+  
+  public attackQueue: QueuedAttack[] = [];
+  private spawnRateFrameCounter = 0;
+  private cleanRow: (Tile | null)[] | null = null;
 
   constructor(
     private player: Player,
@@ -23,14 +33,28 @@ export class GarbageGen {
 
   serialize() {
     return {
+      attackQueue: JSON.stringify(this.attackQueue),
       frameCount: this.spawnRateFrameCounter,
       cleanRow: JSON.stringify(this.cleanRow),
     }
   }
 
   load(state: any) {
+    this.attackQueue.splice(0, this.attackQueue.length,...JSON.parse(state.attackQueue));
     this.spawnRateFrameCounter = state.frameCount;
     this.cleanRow = JSON.parse(state.cleanRow);
+  }
+
+  queueAttack(attacks: Attack[]) {
+    const receivedAttacks: QueuedAttack[] = attacks.map(attack => ({
+      attack: attack,
+      powerLeft: attack.power,
+      frameQueued: this.player.frame,
+      frameReady: this.player.frame + (gameLoopRule.fps * this.playerRule.garbageSpawnDelayTable[Math.min(this.playerRule.garbageSpawnDelayTable.length - 1, Math.floor(attack.power))]),
+    }));
+    this.attackReceivedSubject.next(receivedAttacks);
+
+    this.attackQueue.push(...receivedAttacks);
   }
 
   createTile(type: TileType): Tile | null {
@@ -38,9 +62,7 @@ export class GarbageGen {
   }
 
   runFrame() {
-    if (this.player.attackQueue.length > 0) {
-      this.spawnRateFrameCounter--;
-
+    if (this.attackQueue.length > 0 && this.attackQueue[0].frameReady <= this.player.frame) {
       let spawnAmount = 0;
       while (this.spawnRateFrameCounter <= 0) {
         this.spawnRateFrameCounter += gameLoopRule.fps / this.playerRule.garbageSpawnRate;
@@ -48,11 +70,13 @@ export class GarbageGen {
       }
 
       if (spawnAmount > 0) {
-        this.spawnGarbage(spawnAmount, this.player.attackQueue);
+        this.spawnGarbage(spawnAmount, this.attackQueue);
         this.garbageRateSpawnSubject.next();
       }
+      
+      this.spawnRateFrameCounter--;
     } else {
-      this.spawnRateFrameCounter = this.playerRule.garbageSpawnDelay * gameLoopRule.fps;
+      this.spawnRateFrameCounter = 0;
     }
   }
 
@@ -67,11 +91,13 @@ export class GarbageGen {
         this.cleanRow = null;
         spawnLeft -= attack.powerLeft;
         attackQueue.shift();
+        this.fullSpawnSubject.next();
       } else {
         this.cleanRow = this.cleanRow ?? this.generateRow(attack.attack);
         rows.push(...this.copyRows(this.cleanRow, spawnLeft));
         attack.powerLeft -= spawnLeft;
         spawnLeft = 0;
+        this.queuedAttackUpdateSubject.next(0);
       }
 
       this.player.board.addBottomRows(rows);
@@ -87,7 +113,7 @@ export class GarbageGen {
   }
 
   generateRow(attack: Attack): (Tile | null)[] {
-    if (attack.type == AttackType.HOLE_1) {
+    if (attack.type == AttackType.CLEAN_1) {
       const holePos = this.player.r.int(this.playerRule.width);
       let row: (Tile | null)[] = [];
       for (let j = 0; j < this.playerRule.width; j++) {
