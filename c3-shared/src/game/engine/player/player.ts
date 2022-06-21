@@ -18,6 +18,7 @@ import { Subject } from 'rxjs';
 import { AttackAckEvent } from "@shared/game/network/model/event/attack-ack";
 import { createRotationSystem, RotationSystem } from "@shared/game/engine/player/rotation/rotation-system";
 import { AttackRule } from "@shared/game/engine/player/attack-rule";
+import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 
 export abstract class Player {
   // event emitters
@@ -32,7 +33,7 @@ export abstract class Player {
   alive = true;
   pieceQueue: Piece[] = [];
   attackRule: AttackRule;
-  
+
   // stateful composition
   r: RandomGen;
   board: Board;
@@ -40,6 +41,9 @@ export abstract class Player {
   activePiece: ActivePiece;
   garbageGen: GarbageGen;
   
+  // transient
+  lastFrameMs = Date.now();
+
   // stateless
   rotationSystem: RotationSystem;
 
@@ -123,6 +127,11 @@ export abstract class Player {
     this.activePiece.runFrame();
     this.garbageGen.runFrame();
     this.frame++;
+    this.lastFrameMs = Date.now();
+  }
+
+  getSecondsSinceFrame(now=Date.now(), frame: number=this.frame): number {
+    return (this.frame - frame) / gameLoopRule.fps + (now - this.lastFrameMs) / 1000;
   }
 
   protected runEvent(event: GameEvent): boolean {

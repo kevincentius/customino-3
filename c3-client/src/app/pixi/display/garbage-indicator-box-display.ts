@@ -1,3 +1,4 @@
+import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { QueuedAttack } from "@shared/game/engine/model/queued-attack";
 import { Player } from "@shared/game/engine/player/player";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
@@ -14,24 +15,22 @@ export class GarbageIndicatorBoxDisplay extends Container {
 
   private spriteScale: number;
 
+  private queuedAt = Date.now();
+
   constructor(
     spritesheet: GameSpritesheet,
-    private variant: number,
-    private player: Player,
-    public attack: QueuedAttack,
     private layoutWidth: number,
-    private minoSize: number,
   ) {
     super();
 
-    this.spriteTop = new Sprite(spritesheet.garbageIndicatorTop[this.variant + 2]);
-    this.spriteBgTop = new Sprite(spritesheet.garbageIndicatorTop[0]);
+    this.spriteTop = new Sprite(spritesheet.garbageIndicatorTop[3]);
+    this.spriteBgTop = new Sprite(spritesheet.garbageIndicatorTop[2]);
 
-    this.spriteMiddle = new Sprite(spritesheet.garbageIndicatorMiddle[this.variant + 2]);
-    this.spriteBgMiddle = new Sprite(spritesheet.garbageIndicatorMiddle[0]);
+    this.spriteMiddle = new Sprite(spritesheet.garbageIndicatorMiddle[3]);
+    this.spriteBgMiddle = new Sprite(spritesheet.garbageIndicatorMiddle[2]);
 
-    this.spriteBottom = new Sprite(spritesheet.garbageIndicatorBottom[this.variant + 2]);
-    this.spriteBgBottom = new Sprite(spritesheet.garbageIndicatorBottom[0]);
+    this.spriteBottom = new Sprite(spritesheet.garbageIndicatorBottom[3]);
+    this.spriteBgBottom = new Sprite(spritesheet.garbageIndicatorBottom[2]);
 
     this.spriteScale = this.layoutWidth / this.spriteMiddle.texture.width;
     for (const sprite of [
@@ -48,13 +47,13 @@ export class GarbageIndicatorBoxDisplay extends Container {
     }
   }
 
-  tick() {
-    this.updateBackground();
-    this.updateForeground();
+  tick(bgHeight: number, fgHeight: number) {
+    this.updateBackground(bgHeight);
+    this.updateForeground(bgHeight, fgHeight);
   }
 
-  private updateBackground() {
-    const totalBgHeight = this.attack.powerLeft * this.minoSize;
+  private updateBackground(bgHeight: number) {
+    const totalBgHeight = bgHeight;
     const topBgHeight = this.spriteBgTop.texture.height * this.spriteScale;
     const bottomBgHeight = this.spriteBgBottom.texture.height * this.spriteScale;
     const middleBgHeight = totalBgHeight - topBgHeight - bottomBgHeight;
@@ -64,22 +63,16 @@ export class GarbageIndicatorBoxDisplay extends Container {
     this.spriteBgBottom.position.y = topBgHeight + middleBgHeight;
   }
 
-  private updateForeground() {
-    const framesSinceQueued = this.player.frame - this.attack.frameQueued;
-    const framesDelayTotal = this.attack.frameReady - this.attack.frameQueued;
-    const p = Math.min(1, framesSinceQueued / framesDelayTotal);
-    
-    const totalBgHeight = this.attack.powerLeft * this.minoSize;
-    const totalFgHeight = this.attack.powerLeft * p * this.minoSize;
+  private updateForeground(bgHeight: number, fgHeight: number) {
     const topFgHeight = this.spriteTop.texture.height * this.spriteScale;
     const bottomFgHeight = this.spriteBottom.texture.height * this.spriteScale;
-    const middleFgHeight = Math.max(0, totalFgHeight - topFgHeight - bottomFgHeight);
+    const middleFgHeight = Math.max(0, fgHeight - topFgHeight - bottomFgHeight);
 
     if (middleFgHeight >= 0) {
-      this.spriteBottom.position.y = totalBgHeight - bottomFgHeight;
-      this.spriteMiddle.position.y = totalBgHeight - bottomFgHeight - middleFgHeight;
+      this.spriteBottom.position.y = bgHeight - bottomFgHeight;
+      this.spriteMiddle.position.y = bgHeight - bottomFgHeight - middleFgHeight;
       this.spriteMiddle.scale.y = middleFgHeight / this.spriteMiddle.texture.height;
-      this.spriteTop.position.y = totalBgHeight - totalFgHeight;
+      this.spriteTop.position.y = bgHeight - fgHeight;
     }
   }
 }

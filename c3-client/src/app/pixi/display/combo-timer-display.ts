@@ -11,7 +11,7 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
   diameter: number;
 
   graphics = new Graphics();
-  text = textUtil.create48('0');
+  text = textUtil.create120('0');
 
   layoutWidth: number;
   layoutHeight: number;

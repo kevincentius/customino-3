@@ -129,7 +129,7 @@
     "fixedSize": false,
     "powerOfTwo": true,
     "padding": 0,
-    "extrude": 0,
+    "extrude": 1,
     "allowRotation": true,
     "allowTrim": true,
     "trimMode": "trim",
