@@ -1,8 +1,9 @@
-import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
-import { QueuedAttack } from "@shared/game/engine/model/queued-attack";
-import { Player } from "@shared/game/engine/player/player";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { Container, Sprite } from "pixi.js";
+
+const pendingTx = 0;
+const chargingTx = 1;
+const readyTx = 3;
 
 export class GarbageIndicatorBoxDisplay extends Container {
   private spriteTop: Sprite;
@@ -15,22 +16,22 @@ export class GarbageIndicatorBoxDisplay extends Container {
 
   private spriteScale: number;
 
-  private queuedAt = Date.now();
+  private ready = false;
 
   constructor(
-    spritesheet: GameSpritesheet,
+    private spritesheet: GameSpritesheet,
     private layoutWidth: number,
   ) {
     super();
 
-    this.spriteTop = new Sprite(spritesheet.garbageIndicatorTop[3]);
-    this.spriteBgTop = new Sprite(spritesheet.garbageIndicatorTop[2]);
+    this.spriteTop = new Sprite(spritesheet.garbageIndicatorTop[chargingTx]);
+    this.spriteBgTop = new Sprite(spritesheet.garbageIndicatorTop[pendingTx]);
 
-    this.spriteMiddle = new Sprite(spritesheet.garbageIndicatorMiddle[3]);
-    this.spriteBgMiddle = new Sprite(spritesheet.garbageIndicatorMiddle[2]);
+    this.spriteMiddle = new Sprite(spritesheet.garbageIndicatorMiddle[chargingTx]);
+    this.spriteBgMiddle = new Sprite(spritesheet.garbageIndicatorMiddle[pendingTx]);
 
-    this.spriteBottom = new Sprite(spritesheet.garbageIndicatorBottom[3]);
-    this.spriteBgBottom = new Sprite(spritesheet.garbageIndicatorBottom[2]);
+    this.spriteBottom = new Sprite(spritesheet.garbageIndicatorBottom[chargingTx]);
+    this.spriteBgBottom = new Sprite(spritesheet.garbageIndicatorBottom[pendingTx]);
 
     this.spriteScale = this.layoutWidth / this.spriteMiddle.texture.width;
     for (const sprite of [
@@ -45,11 +46,23 @@ export class GarbageIndicatorBoxDisplay extends Container {
       sprite.scale.y = this.spriteScale;
       this.addChild(sprite);
     }
+
+    this.removeChild(this.spriteTop);
   }
 
   tick(bgHeight: number, fgHeight: number) {
     this.updateBackground(bgHeight);
     this.updateForeground(bgHeight, fgHeight);
+
+    if (fgHeight >= bgHeight && !this.ready) {
+      this.ready = true;
+      this.spriteBgBottom.texture = this.spritesheet.garbageIndicatorBottom[readyTx];
+      this.spriteBgMiddle.texture = this.spritesheet.garbageIndicatorMiddle[readyTx];
+      this.spriteBgTop.texture = this.spritesheet.garbageIndicatorTop[readyTx];
+
+      this.removeChild(this.spriteMiddle);
+      this.removeChild(this.spriteBottom);
+    }
   }
 
   private updateBackground(bgHeight: number) {

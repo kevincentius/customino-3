@@ -46,7 +46,7 @@ export class ComboTimer {
 
       if (this.combo == 1) {
         this.comboStartFrame = this.player.frame;
-        this.comboAccumulatedFrames = 0;
+        this.comboAccumulatedFrames = this.player.playerRule.comboTimerInitial * gameLoopRule.fps;
         this.comboStartSubject.next();
       }
     }

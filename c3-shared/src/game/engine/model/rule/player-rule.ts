@@ -35,26 +35,26 @@ export const playerRule: PlayerRule = {
   height: 18,
   invisibleHeight: 18,
 
-  previews: 2,
+  previews: 1,
   rotationSystem: RotationSystemType.NEAREST,
 
   // garbage entry
-  garbageSpawnDelayTable: [0, 5],
+  garbageSpawnDelayTable: [0, 1],
   garbageSpawnRate: 1,
   lineClearDelaysGarbage: true,
   garbageSpawnCap: 0,
 
   // garbage blocking
   garbageBlockingFactor: 0.5,
-  garbagePierceFactor: 0.25,
+  garbagePierceFactor: 1,
 
   // combo timer
   useComboTimer: true,
   comboAttackTable: [0, 0, 1, 1, 1, 2, 2, 2, 3],
-  comboTimerInitial: 10,
-  comboTimerMultiClearBonus: [-0.2, 1, 1.3, 1.6, 2, 2.5],
+  comboTimerInitial: 2,
+  comboTimerMultiClearBonus: [-0.2, 1, 1.4, 1.7, 2],
   comboTimerSpinBonus: [0, 1.5, 2, 2.5],
-  comboTimerTimeBonusMultiplierTable: [1, 0.8, 0.6, 0.4, 0.3, 0.2, 0.1],
+  comboTimerTimeBonusMultiplierTable: [1, 0.7, 0.5, 0.3, 0.2, 0.1],
 
   // chain
 
