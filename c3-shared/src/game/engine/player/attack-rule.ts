@@ -1,5 +1,5 @@
 import { ComboTimer } from "@shared/game/engine/player/combo-timer";
-import { LockIntermediateResult } from "@shared/game/engine/player/lock-result";
+import { LockPlacementResult } from "@shared/game/engine/player/lock-result";
 import { Player } from "@shared/game/engine/player/player";
 import { Attack } from "@shared/game/network/model/attack/attack";
 import { AttackType } from "@shared/game/network/model/attack/attack-type";
@@ -27,7 +27,7 @@ export class AttackRule {
     }
   }
 
-  calcAttacks(l: LockIntermediateResult): Attack[] {
+  calcAttacks(l: LockPlacementResult): Attack[] {
     let ret: Attack[] = [];
 
     // multi clear

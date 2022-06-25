@@ -39,19 +39,19 @@ export const playerRule: PlayerRule = {
   rotationSystem: RotationSystemType.NEAREST,
 
   // garbage entry
-  garbageSpawnDelayTable: [0, 1],
+  garbageSpawnDelayTable: [0, 5],
   garbageSpawnRate: 1,
   lineClearDelaysGarbage: true,
   garbageSpawnCap: 0,
 
   // garbage blocking
-  garbageBlockingFactor: 1,
-  garbagePierceFactor: 0,
+  garbageBlockingFactor: 0.5,
+  garbagePierceFactor: 0.25,
 
   // combo timer
   useComboTimer: true,
   comboAttackTable: [0, 0, 1, 1, 1, 2, 2, 2, 3],
-  comboTimerInitial: 1,
+  comboTimerInitial: 10,
   comboTimerMultiClearBonus: [-0.2, 1, 1.3, 1.6, 2, 2.5],
   comboTimerSpinBonus: [0, 1.5, 2, 2.5],
   comboTimerTimeBonusMultiplierTable: [1, 0.8, 0.6, 0.4, 0.3, 0.2, 0.1],

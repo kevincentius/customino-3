@@ -1,6 +1,7 @@
 
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { QueuedAttack } from "@shared/game/engine/model/queued-attack";
+import { BlockEvent } from "@shared/game/engine/player/block-event";
 import { Player } from "@shared/game/engine/player/player";
 import { GarbageIndicatorBoxDisplay } from "app/pixi/display/garbage-indicator-box-display";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
@@ -16,7 +17,6 @@ export class GarbageIndicatorDisplay extends Container implements LayoutChild {
 
   boxContainer = new Container();
   boxes: GarbageIndicatorBoxDisplay[] = [];
-  outAnimationBoxes: GarbageIndicatorBoxDisplay[] = [];
   nextVariant = 1;
 
   constructor(
@@ -32,6 +32,7 @@ export class GarbageIndicatorDisplay extends Container implements LayoutChild {
     const gg = this.player.garbageGen;
     gg.attackReceivedSubject.subscribe(queuedAttacks => this.addBoxes(queuedAttacks));
     gg.fullSpawnSubject.subscribe(() => this.popBox());
+    gg.blockSubject.subscribe(e => this.onBlock(e))
   }
 
   private addBoxes(queuedAttacks: QueuedAttack[]) {
@@ -54,7 +55,6 @@ export class GarbageIndicatorDisplay extends Container implements LayoutChild {
       const attack = this.player.garbageGen.attackQueue[i];
       const box = this.boxes[i];
       
-      
       const secondsQueued = this.player.getSecondsSinceFrame(now, attack.frameQueued);
       const secondsDelayTotal = (attack.frameReady - attack.frameQueued) / gameLoopRule.fps;
       const p = Math.min(1, secondsQueued / secondsDelayTotal);
@@ -66,6 +66,14 @@ export class GarbageIndicatorDisplay extends Container implements LayoutChild {
 
       box.position.y = ty;
       box.tick(boxBgHeight, boxFgHeight);
+    }
+  }
+
+  private onBlock(e: BlockEvent) {
+    for (let i = e.deleteList.length - 1; i >= 0; i--) {
+      const deleteIndex = e.deleteList[i];
+      this.boxContainer.removeChild(this.boxes[deleteIndex]);
+      this.boxes.splice(deleteIndex, 1);
     }
   }
 

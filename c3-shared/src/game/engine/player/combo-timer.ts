@@ -1,5 +1,5 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
-import { LockIntermediateResult } from "@shared/game/engine/player/lock-result";
+import { LockPlacementResult } from "@shared/game/engine/player/lock-result";
 import { Player } from "@shared/game/engine/player/player";
 import { Subject } from "rxjs";
 
@@ -33,7 +33,7 @@ export class ComboTimer {
    *  This method must be called on every lock down, even if no lines were cleared,
    *  because there may be time penalty for placing pieces without clearing lines.
    */
-  applyCombo(l: LockIntermediateResult): number {
+  applyCombo(l: LockPlacementResult): number {
     // reset combo if time runs out
     if (this.player.frame > this.comboStartFrame + this.comboAccumulatedFrames) {
       this.combo = 0;
