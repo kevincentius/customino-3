@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    /* Visit https://aka.ms/tsconfig.json to read more about this file */
-
     "target": "es2016",
     "module": "system",
     "baseUrl": "src",
@@ -17,11 +15,11 @@
     "composite": true,
 
     "paths": {
-      "@shared/*": ["*"],
+      "@shared/*": ["*"]
     },
 
-    "outFile": "./dist/shared.ts",
+    "outFile": "./dist/shared.ts"
   },
   "include": ["src/**/*", "test/**/*"],
-  "references": [],
+  "references": []
 }

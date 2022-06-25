@@ -2,8 +2,8 @@ import { Game } from "@shared/game/engine/game/game";
 import { PlayerRule, playerRule } from "@shared/game/engine/model/rule/player-rule";
 import { ActivePiece } from "@shared/game/engine/player/active-piece";
 import { Board } from "@shared/game/engine/player/board";
-import { GarbageGen } from "@shared/game/engine/player/garbage-gen";
-import { LockIntermediateResult, LockResult } from "@shared/game/engine/player/lock-result";
+import { GarbageGen } from "@shared/game/engine/player/garbage-gen/garbage-gen";
+import { LockPlacementResult, LockResult } from "@shared/game/engine/player/lock-result";
 import { Piece } from "@shared/game/engine/player/piece";
 import { PlayerState } from "@shared/game/engine/serialization/player-state";
 import { loadPieceGen, MemoryPieceGen, PieceGen } from "@shared/game/engine/util/piece-factory/piece-gen";
@@ -197,20 +197,23 @@ export abstract class Player {
 
     // calculate and apply move result
     const clearedGarbageLines = clearedLines.filter(line => this.board.isGarbage(line));
-    const lockResult: LockIntermediateResult = {
+    const lockResult: LockPlacementResult = {
       clearedLines,
       clearedGarbageLines,
     }
     
+    let attacks = this.attackRule.calcAttacks(lockResult);
+    attacks = this.garbageGen.applyBlock(attacks);
     const attackResult: LockResult = {
       ...lockResult,
-      attacks: this.attackRule.calcAttacks(lockResult),
+      attacks,
     }
     this.pieceLockSubject.next(attackResult);
 
     // spawn next piece
     this.spawnPiece();
 
+    // death detection
     if (this.activePiece.checkCollision()) {
       this.die();
     }
