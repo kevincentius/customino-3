@@ -1,7 +1,7 @@
 
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { QueuedAttack } from "@shared/game/engine/model/queued-attack";
-import { BlockEvent } from "@shared/game/engine/player/block-event";
+import { BlockEvent } from "@shared/game/engine/player/garbage-gen/block-event";
 import { Player } from "@shared/game/engine/player/player";
 import { GarbageIndicatorBoxDisplay } from "app/pixi/display/garbage-indicator-box-display";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";

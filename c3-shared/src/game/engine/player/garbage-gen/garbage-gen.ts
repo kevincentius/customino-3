@@ -3,7 +3,7 @@ import { QueuedAttack } from "@shared/game/engine/model/queued-attack";
 import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { cloneTile, Tile } from "@shared/game/engine/model/tile";
 import { TileType } from "@shared/game/engine/model/tile-type";
-import { BlockEvent } from "@shared/game/engine/player/block-event";
+import { BlockEvent } from "@shared/game/engine/player/garbage-gen/block-event";
 import { Player } from "@shared/game/engine/player/player";
 import { Attack } from "@shared/game/network/model/attack/attack";
 import { AttackType } from "@shared/game/network/model/attack/attack-type";
@@ -26,8 +26,8 @@ export class GarbageGen {
   private spawnRateFrameCounter = 0;
   private cleanRow: (Tile | null)[] | null = null;
 
-  private blockCarryOver = 0;
-  private pierceCarryOver = 0;
+  blockCarryOver = 0;
+  pierceCarryOver = 0;
 
   constructor(
     private player: Player,
@@ -69,23 +69,32 @@ export class GarbageGen {
     };
     let ret: Attack[] = [];
     attacks.forEach((attack, i) => {
-      // block
-      const powerForBlocking = attack.power + this.blockCarryOver;
-      const powerUsed = this.applyBlockPower(powerForBlocking, blockEvent);
-      const powerUsedFromAttack = powerUsed - this.blockCarryOver;
-      const powerUsedFromAttackCeil = Math.ceil(powerUsedFromAttack); // this can never be greater than attack.power
-      this.blockCarryOver = powerUsedFromAttackCeil - powerUsedFromAttack;
-      
-      // pierce
-      const powerToDeduct = powerUsedFromAttackCeil * (1 - this.playerRule.garbagePierceFactor);
-      const powerToDeductFromAttack = powerToDeduct - this.pierceCarryOver;
-      const powerToDeductFromAttackCeil = Math.ceil(powerToDeductFromAttack);
-      attack.power -= powerToDeductFromAttackCeil;
-      this.pierceCarryOver = powerToDeductFromAttackCeil - powerToDeductFromAttack;
+      const effPower = attack.power + this.blockCarryOver;
 
+      const blockCost = this.applyBlockPower(effPower, blockEvent);
+      let powerUsedToBlock;
+
+      let powerRemaining;
+      if (blockEvent.deleteList.length < this.attackQueue.length) {
+        // use all to block
+        powerUsedToBlock = attack.power;
+        powerRemaining = 0;
+        this.blockCarryOver = effPower - blockCost;
+      } else {
+        // use partial to block
+        powerUsedToBlock = Math.ceil(blockCost);
+        powerRemaining = effPower - powerUsedToBlock;
+        this.blockCarryOver = powerUsedToBlock - blockCost;
+      }
+
+      const effAttPower = powerRemaining + this.pierceCarryOver + powerUsedToBlock * this.playerRule.garbagePierceFactor;
+      const effAttPowerFloor = Math.floor(effAttPower);
+      attack.power = effAttPowerFloor;
+      this.pierceCarryOver = effAttPower - effAttPowerFloor;
+      
       // sanity check
       if (this.blockCarryOver < 0
-          || this.blockCarryOver >= 1
+          || this.blockCarryOver >= 1 / this.playerRule.garbageBlockingFactor
           || this.pierceCarryOver < 0
           || this.pierceCarryOver >= 1
           || attack.power < 0
@@ -118,12 +127,14 @@ export class GarbageGen {
       const queuedAttack = this.attackQueue[i];
       const maxAttBlocked = Math.floor(powerLeft * this.playerRule.garbageBlockingFactor);
       if (maxAttBlocked >= queuedAttack.powerLeft) {
+        // enough to block current next queued attack: use up the required power for blocking and continue
         const powerUsedForThisBlock = queuedAttack.powerLeft / this.playerRule.garbageBlockingFactor;
         event.deleteList.push(i);
         queuedAttack.powerLeft = 0;
         powerUsed += powerUsedForThisBlock;
         powerLeft -= powerUsedForThisBlock;
       } else {
+        // not enough to block all queued attack: use up all power for blocking and break
         queuedAttack.powerLeft -= maxAttBlocked;
         event.updateList.push(i);
         powerUsed += maxAttBlocked / this.playerRule.garbageBlockingFactor;
@@ -179,7 +190,7 @@ export class GarbageGen {
 
       this.player.board.addBottomRows(rows);
 
-      for (const row of rows) {
+      for (const _row of rows) {
         this.player.activePiece.attemptMove(-1, 0, 0);
       }
 
