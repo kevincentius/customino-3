@@ -8,10 +8,15 @@ export interface PlayerRule {
   previews: number;
   rotationSystem: RotationSystemType;
 
+  // garbage entry
   garbageSpawnDelayTable: number[];
   garbageSpawnRate: number;
-  garbageCleanlinessBetween: number;
-  garbageCleanlinessWithin: number;
+  lineClearDelaysGarbage: boolean;
+  garbageSpawnCap: number;
+  
+  // garbage blocking
+  garbageBlockingFactor: number; // the fraction of attack power that will be used for blocking if there are incoming attacks queued.
+  garbagePierceFactor: number; // the fraction of attack power that will be sent anyways even if the power has been used up for blocking
 
   // combo timer
   useComboTimer: boolean;
@@ -33,10 +38,15 @@ export const playerRule: PlayerRule = {
   previews: 2,
   rotationSystem: RotationSystemType.NEAREST,
 
+  // garbage entry
   garbageSpawnDelayTable: [0, 1],
   garbageSpawnRate: 1,
-  garbageCleanlinessBetween: 0,
-  garbageCleanlinessWithin: 100,
+  lineClearDelaysGarbage: true,
+  garbageSpawnCap: 0,
+
+  // garbage blocking
+  garbageBlockingFactor: 1,
+  garbagePierceFactor: 0,
 
   // combo timer
   useComboTimer: true,

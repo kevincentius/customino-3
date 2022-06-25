@@ -63,11 +63,9 @@ export class GarbageGen {
 
   runFrame() {
     if (this.attackQueue.length > 0 && this.attackQueue[0].frameReady <= this.player.frame) {
-      let spawnAmount = 0;
-      while (this.spawnRateFrameCounter <= 0) {
-        this.spawnRateFrameCounter += gameLoopRule.fps / this.playerRule.garbageSpawnRate;
-        spawnAmount++;
-      }
+      const spawnFramesPerLine = gameLoopRule.fps / this.playerRule.garbageSpawnRate;
+      const spawnAmount = Math.floor((-this.spawnRateFrameCounter) / spawnFramesPerLine) + 1;
+      this.spawnRateFrameCounter += spawnAmount * spawnFramesPerLine;
 
       if (spawnAmount > 0) {
         this.spawnGarbage(spawnAmount, this.attackQueue);
@@ -76,10 +74,13 @@ export class GarbageGen {
       
       this.spawnRateFrameCounter--;
     } else {
-      this.spawnRateFrameCounter = 0;
+      this.spawnRateFrameCounter = Math.max(0, this.spawnRateFrameCounter - 1);
     }
   }
 
+  /* Spawns up to spawnAmount lines of garbage.
+   *  If spawnAmount is more than the number of queued garbage lines,
+   *  then all will be spawned and the remainder is ignored. */
   private spawnGarbage(spawnAmount: number, attackQueue: QueuedAttack[]) {
     let spawnLeft = spawnAmount;
     while (spawnLeft > 0 && attackQueue.length > 0) {
