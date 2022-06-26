@@ -39,7 +39,7 @@ Live app: https://customino.netlify.app
 
 Github: https://github.com/kevincentius/minimino/issues
 
-Heroku (main server): https://dashboard.heroku.com/apps/customino/logs
+Heroku (main server): https://dashboard.heroku.com/apps/customino-main-server/logs
 
 Heroku (game server): https://dashboard.heroku.com/apps/customino-game-server/logs
 

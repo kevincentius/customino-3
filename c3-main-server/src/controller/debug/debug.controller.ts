@@ -1,6 +1,7 @@
 
 import { Controller, Get } from "@nestjs/common";
 import { ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { config } from "config/config";
 import { DebugResponseDto } from "model/debug-response.dto";
 import { DebugService } from "service/debug-service";
 
@@ -18,7 +19,7 @@ export class DebugController {
   @ApiCreatedResponse({ type: DebugResponseDto })
   test(): DebugResponseDto {
     return {
-      gameServerUrl: process.env.DEPLOYMENT == 'LIVE' ? 'https://customino-game-server.herokuapp.com' : 'http://localhost:3001',
+      gameServerUrl: config.gameServerUrl,
       debugMessage: 'Hello from the main server (REST API)',
     };
   }
