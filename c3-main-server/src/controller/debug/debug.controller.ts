@@ -18,7 +18,7 @@ export class DebugController {
   @ApiCreatedResponse({ type: DebugResponseDto })
   test(): DebugResponseDto {
     return {
-      gameServerUrl: process.env.DEPLOYMENT == 'LIVE' ? 'https://poc-c3-game-server.herokuapp.com' : 'http://localhost:3001',
+      gameServerUrl: process.env.DEPLOYMENT == 'LIVE' ? 'https://customino-game-server.herokuapp.com' : 'http://localhost:3001',
       debugMessage: 'Hello from the main server (REST API)',
     };
   }

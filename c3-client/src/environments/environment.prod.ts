@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  mainServerUrl: 'https://poc-c3-main-server.herokuapp.com',
+  mainServerUrl: 'https://customino-main-server.herokuapp.com',
 };

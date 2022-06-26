@@ -4,7 +4,7 @@ export const websocketGatewayOptions = {
   cors: {
     origin: [
       'http://localhost:4200',
-      'https://poc-c3-client.netlify.app',
+      'https://customino.netlify.app',
     ],
     credentials: true,
   }
