@@ -11,16 +11,26 @@
 
 Same thing as for main server (see the README there for more info). Branch is `heroku-game-server`.
 
-### Deploy steps
+### First time configuration
 
-- merge into the `heroku-game-server` branch
-- `git checkout heroku-game-server`
-- `git pull`
-- `heroku git:remote -a poc-c3-game-server`
-- `heroku stack:set container -a poc-c3-game-server`
-- `git push heroku heroku-game-server:master`
-- switch back to your branch (don't commit anything in the heroku branch)
+- create new app
+- connect to git and enable auto deploy `master-game-server` branch
+- set config vars (see below)
+- set to container stack:
+  - `heroku stack:set container -a customino-game-server`
 
 ### Required config vars in Heroku:
 
 - DEPLOYMENT = LIVE
+
+### Manual deploy steps (not needed if heroku is connected to github)
+
+- merge into the `heroku-game-server` branch
+- `git checkout heroku-game-server`
+- `git pull`
+- `heroku git:remote -a customino-game-server`
+- `heroku stack:set container -a customino-game-server`
+- `git push heroku heroku-game-server:master`
+- switch back to your branch (don't commit anything in the heroku branch)
+
+### Required config vars in Heroku:

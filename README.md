@@ -35,14 +35,14 @@ Please choose LTS versions and make sure the softwares are included in your PATH
 
 # Links
 
-Live app: https://poc-c3-client.netlify.app
+Live app: https://customino.netlify.app
 
-Github: https://github.com/Cultris-3/monorepo
+Github: https://github.com/kevincentius/minimino/issues
 
-Heroku (main server): https://dashboard.heroku.com/apps/poc-c3-main-server/logs
+Heroku (main server): https://dashboard.heroku.com/apps/customino/logs
 
-Heroku (game server): https://dashboard.heroku.com/apps/poc-c3-game-server/logs
+Heroku (game server): https://dashboard.heroku.com/apps/customino-game-server/logs
 
-Netlify (client): https://app.netlify.com/sites/poc-c3-client/deploys
+Netlify (client): https://app.netlify.com/sites/customino/deploys
 
 

@@ -18,7 +18,7 @@ Whenever the main server's REST API is changed (by you or someone else), the fol
 
 Netlify is setup to publish the master branch, but automatic deployment is disabled to save build quota. Deployment must be triggered manually from the Netlify website:
 
-- https://app.netlify.com/sites/poc-c3-client/deploys
+- https://app.netlify.com/sites/customino-client/deploys
 
 ## Building desktop standalone app
 
