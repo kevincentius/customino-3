@@ -25,7 +25,7 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/c3-client'),
+      dir: require('path').join(__dirname, './coverage/customino-client'),
       subdir: '.',
       reporters: [
         { type: 'html' },

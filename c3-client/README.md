@@ -16,6 +16,15 @@ Whenever the main server's REST API is changed (by you or someone else), the fol
 
 ## Client Netlify deployment
 
+## First time setup
+
+- Base directory:
+  - c3-client
+- Build command:
+  - cd ../c3-shared && npm install && cd ../c3-client && npm install && npm run build
+- Publish directory:
+  - c3-client/angular-build
+
 Netlify is setup to publish the master branch, but automatic deployment is disabled to save build quota. Deployment must be triggered manually from the Netlify website:
 
 - https://app.netlify.com/sites/customino-client/deploys
