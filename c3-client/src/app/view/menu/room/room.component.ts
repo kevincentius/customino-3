@@ -132,7 +132,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   private downloadLocalReplay() {
-    saveAs(new Blob([JSON.stringify(this.lastGameReplay!)]), `C3-Replay-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
+    saveAs(new Blob([JSON.stringify(this.lastGameReplay!)]), `CM-Replay-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
   }
 
   async onVerifyLastReplayClick() {
@@ -150,11 +150,11 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   async onDownloadGameStateClick() {
     const roomInfo = await this.roomService.getRoomInfo(this.roomId);
-    saveAs(new Blob([JSON.stringify(roomInfo!.gameState)]), `C3-Server-State-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
+    saveAs(new Blob([JSON.stringify(roomInfo!.gameState)]), `CM-Server-State-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
   }
 
   private downloadServerReplay() {
-    saveAs(new Blob([JSON.stringify(this.lastGameReplay)]), `C3-Server-Replay-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
+    saveAs(new Blob([JSON.stringify(this.lastGameReplay)]), `CM-Server-Replay-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
   }
 
   isHost() {

@@ -25,6 +25,9 @@ function createWindow(): BrowserWindow {
     },
   });
 
+  // debug only
+  // win.webContents.openDevTools()
+
   win.setMenu(null);
 
   if (serve) {
