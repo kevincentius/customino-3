@@ -24,7 +24,7 @@ import { FormsModule } from '@angular/forms';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
-    basePath: process.env['MAIN_SERVER_URL'] ?? 'http://localhost:3000',
+    basePath: environment.mainServerUrl,
   };
   return new Configuration(params);
 }
