@@ -24,9 +24,9 @@ export class PixiApplication {
 
     this.app = new Application({
       view: this.canvas,
-      resizeTo: window,
+      // resizeTo: window,
       backgroundColor: 0x111111,
-      
+
       antialias: true,
       autoDensity: true, // !!!
       resolution: 2,
@@ -42,8 +42,11 @@ export class PixiApplication {
         this.keyboard.tick(dt);
       }
     });
-    
+
     this.userSettingsService.settingsChangedSubject.subscribe(localSettings => this.updateKeyBindings(localSettings.control));
+
+    window.onresize = e => this.onResize();
+    this.onResize();
   }
 
   public updateKeyBindings(c: ControlSettings) {
@@ -74,6 +77,15 @@ export class PixiApplication {
       this.app.stage.removeChild(this.gameDisplay);
     }
     this.gameDisplay = new GameDisplay(game);
+    this.onResize();
     this.app.stage.addChild(this.gameDisplay);
+  }
+
+  private onResize() {
+    this.app.renderer.resize(window.innerWidth, window.innerHeight);
+
+    if (this.gameDisplay) {
+      this.gameDisplay.resize(window.innerWidth, window.innerHeight);
+    }
   }
 }
