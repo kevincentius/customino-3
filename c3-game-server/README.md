@@ -23,7 +23,7 @@ Same thing as for main server (see the README there for more info). Branch is `h
 
 - DEPLOYMENT = LIVE
 - MAIN_SERVER_URL = (link to the game server, e.g. `https://customino-main-server.herokuapp.com`)
-- CLIENT_SERVER_URL = (link to the game server, e.g. `https://customino.netlify.app`)
+- CLIENT_URL = (link to the game server, e.g. `https://customino.netlify.app`)
 
 
 ### Manual deploy steps (not needed if heroku is connected to github)

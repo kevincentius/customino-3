@@ -35,7 +35,7 @@ export const playerRule: PlayerRule = {
   height: 18,
   invisibleHeight: 18,
 
-  previews: 1,
+  previews: 3,
   rotationSystem: RotationSystemType.NEAREST,
 
   // garbage entry

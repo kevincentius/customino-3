@@ -10,7 +10,7 @@ export class PieceQueueDisplay extends Container implements LayoutChild {
   layoutHeight = 200;
 
   pieceDisplays: PieceDisplay[] = [];
-  layout = new LayoutContainer(1, 200, 0, 40);
+  layout = new LayoutContainer(1, 200, null, 40);
 
   constructor(
     private player: Player,
