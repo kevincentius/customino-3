@@ -18,4 +18,7 @@ export class FieldOutputComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  getChoiceLabel() {
+    return this.field.choices!.find(choice => choice.value == this.fieldValue)!.label;
+  }
 }

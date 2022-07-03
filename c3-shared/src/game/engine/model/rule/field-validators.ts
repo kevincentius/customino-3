@@ -12,3 +12,16 @@ export function intRangeValidator(min: number, max: number) {
     return undefined;
   }
 }
+
+export function listValidator(itemValidator: (value: any) => string | undefined) {
+  return (value: any[]) => {
+    for (const item of value) {
+      const error = itemValidator(item);
+      if (error != undefined) {
+        return error;
+      }
+    }
+    
+    return undefined;
+  }
+}

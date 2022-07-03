@@ -28,6 +28,7 @@ export class FieldInputComponent implements OnInit {
     this.inpValue = this.fieldValue;
   }
 
+  // NUMBER
   onInputChange() {
     this.errors = this.field.validators ? this.field.validators.map(v => v(this.inpValue)).filter(m => !!m) : [];
     
@@ -36,12 +37,22 @@ export class FieldInputComponent implements OnInit {
     }
   }
 
-  startScroll(sign: number) {
-    if (this.validate(this.fieldValue + sign)) {
-      this.fieldValue += sign;
-      this.fieldValueChange.emit(this.fieldValue);
+  // NUMBER_SCROLL
+  startScroll(sign: number, index?: number) {
+    if (index == undefined) {
+      if (this.validate(this.fieldValue + sign)) {
+        this.fieldValue += sign;
+        this.fieldValueChange.emit(this.fieldValue);
+      }
+    } else {
+      const newValue = [...this.fieldValue];
+      newValue[index] += sign;
+      if (this.validate(newValue)) {
+        this.fieldValue[index] += sign;
+        this.fieldValueChange.emit(this.fieldValue);
+      }
     }
-    this.scrollTimeout = setTimeout(() => this.scrollLoop(sign), this.scrollDelay);
+    this.scrollTimeout = setTimeout(() => this.scrollLoop(sign, index), this.scrollDelay);
   }
 
   endScroll() {
@@ -51,13 +62,45 @@ export class FieldInputComponent implements OnInit {
     }
   }
 
-  scrollLoop(sign: number) {
-    if (this.validate(this.fieldValue + sign)) {
-      this.fieldValue += sign;
-      this.fieldValueChange.emit(this.fieldValue);
-      this.scrollTimeout = setTimeout(() => this.scrollLoop(sign), this.scrollRepeatInteveral);
+  scrollLoop(sign: number, index?: number) {
+    if (index == undefined) {
+      if (this.validate(this.fieldValue + sign)) {
+        this.fieldValue += sign;
+        this.fieldValueChange.emit(this.fieldValue);
+        this.scrollTimeout = setTimeout(() => this.scrollLoop(sign, index), this.scrollRepeatInteveral);
+      }
+    } else {
+      const newValue = [...this.fieldValue];
+      newValue[index] += sign;
+      if (this.validate(newValue)) {
+        this.fieldValue[index] += sign;
+        this.fieldValueChange.emit(this.fieldValue);
+        this.scrollTimeout = setTimeout(() => this.scrollLoop(sign, index), this.scrollRepeatInteveral);
+      }
     }
   }
+
+  // CHOICE
+  getChoiceLabel() {
+    return this.field.choices![this.getChoiceIndex()].label;
+  }
+
+  onChangeChoice(sign: number) {
+    this.fieldValue = this.field.choices![this.getChoiceIndex() + sign].value;
+    this.fieldValueChange.emit(this.fieldValue);
+  }
+
+  canChangeChoice(sign: number) {
+    const index = this.getChoiceIndex() + sign;
+    return index >= 0 && index < this.field.choices!.length;
+  }
+
+  private getChoiceIndex() {
+    return this.field.choices!.findIndex(choice => choice.value == this.fieldValue);
+  }
+
+  // NUMBER LIST
+
 
   private validate(val: any) {
     const errors = this.field.validators ? this.field.validators.map(v => v(val)).filter(m => !!m) : [];

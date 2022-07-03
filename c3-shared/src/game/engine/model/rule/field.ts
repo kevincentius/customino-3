@@ -13,4 +13,7 @@ export interface PlayerRuleField {
 
   // CHOICE
   choices?: { label: string, value: any }[];
+
+  // ARRAYS
+  startIndex?: number;
 }

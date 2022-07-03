@@ -6,9 +6,50 @@
   
   <ng-container *ngIf="field.fieldType == FieldType.NUMBER_SCROLL">
     <div class="scroll-container">
-      <mat-icon class="scroll-button" (mousedown)="startScroll(-1)" (mouseup)="endScroll()">chevron_left</mat-icon>
+      <mat-icon class="scroll-button" (mousedown)="startScroll(-1)" (mouseout)="endScroll()" (mouseup)="endScroll()">chevron_left</mat-icon>
       <div class="scroll-value">{{fieldValue}}</div>
-      <mat-icon class="scroll-button" (mousedown)="startScroll(1)" (mouseup)="endScroll()">chevron_right</mat-icon>
+      <mat-icon class="scroll-button" (mousedown)="startScroll(1)" (mouseout)="endScroll()" (mouseup)="endScroll()">chevron_right</mat-icon>
+    </div>
+  </ng-container>
+  
+  <ng-container *ngIf="field.fieldType == FieldType.CHOICE">
+    <div class="scroll-container">
+      <mat-icon class="scroll-button"
+        (mousedown)="onChangeChoice(-1)"
+        (mouseup)="endScroll()"
+        [style.opacity]="canChangeChoice(-1) ? 0.4 : 0.2"
+      >chevron_left</mat-icon>
+      <div class="scroll-choice-value">{{getChoiceLabel()}}</div>
+      <mat-icon class="scroll-button"
+        (mousedown)="onChangeChoice(1)"
+        (mouseup)="endScroll()"
+        [style.opacity]="canChangeChoice(1) ? 0.4 : 0.2"
+      >chevron_right</mat-icon>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="field.fieldType == FieldType.NUMBER_LIST">
+    <div class="array-container">
+      <ng-container *ngFor="let item of fieldValue; let i=index">
+        <div class="array-column" *ngIf="field.startIndex == null || i >= field.startIndex">
+          <div>
+            <mat-icon class="scroll-button"
+            (mousedown)="startScroll(1, i)"
+            (mouseup)="endScroll()"
+            >expand_less</mat-icon>
+          </div>
+
+          <div class="array-index">{{i}}</div>
+
+          <div class="array-value">{{item}}</div>
+          <div>
+            <mat-icon class="scroll-button"
+              (mousedown)="startScroll(-1, i)"
+              (mouseup)="endScroll()"
+            >expand_more</mat-icon>
+          </div>
+        </div>
+      </ng-container>
     </div>
   </ng-container>
 </div>

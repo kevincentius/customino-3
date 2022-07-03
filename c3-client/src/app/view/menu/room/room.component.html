@@ -18,9 +18,7 @@
           <button *ngIf="lastGameReplay" class="gui-button" (click)="onDownloadLastReplayClick()">Replay</button>
   
           <!-- host buttons -->
-          <ng-container *ngIf="isHost()">
-            <button class="gui-button" [disabled]="isRunning()" (click)="onSettingsClick()">Settings</button>
-          </ng-container>
+          <button class="gui-button" [disabled]="isRunning()" (click)="onSettingsClick()">Settings</button>
           
           <!-- debug buttons -->
           <ng-container *ngIf="debug">

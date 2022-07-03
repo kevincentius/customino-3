@@ -1,6 +1,7 @@
 import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
 import { FieldType } from "@shared/game/engine/model/rule/field-type";
-import { intRangeValidator } from "@shared/game/engine/model/rule/field-validators";
+import { intRangeValidator, listValidator } from "@shared/game/engine/model/rule/field-validators";
+import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
 
 export const playerRuleFields: PlayerRuleField[] = [
   {
@@ -38,5 +39,28 @@ export const playerRuleFields: PlayerRuleField[] = [
 
     name: 'Piece previews',
     description: 'The number of next incoming pieces displayed.',
+  },
+  {
+    property: 'rotationSystem',
+    fieldType: FieldType.CHOICE,
+    default: RotationSystemType.NEAREST,
+    choices: [
+      { value: RotationSystemType.NO_KICK, label: 'Strict (no kick)' },
+      { value: RotationSystemType.SRS, label: 'Guideline (SRS)' },
+      { value: RotationSystemType.NEAREST, label: 'Nearest' },
+    ],
+
+    name: 'Rotation system',
+    description: 'This affects the way the pieces move when rotated.',
+  },
+  {
+    property: 'comboAttackTable',
+    fieldType: FieldType.NUMBER_LIST,
+    default: [0, 0, 1, 1, 1, 2, 2, 2, 3],
+    startIndex: 1,
+    validators: [ listValidator(intRangeValidator(0, 100)) ],
+
+    name: 'Combo Attack Table',
+    description: 'Defines the amount of lines sent when performing a combo.',
   },
 ];

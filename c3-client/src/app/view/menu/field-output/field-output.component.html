@@ -1,6 +1,21 @@
 
 <div>
-  <ng-container *ngIf="field.fieldType == FieldType.NUMBER">
+  <ng-container *ngIf="field.fieldType == FieldType.NUMBER || field.fieldType == FieldType.NUMBER_SCROLL">
     {{fieldValue}}
   </ng-container>
 </div>
+
+<ng-container *ngIf="field.fieldType == FieldType.CHOICE">
+  {{getChoiceLabel()}}
+</ng-container>
+
+<ng-container *ngIf="field.fieldType == FieldType.NUMBER_LIST">
+  <div class="array-container">
+    <ng-container *ngFor="let item of fieldValue; let i=index">
+      <div class="array-column" *ngIf="field.startIndex == null || i >= field.startIndex">
+        <div class="array-index">{{i}}</div>
+        <div class="array-value">{{item}}</div>
+      </div>
+    </ng-container>
+  </div>
+</ng-container>
