@@ -23,6 +23,8 @@ import { MenuButtonComponent } from './view/common/menu-button/menu-button.compo
 import { FormsModule } from '@angular/forms';
 import { RoomSettingsComponent } from './view/menu/room-settings/room-settings.component';
 import { RuleSettingsComponent } from './view/menu/rule-settings/rule-settings.component';
+import { FieldInputComponent } from './view/menu/field-input/field-input.component';
+import { FieldOutputComponent } from './view/menu/field-output/field-output.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -48,6 +50,8 @@ export function apiConfigFactory(): Configuration {
     MenuButtonComponent,
     RoomSettingsComponent,
     RuleSettingsComponent,
+    FieldInputComponent,
+    FieldOutputComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),

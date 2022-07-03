@@ -1,0 +1,10 @@
+
+<div>
+  <ng-container *ngIf="field.fieldType == FieldType.NUMBER">
+    <input [(ngModel)]="inpValue" (input)="onInputChange()"/>
+  </ng-container>
+</div>
+
+<div class="validation-error" *ngFor="let validationErrorMessage of validationErrorMessages">
+  {{validationErrorMessage}}
+</div>

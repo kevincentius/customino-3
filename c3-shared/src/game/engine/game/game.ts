@@ -1,5 +1,6 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { GameResult } from "@shared/game/engine/game/game-result";
+import { GameRule } from "@shared/game/engine/model/rule/game-rule";
 import { Player } from "@shared/game/engine/player/player";
 import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
 import { Subject } from "rxjs";

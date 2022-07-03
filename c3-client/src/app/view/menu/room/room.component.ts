@@ -173,7 +173,12 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomSettingsComponent.show(this.roomInfo.settings);
   }
 
-  onCloseSettingsClick() {
+  onCancelSettingsClick() {
     this.showSettings = false;
+  }
+
+  onSaveSettingsClick() {
+    this.showSettings = false;
+    this.roomService.changeRoomSettings(this.roomSettingsComponent.getData());
   }
 }

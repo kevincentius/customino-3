@@ -1,0 +1,23 @@
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-container {
+  display: flex;
+  gap: 20px;
+  padding: 4px 0;
+  
+  &:hover {
+    background: #fff2;
+  }
+}
+
+.field-caption {
+  width: 200px;
+}
+
+.field-value {
+  flex-grow: 1;
+}

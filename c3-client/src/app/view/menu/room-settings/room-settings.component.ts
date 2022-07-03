@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { RoomSettings } from '@shared/game/engine/model/room-settings';
 
 @Component({
@@ -9,6 +9,7 @@ import { RoomSettings } from '@shared/game/engine/model/room-settings';
 export class RoomSettingsComponent implements OnInit {
 
   data!: RoomSettings;
+  @Input() editMode = false;
 
   constructor() { }
 
@@ -16,7 +17,13 @@ export class RoomSettingsComponent implements OnInit {
   }
 
   show(actualSettings: RoomSettings) {
-    console.log(JSON.stringify(actualSettings));
-    this.data = JSON.parse(JSON.stringify(actualSettings));
+    this.data = undefined!;
+    setTimeout(() => {
+      this.data = JSON.parse(JSON.stringify(actualSettings));
+    });
+  }
+
+  getData() {
+    return this.data;
   }
 }

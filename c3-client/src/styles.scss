@@ -69,7 +69,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     &:hover {
       color: #ff0;
     }
-  
+  }
+
+  &.gui-button-danger {
+    color: #f66d;
+
+    &:hover {
+      color: #f00;
+    }
   }
 }
 

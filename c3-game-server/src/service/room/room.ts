@@ -23,6 +23,7 @@ export class Room {
       globalRule: playerRule,
     },
   };
+  host!: Session;
 
   provideReplay = true;
   lastGameReplay?: GameReplay;
@@ -37,6 +38,7 @@ export class Room {
     public creator: Session,
   ) {
     this.slots =[new RoomSlot(creator, true)];
+    this.host = creator;
   }
 
   leave(session: Session) {
@@ -86,7 +88,7 @@ export class Room {
   }
 
   startGame(session: Session) {
-    if (!this.isRunning() && this.creator == session && this.isInRoom(session)) {
+    if (!this.isRunning() && this.host == session && this.isInRoom(session)) {
       const playerSlots = this.slots.filter(slot => slot.playing);
       this.slots.forEach(slot => slot.playerIndex = null);
       playerSlots.forEach((playerSlot, index) => playerSlot.playerIndex = index);
@@ -96,6 +98,7 @@ export class Room {
       const globalSeed = this.r.int();
       
       const startGameData: StartGameData = {
+        gameRule: this.settings.gameRule,
         players: players.map(p => ({
           clientInfo: p,
           randomSeed: globalSeed,
@@ -142,6 +145,13 @@ export class Room {
     }
   }
 
+  changeRoomSettings(session: Session, roomSettings: RoomSettings) {
+    if (this.host == session) {
+      this.settings = roomSettings;
+      this.broadcastRoomInfo();
+    }
+  }
+  
   isInRoom(session: Session) {
     return this.slots.find(slot => slot.session == session);
   }
@@ -158,7 +168,7 @@ export class Room {
     return {
       id: this.id,
       name: this.name,
-      host: this.creator.getClientInfo(),
+      host: this.host.getClientInfo(),
 
       settings: this.settings,
       slots: this.slots.map(roomSlot => roomSlot.getRoomSlotInfo()),

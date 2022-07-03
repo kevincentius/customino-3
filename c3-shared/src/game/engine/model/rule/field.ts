@@ -7,4 +7,6 @@ export interface PlayerRuleField {
   description: string;
   fieldType: FieldType;
   validators?: ((value: any) => string | undefined)[];
+
+  choices?: { label: string, value: any }[];
 }

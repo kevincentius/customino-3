@@ -8,5 +8,7 @@ export function intRangeValidator(min: number, max: number) {
     if (value < min || value > max) {
       return `The value must be between ${min} and ${max}.`;
     }
+
+    return undefined;
   }
 }
