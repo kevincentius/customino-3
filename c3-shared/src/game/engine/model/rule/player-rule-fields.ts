@@ -5,7 +5,7 @@ import { intRangeValidator } from "@shared/game/engine/model/rule/field-validato
 export const playerRuleFields: PlayerRuleField[] = [
   {
     property: 'width',
-    fieldType: FieldType.NUMBER,
+    fieldType: FieldType.NUMBER_SCROLL,
     default: 10,
     validators: [ intRangeValidator(4, 100) ],
 
@@ -14,7 +14,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   },
   {
     property: 'height',
-    fieldType: FieldType.NUMBER,
+    fieldType: FieldType.NUMBER_SCROLL,
     default: 18,
     validators: [ intRangeValidator(4, 100) ],
 
@@ -23,8 +23,8 @@ export const playerRuleFields: PlayerRuleField[] = [
   },
   {
     property: 'invisibleHeight',
-    fieldType: FieldType.NUMBER,
-    default: 18,
+    fieldType: FieldType.NUMBER_SCROLL,
+    default: 20,
     validators: [ intRangeValidator(0, 100) ],
 
     name: 'Hidden rows',
@@ -32,7 +32,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   },
   {
     property: 'previews',
-    fieldType: FieldType.NUMBER,
+    fieldType: FieldType.NUMBER_SCROLL,
     default: 1,
     validators: [ intRangeValidator(0, 10) ],
 

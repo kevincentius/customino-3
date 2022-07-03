@@ -15,7 +15,11 @@ export class FieldInputComponent implements OnInit {
   FieldType = FieldType;
 
   inpValue: any;
-  validationErrorMessages: (string | undefined)[] = [];
+  errors: (string | undefined)[] = [];
+
+  scrollTimeout: any;
+  scrollDelay = 250;
+  scrollRepeatInteveral = 50;
 
   constructor() {
   }
@@ -25,11 +29,39 @@ export class FieldInputComponent implements OnInit {
   }
 
   onInputChange() {
-    this.validationErrorMessages = this.field.validators ? this.field.validators.map(v => v(this.inpValue)).filter(m => !!m) : [];
+    this.errors = this.field.validators ? this.field.validators.map(v => v(this.inpValue)).filter(m => !!m) : [];
     
-    if (this.validationErrorMessages.length == 0) {
+    if (this.errors.length == 0) {
       this.fieldValueChange.emit(this.getValue());
     }
+  }
+
+  startScroll(sign: number) {
+    if (this.validate(this.fieldValue + sign)) {
+      this.fieldValue += sign;
+      this.fieldValueChange.emit(this.fieldValue);
+    }
+    this.scrollTimeout = setTimeout(() => this.scrollLoop(sign), this.scrollDelay);
+  }
+
+  endScroll() {
+    if (this.scrollTimeout) {
+      clearTimeout(this.scrollTimeout);
+      this.scrollTimeout = undefined;
+    }
+  }
+
+  scrollLoop(sign: number) {
+    if (this.validate(this.fieldValue + sign)) {
+      this.fieldValue += sign;
+      this.fieldValueChange.emit(this.fieldValue);
+      this.scrollTimeout = setTimeout(() => this.scrollLoop(sign), this.scrollRepeatInteveral);
+    }
+  }
+
+  private validate(val: any) {
+    const errors = this.field.validators ? this.field.validators.map(v => v(val)).filter(m => !!m) : [];
+    return errors.length == 0;    
   }
 
   private getValue() {

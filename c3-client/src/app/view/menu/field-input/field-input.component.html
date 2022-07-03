@@ -3,8 +3,16 @@
   <ng-container *ngIf="field.fieldType == FieldType.NUMBER">
     <input [(ngModel)]="inpValue" (input)="onInputChange()"/>
   </ng-container>
+  
+  <ng-container *ngIf="field.fieldType == FieldType.NUMBER_SCROLL">
+    <div class="scroll-container">
+      <mat-icon class="scroll-button" (mousedown)="startScroll(-1)" (mouseup)="endScroll()">chevron_left</mat-icon>
+      <div class="scroll-value">{{fieldValue}}</div>
+      <mat-icon class="scroll-button" (mousedown)="startScroll(1)" (mouseup)="endScroll()">chevron_right</mat-icon>
+    </div>
+  </ng-container>
 </div>
 
-<div class="validation-error" *ngFor="let validationErrorMessage of validationErrorMessages">
-  {{validationErrorMessage}}
+<div class="validation-error" *ngFor="let error of errors">
+  {{error}}
 </div>

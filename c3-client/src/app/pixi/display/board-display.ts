@@ -66,9 +66,9 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.maskContainer = new Container();
     const maskGraphics = new Graphics();
     maskGraphics.beginFill();
-    maskGraphics.drawRect(0, 0, this.layout.width, this.layout.height);
+    maskGraphics.drawRect(0, 0, this.layout.innerWidth, this.layout.innerHeight);
     maskGraphics.endFill();
-    this.addChild(maskGraphics);
+    this.fieldContainer.addChild(maskGraphics);
     this.maskContainer.mask = maskGraphics;
     this.fieldContainer.addChild(this.maskContainer);
 

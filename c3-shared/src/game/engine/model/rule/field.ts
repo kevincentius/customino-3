@@ -8,5 +8,9 @@ export interface PlayerRuleField {
   fieldType: FieldType;
   validators?: ((value: any) => string | undefined)[];
 
+  // NUMBER_SCROLL
+  stepSize?: number;
+
+  // CHOICE
   choices?: { label: string, value: any }[];
 }

@@ -3,3 +3,20 @@
   font-size: 65%;
   color: #f88;
 }
+
+.scroll-container {
+  display: flex;
+  align-items: center;
+
+  .scroll-button {
+    cursor: pointer;
+    opacity: 0.4;
+    transform: scale(1.4);
+    &:hover { background: #fff2; opacity: 1; }
+  }
+
+  .scroll-value {
+    width: 50px;
+    text-align: center;
+  }
+}
