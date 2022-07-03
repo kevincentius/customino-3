@@ -18,6 +18,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   height: 100%;
 }
 
+.v-flex {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .screen-title-container {
   padding-left: 30px;
   padding-right: 30px;
@@ -102,6 +108,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   background: #000b;
   border: solid #fff2 1px;
   border-radius: 3px;
+  overflow: auto;
 
   .section-title {
     font-size: 24px;

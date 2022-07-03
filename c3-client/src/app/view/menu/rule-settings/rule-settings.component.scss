@@ -9,6 +9,7 @@
   align-items: center;
   gap: 20px;
   padding: 4px 0;
+  min-height: 40px;
   
   &:hover {
     background: #fff2;
@@ -16,7 +17,7 @@
 }
 
 .field-caption {
-  width: 200px;
+  width: 400px;
 }
 
 .field-value {

@@ -1,3 +1,4 @@
+import { FieldTags as FieldTag } from "@shared/game/engine/model/rule/field-tag";
 import { FieldType } from "@shared/game/engine/model/rule/field-type";
 
 export interface PlayerRuleField {
@@ -7,9 +8,11 @@ export interface PlayerRuleField {
   description: string;
   fieldType: FieldType;
   validators?: ((value: any) => string | undefined)[];
+  tags: FieldTag[];
 
-  // NUMBER_SCROLL
+  // NUMBERS
   stepSize?: number;
+  decimalPlaces?: number;
 
   // CHOICE
   choices?: { label: string, value: any }[];

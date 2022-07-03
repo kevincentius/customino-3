@@ -13,6 +13,16 @@ export function intRangeValidator(min: number, max: number) {
   }
 }
 
+export function floatRangeValidator(min: number, max: number) {
+  return (value: number) => {
+    if (value < min || value > max) {
+      return `The value must be between ${min} and ${max}.`;
+    }
+
+    return undefined;
+  }
+}
+
 export function listValidator(itemValidator: (value: any) => string | undefined) {
   return (value: any[]) => {
     for (const item of value) {
@@ -21,7 +31,7 @@ export function listValidator(itemValidator: (value: any) => string | undefined)
         return error;
       }
     }
-    
+
     return undefined;
   }
 }

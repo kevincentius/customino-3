@@ -15,3 +15,9 @@
     flex-direction: row;
   }
 }
+
+.screen-body-container {
+  flex-grow: 1;
+  overflow: hidden;
+  padding-bottom: 30px;
+}
