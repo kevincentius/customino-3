@@ -21,6 +21,8 @@ import { BackgroundComponent } from './view/common/background/background.compone
 import { ControlRowComponent } from './view/menu/controls/control-row/control-row.component';
 import { MenuButtonComponent } from './view/common/menu-button/menu-button.component';
 import { FormsModule } from '@angular/forms';
+import { RoomSettingsComponent } from './view/menu/room-settings/room-settings.component';
+import { RuleSettingsComponent } from './view/menu/rule-settings/rule-settings.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -44,6 +46,8 @@ export function apiConfigFactory(): Configuration {
     BackgroundComponent,
     ControlRowComponent,
     MenuButtonComponent,
+    RoomSettingsComponent,
+    RuleSettingsComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),

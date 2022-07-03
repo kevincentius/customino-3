@@ -11,11 +11,18 @@ import { GameReplay } from "@shared/game/engine/recorder/game-replay";
 import { GameRecorder } from "@shared/game/engine/recorder/game-recorder";
 import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
 import { RandomGen } from "@shared/game/engine/util/random-gen";
+import { RoomSettings } from "@shared/game/engine/model/room-settings";
+import { playerRule } from "@shared/game/engine/model/rule/player-rule";
 
 export class Room {
   createdAt = Date.now();
   lastActivity = Date.now();
   slots: RoomSlot[];
+  settings: RoomSettings = {
+    gameRule: { 
+      globalRule: playerRule,
+    },
+  };
 
   provideReplay = true;
   lastGameReplay?: GameReplay;
@@ -153,6 +160,7 @@ export class Room {
       name: this.name,
       host: this.creator.getClientInfo(),
 
+      settings: this.settings,
       slots: this.slots.map(roomSlot => roomSlot.getRoomSlotInfo()),
       gameState: gameState ? this.game?.serialize() ?? null : null,
     };
