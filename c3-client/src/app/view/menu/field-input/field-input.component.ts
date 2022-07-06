@@ -88,7 +88,7 @@ export class FieldInputComponent implements OnInit {
   }
 
   onChangeChoice(sign: number) {
-    this.fieldValue = this.field.choices![this.getChoiceIndex() + sign].value;
+    this.fieldValue = this.field.choices![((this.getChoiceIndex() + sign) % this.field.choices!.length)].value;
     this.fieldValueChange.emit(this.fieldValue);
   }
 

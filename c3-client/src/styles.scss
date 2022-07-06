@@ -2,7 +2,9 @@
 
 @import 'styles/palette';
 
-
+* {
+  user-select: none;
+}
 
 body {
   margin: 0;

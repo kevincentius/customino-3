@@ -9,7 +9,7 @@
   align-items: center;
 
   .scroll-button {
-    padding: 5px 10px;
+    padding: 4px 10px 0px;
   }
 
   .scroll-value {
@@ -20,14 +20,17 @@
   .scroll-choice-value {
     width: 180px;
     text-align: center;
+    padding: 6px 0;
+    cursor: pointer;
+    &:hover { background: #fff6; }
   }
 }
 
 .scroll-button {
   cursor: pointer;
   opacity: 0.6;
-  transform: scale(1.4);
-  &:hover { background: #fff2; opacity: 1; }
+  z-index: 1;
+  &:hover { background: #fff6; opacity: 1; }
 }
 
 .array-container {
@@ -42,11 +45,11 @@
 
     .array-index {
       color: #fff8;
-      font-size: 50%;
+      font-size: 75%;
       margin-top: -2em;
       transform: translate(0px, 3px);
 
-      visibility: hidden;
+      // visibility: hidden;
     }
     &:hover .array-index {
       visibility: visible;
@@ -57,6 +60,7 @@
     }
 
     .scroll-button { visibility: hidden; }
+    .scroll-button-up { margin-bottom: 16px; }
     &:hover .scroll-button { visibility: visible; }
   }
 }
