@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { RoomSettings } from '@shared/game/engine/model/room-settings';
 
 @Component({
@@ -7,23 +7,24 @@ import { RoomSettings } from '@shared/game/engine/model/room-settings';
   styleUrls: ['./room-settings.component.scss']
 })
 export class RoomSettingsComponent implements OnInit {
+  @Output() save = new EventEmitter<RoomSettings>();
+  @Output() cancel = new EventEmitter();
 
   data!: RoomSettings;
+  @Input() currentSettings!: RoomSettings;
   @Input() editMode = false;
 
   constructor() { }
 
   ngOnInit(): void {
+    this.data = JSON.parse(JSON.stringify(this.currentSettings));
   }
 
-  show(actualSettings: RoomSettings) {
-    this.data = undefined!;
-    setTimeout(() => {
-      this.data = JSON.parse(JSON.stringify(actualSettings));
-    });
+  onSaveClick() {
+    this.save.emit(this.data);
   }
 
-  getData() {
-    return this.data;
+  onCancelClick() {
+    this.cancel.emit();
   }
 }

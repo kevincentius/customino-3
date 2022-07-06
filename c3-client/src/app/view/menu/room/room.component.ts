@@ -37,8 +37,6 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   playerRule: PlayerRule = JSON.parse(JSON.stringify(playerRule));
   
-  @ViewChild('roomSettings') roomSettingsComponent!: RoomSettingsComponent;
-
   constructor(
     private roomService: RoomService,
     private mainService: MainService,
@@ -170,15 +168,14 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   onSettingsClick() {
     this.showSettings = true;
-    this.roomSettingsComponent.show(this.roomInfo.settings);
   }
 
-  onCancelSettingsClick() {
+  onCancelSettings() {
     this.showSettings = false;
   }
 
-  onSaveSettingsClick() {
+  onSaveSettings(settings: RoomSettings) {
     this.showSettings = false;
-    this.roomService.changeRoomSettings(this.roomSettingsComponent.getData());
+    this.roomService.changeRoomSettings(settings);
   }
 }

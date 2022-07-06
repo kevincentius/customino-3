@@ -26,34 +26,30 @@
             <button class="gui-button" (click)="onDownloadGameStateClick()">Download debug state</button>
           </ng-container>
         </ng-container>
-        
-        <ng-container *ngIf="showSettings">
-          <button class="gui-button gui-button-main" (click)="onSaveSettingsClick()">Save</button>
-          <button class="gui-button gui-button-danger" (click)="onCancelSettingsClick()">Cancel</button>
-        </ng-container>
       </div>
     </ng-container>
 
-    <div class="section" *ngIf="roomInfo">
+    <ng-container *ngIf="roomInfo">
       <ng-container *ngIf="!showSettings">
-        <div class="section-title">Players</div>
-        <div class="section-body">
-          <div class="slots-container">
-            <div *ngFor="let slot of roomInfo.slots" class="slot" [class.spectator]="!slot.playing">
-              <div class="slot-player-name">{{slot.player.username}}</div>
+        <div class="section">
+          <div class="section-title">Players</div>
+          <div class="section-body">
+            <div class="slots-container">
+              <div *ngFor="let slot of roomInfo.slots" class="slot" [class.spectator]="!slot.playing">
+                <div class="slot-player-name">{{slot.player.username}}</div>
+              </div>
             </div>
           </div>
         </div>
       </ng-container>
 
-      <div [ngStyle]="{'display': showSettings ? 'block' : 'none'}">
-        <div class="section-title">Settings</div>
-        <div class="section-body">
-          <div class="slots-container">
-            <app-room-settings #roomSettings [editMode]="isHost()"></app-room-settings>
-          </div>
-        </div>
-      </div>
-    </div>
+      <app-room-settings
+        *ngIf="showSettings"
+        [currentSettings]="roomInfo.settings"
+        [editMode]="isHost()"
+        (save)="onSaveSettings($event)"
+        (cancel)="onCancelSettings()"
+      ></app-room-settings>
+    </ng-container>
   </div>
 </div>

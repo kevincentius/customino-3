@@ -1,4 +1,16 @@
 
-<ng-container *ngIf="data">
-  <app-rule-settings [gameRule]="data.gameRule" [editMode]="editMode"></app-rule-settings>
-</ng-container>
+<!-- Buttons -->
+<div class="gui-button-row">
+  <button class="gui-button gui-button-main" (click)="onSaveClick()">Save</button>
+  <button class="gui-button gui-button-danger" (click)="onCancelClick()">Cancel</button>
+</div>
+
+<div class="section">
+  <div class="section-title">Settings</div>
+  
+  <div class="section-body">
+    <ng-container *ngIf="data">
+      <app-rule-settings [gameRule]="data.gameRule" [editMode]="editMode"></app-rule-settings>
+    </ng-container>
+  </div>
+</div>
