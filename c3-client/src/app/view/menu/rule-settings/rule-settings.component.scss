@@ -1,4 +1,10 @@
 
+:host {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .form-container {
   display: flex;
   flex-direction: column;

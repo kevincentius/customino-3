@@ -26,4 +26,8 @@ export class RuleSettingsComponent implements OnInit {
   getFieldValue(field: PlayerRuleField) {
     return (this.gameRule.globalRule as any)[field.property];
   }
+  
+  onSaveRuleClick() {
+    
+  }
 }

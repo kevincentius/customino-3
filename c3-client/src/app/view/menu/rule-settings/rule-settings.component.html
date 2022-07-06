@@ -1,18 +1,34 @@
 
-<div class="form-container">
-  <div *ngFor="let field of playerRuleFields" class="field-container">
-    <div class="field-caption">
-      {{field.name}}
-    </div>
-  
-    <div class="field-value">
-      <ng-container *ngIf="editMode">
-        <app-field-input [field]="field" [(fieldValue)]="displayedRule[field.property]"></app-field-input>
-      </ng-container>
+<div class="section-title">
+  <div style="display: flex;">
+    <div>Game rules</div>
 
-      <ng-container *ngIf="!editMode">
-        <app-field-output [field]="field" [fieldValue]="displayedRule[field.property]"></app-field-output>
-      </ng-container>
-    </div>
+    <div style="flex-grow: 1;"></div>
+  
+    <div class="gui-button gui-button-small"><mat-icon>download</mat-icon> <div style="width: 6px;"></div>save current rule into file</div>
   </div>
+</div>
+
+<div class="section-body">
+  <!-- <app-file-drop-area [instructionText]="'Drag a *.rule file here to load settings.'" [showFiles]="false"></app-file-drop-area> -->
+  
+  
+  
+  <div class="form-container">
+    <div *ngFor="let field of playerRuleFields" class="field-container">
+      <div class="field-caption">
+        {{field.name}}
+      </div>
+    
+      <div class="field-value">
+        <ng-container *ngIf="editMode">
+          <app-field-input [field]="field" [(fieldValue)]="displayedRule[field.property]"></app-field-input>
+        </ng-container>
+  
+        <ng-container *ngIf="!editMode">
+          <app-field-output [field]="field" [fieldValue]="displayedRule[field.property]"></app-field-output>
+        </ng-container>
+      </div>
+    </div>
+  </div>  
 </div>

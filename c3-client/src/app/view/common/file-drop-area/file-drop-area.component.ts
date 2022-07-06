@@ -9,6 +9,8 @@ export class FileDropAreaComponent {
   @Output() fileChange = new EventEmitter<File[]>();
 
   @Input() multi = false;
+  @Input() instructionText = 'Drag a file here...';
+  @Input() showFiles = true;
 
   dragIndicator = false;
 
