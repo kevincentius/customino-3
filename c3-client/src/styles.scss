@@ -2,7 +2,9 @@
 
 @import 'styles/palette';
 
-
+* {
+  user-select: none;
+}
 
 body {
   margin: 0;
@@ -16,6 +18,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .full-size {
   display: block;
   height: 100%;
+}
+
+.v-flex {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .screen-title-container {
@@ -56,6 +64,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   border: solid #0000 2px;
   border-radius: 2px;
 
+  &.gui-button-small {
+    font-size: 16px;
+  }
+
   &:hover {
     transition: 50ms;
     color: #fff;
@@ -69,7 +81,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     &:hover {
       color: #ff0;
     }
-  
+  }
+
+  &.gui-button-danger {
+    color: #f66d;
+
+    &:hover {
+      color: #f00;
+    }
   }
 }
 
@@ -92,12 +111,21 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .section {
   padding: 20px;
   padding-left: 60px;
-  background: #000b;
+  background: #0006;
+  backdrop-filter: blur(8px);
   border: solid #fff2 1px;
   border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 
   .section-title {
     font-size: 24px;
     padding: 10px 0;
+  }
+
+  .section-body {
+    flex-grow: 1;
+    overflow: auto;
   }
 }

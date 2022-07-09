@@ -45,8 +45,8 @@ export const playerRule: PlayerRule = {
   garbageSpawnCap: 0,
 
   // garbage blocking
-  garbageBlockingFactor: 0.5,
-  garbagePierceFactor: 1,
+  garbageBlockingFactor: 1,
+  garbagePierceFactor: 0,
 
   // combo timer
   useComboTimer: true,

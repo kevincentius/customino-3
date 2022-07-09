@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { GameResult } from "@shared/game/engine/game/game-result";
+import { RoomSettings } from "@shared/game/engine/model/room-settings";
 import { GameReplay } from "@shared/game/engine/recorder/game-replay";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { ServerEvent } from "@shared/game/network/model/event/server-event";
@@ -52,5 +53,9 @@ export class RoomService {
 
   async getReplay(): Promise<GameReplay | null> {
     return this.socketService.emitQuery(LobbyEvent.GET_REPLAY);
+  }
+
+  async changeRoomSettings(roomSettings: RoomSettings) {
+    this.socketService.emit(LobbyEvent.CHANGE_ROOM_SETTINGS, roomSettings);
   }
 }

@@ -1,0 +1,107 @@
+
+<div class="section-title">
+  <div style="display: flex;">
+    <div>Game mode</div>
+
+    <div style="flex-grow: 1;"></div>
+
+    <!-- Category toggle button -->
+    <div *ngIf="viewMode.allowCategories"
+      class="gui-button gui-button-small" style="width: 200px;"
+      (click)="toggleCategories()"
+    >
+      <mat-icon>category</mat-icon>
+      <div style="width: 6px;"></div>
+      {{groupByCategory ? 'Show by category' : 'Show all'}}
+    </div>
+
+    <!-- JSON download button-->
+    <div *ngIf="!viewMode.hideRuleFields"
+      class="gui-button gui-button-small"
+      (click)="onDownloadClick()"
+    >
+      <mat-icon>download</mat-icon>
+      <div style="width: 6px;"></div>
+      save current rule into file
+    </div>
+
+    <!-- View mode toggle -->
+    <div *ngIf="!viewMode.hideRuleFields"
+      class="gui-button gui-button-small"
+      style="width: 200px;"
+      (click)="toggleViewMode()"
+    >
+      <mat-icon>settings</mat-icon>
+      <div style="width: 6px;"></div>
+      {{viewMode.name}}
+    </div>  
+  </div>
+</div>
+
+<div class="section-body">
+  <div *ngIf="viewMode.hideRuleFields">
+    <div style="height: 20px"></div>
+
+    <div class="preset-container">
+      <div class="preset" *ngFor="let preset of presets" (click)="onPresetClick(preset)">
+        <div class="preset-icon-area">
+          <span class="material-icons preset-icon" [style.visibility]="this.selectedPreset == preset ? 'visible' : 'hidden'">check_circle</span>
+        </div>
+
+        <div class="preset-content-area">
+          <div class="preset-name">{{preset.name}}</div>
+          <div class="preset-description">{{preset.description}}</div>
+        </div>
+      </div>
+      
+      <div class="preset" (click)="toggleViewMode()">
+        <div class="preset-icon-area">
+          <span class="material-icons preset-icon" [style.visibility]="this.selectedPreset == undefined ? 'visible' : 'hidden'">check_circle</span>
+        </div>
+
+        <div class="preset-content-area">
+          <div class="preset-name">Custom</div>
+          <div class="preset-description">Play with customized rules.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!viewMode.hideRuleFields" class="form-container">
+    <mat-tab-group *ngIf="viewMode.allowCategories && groupByCategory" [disableRipple]="true">
+      <mat-tab *ngFor="let category of categories" label="{{category.name}}">
+        <ng-container *ngTemplateOutlet="categoryContent; context: {fields: category.fields}"></ng-container>
+      </mat-tab>
+    </mat-tab-group>
+
+    <ng-container *ngIf="!(viewMode.allowCategories && groupByCategory)">
+      <ng-container *ngTemplateOutlet="categoryContent; context: {fields: playerRuleFields}"></ng-container>
+    </ng-container>
+    
+    <ng-template #categoryContent let-fields='fields'>
+      <ng-container *ngFor="let field of fields">
+        <ng-container *ngIf="passesFilter(field)">
+          <div class="field-container">
+            <div class="field-caption">
+              {{field.name}}
+            </div>
+  
+            <div class="field-value">
+              <ng-container *ngIf="editMode">
+                <app-field-input [field]="field" [(fieldValue)]="displayedRule[field.property]"></app-field-input>
+              </ng-container>
+        
+              <ng-container *ngIf="!editMode">
+                <app-field-output [field]="field" [fieldValue]="displayedRule[field.property]"></app-field-output>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-template>
+  </div>
+  
+  <div style="height: 30px"></div>
+
+  <app-file-drop-area *ngIf="!viewMode.hideRuleFields" [instructionText]="'Drag a *.rule file here to load settings.'" [showFiles]="false" (fileChange)="onRuleUpload($event)"></app-file-drop-area>
+</div>
