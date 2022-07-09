@@ -52,8 +52,6 @@ export class AttackRule {
       }
     }
 
-    // TODO: block garbage
-
     return ret;
   }
 }

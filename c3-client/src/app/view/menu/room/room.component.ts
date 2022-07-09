@@ -1,6 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ClientGame } from '@shared/game/engine/game/client-game';
-import { Game } from '@shared/game/engine/game/game';
 import { GameResult } from '@shared/game/engine/game/game-result';
 import { LocalPlayer } from '@shared/game/engine/player/local-player';
 import { GameRecorder } from '@shared/game/engine/recorder/game-recorder';
@@ -12,9 +11,11 @@ import { MainService } from 'app/view/main/main.service';
 import { Subscription } from 'rxjs';
 import {saveAs} from 'file-saver';
 import { format } from 'date-fns';
-import { environment } from 'environments/environment';
 import { StartGameData } from '@shared/game/network/model/start-game/start-game-data';
 import { MainScreen } from 'app/view/main/main-screen';
+import { playerRule, PlayerRule } from '@shared/game/engine/model/rule/player-rule';
+import { RoomSettings } from '@shared/game/engine/model/room-settings';
+import { RoomSettingsComponent } from 'app/view/menu/room-settings/room-settings.component';
 
 @Component({
   selector: 'app-room',
@@ -26,12 +27,16 @@ export class RoomComponent implements OnInit, OnDestroy {
   private roomId!: number;
   roomInfo!: RoomInfo;
   lastGameReplay?: GameReplay;
-  debug = !environment.production;
+  debug = false; //!environment.production;
 
   private subscriptions: Subscription[] = [];
 
   private game!: ClientGame;
 
+  showSettings = false;
+
+  playerRule: PlayerRule = JSON.parse(JSON.stringify(playerRule));
+  
   constructor(
     private roomService: RoomService,
     private mainService: MainService,
@@ -159,5 +164,18 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   isHost() {
     return this.mainService.sessionInfo.sessionId == this.roomInfo.host.sessionId;
+  }
+
+  onSettingsClick() {
+    this.showSettings = true;
+  }
+
+  onCancelSettings() {
+    this.showSettings = false;
+  }
+
+  onSaveSettings(settings: RoomSettings) {
+    this.showSettings = false;
+    this.roomService.changeRoomSettings(settings);
   }
 }

@@ -1,0 +1,14 @@
+
+<div class="v-flex">
+  <!-- Buttons -->
+  <div class="gui-button-row">
+    <button class="gui-button gui-button-main" (click)="onSaveClick()">Apply</button>
+    <button class="gui-button gui-button-danger" (click)="onCancelClick()">Cancel</button>
+  </div>
+  
+  <div class="section" style="flex-grow: 1">
+    <ng-container *ngIf="data">
+      <app-rule-settings [gameRule]="data.gameRule" [editMode]="editMode"></app-rule-settings>
+    </ng-container>
+  </div>
+</div>

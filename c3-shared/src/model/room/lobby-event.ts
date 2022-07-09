@@ -7,6 +7,7 @@ export enum LobbyEvent {
 
   GET_ROOM_INFO  = '4',
   START_GAME     = '5', // also by server
+  CHANGE_ROOM_SETTINGS = '8',
 
   GAME_EVENTS    = '6',
   GET_REPLAY     = '7',

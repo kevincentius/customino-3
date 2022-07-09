@@ -68,7 +68,7 @@ export abstract class Player {
   ) {
     this.init();
 
-    this.playerRule = playerRule;
+    this.playerRule = this.game.startGameData.gameRule.globalRule;
 
     this.r = new RandomGen(startPlayerData.randomSeed);
     this.board = new Board(this.playerRule);

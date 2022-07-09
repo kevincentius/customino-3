@@ -1,0 +1,79 @@
+
+<div>
+  <ng-container *ngIf="field.fieldType == FieldType.NUMBER">
+    <input [(ngModel)]="inpValue" (input)="onInputChange()"/>
+  </ng-container>
+  
+  <ng-container *ngIf="field.fieldType == FieldType.NUMBER_SCROLL">
+    <div class="scroll-container">
+      <div class="scroll-button"
+        (mousedown)="startScroll(-1)"
+        (mouseout)="endScroll()"
+        (mouseup)="endScroll()"
+      >
+        <mat-icon>chevron_left</mat-icon>
+      </div>
+
+      <div class="scroll-value">{{fieldValue.toFixed(field.decimalPlaces ?? 0)}}</div>
+
+      <div class="scroll-button"
+        (mousedown)="startScroll(1)"
+        (mouseout)="endScroll()"
+        (mouseup)="endScroll()"
+      >
+        <mat-icon>chevron_right</mat-icon>
+      </div>
+    </div>
+  </ng-container>
+  
+  <ng-container *ngIf="field.fieldType == FieldType.CHOICE">
+    <div class="scroll-container">
+      <div class="scroll-button"
+        (mousedown)="onChangeChoice(-1)"
+        [style.opacity]="canChangeChoice(-1) ? 0.6 : 0.3"
+      >
+        <mat-icon>chevron_left</mat-icon>
+      </div>
+
+      <div class="scroll-choice-value" (mousedown)="onChangeChoice(1)">{{getChoiceLabel()}}</div>
+
+      <div class="scroll-button"
+        (mousedown)="canChangeChoice(1) ? onChangeChoice(1) : undefined"
+        [style.opacity]="canChangeChoice(1) ? 0.6 : 0.3"
+      >
+        <mat-icon>chevron_right</mat-icon>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="field.fieldType == FieldType.NUMBER_LIST">
+    <div class="array-container">
+      <ng-container *ngFor="let item of fieldValue; let i=index">
+        <div class="array-column" *ngIf="field.startIndex == null || i >= field.startIndex">
+          <div class="scroll-button scroll-button-up"
+            (mousedown)="startScroll(1, i)"
+            (mouseup)="endScroll()"
+            (mouseout)="endScroll()" 
+          >
+            <mat-icon>expand_less</mat-icon>
+          </div>
+
+          <div class="array-index">{{i}}</div>
+
+          <div class="array-value">{{item.toFixed(field.decimalPlaces ?? 0)}}</div>
+          <div class="scroll-button"
+            (mousedown)="startScroll(-1, i)"
+            (mouseup)="endScroll()"
+            (mouseout)="endScroll()" 
+          >
+            <mat-icon>expand_more</mat-icon>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+</div>
+
+<div class="validation-error" *ngFor="let error of errors">
+  {{error}}
+</div>

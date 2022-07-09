@@ -1,0 +1,66 @@
+
+.validation-error {
+  font-size: 65%;
+  color: #f88;
+}
+
+.scroll-container {
+  display: flex;
+  align-items: center;
+
+  .scroll-button {
+    padding: 4px 10px 0px;
+  }
+
+  .scroll-value {
+    width: 50px;
+    text-align: center;
+  }
+
+  .scroll-choice-value {
+    width: 180px;
+    text-align: center;
+    padding: 6px 0;
+    cursor: pointer;
+    &:hover { background: #fff6; }
+  }
+}
+
+.scroll-button {
+  cursor: pointer;
+  opacity: 0.6;
+  z-index: 1;
+  &:hover { background: #fff6; opacity: 1; }
+}
+
+.array-container {
+  display: flex;
+  flex-wrap: wrap;
+
+  .array-column {
+    min-width: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .array-index {
+      color: #fff8;
+      font-size: 75%;
+      margin-top: -2em;
+      transform: translate(0px, 3px);
+
+      // visibility: hidden;
+    }
+    &:hover .array-index {
+      visibility: visible;
+    }
+
+    .array-value {
+      
+    }
+
+    .scroll-button { visibility: hidden; }
+    .scroll-button-up { margin-bottom: 16px; }
+    &:hover .scroll-button { visibility: visible; }
+  }
+}

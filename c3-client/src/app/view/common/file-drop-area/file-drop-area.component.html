@@ -1,9 +1,9 @@
 <div class="droparea" [class.drag-indicator]="dragIndicator" (drop)="onDrop($event)">
-  <div *ngIf="!files || files.length == 0" class="hint">
-    Drag a replay file here...
+  <div *ngIf="!files || files.length == 0 || !showFiles" class="hint">
+    {{instructionText}}
   </div>
 
-  <ng-container *ngIf="files">
+  <ng-container *ngIf="files && showFiles">
     <ng-container *ngFor="let file of files; let i = index">
       <div class="file-row">
         <a href="javascript:void(0)" type="{{file.type}}">
@@ -18,11 +18,11 @@
   <div style="height: 10px;"></div>
 
   <div style="display: flex; justify-content: center;">
-    <button mat-button (click)="inp.click()" style="display: flex; align-items: center;">
+    <div class="browse-button" (click)="inp.click()" style="display: flex; align-items: center;">
       <span class="material-icons">file_upload</span>
 
       Browse
-    </button>
+    </div>
   </div>
   <input type="file"
          #inp

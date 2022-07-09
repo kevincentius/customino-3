@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import {MatIconModule} from '@angular/material/icon';
+import {MatTabsModule} from '@angular/material/tabs';
 
 import { DebugComponent } from 'app/view/debug/debug.component';
 import { MainComponent } from 'app/view/main/main.component';
@@ -21,6 +22,10 @@ import { BackgroundComponent } from './view/common/background/background.compone
 import { ControlRowComponent } from './view/menu/controls/control-row/control-row.component';
 import { MenuButtonComponent } from './view/common/menu-button/menu-button.component';
 import { FormsModule } from '@angular/forms';
+import { RoomSettingsComponent } from './view/menu/room-settings/room-settings.component';
+import { RuleSettingsComponent } from './view/menu/rule-settings/rule-settings.component';
+import { FieldInputComponent } from './view/menu/field-input/field-input.component';
+import { FieldOutputComponent } from './view/menu/field-output/field-output.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -44,6 +49,10 @@ export function apiConfigFactory(): Configuration {
     BackgroundComponent,
     ControlRowComponent,
     MenuButtonComponent,
+    RoomSettingsComponent,
+    RuleSettingsComponent,
+    FieldInputComponent,
+    FieldOutputComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),
@@ -53,6 +62,7 @@ export function apiConfigFactory(): Configuration {
     MatIconModule,
     BrowserAnimationsModule,
     FormsModule,
+    MatTabsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

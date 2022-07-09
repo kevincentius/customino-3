@@ -1,5 +1,5 @@
 
-<div class="full-size">
+<div class="v-flex">
   <app-background></app-background>
 
   <div class="screen-title-container">
@@ -9,28 +9,47 @@
     </div>
   </div>
 
-  <div class="screen-body-container">
+  <div class="v-flex screen-body-container">
     <ng-container *ngIf="roomInfo">
+      <!-- Buttons -->
       <div class="gui-button-row">
-        <button *ngIf="lastGameReplay" class="gui-button" (click)="onDownloadLastReplayClick()">Replay</button>
-        <button class="gui-button gui-button-main" [disabled]="isRunning() || !isHost()" (click)="onStartGameClick()">Start game</button>
-        
-        <ng-container *ngIf="debug">
-          <button *ngIf="lastGameReplay" class="gui-button" (click)="onVerifyLastReplayClick()">Verify replay</button>
-          <button class="gui-button" (click)="onDownloadGameStateClick()">Download debug state</button>
+        <ng-container *ngIf="!showSettings">
+          <button class="gui-button gui-button-main" [disabled]="isRunning() || !isHost()" (click)="onStartGameClick()">Start game</button>
+          <button *ngIf="lastGameReplay" class="gui-button" (click)="onDownloadLastReplayClick()">Replay</button>
+  
+          <!-- host buttons -->
+          <button class="gui-button" [disabled]="isRunning()" (click)="onSettingsClick()">Settings</button>
+          
+          <!-- debug buttons -->
+          <ng-container *ngIf="debug">
+            <button *ngIf="lastGameReplay" class="gui-button" (click)="onVerifyLastReplayClick()">Verify replay</button>
+            <button class="gui-button" (click)="onDownloadGameStateClick()">Download debug state</button>
+          </ng-container>
         </ng-container>
       </div>
     </ng-container>
 
-    <div class="section" *ngIf="roomInfo">
-      <div class="section-title">Players</div>
-      <div class="section-body">
-        <div class="slots-container">
-          <div *ngFor="let slot of roomInfo.slots" class="slot" [class.spectator]="!slot.playing">
-            <div class="slot-player-name">{{slot.player.username}}</div>
+    <ng-container *ngIf="roomInfo">
+      <ng-container *ngIf="!showSettings">
+        <div class="section">
+          <div class="section-title">Players</div>
+          <div class="section-body">
+            <div class="slots-container">
+              <div *ngFor="let slot of roomInfo.slots" class="slot" [class.spectator]="!slot.playing">
+                <div class="slot-player-name">{{slot.player.username}}</div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </ng-container>
+
+      <app-room-settings
+        *ngIf="showSettings"
+        [currentSettings]="roomInfo.settings"
+        [editMode]="isHost()"
+        (save)="onSaveSettings($event)"
+        (cancel)="onCancelSettings()"
+      ></app-room-settings>
+    </ng-container>
   </div>
 </div>
