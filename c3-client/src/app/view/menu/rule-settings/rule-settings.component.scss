@@ -18,7 +18,7 @@
   min-height: 40px;
   
   &:hover {
-    background: #fff2;
+    background: #fff1;
   }
 }
 
@@ -28,4 +28,43 @@
 
 .field-value {
   flex-grow: 1;
+}
+
+
+
+.preset-container {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+
+.preset {
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  &:hover { background: #fff2; }
+}
+
+.preset-icon-area {
+  display: flex;
+  align-items: center;
+}
+
+.preset-icon {
+  font-size: 48px;
+  height: 48px ;
+  width: 48px;
+}
+
+.preset-content-area {
+  flex-grow: 1;
+}
+
+.preset-name {
+  font-size: 36px;
+}
+
+.preset-description {
+  color: #fff8;
 }

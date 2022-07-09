@@ -3,6 +3,7 @@ import { PlayerRuleField } from '@shared/game/engine/model/rule/field';
 import { FieldTags } from '@shared/game/engine/model/rule/field-tag';
 import { GameRule } from '@shared/game/engine/model/rule/game-rule';
 import { playerRuleFields } from '@shared/game/engine/model/rule/player-rule-fields';
+import { RulePreset, rulePresets } from 'app/view/menu/rule-settings/rule-presets';
 import { saveAs } from 'file-saver';
 
 interface ViewMode {
@@ -79,6 +80,7 @@ for (let field of playerRuleFields) {
 })
 export class RuleSettingsComponent implements OnInit {
   playerRuleFields = playerRuleFields;
+  presets: RulePreset[] = rulePresets;
 
   @Input() gameRule!: GameRule;
   @Input() editMode = false;
@@ -87,6 +89,7 @@ export class RuleSettingsComponent implements OnInit {
   viewMode = viewModes[0];
   categories = categories;
   groupByCategory = false;
+  selectedPreset?: RulePreset = rulePresets[0];
 
   constructor() { }
 
@@ -100,6 +103,10 @@ export class RuleSettingsComponent implements OnInit {
 
   toggleViewMode() {
     this.viewMode = viewModes[(viewModes.indexOf(this.viewMode) + 1) % viewModes.length]
+
+    if (this.viewMode != viewModes[0]) {
+      this.selectedPreset = undefined;
+    }
   }
 
   toggleCategories() {
@@ -115,8 +122,11 @@ export class RuleSettingsComponent implements OnInit {
   }
 
   async onRuleUpload(files: File[]) {
-    console.log(JSON.stringify(this.gameRule.globalRule));
     const gameRule = await this.readFileAsJsObject(files[0]);
+    this.loadRule(gameRule);
+  }
+
+  private loadRule(gameRule: GameRule) {
     const unknownProperties: string[] = [];
     for (const key of Object.keys(gameRule.globalRule)) {
       if (key in this.gameRule.globalRule) {
@@ -147,5 +157,10 @@ export class RuleSettingsComponent implements OnInit {
       }
       reader.readAsText(file);
     });
+  }
+
+  onPresetClick(preset: RulePreset) {
+    this.selectedPreset = preset;
+    this.loadRule(JSON.parse(preset.json));
   }
 }

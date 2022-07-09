@@ -15,7 +15,7 @@ export function intRangeValidator(min: number, max: number) {
 
 export function floatRangeValidator(min: number, max: number) {
   return (value: number) => {
-    if (value < min || value > max) {
+    if (value < min - 0.00001 || value > max + 0.00001) {
       return `The value must be between ${min} and ${max}.`;
     }
 
