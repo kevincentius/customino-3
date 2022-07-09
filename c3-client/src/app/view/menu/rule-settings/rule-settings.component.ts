@@ -37,9 +37,9 @@ const viewModes: ViewMode[] = [
 
 interface RuleCategory {
   name: string;
-  tag: FieldTags;
+  fields: PlayerRuleField[];
 }
-const categories: RuleCategory[] = [
+const categoryDatas: RuleCategoryData[] = [
   {
     name: 'General',
     tag: FieldTags.GENERAL,
@@ -51,8 +51,26 @@ const categories: RuleCategory[] = [
   {
     name: 'Defense',
     tag: FieldTags.DEFENSE,
+  },
+  {
+    name: 'Others',
   }
 ];
+
+interface RuleCategoryData {
+  name: string;
+  tag?: FieldTags;
+}
+const categories: RuleCategory[] = categoryDatas.map(d => ({...d, fields: []}));
+for (let field of playerRuleFields) {
+  for (let i = 0; i < categoryDatas.length; i++) {
+    if (!categoryDatas[i].tag || field.tags.indexOf(categoryDatas[i].tag!) != -1) {
+      categories[i].fields.push(field);
+      break;
+    }
+  }
+}
+
 
 @Component({
   selector: 'app-rule-settings',
@@ -68,7 +86,7 @@ export class RuleSettingsComponent implements OnInit {
   displayedRule!: any;
   viewMode = viewModes[0];
   categories = categories;
-  groupByCategory = true;
+  groupByCategory = false;
 
   constructor() { }
 

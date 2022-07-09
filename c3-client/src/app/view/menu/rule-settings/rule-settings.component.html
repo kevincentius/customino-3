@@ -39,26 +39,40 @@
 
 <div class="section-body">
   <div *ngIf="!viewMode.hideRuleFields" class="form-container">
-    <ng-container *ngFor="let field of playerRuleFields">
-      <ng-container *ngIf="passesFilter(field)">
-        <div class="field-container">
-          <div class="field-caption">
-            {{field.name}}
-          </div>
-        
-          <div class="field-value">
-            <ng-container *ngIf="editMode">
-              <app-field-input [field]="field" [(fieldValue)]="displayedRule[field.property]"></app-field-input>
-            </ng-container>
-      
-            <ng-container *ngIf="!editMode">
-              <app-field-output [field]="field" [fieldValue]="displayedRule[field.property]"></app-field-output>
-            </ng-container>
-          </div>
-        </div>
-      </ng-container>
+    <mat-tab-group *ngIf="viewMode.allowCategories && groupByCategory" [disableRipple]="true">
+      <mat-tab *ngFor="let category of categories" label="{{category.name}}">
+        <ng-container *ngTemplateOutlet="categoryContent; context: {fields: category.fields}"></ng-container>
+      </mat-tab>
+    </mat-tab-group>
+
+    <ng-container *ngIf="!(viewMode.allowCategories && groupByCategory)">
+      <ng-container *ngTemplateOutlet="categoryContent; context: {fields: playerRuleFields}"></ng-container>
     </ng-container>
+    
+    <ng-template #categoryContent let-fields='fields'>
+      <ng-container *ngFor="let field of fields">
+        <ng-container *ngIf="passesFilter(field)">
+          <div class="field-container">
+            <div class="field-caption">
+              {{field.name}}
+            </div>
+  
+            <div class="field-value">
+              <ng-container *ngIf="editMode">
+                <app-field-input [field]="field" [(fieldValue)]="displayedRule[field.property]"></app-field-input>
+              </ng-container>
+        
+              <ng-container *ngIf="!editMode">
+                <app-field-output [field]="field" [fieldValue]="displayedRule[field.property]"></app-field-output>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-template>
   </div>
   
+  <div style="flex-grow: 1"></div>
+
   <app-file-drop-area [instructionText]="'Drag a *.rule file here to load settings.'" [showFiles]="false" (fileChange)="onRuleUpload($event)"></app-file-drop-area>
 </div>

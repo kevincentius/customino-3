@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import {MatIconModule} from '@angular/material/icon';
+import {MatTabsModule} from '@angular/material/tabs';
 
 import { DebugComponent } from 'app/view/debug/debug.component';
 import { MainComponent } from 'app/view/main/main.component';
@@ -61,6 +62,7 @@ export function apiConfigFactory(): Configuration {
     MatIconModule,
     BrowserAnimationsModule,
     FormsModule,
+    MatTabsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
