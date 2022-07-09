@@ -92,7 +92,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   },
   {
     property: 'garbageSpawnRate',
-    fieldType: FieldType.NUMBER,
+    fieldType: FieldType.NUMBER_SCROLL,
     default: 1,
     stepSize: 0.1,
     decimalPlaces: 1,
@@ -108,10 +108,10 @@ export const playerRuleFields: PlayerRuleField[] = [
   },
   {
     property: 'garbageBlockingFactor',
-    fieldType: FieldType.NUMBER,
+    fieldType: FieldType.NUMBER_SCROLL,
     default: 1,
-    stepSize: 0.1,
-    decimalPlaces: 1,
+    stepSize: 0.05,
+    decimalPlaces: 2,
     validators: [ floatRangeValidator(0, 1) ],
     startIndex: 0,
     
@@ -124,10 +124,10 @@ export const playerRuleFields: PlayerRuleField[] = [
   },
   {
     property: 'garbagePierceFactor',
-    fieldType: FieldType.NUMBER,
+    fieldType: FieldType.NUMBER_SCROLL,
     default: 0,
-    stepSize: 0.1,
-    decimalPlaces: 1,
+    stepSize: 0.05,
+    decimalPlaces: 2,
     validators: [ floatRangeValidator(0, 1) ],
     startIndex: 0,
     

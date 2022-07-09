@@ -111,7 +111,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .section {
   padding: 20px;
   padding-left: 60px;
-  background: #000b;
+  background: #0006;
+  backdrop-filter: blur(8px);
   border: solid #fff2 1px;
   border-radius: 3px;
   display: flex;
