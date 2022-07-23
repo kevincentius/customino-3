@@ -1,4 +1,5 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
+import { GravityRule } from "@shared/game/engine/model/rule/player-rule/gravity-rule";
 import { Board } from "@shared/game/engine/player/board";
 import { Piece } from "@shared/game/engine/player/piece";
 import { MatUtil } from "@shared/game/engine/util/mat-util";
@@ -18,8 +19,8 @@ export class ActivePiece {
 
   // state
   piece: Piece | null = null;
-  x = 2;
-  y = 2;
+  x = 0;
+  y = 0;
   isLastMoveRotation = false;
 
   gravityFrameCount = 0;
@@ -27,16 +28,12 @@ export class ActivePiece {
 
   lockDelayFrameCount = 0;
 
-  // config
-  readonly gravityCap = 18;
-  readonly gravityAccel = 0.0; // tiles per second^2
-  readonly lockDelay = 0.5; // seconds
-
   constructor(
+    private gravityRule: GravityRule,
     private board: Board,
     private onLockDelayExhausted: () => void,
   ) {
-
+    this.gravity = this.gravityRule.speed;
   }
 
   serialize() {
@@ -131,7 +128,7 @@ export class ActivePiece {
   
   runFrame() {
     // gravity
-    this.gravity += this.gravityAccel;
+    this.gravity = Math.min(this.gravityRule.cap, this.gravity + this.gravityRule.acceleration);
     this.gravityFrameCount++;
     const framesPerG = 1 / (this.gravity * gameLoopRule.mspf / 1000);
     while (this.gravityFrameCount >= framesPerG) {
@@ -145,7 +142,7 @@ export class ActivePiece {
     this.y--;
     if (grounded) {
       this.lockDelayFrameCount++;
-      if (this.lockDelayFrameCount >= this.lockDelay * 1000 / gameLoopRule.mspf) {
+      if (this.lockDelayFrameCount >= this.gravityRule.lockDelay * 1000 / gameLoopRule.mspf) {
         this.onLockDelayExhausted();
       }
     }

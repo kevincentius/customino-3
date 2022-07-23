@@ -3,7 +3,7 @@ import { ComboTimer } from "@shared/game/engine/player/combo-timer";
 import { Player } from "@shared/game/engine/player/player";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { textUtil } from "app/pixi/util/text-util";
-import { Container, Graphics } from "pixi.js";
+import { Circle, Container, Graphics } from "pixi.js";
 
 const colors = [0xff0000, 0xffff00, 0x00ff00, 0x00ffff, 0x0000ff, 0xff00ff];
 
@@ -12,11 +12,15 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
 
   graphics = new Graphics();
   text = textUtil.create120('0');
+  bg = this.createBackground();
 
   layoutWidth: number;
   layoutHeight: number;
 
   comboStartMs?: number;
+  period = 2.5;
+
+  lastComboTimestamp = Date.now();
 
   constructor(
     private player: Player,
@@ -31,10 +35,12 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
 
     this.addChild(this.graphics);
     this.addChild(this.text);
-    this.text.position.set(this.diameter / 2, this.diameter / 2);
+    // this.addChild(this.bg);
+    this.text.position.set(this.diameter / 2, this.diameter / 2 - 7);
     this.text.anchor.set(0.5, 0.5);
 
     this.comboTimer.comboStartSubject.subscribe(() => this.comboStartMs = Date.now());
+    this.comboTimer.comboIncreasedSubject.subscribe(combo => this.animateCombo(combo));
 
     this.comboStartMs = Date.now() - gameLoopRule.mspf * (this.player.frame - this.comboTimer.comboStartFrame);
   }
@@ -56,8 +62,8 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     let r = this.diameter * 0.5;
     this.text.text = this.comboTimer.combo.toString();
 
-    let seconds = Math.floor(s);
-    let subseconds = s - Math.floor(s);
+    let seconds = Math.floor(s / this.period);
+    let subseconds = (s / this.period - Math.floor(s / this.period));
 
     // render sub second
     this.graphics
@@ -73,5 +79,31 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
         .lineTo(r, r)
         .closePath();
     }
+
+    const mp = Math.min(1, this.comboTimer.combo / 1);
+    const textMaxScale = mp * 1;
+    const graphicsMaxScale = mp * 0.2;
+    const p = 1 / (5 * (Date.now() - this.lastComboTimestamp) / 1000 + 1);
+    this.text.scale.set(1 + p * textMaxScale);
+    this.graphics.scale.set(1 + p * graphicsMaxScale);
+    this.graphics.position.set(-this.diameter / 2 * (p * graphicsMaxScale));
+  }
+
+  animateCombo(combo: number) {
+    this.lastComboTimestamp = Date.now();
+  }
+
+  createBackground() {
+    const g = new Graphics();
+    g.beginFill(0x000000);
+    g.drawCircle(this.diameter / 2, this.diameter / 2, this.diameter / 2);
+    g.endFill();
+
+    // // g.lineStyle({
+    // //   width: 2,
+    // //   color: 0xffffff22,
+    // // });
+    
+    return g;
   }
 }

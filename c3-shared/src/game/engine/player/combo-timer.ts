@@ -9,6 +9,7 @@ export class ComboTimer {
   comboAccumulatedFrames = 0;
 
   comboStartSubject = new Subject<void>();
+  comboIncreasedSubject = new Subject<number>();
 
   constructor(
     private player: Player,
@@ -43,12 +44,14 @@ export class ComboTimer {
     const isCombo = l.clearedLines.length > 0;
     if (isCombo) {
       this.combo++;
-
+      
       if (this.combo == 1) {
         this.comboStartFrame = this.player.frame;
         this.comboAccumulatedFrames = this.player.playerRule.comboTimerInitial * gameLoopRule.fps;
         this.comboStartSubject.next();
       }
+      
+      this.comboIncreasedSubject.next(this.combo);
     }
 
     // add time bonus/penalty
