@@ -1,14 +1,22 @@
 import { ActivePiece, PieceMoveEvent } from "@shared/game/engine/player/active-piece";
+import { Player } from "@shared/game/engine/player/player";
+import { EffectContainer } from "app/pixi/display/effects/effect-container";
+import { SonicDropEffect } from "app/pixi/display/effects/sonic-drop-effect";
 import { MinoGridDisplay } from "app/pixi/display/mino-grid-display";
+import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { Container } from "pixi.js";
 
 export class ActivePieceDisplay extends Container {
   minoGridDisplay?: MinoGridDisplay;
   ghostDistance = 0;
+  spritesheet = new GameSpritesheet();
+
+  activePiece: ActivePiece;
 
   constructor(
     private boardMinoGridDisplay: MinoGridDisplay,
-    private activePiece: ActivePiece,
+    private effectContainer: EffectContainer,
+    private player: Player,
     private minoSize: number,
     private ghost=false,
   ) {
@@ -18,6 +26,7 @@ export class ActivePieceDisplay extends Container {
       this.alpha = 0.3;
     }
 
+    this.activePiece = this.player.activePiece;
     this.activePiece.spawnSubject.subscribe(this.onSpawn.bind(this));
     this.activePiece.moveSubject.subscribe(this.onMove.bind(this));
 
@@ -43,7 +52,27 @@ export class ActivePieceDisplay extends Container {
         this.minoGridDisplay.rotate(e.drot);
       }
       this.updatePosition();
+      
+      // after effects
+      if (!this.ghost && e.dy > 1) {
+        const tiles = this.activePiece.piece!.tiles;
+        for (let j = 0; j < tiles[0].length; j++) {
+          for (let i = 0; i < tiles.length; i++) {
+            const tile = tiles[i][j];
+            if (tile != null) {
+              // tile is the top most mino in each column
+              const minoPos = this.boardMinoGridDisplay.calcMinoPos(this.activePiece.y - e.dy + i, this.activePiece.x + j);
+
+              const effect = new SonicDropEffect(this.player.playerRule.sonicDropEffect, this.spritesheet, tile, this.minoSize, e.dy + 1, this.player.attackRule.comboTimer.combo);
+              effect.position.set(minoPos.x, minoPos.y);
+              this.effectContainer.addEffect(effect);
+              break;
+            }
+          }
+        }
+      }
     }
+
   }
 
   private updatePosition() {

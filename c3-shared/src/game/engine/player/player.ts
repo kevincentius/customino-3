@@ -1,5 +1,5 @@
 import { Game } from "@shared/game/engine/game/game";
-import { PlayerRule, playerRule } from "@shared/game/engine/model/rule/player-rule";
+import { PlayerRule, playerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
 import { ActivePiece } from "@shared/game/engine/player/active-piece";
 import { Board } from "@shared/game/engine/player/board";
 import { GarbageGen } from "@shared/game/engine/player/garbage-gen/garbage-gen";
@@ -73,7 +73,7 @@ export abstract class Player {
     this.r = new RandomGen(startPlayerData.randomSeed);
     this.board = new Board(this.playerRule);
     this.pieceGen = new MemoryPieceGen(this.r, this.pieceList, 1);
-    this.activePiece = new ActivePiece(this.board, () => this.hardDrop());
+    this.activePiece = new ActivePiece(this.playerRule.gravity, this.board, () => this.hardDrop());
     this.rotationSystem = createRotationSystem(this.playerRule.rotationSystem);
     this.pieceQueue.push(...Array.from(Array(this.playerRule.previews)).map(() => this.pieceGen.next()));
     this.garbageGen = new GarbageGen(this, this.playerRule);
@@ -176,7 +176,13 @@ export abstract class Player {
 
   private sonicDrop() {
     let success = false;
-    while (this.activePiece.attemptMove(1, 0, 0)) {
+    let di = 1;
+    while (!this.activePiece.checkCollision(di, 0)) {
+      di++;
+    }
+    di--;
+    if (di > 0) {
+      this.activePiece.attemptMove(di, 0, 0);
       success = true;
     }
     return success;

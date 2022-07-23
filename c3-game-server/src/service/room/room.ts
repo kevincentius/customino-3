@@ -1,5 +1,5 @@
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
-import { ServerEvent, ServerPlayerEvent } from "@shared/game/network/model/event/server-event";
+import { ServerEvent } from "@shared/game/network/model/event/server-event";
 import { LobbyEvent } from "@shared/model/room/lobby-event";
 import { RoomInfo } from "@shared/model/room/room-info";
 import { RoomSlot } from "service/room/room-slot";
@@ -12,7 +12,7 @@ import { GameRecorder } from "@shared/game/engine/recorder/game-recorder";
 import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
 import { RandomGen } from "@shared/game/engine/util/random-gen";
 import { RoomSettings } from "@shared/game/engine/model/room-settings";
-import { playerRule } from "@shared/game/engine/model/rule/player-rule";
+import { playerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
 
 export class Room {
   createdAt = Date.now();

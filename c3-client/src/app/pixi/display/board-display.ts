@@ -7,6 +7,9 @@ import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { BoardLayout as BoardLayout } from "app/pixi/layout/board-layout";
 import { Container, Graphics, Sprite, Texture } from "pixi.js";
 import { GarbageIndicatorDisplay } from "app/pixi/display/garbage-indicator-display";
+import { EffectContainer } from "app/pixi/display/effects/effect-container";
+import { Shaker } from "app/pixi/display/effects/shaker";
+import { LockResult } from "@shared/game/engine/player/lock-result";
 
 export class BoardDisplay extends Container implements LayoutChild {
 
@@ -23,6 +26,12 @@ export class BoardDisplay extends Container implements LayoutChild {
   private fieldContainer: Container;
   private maskContainer: Container;
   private spawnRateOffsetContainer: Container;
+  private shakeContainer: Container;
+  private shaker: Shaker;
+
+  private innerContainer: Container;
+  private effectContainer: EffectContainer = new EffectContainer();
+
   private background: Sprite;
   private minoGridDisplay: MinoGridDisplay;
   private activePieceDisplay: ActivePieceDisplay;
@@ -46,14 +55,18 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.offsetContainer.position.set(this.layout.offsetX, this.layout.offsetY);
     this.addChild(this.offsetContainer);
 
+    this.shakeContainer = new Container();
+    this.offsetContainer.addChild(this.shakeContainer);
+    this.shaker = new Shaker(this.shakeContainer);
+
     // garbage indicator
     this.garbageIndicator = new GarbageIndicatorDisplay(this.player, this.garbageIndicatorWidth, this.layout.height, this.layout.minoSize);
-    this.offsetContainer.addChild(this.garbageIndicator);
+    this.shakeContainer.addChild(this.garbageIndicator);
 
     // field container: contains the field but excluding the garbage indicator
     this.fieldContainer = new Container();
     this.fieldContainer.position.x = this.garbageIndicatorWidth;
-    this.offsetContainer.addChild(this.fieldContainer);
+    this.shakeContainer.addChild(this.fieldContainer);
 
     // board background
     this.background = Sprite.from(Texture.WHITE);
@@ -76,17 +89,23 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.spawnRateOffsetContainer = new Container();
     this.maskContainer.addChild(this.spawnRateOffsetContainer);
 
+    // inner container
+    this.innerContainer = new Container();
+    this.spawnRateOffsetContainer.addChild(this.innerContainer);
+    
+    this.maskContainer.addChild(this.effectContainer);
+
     // mino grid
     this.minoGridDisplay = new MinoGridDisplay(this.board.tiles, this.layout.minoSize, this.board.tiles.length - this.board.visibleHeight);
-    this.spawnRateOffsetContainer.addChild(this.minoGridDisplay);
+    this.innerContainer.addChild(this.minoGridDisplay);
 
     // ghost piece
-    this.ghostPieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.player.activePiece, this.layout.minoSize, true);
-    this.spawnRateOffsetContainer.addChild(this.ghostPieceDisplay);
+    this.ghostPieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.effectContainer, this.player, this.layout.minoSize, true);
+    this.innerContainer.addChild(this.ghostPieceDisplay);
     
     // active piece
-    this.activePieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.player.activePiece, this.layout.minoSize);
-    this.spawnRateOffsetContainer.addChild(this.activePieceDisplay);
+    this.activePieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.effectContainer, this.player, this.layout.minoSize);
+    this.innerContainer.addChild(this.activePieceDisplay);
 
     // overlay
     this.overlayDisplay = new BoardOverlayDisplay(this.layoutWidth, this.layoutHeight);
@@ -97,6 +116,7 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.board.addRowsSubject.subscribe(e => this.minoGridDisplay.onRowsAdded(e));
     this.player.garbageGen.garbageRateSpawnSubject.subscribe(e => this.lastGarbageRateSpawn = Date.now());
     this.player.gameOverSubject.subscribe(r => this.overlayDisplay.show(this.player.alive ? 'Winner' : 'Game Over', '2nd Place'))
+    this.player.pieceLockSubject.subscribe(r => this.shakeBoard(r));
   }
 
   getMinoSize() {
@@ -112,5 +132,16 @@ export class BoardDisplay extends Container implements LayoutChild {
     }
 
     this.garbageIndicator.tick(garbageRateShift);
+
+    this.shaker.tick();
+    this.effectContainer.tick();
+  }
+
+  shakeBoard(r: LockResult) {
+    if (r.clearedLines.length > 0) {
+      const dir = (Math.random() * 0 + 90) * Math.PI / 180;
+      const str = 5 * Math.min(4, r.clearedLines.length);
+      this.shaker.shake(str * Math.cos(dir), str * Math.sin(dir));
+    }
   }
 }
