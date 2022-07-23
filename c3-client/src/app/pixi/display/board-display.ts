@@ -138,9 +138,9 @@ export class BoardDisplay extends Container implements LayoutChild {
   }
 
   shakeBoard(r: LockResult) {
-    if (r.clearedLines.length > 1 || (r.attacks.length > 0)) {
+    if (r.clearedLines.length > 0) {
       const dir = (Math.random() * 0 + 90) * Math.PI / 180;
-      const str = 3;
+      const str = 5 * Math.min(4, r.clearedLines.length);
       this.shaker.shake(str * Math.cos(dir), str * Math.sin(dir));
     }
   }

@@ -2,8 +2,8 @@ import { Container } from "pixi.js";
 
 export class Shaker {
 
-  halvePeriod = 0.02; // seconds
-  halveTrajectory = 0.01; // seconds
+  halvePeriod = 0.05; // seconds
+  halveTrajectory = 0.025; // seconds
 
   shakeStart = Date.now();
   startPosX = 0;
