@@ -77,7 +77,7 @@ export const playerRule: PlayerRule = {
 
   // graphics
   sonicDropEffect: {
-    duration: 400,
+    duration: 200,
     decay: 2,
 
     particleCount: 2,
@@ -91,7 +91,7 @@ export const playerRule: PlayerRule = {
     
     comboCap: 10,
     comboBrightnessMultiplier: 4,
-    comboDecayDivisor: 3,
+    comboDurationMultiplier: 4,
     comboParticleCountMultiplier: 5,
   }
 }

@@ -14,6 +14,6 @@ export interface SonicDropEffectConfig {
 
   comboCap: number,
   comboBrightnessMultiplier: number,
-  comboDecayDivisor: number,
+  comboDurationMultiplier: number,
   comboParticleCountMultiplier: number,
 }

@@ -34,9 +34,11 @@ export class SonicDropEffect extends Container implements Effect {
     this.filters = [this.createAdjustmentFilter(comboMultiplier)];
 
     this.flashTtl = Math.min(this.config.duration, this.config.duration / 4 * rows);
+    this.flashTtl *= 1 + Math.pow(comboMultiplier, 2) * (this.config.comboDurationMultiplier - 1);
     this.particleTtl = this.config.particleDuration;
     this.totalTtl = Math.max(this.flashTtl, this.particleTtl);
-    this.decayFactor = Math.pow(2, this.config.decay) / (1 + Math.pow(comboMultiplier, 3) * (this.config.comboDecayDivisor - 1));
+    // this.decayFactor = Math.pow(2, this.config.decay) / (1 + Math.pow(comboMultiplier, 5) * (this.config.comboDecayDivisor - 1));
+    this.decayFactor = Math.pow(2, this.config.decay);
     
     if (this.tile.type == TileType.FILLED) {
       this.createSprite(this.tile.color);

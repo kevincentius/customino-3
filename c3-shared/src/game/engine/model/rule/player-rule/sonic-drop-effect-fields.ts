@@ -148,7 +148,6 @@ export const sonicDropEffectRuleFields: PlayerRuleField[] = [
   {
     property: 'comboCap',
     fieldType: FieldType.NUMBER_SCROLL,
-    decimalPlaces: 1,
     default: 10,
     stepSize: 1,
     validators: [ intRangeValidator(1, 20) ],
@@ -174,15 +173,15 @@ export const sonicDropEffectRuleFields: PlayerRuleField[] = [
     ],
   },
   {
-    property: 'comboDecayDivisor',
+    property: 'comboDurationMultiplier',
     fieldType: FieldType.NUMBER_SCROLL,
     decimalPlaces: 1,
-    default: 3,
+    default: 4,
     stepSize: 0.1,
     validators: [ floatRangeValidator(1, 10) ],
 
-    name: 'combo decay divisor',
-    description: 'How much combo affects the decay rate of the sonic drop effect. The actual divisor grows gradually up to this value when the player is performing a combo.',
+    name: 'combo duration multiplier',
+    description: 'How much combo affects the sonic drop after effect animation. The actual multiplier grows gradually up to this value when the player is performing a combo.',
     tags: [
       FieldTags.ADVANCED,
     ],
