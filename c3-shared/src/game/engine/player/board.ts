@@ -1,4 +1,4 @@
-import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
+import { PlayerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
 import { Tile } from "@shared/game/engine/model/tile";
 import { TileType } from "@shared/game/engine/model/tile-type";
 import { Piece } from "@shared/game/engine/player/piece";

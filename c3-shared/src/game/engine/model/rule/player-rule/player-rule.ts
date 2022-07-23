@@ -1,3 +1,4 @@
+import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
 import { SonicDropEffectConfig } from "@shared/game/engine/model/rule/player-rule/sonic-drop-effect-config";
 import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
 
@@ -76,5 +77,38 @@ export const playerRule: PlayerRule = {
     particleDuration: 1500,
     particleSpeed: 250,
     particleMaxAngle: 10,
+    particleBrightness: 1,
+    particleSaturation: 1,
+    
+    comboCap: 10,
+    comboBrightnessMultiplier: 4,
+    comboDecayDivisor: 3,
   }
+}
+
+export function getField(rule: PlayerRule, field: PlayerRuleField) {
+  let obj: any = rule;
+  const parts = field.property.split('.');
+  for (const part of parts) {
+    obj = obj[part];
+    if (obj === undefined) {
+      console.log(rule, parts);
+      throw new Error();
+    }
+  }
+  return obj;
+}
+
+export function setField(rule: PlayerRule, field: PlayerRuleField, value: any) {
+  let obj: any = rule;
+  const parts = field.property.split('.');
+  const property = parts.pop()!;
+  for (const part of parts) {
+    obj = obj[part];
+    if (obj === undefined) {
+      console.log(rule, parts);
+      throw new Error();
+    }
+  }
+  obj[property] = value;
 }

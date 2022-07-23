@@ -9,4 +9,10 @@ export interface SonicDropEffectConfig {
   particleDuration: number;
   particleSpeed: number;
   particleMaxAngle: number;
+  particleSaturation: number;
+  particleBrightness: number;
+
+  comboCap: number,
+  comboBrightnessMultiplier: number,
+  comboDecayDivisor: number,
 }

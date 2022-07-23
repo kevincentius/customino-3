@@ -17,6 +17,7 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
   layoutHeight: number;
 
   comboStartMs?: number;
+  period = 3;
 
   constructor(
     private player: Player,
@@ -56,8 +57,8 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     let r = this.diameter * 0.5;
     this.text.text = this.comboTimer.combo.toString();
 
-    let seconds = Math.floor(s);
-    let subseconds = s - Math.floor(s);
+    let seconds = Math.floor(s / this.period);
+    let subseconds = (s / this.period - Math.floor(s / this.period));
 
     // render sub second
     this.graphics

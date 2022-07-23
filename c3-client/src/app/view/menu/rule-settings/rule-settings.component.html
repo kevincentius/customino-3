@@ -88,11 +88,11 @@
   
             <div class="field-value">
               <ng-container *ngIf="editMode">
-                <app-field-input [field]="field" [(fieldValue)]="displayedRule[field.property]"></app-field-input>
+                <app-field-input [field]="field" [fieldValue]="getFieldValue(field)" (fieldValueChange)="setFieldValue(field, $event)"></app-field-input>
               </ng-container>
         
               <ng-container *ngIf="!editMode">
-                <app-field-output [field]="field" [fieldValue]="displayedRule[field.property]"></app-field-output>
+                <app-field-output [field]="field" [fieldValue]="getFieldValue(field)"></app-field-output>
               </ng-container>
             </div>
           </div>

@@ -2,7 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { PlayerRuleField } from '@shared/game/engine/model/rule/field';
 import { FieldTags } from '@shared/game/engine/model/rule/field-tag';
 import { GameRule } from '@shared/game/engine/model/rule/game-rule';
-import { playerRuleFields } from '@shared/game/engine/model/rule/player-rule-fields';
+import { getField, setField } from '@shared/game/engine/model/rule/player-rule/player-rule';
+import { playerRuleFields } from '@shared/game/engine/model/rule/player-rule/player-rule-fields';
 import { RulePreset, rulePresets } from 'app/view/menu/rule-settings/rule-presets';
 import { saveAs } from 'file-saver';
 
@@ -98,7 +99,11 @@ export class RuleSettingsComponent implements OnInit {
   }
 
   getFieldValue(field: PlayerRuleField) {
-    return (this.gameRule.globalRule as any)[field.property];
+    return getField(this.displayedRule, field);
+  }
+
+  setFieldValue(field: PlayerRuleField, value: any) {
+    setField(this.displayedRule, field, value);
   }
 
   toggleViewMode() {

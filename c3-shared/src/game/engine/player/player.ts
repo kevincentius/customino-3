@@ -1,5 +1,5 @@
 import { Game } from "@shared/game/engine/game/game";
-import { PlayerRule, playerRule } from "@shared/game/engine/model/rule/player-rule";
+import { PlayerRule, playerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
 import { ActivePiece } from "@shared/game/engine/player/active-piece";
 import { Board } from "@shared/game/engine/player/board";
 import { GarbageGen } from "@shared/game/engine/player/garbage-gen/garbage-gen";

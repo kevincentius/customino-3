@@ -13,7 +13,7 @@ import {saveAs} from 'file-saver';
 import { format } from 'date-fns';
 import { StartGameData } from '@shared/game/network/model/start-game/start-game-data';
 import { MainScreen } from 'app/view/main/main-screen';
-import { playerRule, PlayerRule } from '@shared/game/engine/model/rule/player-rule';
+import { playerRule, PlayerRule } from '@shared/game/engine/model/rule/player-rule/player-rule';
 import { RoomSettings } from '@shared/game/engine/model/room-settings';
 
 @Component({

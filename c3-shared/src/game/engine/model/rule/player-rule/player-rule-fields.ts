@@ -2,6 +2,7 @@ import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
 import { FieldTags } from "@shared/game/engine/model/rule/field-tag";
 import { FieldType } from "@shared/game/engine/model/rule/field-type";
 import { floatRangeValidator, intRangeValidator, listValidator } from "@shared/game/engine/model/rule/field-validators";
+import { sonicDropEffectRuleFields } from "@shared/game/engine/model/rule/player-rule/sonic-drop-effect-fields";
 import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
 
 export const playerRuleFields: PlayerRuleField[] = [
@@ -231,4 +232,5 @@ export const playerRuleFields: PlayerRuleField[] = [
       FieldTags.ATTACK,
     ],
   },
+  ...sonicDropEffectRuleFields,
 ];

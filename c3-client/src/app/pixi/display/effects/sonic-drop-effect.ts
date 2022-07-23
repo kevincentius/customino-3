@@ -3,6 +3,7 @@ import { Tile } from "@shared/game/engine/model/tile";
 import { TileType } from "@shared/game/engine/model/tile-type";
 import { Effect } from "app/pixi/display/effects/effect";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
+import { AdjustmentFilter } from "pixi-filters";
 import { Emitter } from "pixi-particles";
 import { Container, Sprite } from "pixi.js";
 
@@ -14,25 +15,28 @@ export class SonicDropEffect extends Container implements Effect {
   private lastUpdate = Date.now();
 
   private emitter: Emitter;
-  private emitterTtl;
-  private particleTtl = 1500;
+  private particleTtl;
   private totalTtl: number;
   private initScale!: number;
   private decayFactor: number;
 
   constructor(
+    private config: SonicDropEffectConfig,
     private spritesheet: GameSpritesheet,
     private tile: Tile,
     private minoSize: number,
     private rows: number,
-    private config: SonicDropEffectConfig,
+    private combo: number,
   ) {
     super();
 
+    const comboMultiplier = Math.min(1, this.combo / this.config.comboCap);
+    this.filters = [this.createAdjustmentFilter(comboMultiplier)];
+
     this.flashTtl = Math.min(this.config.duration, this.config.duration / 4 * rows);
-    this.emitterTtl = this.flashTtl;
-    this.totalTtl = this.emitterTtl + this.particleTtl;
-    this.decayFactor = Math.pow(2, this.config.decay);
+    this.particleTtl = this.config.particleDuration;
+    this.totalTtl = Math.max(this.flashTtl, this.particleTtl);
+    this.decayFactor = Math.pow(2, this.config.decay) / (1 + Math.pow(comboMultiplier, 3) * (this.config.comboDecayDivisor - 1));
     
     if (this.tile.type == TileType.FILLED) {
       this.createSprite(this.tile.color);
@@ -84,7 +88,7 @@ export class SonicDropEffect extends Container implements Effect {
         },
         "blendMode": "normal",
         "frequency": 0.001,
-        "emitterLifetime": this.emitterTtl / 1000,
+        "emitterLifetime": 0.1,
         "maxParticles": this.config.particleCount,
         "pos": {
           "x": 0,
@@ -100,6 +104,15 @@ export class SonicDropEffect extends Container implements Effect {
         }
       }
     );
+  }
+
+  createAdjustmentFilter(comboMultiplier: number) {
+    const brightnessMultiplier = 1 + (this.config.comboBrightnessMultiplier - 1) * comboMultiplier;
+
+    return new AdjustmentFilter({
+      saturation: this.config.particleSaturation,
+      brightness: this.config.particleBrightness * brightnessMultiplier,
+    });
   }
   
   tick(): boolean {
@@ -117,11 +130,6 @@ export class SonicDropEffect extends Container implements Effect {
       this.sprite.position.y = this.minoSize * this.rows * py;
     } else {
       this.sprite.alpha = 0;
-    }
-    
-    if (age <= this.emitterTtl) {
-      const p = age / this.emitterTtl;
-      this.emitter.updateSpawnPos(0, (p) * this.minoSize * this.rows);
     }
     
     if (age <= this.totalTtl) {
