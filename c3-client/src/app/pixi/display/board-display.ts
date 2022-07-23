@@ -7,6 +7,7 @@ import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { BoardLayout as BoardLayout } from "app/pixi/layout/board-layout";
 import { Container, Graphics, Sprite, Texture } from "pixi.js";
 import { GarbageIndicatorDisplay } from "app/pixi/display/garbage-indicator-display";
+import { EffectContainer } from "app/pixi/display/effects/effect-container";
 
 export class BoardDisplay extends Container implements LayoutChild {
 
@@ -23,6 +24,10 @@ export class BoardDisplay extends Container implements LayoutChild {
   private fieldContainer: Container;
   private maskContainer: Container;
   private spawnRateOffsetContainer: Container;
+
+  private innerContainer: Container;
+  private effectContainer: EffectContainer = new EffectContainer();
+
   private background: Sprite;
   private minoGridDisplay: MinoGridDisplay;
   private activePieceDisplay: ActivePieceDisplay;
@@ -76,17 +81,23 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.spawnRateOffsetContainer = new Container();
     this.maskContainer.addChild(this.spawnRateOffsetContainer);
 
+    // inner container
+    this.innerContainer = new Container();
+    this.spawnRateOffsetContainer.addChild(this.innerContainer);
+    
+    this.innerContainer.addChild(this.effectContainer);
+
     // mino grid
     this.minoGridDisplay = new MinoGridDisplay(this.board.tiles, this.layout.minoSize, this.board.tiles.length - this.board.visibleHeight);
-    this.spawnRateOffsetContainer.addChild(this.minoGridDisplay);
+    this.innerContainer.addChild(this.minoGridDisplay);
 
     // ghost piece
-    this.ghostPieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.player.activePiece, this.layout.minoSize, true);
-    this.spawnRateOffsetContainer.addChild(this.ghostPieceDisplay);
+    this.ghostPieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.effectContainer, this.player, this.layout.minoSize, true);
+    this.innerContainer.addChild(this.ghostPieceDisplay);
     
     // active piece
-    this.activePieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.player.activePiece, this.layout.minoSize);
-    this.spawnRateOffsetContainer.addChild(this.activePieceDisplay);
+    this.activePieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.effectContainer, this.player, this.layout.minoSize);
+    this.innerContainer.addChild(this.activePieceDisplay);
 
     // overlay
     this.overlayDisplay = new BoardOverlayDisplay(this.layoutWidth, this.layoutHeight);
@@ -112,5 +123,7 @@ export class BoardDisplay extends Container implements LayoutChild {
     }
 
     this.garbageIndicator.tick(garbageRateShift);
+
+    this.effectContainer.tick();
   }
 }

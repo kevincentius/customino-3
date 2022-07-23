@@ -176,7 +176,13 @@ export abstract class Player {
 
   private sonicDrop() {
     let success = false;
-    while (this.activePiece.attemptMove(1, 0, 0)) {
+    let di = 1;
+    while (!this.activePiece.checkCollision(di, 0)) {
+      di++;
+    }
+    di--;
+    if (di > 0) {
+      this.activePiece.attemptMove(di, 0, 0);
       success = true;
     }
     return success;

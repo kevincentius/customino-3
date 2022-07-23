@@ -15,7 +15,6 @@ import { StartGameData } from '@shared/game/network/model/start-game/start-game-
 import { MainScreen } from 'app/view/main/main-screen';
 import { playerRule, PlayerRule } from '@shared/game/engine/model/rule/player-rule';
 import { RoomSettings } from '@shared/game/engine/model/room-settings';
-import { RoomSettingsComponent } from 'app/view/menu/room-settings/room-settings.component';
 
 @Component({
   selector: 'app-room',

@@ -1,3 +1,4 @@
+import { SonicDropEffectConfig } from "@shared/game/engine/model/rule/player-rule/sonic-drop-effect-config";
 import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
 
 export interface PlayerRule {
@@ -28,6 +29,8 @@ export interface PlayerRule {
 
   // attack rule
   multiClearAttackTable: number[];
+
+  sonicDropEffect: SonicDropEffectConfig;
 }
 
 export const playerRule: PlayerRule = {
@@ -60,4 +63,18 @@ export const playerRule: PlayerRule = {
 
   // attack rule
   multiClearAttackTable: [0, 0, 1, 2, 4, 6],
+
+
+  // graphics
+  sonicDropEffect: {
+    duration: 400,
+    decay: 2,
+
+    particleCount: 10,
+    particleOpacity: 0.3,
+    particleScale: 0.2,
+    particleDuration: 1500,
+    particleSpeed: 250,
+    particleMaxAngle: 10,
+  }
 }
