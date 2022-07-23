@@ -1,4 +1,5 @@
 import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
+import { GravityRule } from "@shared/game/engine/model/rule/player-rule/gravity-rule";
 import { SonicDropEffectConfig } from "@shared/game/engine/model/rule/player-rule/sonic-drop-effect-config";
 import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
 
@@ -31,6 +32,8 @@ export interface PlayerRule {
   // attack rule
   multiClearAttackTable: number[];
 
+  gravity: GravityRule;
+
   sonicDropEffect: SonicDropEffectConfig;
 }
 
@@ -41,6 +44,13 @@ export const playerRule: PlayerRule = {
 
   previews: 3,
   rotationSystem: RotationSystemType.NEAREST,
+
+  gravity: {
+    speed: 1,
+    cap: 10,
+    acceleration: 0,
+    lockDelay: 0.5,
+  },
 
   // garbage entry
   garbageSpawnDelayTable: [0, 1],
@@ -65,13 +75,12 @@ export const playerRule: PlayerRule = {
   // attack rule
   multiClearAttackTable: [0, 0, 1, 2, 4, 6],
 
-
   // graphics
   sonicDropEffect: {
     duration: 400,
     decay: 2,
 
-    particleCount: 10,
+    particleCount: 2,
     particleOpacity: 0.3,
     particleScale: 0.2,
     particleDuration: 1500,
@@ -83,6 +92,7 @@ export const playerRule: PlayerRule = {
     comboCap: 10,
     comboBrightnessMultiplier: 4,
     comboDecayDivisor: 3,
+    comboParticleCountMultiplier: 5,
   }
 }
 

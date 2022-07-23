@@ -73,7 +73,7 @@ export abstract class Player {
     this.r = new RandomGen(startPlayerData.randomSeed);
     this.board = new Board(this.playerRule);
     this.pieceGen = new MemoryPieceGen(this.r, this.pieceList, 1);
-    this.activePiece = new ActivePiece(this.board, () => this.hardDrop());
+    this.activePiece = new ActivePiece(this.playerRule.gravity, this.board, () => this.hardDrop());
     this.rotationSystem = createRotationSystem(this.playerRule.rotationSystem);
     this.pieceQueue.push(...Array.from(Array(this.playerRule.previews)).map(() => this.pieceGen.next()));
     this.garbageGen = new GarbageGen(this, this.playerRule);

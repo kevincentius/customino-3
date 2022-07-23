@@ -89,7 +89,7 @@ export class SonicDropEffect extends Container implements Effect {
         "blendMode": "normal",
         "frequency": 0.001,
         "emitterLifetime": 0.1,
-        "maxParticles": this.config.particleCount,
+        "maxParticles": this.config.particleCount * (1 + comboMultiplier * (this.config.comboParticleCountMultiplier - 1)),
         "pos": {
           "x": 0,
           "y": 0

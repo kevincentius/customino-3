@@ -85,7 +85,7 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.innerContainer = new Container();
     this.spawnRateOffsetContainer.addChild(this.innerContainer);
     
-    this.innerContainer.addChild(this.effectContainer);
+    this.maskContainer.addChild(this.effectContainer);
 
     // mino grid
     this.minoGridDisplay = new MinoGridDisplay(this.board.tiles, this.layout.minoSize, this.board.tiles.length - this.board.visibleHeight);
