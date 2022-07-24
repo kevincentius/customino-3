@@ -132,6 +132,7 @@ export abstract class Player {
 
   protected runFrame() {
     this.activePiece.runFrame();
+    this.attackRule.runFrame();
     this.garbageGen.runFrame();
     this.frame++;
     this.lastFrameMs = Date.now();
