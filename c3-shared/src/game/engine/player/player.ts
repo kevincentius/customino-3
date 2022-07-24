@@ -1,5 +1,5 @@
 import { Game } from "@shared/game/engine/game/game";
-import { PlayerRule, playerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
+import { PlayerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
 import { ActivePiece } from "@shared/game/engine/player/active-piece";
 import { Board } from "@shared/game/engine/player/board";
 import { GarbageGen } from "@shared/game/engine/player/garbage-gen/garbage-gen";
@@ -53,7 +53,7 @@ export abstract class Player {
     [InputKey.RIGHT, () => this.attemptMove(0, 1, 0)],
     [InputKey.SOFT_DROP, () => this.attemptMove(1, 0, 0)],
     [InputKey.HARD_DROP, () => this.hardDrop()],
-    [InputKey.SONIC_DROP, () => this.sonicDrop()],
+    [InputKey.SONIC_DROP, () => this.sonicDrop() > 0],
     [InputKey.RCW, () => this.attemptMove(0, 0, 1)],
     [InputKey.RCCW, () => this.attemptMove(0, 0, 3)],
     [InputKey.R180, () => this.attemptMove(0, 0, 2)],
@@ -174,7 +174,7 @@ export abstract class Player {
     return this.game.running;
   }
 
-  private sonicDrop() {
+  private sonicDrop(): number {
     let success = false;
     let di = 1;
     while (!this.activePiece.checkCollision(di, 0)) {
@@ -185,7 +185,7 @@ export abstract class Player {
       this.activePiece.attemptMove(di, 0, 0);
       success = true;
     }
-    return success;
+    return di;
   }
 
   private hardDrop() {
@@ -194,7 +194,7 @@ export abstract class Player {
     }
 
     // lock piece
-    this.sonicDrop();
+    const dropDistance = this.sonicDrop();
     this.board.placePiece(this.activePiece.piece, this.activePiece.y, this.activePiece.x);
     
     // check line clear
@@ -206,6 +206,7 @@ export abstract class Player {
     const lockResult: LockPlacementResult = {
       clearedLines,
       clearedGarbageLines,
+      dropDistance: dropDistance,
     }
     
     let attacks = this.attackRule.calcAttacks(lockResult);

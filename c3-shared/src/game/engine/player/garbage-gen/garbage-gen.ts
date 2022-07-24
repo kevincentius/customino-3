@@ -203,7 +203,7 @@ export class GarbageGen {
   generateRow(attack: Attack): (Tile | null)[] {
     if (attack.type == AttackType.CLEAN_1) {
       const holePos = this.player.r.int(this.playerRule.width);
-      let row: (Tile | null)[] = [];
+      let row: (Tile | null)[] = Array(this.playerRule.width);
       for (let j = 0; j < this.playerRule.width; j++) {
         if (j != holePos) {
           row[j] = this.createTile(TileType.GARBAGE);

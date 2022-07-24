@@ -157,7 +157,6 @@ export class RuleSettingsComponent implements OnInit {
         }
   
         const content = e.target.result as string;
-        console.log(content);
         resolve(JSON.parse(content));
       }
       reader.readAsText(file);

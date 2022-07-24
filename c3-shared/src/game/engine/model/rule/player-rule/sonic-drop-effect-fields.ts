@@ -186,6 +186,20 @@ export const sonicDropEffectRuleFields: PlayerRuleField[] = [
       FieldTags.ADVANCED,
     ],
   },
+  {
+    property: 'comboParticleCountMultiplier',
+    fieldType: FieldType.NUMBER_SCROLL,
+    decimalPlaces: 1,
+    default: 8,
+    stepSize: 0.1,
+    validators: [ floatRangeValidator(1, 20) ],
+
+    name: 'combo particle count multiplier',
+    description: 'How much combo affects the sonic drop effect particle count. The actual multiplier grows gradually up to this value when the player is performing a combo.',
+    tags: [
+      FieldTags.ADVANCED,
+    ],
+  },
 ];
 
 sonicDropEffectRuleFields.forEach(field => {
