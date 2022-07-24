@@ -42,7 +42,6 @@ export class GameDisplay extends Container {
       teams: this.players.map(p => -1),
     });
 
-    console.log(poses);
     this.players.forEach((player, index) => {
       const pos = poses[index];
       const tScale = Math.min(pos.w / player.layoutWidth, pos.h / player.layoutHeight);

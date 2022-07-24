@@ -12,7 +12,7 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
 
   graphics = new Graphics();
   text = textUtil.create120('0');
-  bg = this.createBackground();
+  bg: Graphics;
 
   layoutWidth: number;
   layoutHeight: number;
@@ -33,9 +33,10 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     this.layoutWidth = this.diameter;
     this.layoutHeight = this.diameter;
 
+    this.bg = this.createBackground();
+    this.addChild(this.bg);
     this.addChild(this.graphics);
     this.addChild(this.text);
-    // this.addChild(this.bg);
     this.text.position.set(this.diameter / 2, this.diameter / 2 - 7);
     this.text.anchor.set(0.5, 0.5);
 
@@ -95,7 +96,7 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
 
   createBackground() {
     const g = new Graphics();
-    g.beginFill(0x000000);
+    g.beginFill(0x666666);
     g.drawCircle(this.diameter / 2, this.diameter / 2, this.diameter / 2);
     g.endFill();
 
@@ -104,6 +105,7 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     // //   color: 0xffffff22,
     // // });
     
+    g.alpha = 0.2;
     return g;
   }
 }

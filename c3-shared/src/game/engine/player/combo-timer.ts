@@ -7,6 +7,7 @@ export class ComboTimer {
   combo = 0;
   comboStartFrame = 0;
   comboAccumulatedFrames = 0;
+  lastExpiredCombo = 0;
 
   comboStartSubject = new Subject<void>();
   comboIncreasedSubject = new Subject<number>();
@@ -36,7 +37,8 @@ export class ComboTimer {
    */
   applyCombo(l: LockPlacementResult): number {
     // reset combo if time runs out
-    if (this.player.frame > this.comboStartFrame + this.comboAccumulatedFrames) {
+    if (this.combo > 0 && this.player.frame > this.comboStartFrame + this.comboAccumulatedFrames) {
+      this.lastExpiredCombo = this.combo;
       this.combo = 0;
     }
 
