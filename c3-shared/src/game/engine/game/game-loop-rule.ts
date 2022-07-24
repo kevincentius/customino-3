@@ -1,5 +1,5 @@
 
-const fps = 10;
+const fps = 60;
 
 export const gameLoopRule = {
   mspf: 1000 / fps,

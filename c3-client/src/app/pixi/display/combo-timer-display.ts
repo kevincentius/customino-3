@@ -81,8 +81,8 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     }
 
     const mp = Math.min(1, this.comboTimer.combo / 1);
-    const textMaxScale = mp * 1;
-    const graphicsMaxScale = mp * 0.2;
+    const textMaxScale = mp * 2;
+    const graphicsMaxScale = mp * 0.5;
     const p = 1 / (5 * (Date.now() - this.lastComboTimestamp) / 1000 + 1);
     this.text.scale.set(1 + p * textMaxScale);
     this.graphics.scale.set(1 + p * graphicsMaxScale);
