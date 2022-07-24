@@ -10,6 +10,8 @@ import { GarbageIndicatorDisplay } from "app/pixi/display/garbage-indicator-disp
 import { EffectContainer } from "app/pixi/display/effects/effect-container";
 import { Shaker } from "app/pixi/display/effects/shaker";
 import { LockResult } from "@shared/game/engine/player/lock-result";
+import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
+import { MinoFlashEffect } from "app/pixi/display/effects/mino-flash-effect";
 
 export class BoardDisplay extends Container implements LayoutChild {
 
@@ -18,6 +20,7 @@ export class BoardDisplay extends Container implements LayoutChild {
   garbageIndicatorWidth = 20;
 
   lastGarbageRateSpawn: number | null = null;
+  spritesheet = new GameSpritesheet();
 
   // children
   private layout: BoardLayout;
@@ -116,7 +119,10 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.board.addRowsSubject.subscribe(e => this.minoGridDisplay.onRowsAdded(e));
     this.player.garbageGen.garbageRateSpawnSubject.subscribe(e => this.lastGarbageRateSpawn = Date.now());
     this.player.gameOverSubject.subscribe(r => this.overlayDisplay.show(this.player.alive ? 'Winner' : 'Game Over', '2nd Place'))
-    this.player.pieceLockSubject.subscribe(r => this.shakeBoard(r));
+    this.player.pieceLockSubject.subscribe(r => {
+      this.shakeBoard(r);
+      this.spawnFlashEffect(r);
+    });
   }
 
   getMinoSize() {
@@ -144,4 +150,21 @@ export class BoardDisplay extends Container implements LayoutChild {
       this.shaker.shake(str * Math.cos(dir), str * Math.sin(dir));
     }
   }
+  
+  private spawnFlashEffect(r: LockResult) {
+    const tiles = this.player.activePiece.piece!.tiles;
+    for (let i = 0; i < tiles.length; i++) {
+      for (let j = 0; j < tiles[i].length; j++) {
+        const tile = tiles[i][j];
+        if (tile != null) {
+          const minoPos = this.minoGridDisplay.calcMinoPos(this.player.activePiece.y + i, this.player.activePiece.x + j);
+          
+          const effect = new MinoFlashEffect(this.getMinoSize(), 250, 0.5);
+          effect.position.set(minoPos.x, minoPos.y);
+          this.effectContainer.addEffect(effect);
+        }
+      }
+    }
+  }
+
 }

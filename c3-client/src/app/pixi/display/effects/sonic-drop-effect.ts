@@ -1,14 +1,15 @@
 import { SonicDropEffectConfig } from "@shared/game/engine/model/rule/player-rule/sonic-drop-effect-config";
 import { Tile } from "@shared/game/engine/model/tile";
-import { TileType } from "@shared/game/engine/model/tile-type";
 import { Effect } from "app/pixi/display/effects/effect";
+import { createMinoSprite } from "app/pixi/display/effects/mino-sprite-factory";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
+import { isThisSecond } from "date-fns";
 import { AdjustmentFilter } from "pixi-filters";
 import { Emitter } from "pixi-particles";
 import { Container, Sprite } from "pixi.js";
 
 export class SonicDropEffect extends Container implements Effect {
-  sprite!: Sprite;
+  private sprite!: Sprite;
 
   private flashTtl: number;
   private createdAt = Date.now();
@@ -40,13 +41,9 @@ export class SonicDropEffect extends Container implements Effect {
     // this.decayFactor = Math.pow(2, this.config.decay) / (1 + Math.pow(comboMultiplier, 5) * (this.config.comboDecayDivisor - 1));
     this.decayFactor = Math.pow(2, this.config.decay);
     
-    if (this.tile.type == TileType.FILLED) {
-      this.createSprite(this.tile.color);
-    } else if (this.tile.type == TileType.GARBAGE) {
-      this.createSprite(7);
-    } else {
-      throw new Error('Unknown tile type.');
-    }
+    this.sprite = createMinoSprite(this.spritesheet, this.tile, this.minoSize);
+    this.initScale = this.minoSize / this.sprite.texture.height * this.rows;
+    this.sprite.scale.y = this.initScale;
 
     this.addChild(this.sprite);
 
@@ -141,13 +138,5 @@ export class SonicDropEffect extends Container implements Effect {
     }
     
     return true;
-  }
-
-  private createSprite(textureMinoId: number) {
-    const scale = this.minoSize / this.spritesheet.mino[0].width;
-    this.initScale = scale * this.rows;
-
-    this.sprite = new Sprite(this.spritesheet.mino[textureMinoId]);
-    this.sprite.scale.set(scale, this.initScale);
   }
 }

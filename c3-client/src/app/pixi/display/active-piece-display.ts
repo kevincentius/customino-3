@@ -1,6 +1,7 @@
 import { ActivePiece, PieceMoveEvent } from "@shared/game/engine/player/active-piece";
 import { Player } from "@shared/game/engine/player/player";
 import { EffectContainer } from "app/pixi/display/effects/effect-container";
+import { MinoFlashEffect } from "app/pixi/display/effects/mino-flash-effect";
 import { SonicDropEffect } from "app/pixi/display/effects/sonic-drop-effect";
 import { MinoGridDisplay } from "app/pixi/display/mino-grid-display";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
@@ -53,26 +54,30 @@ export class ActivePieceDisplay extends Container {
       }
       this.updatePosition();
       
-      // after effects
-      if (!this.ghost && e.dy > 1) {
-        const tiles = this.activePiece.piece!.tiles;
-        for (let j = 0; j < tiles[0].length; j++) {
-          for (let i = 0; i < tiles.length; i++) {
-            const tile = tiles[i][j];
-            if (tile != null) {
-              // tile is the top most mino in each column
-              const minoPos = this.boardMinoGridDisplay.calcMinoPos(this.activePiece.y - e.dy + i, this.activePiece.x + j);
-
-              const effect = new SonicDropEffect(this.player.playerRule.sonicDropEffect, this.spritesheet, tile, this.minoSize, e.dy + 1, this.player.attackRule.comboTimer.combo);
-              effect.position.set(minoPos.x, minoPos.y);
-              this.effectContainer.addEffect(effect);
-              break;
-            }
-          }
+      if (!this.ghost) {
+        if (e.dy > 1) {
+          this.spawnSonicDropEffect(e);
         }
       }
     }
+  }
 
+  private spawnSonicDropEffect(e: PieceMoveEvent) {
+    const tiles = this.activePiece.piece!.tiles;
+    for (let j = 0; j < tiles[0].length; j++) {
+      for (let i = 0; i < tiles.length; i++) {
+        const tile = tiles[i][j];
+        if (tile != null) {
+          // tile is the top most mino in each column
+          const minoPos = this.boardMinoGridDisplay.calcMinoPos(this.activePiece.y - e.dy + i, this.activePiece.x + j);
+
+          const effect = new SonicDropEffect(this.player.playerRule.sonicDropEffect, this.spritesheet, tile, this.minoSize, e.dy + 1, this.player.attackRule.comboTimer.combo);
+          effect.position.set(minoPos.x, minoPos.y);
+          this.effectContainer.addEffect(effect);
+          break;
+        }
+      }
+    }
   }
 
   private updatePosition() {

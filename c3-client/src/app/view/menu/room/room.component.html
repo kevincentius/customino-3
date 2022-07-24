@@ -36,7 +36,7 @@
           <div class="section-body">
             <div class="slots-container">
               <div *ngFor="let slot of roomInfo.slots" class="slot" [class.spectator]="!slot.playing">
-                <div class="slot-player-name">{{slot.player.username}}</div>
+                <div class="slot-player-name" [class.local-player]="slot.player.sessionId == getSessionId()">{{slot.player.username}}</div>
               </div>
             </div>
           </div>

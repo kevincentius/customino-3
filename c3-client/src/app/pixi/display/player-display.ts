@@ -4,6 +4,7 @@ import { BoardDisplay } from "app/pixi/display/board-display";
 import { ComboTimerDisplay } from "app/pixi/display/combo-timer-display";
 import { LayoutContainer } from "app/pixi/display/layout/layout-container";
 import { PieceQueueDisplay } from "app/pixi/display/piece-queue-display";
+import { PlayerInfoDisplay } from "app/pixi/display/player-into-display";
 import { PlayerSound } from "app/pixi/display/sound/player-sound";
 import { textUtil } from "app/pixi/util/text-util";
 import { BitmapText } from "pixi.js";
@@ -12,6 +13,7 @@ export class PlayerDisplay extends LayoutContainer {
 
   private debugText: BitmapText = textUtil.create('');
 
+  private playerInfoDisplay: PlayerInfoDisplay;
   private board: BoardDisplay;
   private pieceQueue: PieceQueueDisplay;
   private comboTimer?: ComboTimerDisplay;
@@ -26,27 +28,26 @@ export class PlayerDisplay extends LayoutContainer {
   ) {
     super(1);
 
+    this.playerInfoDisplay = new PlayerInfoDisplay(this.player.playerInfo);
     this.board = new BoardDisplay(this.player);
     this.pieceQueue = new PieceQueueDisplay(this.player, this.board.getMinoSize());
     this.playerSound = new PlayerSound(this.player);
 
     this.player.gameOverSubject.subscribe(this.updateDebugText.bind(this));
 
-    // TODO: this.layout.addNode(player info);
+    this.addNode(this.playerInfoDisplay);
     this.addNode(this.rowLayout);
     
     this.rowLayout.addNode(this.board);
     this.rowLayout.addNode(this.rightColumnLayout);
-    // this.rowLayout.updateLayout();
 
     this.rightColumnLayout.addNode(this.pieceQueue);
     if (this.player.playerRule.useComboTimer) {
       this.comboTimer = new ComboTimerDisplay(this.player, this.player.attackRule.comboTimer, 160);
       this.rightColumnLayout.addNode(this.comboTimer);
     }
-    // this.rightColumnLayout.updateLayout();
 
-    this.addChild(this.debugText);
+    // this.addChild(this.debugText);
   }
   
   private updateDebugText() {
@@ -55,7 +56,7 @@ export class PlayerDisplay extends LayoutContainer {
   }
 
   tick() {
-    this.updateDebugText();
+    // this.updateDebugText();
     this.board.tick();
     this.comboTimer?.tick();
   }
