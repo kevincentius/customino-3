@@ -11,6 +11,7 @@ export class ComboTimer {
 
   comboStartSubject = new Subject<void>();
   comboIncreasedSubject = new Subject<number>();
+  comboEndedSubject = new Subject<number>();
 
   constructor(
     private player: Player,
@@ -29,6 +30,16 @@ export class ComboTimer {
     this.comboStartFrame = state.comboStartFrame;
     this.comboAccumulatedFrames = state.comboAccumulatedFrames;
   }
+  
+  runFrame() {
+    // reset combo if time runs out
+    if (this.combo > 0 && this.player.frame > this.comboStartFrame + this.comboAccumulatedFrames) {
+      const combo = this.combo;
+      this.lastExpiredCombo = this.combo;
+      this.combo = 0;
+      this.comboEndedSubject.next(combo);
+    }
+  }
 
   /**
    *  Returns number of lines that should be sent due to combo (not including other bonuses).
@@ -36,12 +47,6 @@ export class ComboTimer {
    *  because there may be time penalty for placing pieces without clearing lines.
    */
   applyCombo(l: LockPlacementResult): number {
-    // reset combo if time runs out
-    if (this.combo > 0 && this.player.frame > this.comboStartFrame + this.comboAccumulatedFrames) {
-      this.lastExpiredCombo = this.combo;
-      this.combo = 0;
-    }
-
     // increment combo
     const isCombo = l.clearedLines.length > 0;
     if (isCombo) {

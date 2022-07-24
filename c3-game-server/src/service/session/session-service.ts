@@ -1,4 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { shuffle } from "@shared/util/random";
 import EventEmitter from "events";
 import { Session } from "service/session/session";
 import { Socket } from "socket.io";
@@ -18,6 +19,8 @@ export class SessionService {
   private nextDummyUserId = 1; // TODO: No longer needed when replaced with the real user id later.
 
   private logger: Logger = new Logger(SessionService.name);
+  
+  private randomNames = shuffle(['Albatross','Alligator','Anteater','Antelope','Ape','Armadillo','Donkey','Baboon','Badger','Barracuda','Bat','Bear','Beaver','Bee','Bison','Bluebird','Boar','Buffalo','Butterfly','Camel','Capybara','Caribou','Cassowary','Cat','Caterpillar','Cheetah','Chicken','Chimpanzee','Chinchilla','Cobra','Cougar','Coyote','Crab','Cricket','Crocodile','Crow','Deer','Dog','Dolphin','Donkey','Dragonfly','Duck','Dugong','Eagle','Echidna','Eel','Elephant','Elk','Falcon','Flamingo','Fox','Frog','Gazelle','Gecko','Giraffe','Goat','Goose','Gorilla','Grasshopper','Hamster','Hawk','Hedgehog','Hippopotamus','Hornet','Horse','Hyena','Iguana','Jaguar','Jellyfish','Kangaroo','Koala','Komodo','Lemur','Leopard','Lion','Lizard','Lynx','Mammoth','Meerkat','Mole','Mongoose','Mouse','Nightingale','Ocelot','Octopus','Orangutan','Ostrich','Otter','Ox','Owl','Oyster','Panther','Parrot','Panda','Penguin','Rabbit','Raccoon','Raven','Reindeer','Rhinoceros','Salamander','Seahorse','Seal','Shark','Snake','Spider','Squirrel','Swan','Tiger','Toucan','Viper','Weasel','Wolf','Zebra']);
 
   /**
    * Creates a new session data for the connected client.
@@ -25,7 +28,7 @@ export class SessionService {
   createSession(socket: Socket): Session {
     // TODO: get userId & username via jwt?
     const userId = this.nextDummyUserId++;
-    const username = 'Mock user ' + userId;
+    const username = `${this.randomNames[this.nextDummyUserId % this.randomNames.length]} #${userId}`;
     const session = new Session(socket, this.nextSessionId++, userId, username);
 
     this.socketToSessionMap.set(socket, session);

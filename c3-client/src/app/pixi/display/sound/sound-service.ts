@@ -25,7 +25,7 @@ export class SoundService {
       { name: 'receivespike' },
       { name: 'die' },
       { name: 'combo', variations: 7 },
-      { name: 'combotimerstart' },
+      { name: 'combotimerend' },
       { name: 'hold' },
       { name: 'colorclear' },
       { name: 'perfectclear' },

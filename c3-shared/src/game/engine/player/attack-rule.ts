@@ -27,6 +27,10 @@ export class AttackRule {
     }
   }
 
+  runFrame() {
+    this.comboTimer.runFrame();
+  }
+
   calcAttacks(l: LockPlacementResult): Attack[] {
     let ret: Attack[] = [];
 
