@@ -4,6 +4,7 @@ import { BoardDisplay } from "app/pixi/display/board-display";
 import { ComboTimerDisplay } from "app/pixi/display/combo-timer-display";
 import { LayoutContainer } from "app/pixi/display/layout/layout-container";
 import { PieceQueueDisplay } from "app/pixi/display/piece-queue-display";
+import { PlayerSound } from "app/pixi/display/sound/player-sound";
 import { textUtil } from "app/pixi/util/text-util";
 import { BitmapText } from "pixi.js";
 
@@ -14,6 +15,8 @@ export class PlayerDisplay extends LayoutContainer {
   private board: BoardDisplay;
   private pieceQueue: PieceQueueDisplay;
   private comboTimer?: ComboTimerDisplay;
+  
+  private playerSound: PlayerSound;
 
   private rowLayout = new LayoutContainer();
   private rightColumnLayout = new LayoutContainer(1, 200, undefined, 40);
@@ -25,6 +28,7 @@ export class PlayerDisplay extends LayoutContainer {
 
     this.board = new BoardDisplay(this.player);
     this.pieceQueue = new PieceQueueDisplay(this.player, this.board.getMinoSize());
+    this.playerSound = new PlayerSound(this.player);
 
     this.player.gameOverSubject.subscribe(this.updateDebugText.bind(this));
 

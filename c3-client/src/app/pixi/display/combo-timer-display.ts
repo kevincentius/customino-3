@@ -12,7 +12,7 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
 
   graphics = new Graphics();
   text = textUtil.create120('0');
-  bg = this.createBackground();
+  bg: Graphics;
 
   layoutWidth: number;
   layoutHeight: number;
@@ -33,9 +33,10 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     this.layoutWidth = this.diameter;
     this.layoutHeight = this.diameter;
 
+    this.bg = this.createBackground();
+    this.addChild(this.bg);
     this.addChild(this.graphics);
     this.addChild(this.text);
-    // this.addChild(this.bg);
     this.text.position.set(this.diameter / 2, this.diameter / 2 - 7);
     this.text.anchor.set(0.5, 0.5);
 
@@ -52,6 +53,14 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
       const comboAccumulatedTime = this.comboTimer.comboAccumulatedFrames / gameLoopRule.fps;
       s = comboAccumulatedTime - (msSinceComboStart / 1000);
     }
+    
+    const mp = Math.pow(Math.min(1, this.comboTimer.combo / this.player.playerRule.sonicDropEffect.comboCap), 2);
+    const textMaxScale = mp * 3;
+    const graphicsMaxScale = mp * 1;
+    const p = 1 / (5 * (Date.now() - this.lastComboTimestamp) / 1000 + 1);
+    this.text.scale.set(1 + p * textMaxScale);
+    this.graphics.scale.set(1 + p * graphicsMaxScale);
+    this.graphics.position.set(-this.diameter / 2 * (p * graphicsMaxScale));
 
     this.graphics.clear();
 
@@ -79,14 +88,6 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
         .lineTo(r, r)
         .closePath();
     }
-
-    const mp = Math.min(1, this.comboTimer.combo / 1);
-    const textMaxScale = mp * 1;
-    const graphicsMaxScale = mp * 0.2;
-    const p = 1 / (5 * (Date.now() - this.lastComboTimestamp) / 1000 + 1);
-    this.text.scale.set(1 + p * textMaxScale);
-    this.graphics.scale.set(1 + p * graphicsMaxScale);
-    this.graphics.position.set(-this.diameter / 2 * (p * graphicsMaxScale));
   }
 
   animateCombo(combo: number) {
@@ -95,7 +96,7 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
 
   createBackground() {
     const g = new Graphics();
-    g.beginFill(0x000000);
+    g.beginFill(0x666666);
     g.drawCircle(this.diameter / 2, this.diameter / 2, this.diameter / 2);
     g.endFill();
 
@@ -104,6 +105,7 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     // //   color: 0xffffff22,
     // // });
     
+    g.alpha = 0.2;
     return g;
   }
 }
