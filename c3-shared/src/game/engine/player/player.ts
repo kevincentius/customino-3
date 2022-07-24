@@ -19,6 +19,7 @@ import { AttackAckEvent } from "@shared/game/network/model/event/attack-ack";
 import { createRotationSystem, RotationSystem } from "@shared/game/engine/player/rotation/rotation-system";
 import { AttackRule } from "@shared/game/engine/player/attack-rule";
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
+import { PlayerInfo } from "@shared/game/engine/player/player-info";
 
 export abstract class Player {
   // event emitters
@@ -33,6 +34,7 @@ export abstract class Player {
   alive = true;
   pieceQueue: Piece[] = [];
   attackRule: AttackRule;
+  playerInfo: PlayerInfo;
 
   // stateful composition
   r: RandomGen;
@@ -66,6 +68,11 @@ export abstract class Player {
 
     startPlayerData: StartPlayerData,
   ) {
+    this.playerInfo = {
+      name: startPlayerData.clientInfo.username,
+      userId: startPlayerData.clientInfo.userId,
+    };
+
     this.init();
 
     this.playerRule = this.game.startGameData.gameRule.globalRule;

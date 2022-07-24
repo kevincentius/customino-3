@@ -39,7 +39,11 @@ export class RoomComponent implements OnInit, OnDestroy {
   constructor(
     private roomService: RoomService,
     private mainService: MainService,
-  ) { }
+  ) {}
+
+  getSessionId() {
+    return this.mainService.sessionInfo.sessionId;
+  }
 
   ngOnInit() {
     this.subscriptions.push(... [

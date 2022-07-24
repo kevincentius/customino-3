@@ -1,6 +1,7 @@
 import { Piece } from "@shared/game/engine/player/piece";
 import { pieceDataArray } from "@shared/game/engine/util/piece-factory/piece-data";
 import { RandomGen } from "@shared/game/engine/util/random-gen";
+import { shuffle } from "@shared/util/random";
 
 
 export interface PieceList {
@@ -170,7 +171,7 @@ export class BagPieceGen implements PieceGen {
           }
         }
       }
-      this.shuffle(this.bag);
+      shuffle(this.bag, this.r);
     }
 
     return this.bag.pop()!;
@@ -178,25 +179,5 @@ export class BagPieceGen implements PieceGen {
 
   reset() {
     this.bag = [];
-  }
-
-
-  shuffle(array: any[]) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
-
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-
-      // Pick a remaining element...
-      randomIndex = this.r.int(currentIndex);
-      currentIndex -= 1;
-
-      // And swap it with the current element.
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
-    }
-
-    return array;
   }
 }
