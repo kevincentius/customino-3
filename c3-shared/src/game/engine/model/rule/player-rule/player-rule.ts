@@ -102,7 +102,6 @@ export function getField(rule: PlayerRule, field: PlayerRuleField) {
   for (const part of parts) {
     obj = obj[part];
     if (obj === undefined) {
-      console.log(rule, parts);
       throw new Error();
     }
   }
@@ -116,7 +115,6 @@ export function setField(rule: PlayerRule, field: PlayerRuleField, value: any) {
   for (const part of parts) {
     obj = obj[part];
     if (obj === undefined) {
-      console.log(rule, parts);
       throw new Error();
     }
   }

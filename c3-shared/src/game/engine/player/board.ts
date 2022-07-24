@@ -65,7 +65,6 @@ export class Board {
     let ret: number[] = [];
     for (let i = from; i < to; i++) {
       if (this.isRowCleared(i)) {
-        console.log(JSON.stringify(this.tiles[i]));
         ret.push(i);
       }
     }

@@ -52,6 +52,14 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
       const comboAccumulatedTime = this.comboTimer.comboAccumulatedFrames / gameLoopRule.fps;
       s = comboAccumulatedTime - (msSinceComboStart / 1000);
     }
+    
+    const mp = Math.pow(Math.min(1, this.comboTimer.combo / this.player.playerRule.sonicDropEffect.comboCap), 2);
+    const textMaxScale = mp * 3;
+    const graphicsMaxScale = mp * 1;
+    const p = 1 / (5 * (Date.now() - this.lastComboTimestamp) / 1000 + 1);
+    this.text.scale.set(1 + p * textMaxScale);
+    this.graphics.scale.set(1 + p * graphicsMaxScale);
+    this.graphics.position.set(-this.diameter / 2 * (p * graphicsMaxScale));
 
     this.graphics.clear();
 
@@ -79,14 +87,6 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
         .lineTo(r, r)
         .closePath();
     }
-
-    const mp = Math.min(1, this.comboTimer.combo / 1);
-    const textMaxScale = mp * 2;
-    const graphicsMaxScale = mp * 0.5;
-    const p = 1 / (5 * (Date.now() - this.lastComboTimestamp) / 1000 + 1);
-    this.text.scale.set(1 + p * textMaxScale);
-    this.graphics.scale.set(1 + p * graphicsMaxScale);
-    this.graphics.position.set(-this.diameter / 2 * (p * graphicsMaxScale));
   }
 
   animateCombo(combo: number) {
