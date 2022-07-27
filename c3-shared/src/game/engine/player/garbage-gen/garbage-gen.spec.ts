@@ -1,5 +1,5 @@
-import { QueuedAttack } from '@shared/game/engine/model/queued-attack';
-import { PlayerRule, playerRule } from '@shared/game/engine/model/rule/player-rule';
+
+import { playerRule, PlayerRule } from '@shared/game/engine/model/rule/player-rule/player-rule';
 import { GarbageGen } from '@shared/game/engine/player/garbage-gen/garbage-gen';
 import { Attack } from '@shared/game/network/model/attack/attack';
 import { AttackType } from '@shared/game/network/model/attack/attack-type';
@@ -114,6 +114,6 @@ describe('Environment', () => {
 function createTestAttacks(powers: number[]): Attack[] {
   return powers.map(power => ({
     power,
-    type: AttackType.CLEAN_1,
+    type: AttackType.DIRTY_1,
   }));
 }

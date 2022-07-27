@@ -42,7 +42,7 @@ export const playerRule: PlayerRule = {
   height: 18,
   invisibleHeight: 18,
 
-  previews: 3,
+  previews: 1,
   rotationSystem: RotationSystemType.NEAREST,
 
   gravity: {

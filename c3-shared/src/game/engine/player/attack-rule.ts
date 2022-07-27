@@ -39,7 +39,7 @@ export class AttackRule {
       const power = this.player.playerRule.multiClearAttackTable[Math.max(l.clearedLines.length)];
       if (power > 0) {
         ret.push({
-          type: AttackType.CLEAN_1,
+          type: AttackType.DIRTY_1,
           power: power,
         });
       }
@@ -50,7 +50,7 @@ export class AttackRule {
       const power = this.comboTimer.applyCombo(l);
       if (power > 0) {
         ret.push({
-          type: AttackType.CLEAN_1,
+          type: AttackType.DIRTY_1,
           power: power,
         });
       }
