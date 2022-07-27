@@ -4,7 +4,8 @@ import { MatUtil } from "@shared/game/engine/util/mat-util";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { MinoDisplay } from "app/pixi/display/mino-display";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
-import { Container, Graphics } from "pixi.js";
+import { AdjustmentFilter, GlowFilter, KawaseBlurFilter } from "pixi-filters";
+import { Container } from "pixi.js";
 
 export class MinoGridDisplay extends Container implements LayoutChild {
   // helpers
@@ -35,6 +36,17 @@ export class MinoGridDisplay extends Container implements LayoutChild {
         }
       }
     }
+
+    this.filters = [new GlowFilter({
+      color: 0xffffff,
+      outerStrength: 0.5,
+      innerStrength: 0,
+    }),
+      new AdjustmentFilter({
+        saturation: 1.2,
+        brightness: 1.2,
+      })
+    ];
   }
   
   placeTile(e: PlaceTileEvent) {

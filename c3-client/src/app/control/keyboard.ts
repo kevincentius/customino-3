@@ -103,10 +103,16 @@ export class Keyboard {
 
     if (this.repeatKey && this.repeatKey.down) {
       this.repeatTimer -= dt;
-      while (this.repeatTimer <= 0 && this.tryMove(this.repeatKey.move)) {
+      while (this.repeatTimer <= 0) {
+        const oldX = this.player.activePiece.x;
+        const oldY = this.player.activePiece.y;
+
+        this.tryMove(this.repeatKey.move);
         this.repeatTimer += this.arr;
         
-        break; // todo: remove this break when player.canMove is actually implemented
+        if (this.player.activePiece.y == oldY && this.player.activePiece.x == oldX) {
+          break;
+        }
       }
     }
   }

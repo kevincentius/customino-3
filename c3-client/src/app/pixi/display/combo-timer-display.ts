@@ -54,7 +54,7 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
       s = comboAccumulatedTime - (msSinceComboStart / 1000);
     }
     
-    const mp = Math.pow(Math.min(1, this.comboTimer.combo / this.player.playerRule.sonicDropEffect.comboCap), 2);
+    const mp = Math.pow(Math.min(1, this.comboTimer.combo / this.player.playerRule.sonicDropEffect.comboCap), 1);
     const textMaxScale = mp * 3;
     const graphicsMaxScale = mp * 1;
     const p = 1 / (5 * (Date.now() - this.lastComboTimestamp) / 1000 + 1);
