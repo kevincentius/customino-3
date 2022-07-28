@@ -49,7 +49,7 @@ export class MainComponent {
     this.openScreen(MainScreen.PRELOADER);
 
     this.route.params.subscribe(params => {
-      this.openScreen(params['component'] ?? MainScreen.MENU);
+      this.openScreen(params['component'] ?? MainScreen.THANKS);
     });
 
     this.lobbyService.clientInfoSubject.subscribe(sessionInfo => this.mainService.sessionInfo = sessionInfo);

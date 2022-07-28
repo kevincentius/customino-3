@@ -2,7 +2,7 @@ import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { Container } from "pixi.js";
 import { LayoutContainer } from "app/pixi/display/layout/layout-container";
 import { Player } from "@shared/game/engine/player/player";
-import { PieceDisplay } from "app/pixi/display/piece-display";
+import { PieceDisplay } from "app/pixi/display/widgets/piece-queue/piece-display";
 import { Piece } from "@shared/game/engine/player/piece";
 
 export class PieceQueueDisplay extends Container implements LayoutChild {

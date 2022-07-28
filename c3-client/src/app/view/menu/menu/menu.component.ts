@@ -27,4 +27,8 @@ export class MenuComponent implements OnInit {
   onControlsClick() {
     this.mainService.openScreen(MainScreen.CONTROLS);
   }
+
+  onThanksClick() {
+    this.mainService.openScreen(MainScreen.THANKS);
+  }
 }

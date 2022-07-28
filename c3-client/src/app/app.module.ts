@@ -26,6 +26,7 @@ import { RoomSettingsComponent } from './view/menu/room-settings/room-settings.c
 import { RuleSettingsComponent } from './view/menu/rule-settings/rule-settings.component';
 import { FieldInputComponent } from './view/menu/field-input/field-input.component';
 import { FieldOutputComponent } from './view/menu/field-output/field-output.component';
+import { ThanksComponent } from './view/menu/thanks/thanks.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -53,6 +54,7 @@ export function apiConfigFactory(): Configuration {
     RuleSettingsComponent,
     FieldInputComponent,
     FieldOutputComponent,
+    ThanksComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),

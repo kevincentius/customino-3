@@ -43,8 +43,8 @@ export class MinoGridDisplay extends Container implements LayoutChild {
       innerStrength: 0,
     }),
       new AdjustmentFilter({
-        saturation: 1.2,
-        brightness: 1.2,
+        saturation: 1.3,
+        brightness: 1.3,
       })
     ];
   }

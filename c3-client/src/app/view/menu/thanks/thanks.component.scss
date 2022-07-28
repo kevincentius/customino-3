@@ -1,0 +1,38 @@
+
+.thanks-container {
+  padding: 30px;
+}
+
+.thanks-subject {
+  display: inline;
+  font-size: 36px;
+}
+
+.thanks-text {
+  padding-left: 20px;
+}
+
+.thanks-list {
+  margin-top: 20px;
+}
+
+.thanks-item {
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px;
+
+  &:hover {
+    background: #fff2;
+    backdrop-filter: blur(4px);
+  }
+}
+
+.thanks-name {
+  width: 400px;
+}
+
+.thanks-author {
+  width: 300px;
+  opacity: 0.65;
+}
