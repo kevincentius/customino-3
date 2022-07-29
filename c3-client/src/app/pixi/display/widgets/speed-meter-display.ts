@@ -19,7 +19,7 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
   movingAverage = 0; // bpm
   weight = 0.3;
 
-  arcConfig = {
+  config = {
     bg: 0x333333,
 
     arcRadiusNear: 0.7,
@@ -27,7 +27,10 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
     arcDegreeStart: 45,
     arcColor: 0xff0000,
     arcOpacity: 0.7,
-    arcMaxSpeed: 240,
+    maxSpeed: 240,
+
+    tintSpeed: 60,
+    tintSpeedTint: 0xffff00,
 
     arcSat: 0.6,
     arcFlashMs: 250,
@@ -55,7 +58,7 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
 
     this.arcBg = new Graphics();
     this.arcBg.position.set(this.diameter / 2, this.diameter / 2);
-    this.drawArc(this.arcBg, 360 - this.arcConfig.arcDegreeStart * 2, this.arcConfig.bg);
+    this.drawArc(this.arcBg, 360 - this.config.arcDegreeStart * 2, this.config.bg);
     this.addChild(this.arcBg);
 
     this.arc = new Graphics();
@@ -63,12 +66,12 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
     this.addChild(this.arc);
     
     this.addChild(this.text);
-    this.text.position.set(this.diameter / 2, this.diameter / 2 - 7);
+    this.text.position.set(this.diameter / 2, this.diameter / 2 - 3);
     this.text.scale.set(0.9);
     this.text.anchor.set(0.5, 0.5);
     
     this.addChild(this.textBpm);
-    this.textBpm.position.set(this.diameter / 2, this.diameter / 2 + 25);
+    this.textBpm.position.set(this.diameter / 2, this.diameter / 2 + 35);
     this.textBpm.scale.set(0.6);
     this.textBpm.anchor.set(0.5, 0.5);
     
@@ -109,12 +112,14 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
     this.displayValue = p * this.displayValueAtLastPiece + (1 - p) * targetDisplay;
     
     this.text.text = Math.round(this.displayValue).toString();
+    const pTint = Math.max(0, Math.min(1, (this.displayValue - this.config.tintSpeed) / (this.config.maxSpeed - this.config.tintSpeed)));
+    this.text.tint = 0xffff00 + (255 - (pTint * 255));
 
-    this.drawArc(this.arc, 360 * Math.min(1, this.displayValue / this.arcConfig.arcMaxSpeed));
+    this.drawArc(this.arc, 360 * Math.min(1, this.displayValue / this.config.maxSpeed));
   }
 
   private drawArc(arc: Graphics, deg: number, color?: number) {
-    const c = this.arcConfig;
+    const c = this.config;
     const radStart = (c.arcDegreeStart + 90) * Math.PI / 180;
     const radEnd = radStart + deg * Math.PI / 180;
 
