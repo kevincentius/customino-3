@@ -82,8 +82,8 @@ export class MinoGridDisplay extends Container implements LayoutChild {
   }
 
   chorus(p: number) {
-    this.glowFilter.innerStrength = p * 1;
-    this.glowFilter.outerStrength = p * 1;
+    this.glowFilter.innerStrength = p * 1.5;
+    this.glowFilter.outerStrength = p * 1.5;
   }
 
   placeTile(e: PlaceTileEvent) {

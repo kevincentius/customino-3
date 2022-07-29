@@ -135,7 +135,7 @@ export class BoardDisplay extends Container implements LayoutChild {
       for (let j = 0; j < this.board.tiles[row.y].length; j++) {
         const mino = this.minoGridDisplay.minos[row.y][j];
         if (mino.minoDisplay) {
-          const effect2 = new MinoFlashEffect(minoSize, minoSize, 150, 1, new Sprite(Texture.WHITE));
+          const effect2 = new MinoFlashEffect(minoSize, minoSize, 150, 0.5, new Sprite(Texture.WHITE));
           effect2.position.set(mino.minoDisplay.position.x, mino.absPos);
           this.effectContainer.addEffect(effect2);
         }
