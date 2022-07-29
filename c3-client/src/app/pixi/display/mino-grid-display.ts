@@ -23,13 +23,13 @@ export class MinoGridDisplay extends Container implements LayoutChild {
 
   glowFilter = new GlowFilter({
     color: 0xffffff,
-    outerStrength: 0,
-    innerStrength: 0,
+    outerStrength: 0.5,
+    innerStrength: 0.5,
   });
 
   adjustmentFilter = new AdjustmentFilter({
-    saturation: 1.3,
-    brightness: 1.3,
+    saturation: 1.5,
+    brightness: 1.1,
   });
 
   constructor(private tiles: (Tile | null)[][], private minoSize: number, private invisibleHeight=0) {

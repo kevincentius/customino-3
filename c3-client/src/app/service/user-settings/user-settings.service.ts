@@ -1,5 +1,7 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { InputKey } from '@shared/game/network/model/input-key';
+import { musicService } from 'app/pixi/display/sound/music-service';
+import { soundService } from 'app/pixi/display/sound/sound-service';
 import { IdbService } from 'app/service/idb.service';
 import { ControlSettings } from 'app/service/user-settings/control-settings';
 import { LocalSettings } from 'app/service/user-settings/local-settings';
@@ -27,6 +29,15 @@ export class UserSettingsService {
     const localSettings = await this.idbService.getLocalSettings();
     if (localSettings) {
       this.localSettings = localSettings;
+
+      if (this.localSettings.control.arr == null) { this.localSettings.control.arr = 15; }
+      if (this.localSettings.control.das == null) { this.localSettings.control.das = 100; }
+      if (this.localSettings.control.sdr == null) { this.localSettings.control.sdr = 1; }
+      if (this.localSettings.musicVolume == null) { this.localSettings.musicVolume = 1; }
+      if (this.localSettings.soundVolume == null) { this.localSettings.soundVolume = 1; }
+
+      musicService.setUserMusicVolume(this.localSettings.musicVolume);
+      soundService.setUserSoundVolume(this.localSettings.soundVolume);
     } else {
       this.localSettings = this.createDefaultSettings();
       this.save();
@@ -46,6 +57,7 @@ export class UserSettingsService {
     return {
       control: this.createDefaultControlSettings(),
       musicVolume: 1,
+      soundVolume: 1,
     }
   }
   

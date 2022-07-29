@@ -169,6 +169,7 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.minoGridDisplay.chorus(this.chorus);
 
     this.activePieceDisplay.tick();
+    this.ghostPieceDisplay.tick();
 
     this.shaker.tick();
     this.effectContainer.tick(dt);

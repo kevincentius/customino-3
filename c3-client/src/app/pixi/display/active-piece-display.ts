@@ -68,10 +68,13 @@ export class ActivePieceDisplay extends Container {
   }
 
   tick() {
-    if (!this.ghost && this.minoGridDisplay) {
+    if (this.minoGridDisplay) {
       const glow = 0.5 + 0.5 * Math.abs(Math.sin(Date.now() * Math.PI * 2 / 1000));
-      this.minoGridDisplay.glowFilter.innerStrength = glow;
       this.minoGridDisplay.glowFilter.outerStrength = glow;
+      
+      if (!this.ghost) {
+        this.minoGridDisplay.glowFilter.innerStrength = glow;
+      }
     }
   }
 

@@ -1,4 +1,5 @@
 import { shuffle } from "@shared/util/random";
+import { UserSettingsService } from "app/service/user-settings/user-settings.service";
 import { Howl } from "howler";
 
 export class MusicService {
@@ -29,6 +30,8 @@ export class MusicService {
   currentVolume: number = 0;
   targetVolume: number = 0;
   volumeAdjustMs: number = 0;
+
+  userSettingsVolume = 1;
 
   constructor() {
     this.gameBgmHowls = this.gameBgmNames.map(name => new Howl({
@@ -63,6 +66,11 @@ export class MusicService {
   setVolumeMenu() { this.setTargetVolume( this.volumeMenu); }
   setVolumeGame() { this.setTargetVolume( this.volumeGame); }
 
+  setUserMusicVolume(volume: number) {
+    this.userSettingsVolume = volume;
+    this.loop();
+  }
+
   private setTargetVolume(volume: number) {
     this.prevVolume = this.currentVolume;
     this.volumeAdjustMs = Date.now();
@@ -81,7 +89,7 @@ export class MusicService {
       this.currentVolume = p * this.targetVolume + (1-p) * this.prevVolume;
       this.timeout = setTimeout(() => this.loop());
     }
-    this.setVolume(this.currentVolume);
+    this.setVolume(this.currentVolume * this.userSettingsVolume);
   }
 
   private setVolume(volume: number) {
