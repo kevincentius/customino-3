@@ -1,6 +1,7 @@
 import { Component, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { LobbyService } from "app/game-server/lobby.service";
+import { musicService } from "app/pixi/display/sound/music-service";
 import { MainScreen } from "app/view/main/main-screen";
 import { MainService } from "app/view/main/main.service";
 import { ControlsComponent } from "app/view/menu/controls/controls.component";

@@ -42,7 +42,7 @@ export const playerRule: PlayerRule = {
   height: 18,
   invisibleHeight: 18,
 
-  previews: 3,
+  previews: 1,
   rotationSystem: RotationSystemType.NEAREST,
 
   gravity: {
@@ -64,7 +64,7 @@ export const playerRule: PlayerRule = {
 
   // combo timer
   useComboTimer: true,
-  comboAttackTable: [0, 0, 1, 1, 1, 2, 2, 2, 3],
+  comboAttackTable: [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12],
   comboTimerInitial: 2,
   comboTimerMultiClearBonus: [-0.2, 1, 1.4, 1.7, 2],
   comboTimerSpinBonus: [0, 1.5, 2, 2.5],
@@ -77,7 +77,7 @@ export const playerRule: PlayerRule = {
 
   // graphics
   sonicDropEffect: {
-    duration: 200,
+    duration: 100,
     decay: 2,
 
     particleCount: 2,
@@ -91,7 +91,7 @@ export const playerRule: PlayerRule = {
     
     comboCap: 10,
     comboBrightnessMultiplier: 4,
-    comboDurationMultiplier: 4,
+    comboDurationMultiplier: 6,
     comboParticleCountMultiplier: 5,
   }
 }

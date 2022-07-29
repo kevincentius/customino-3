@@ -9,9 +9,9 @@ export class EffectContainer extends Container {
     this.effects.push(effect);
   }
 
-  tick() {
+  tick(dt: number) {
     this.effects = this.effects.filter(effect => {
-      const result = effect.tick();
+      const result = effect.tick(dt);
       if (!result) {
         this.removeChild(effect);
       }

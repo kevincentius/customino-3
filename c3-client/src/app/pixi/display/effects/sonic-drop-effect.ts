@@ -3,7 +3,6 @@ import { Tile } from "@shared/game/engine/model/tile";
 import { Effect } from "app/pixi/display/effects/effect";
 import { createMinoSprite } from "app/pixi/display/effects/mino-sprite-factory";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
-import { isThisSecond } from "date-fns";
 import { AdjustmentFilter } from "pixi-filters";
 import { Emitter } from "pixi-particles";
 import { Container, Sprite } from "pixi.js";

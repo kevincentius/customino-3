@@ -1,0 +1,30 @@
+
+<div class="v-flex">
+  <app-background></app-background>
+
+  <div class="screen-title-container">
+    <div class="screen-title">
+      <app-menu-button (click)="onBackClick()">arrow_back_ios</app-menu-button>
+      Special thanks
+    </div>
+  </div>
+
+  <div class="v-flex screen-body-container">
+    <div *ngFor="let credit of credits" class="thanks-container">
+      <div class="thanks-headline" (click)="onHeaderClick(credit)">
+        <div class="thanks-subject">{{credit.name}}</div>
+        <div class="thanks-text"> {{credit.description}}</div>
+      </div>
+    
+      <div class="thanks-list">
+        <div *ngFor="let item of credit.items" class="thanks-item" (click)="onItemClick(item)">
+          <div class="thanks-name">{{item.name}}</div>
+          <div class="thanks-author">
+            <ng-container *ngIf="item.author">by {{item.author}}</ng-container>
+            <ng-container *ngIf="item.license"> ({{item.license}})</ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
