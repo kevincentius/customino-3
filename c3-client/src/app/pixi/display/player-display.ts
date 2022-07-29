@@ -50,7 +50,7 @@ export class PlayerDisplay extends LayoutContainer {
     }
 
     this.speedMeter = new SpeedMeterDisplay(this.player, 100);
-    // this.rightColumnLayout.addNode(this.speedMeter);
+    this.rightColumnLayout.addNode(this.speedMeter);
 
     // this.addChild(this.debugText);
   }

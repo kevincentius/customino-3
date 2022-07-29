@@ -40,7 +40,9 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
       const ct = Date.now();
       const dt = ct - this.lastPieceMs;
       this.lastPieceMs = ct;
-      this.movingAverage = this.weight * (60000 / dt) + (1 - this.weight) * this.movingAverage;
+      const weightMul = dt / (this.movingAverage == 0 ? 1 : 60000 / this.movingAverage);
+      const weight = this.weight * weightMul / (1 + (this.weight * (weightMul - 1)));
+      this.movingAverage = weight * (60000 / dt) + (1 - weight) * this.movingAverage;
       this.displayValueAtLastPiece = this.displayValue;
     });
   }
@@ -56,8 +58,14 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
     // calculate target display (most actual speed)
     const msSinceLastPiece = ct - this.lastPieceMs;
     const expectedMsPerPiece = 60000 / this.movingAverage;
-    const targetDisplay = msSinceLastPiece < expectedMsPerPiece ? this.movingAverage
-      : (this.weight * (60000 / msSinceLastPiece) + (1 - this.weight) * this.movingAverage)
+    let targetDisplay!: number;
+    if (msSinceLastPiece < expectedMsPerPiece) {
+      targetDisplay = this.movingAverage;
+    } else {
+      const weightMul = msSinceLastPiece / expectedMsPerPiece;
+      const weight = this.weight * weightMul / (1 + (this.weight * (weightMul - 1)));
+      targetDisplay = (weight * (60000 / msSinceLastPiece) + (1 - weight) * this.movingAverage);
+    }
     
     // display should catch up to the most actual speed gradually (animate)
     const p = 1 / (msSinceLastPiece / 1000 + 1);

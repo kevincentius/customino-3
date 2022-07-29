@@ -11,7 +11,7 @@
 
   <div class="v-flex screen-body-container">
     <div *ngFor="let credit of credits" class="thanks-container">
-      <div class="thanks-headline">
+      <div class="thanks-headline" (click)="onHeaderClick(credit)">
         <div class="thanks-subject">{{credit.name}}</div>
         <div class="thanks-text"> {{credit.description}}</div>
       </div>

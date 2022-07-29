@@ -9,31 +9,33 @@
     </div>
   </div>
 
-  <div *ngIf="controlSettings" style="display: flex; flex-direction: column; padding: 0 100px">
-    <app-control-row *ngFor="let row of rows; let i=index"
-      [data]="row"
-      [editMode]="i==this.editIndex"
-      (click)="onRowClick(i)"
-    ></app-control-row>
-
-    <ng-container *ngIf="controlSettings">
-      <app-control-row
-        [name]="'DAS (auto-repeat delay)'"
-        [value]="controlSettings.das"
-        (inputBlur)="onDasUpdated($event)"
+  <div class="v-flex screen-body-container">
+    <div *ngIf="controlSettings" style="display: flex; flex-direction: column; padding: 0 100px">
+      <app-control-row *ngFor="let row of rows; let i=index"
+        [data]="row"
+        [editMode]="i==this.editIndex"
+        (click)="onRowClick(i)"
       ></app-control-row>
-      
-      <app-control-row
-        [name]="'ARR (auto-repeat rate)'"
-        [value]="controlSettings.arr"
-        (inputBlur)="onArrUpdated($event)"
-      ></app-control-row>
-      
-      <app-control-row
-        [name]="'Soft drop speed'"
-        [value]="controlSettings.sdr"
-        (inputBlur)="onSdrUpdated($event)"
-      ></app-control-row>
-    </ng-container>
+  
+      <ng-container *ngIf="controlSettings">
+        <app-control-row
+          [name]="'DAS (auto-repeat delay)'"
+          [value]="controlSettings.das"
+          (inputBlur)="onDasUpdated($event)"
+        ></app-control-row>
+        
+        <app-control-row
+          [name]="'ARR (auto-repeat rate)'"
+          [value]="controlSettings.arr"
+          (inputBlur)="onArrUpdated($event)"
+        ></app-control-row>
+        
+        <app-control-row
+          [name]="'Soft drop speed'"
+          [value]="controlSettings.sdr"
+          (inputBlur)="onSdrUpdated($event)"
+        ></app-control-row>
+      </ng-container>
+    </div>
   </div>
 </div>

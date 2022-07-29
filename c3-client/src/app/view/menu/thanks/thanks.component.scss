@@ -1,6 +1,19 @@
 
+:host {
+  overflow: hidden;
+}
+
 .thanks-container {
   padding: 30px;
+}
+
+.thanks-headline {
+  transition: 50ms;
+  transform-origin: center left;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.25);
+  }
 }
 
 .thanks-subject {

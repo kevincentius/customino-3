@@ -45,6 +45,7 @@ export class UserSettingsService {
   private createDefaultSettings(): LocalSettings {
     return {
       control: this.createDefaultControlSettings(),
+      musicVolume: 1,
     }
   }
   

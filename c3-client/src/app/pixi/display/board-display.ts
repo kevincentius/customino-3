@@ -132,7 +132,7 @@ export class BoardDisplay extends Container implements LayoutChild {
   tick() {
     let garbageRateShift = 0;
     if (this.lastGarbageRateSpawn != null) {
-      const p = 1 - Math.min(1, (Date.now() - this.lastGarbageRateSpawn) / 1000 / (this.player.playerRule.garbageSpawnRate));
+      const p = 1 - Math.min(1, (Date.now() - this.lastGarbageRateSpawn) / (1000 / this.player.playerRule.garbageSpawnRate));
       garbageRateShift = this.getMinoSize() * p;
       this.spawnRateOffsetContainer.position.y = garbageRateShift;
     }

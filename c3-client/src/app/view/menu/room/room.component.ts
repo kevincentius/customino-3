@@ -15,6 +15,7 @@ import { StartGameData } from '@shared/game/network/model/start-game/start-game-
 import { MainScreen } from 'app/view/main/main-screen';
 import { playerRule, PlayerRule } from '@shared/game/engine/model/rule/player-rule/player-rule';
 import { RoomSettings } from '@shared/game/engine/model/room-settings';
+import { musicService } from 'app/pixi/display/sound/music-service';
 
 @Component({
   selector: 'app-room',
@@ -114,6 +115,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   private startGame() {
     this.game.start();
     this.mainService.pixi.bindGame(this.game);
+    musicService.setVolumeGame();
     this.mainService.displayGui = false;
   }
 
@@ -124,6 +126,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   async onRecvGameOver(gameResult: GameResult) {
+    musicService.setVolumeMenu();
     this.mainService.displayGui = true;
     this.mainService.pixi.keyboard.enabled = false;
   }

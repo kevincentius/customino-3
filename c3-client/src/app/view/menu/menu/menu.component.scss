@@ -22,17 +22,19 @@
   }
 
   .menu-item {
-    transition: 200ms;
+    transition: 400ms;
     font-size: 36px;
     padding: 20px 70px;
     background: $button-bg;
     backdrop-filter: blur(4px);
+    transform-origin: center left;
     
     cursor: pointer;
 
     &:hover {
       transition: 50ms;
       background: $button-hover;
+      transform: scale(1.15);
     }
   }
 

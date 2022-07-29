@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
-import { credits } from 'app/view/menu/thanks/credits';
+import { musicCredits } from 'app/view/menu/thanks/music-credits';
+import { soundCredits } from 'app/view/menu/thanks/sound-credits';
 
 export interface CreditItem {
   name: string;
@@ -26,7 +27,7 @@ export interface CreditGroup {
 })
 export class ThanksComponent implements OnInit {
 
-  credits = credits;
+  credits = [ soundCredits, musicCredits ];
 
   constructor(
     private mainService: MainService
@@ -38,6 +39,12 @@ export class ThanksComponent implements OnInit {
   onItemClick(item: CreditItem) {
     if (item.url) {
       window.open(item.url);
+    }
+  }
+
+  onHeaderClick(credit: CreditGroup) {
+    if (credit.url) {
+      window.open(credit.url);
     }
   }
 
