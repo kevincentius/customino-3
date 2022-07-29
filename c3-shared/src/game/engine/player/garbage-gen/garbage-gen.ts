@@ -175,14 +175,13 @@ export class GarbageGen {
 
       const attack = this.attackQueue[0];
       if (spawnLeft >= attack.powerLeft) {
-        rows.push(...this.copyRows(this.cleanRow ?? this.generateRow(attack.attack), attack.powerLeft));
+        rows.push(...this.generateRows(attack.attack, attack.powerLeft, true));
         this.cleanRow = null;
         spawnLeft -= attack.powerLeft;
         this.attackQueue.shift();
         this.fullSpawnSubject.next();
       } else {
-        this.cleanRow = this.cleanRow ?? this.generateRow(attack.attack);
-        rows.push(...this.copyRows(this.cleanRow, spawnLeft));
+        rows.push(...this.generateRows(attack.attack, spawnLeft, false));
         attack.powerLeft -= spawnLeft;
         spawnLeft = 0;
         this.partialSpawnSubject.next(0);
@@ -200,19 +199,30 @@ export class GarbageGen {
     }
   }
 
-  generateRow(attack: Attack): (Tile | null)[] {
+  generateRows(attack: Attack, power: number, sameAttack: boolean): (Tile | null)[][] {
     if (attack.type == AttackType.CLEAN_1) {
-      const holePos = this.player.r.int(this.playerRule.width);
-      let row: (Tile | null)[] = Array(this.playerRule.width);
-      for (let j = 0; j < this.playerRule.width; j++) {
-        if (j != holePos) {
-          row[j] = this.createTile(TileType.GARBAGE);
-        }
+      if (!this.cleanRow || !sameAttack) {
+        this.cleanRow = this.cleanRow ?? this.generateRow();
       }
-      return row;
+      return this.copyRows(this.cleanRow, power);
+    } else if (attack.type == AttackType.DIRTY_1) {
+      return Array(power).fill(null).map(_ => this.generateRow());
     } else {
       throw new Error();
     }
+  }
+
+  generateRow(): (Tile | null)[] {
+    const holePos = this.player.r.int(this.playerRule.width);
+    let row: (Tile | null)[] = Array(this.playerRule.width);
+    for (let j = 0; j < this.playerRule.width; j++) {
+      if (j != holePos) {
+        row[j] = this.createTile(TileType.GARBAGE);
+      } else {
+        row[j] = null;
+      }
+    }
+    return row;
   }
 
   copyRows(row: (Tile | null)[], numRows: number): (Tile | null)[][] {

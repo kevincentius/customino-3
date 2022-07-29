@@ -6,4 +6,5 @@ export enum MainScreen {
   LOBBY='lobby',
   ROOM='room',
   REPLAY='replay',
+  THANKS='thanks',
 }

@@ -42,8 +42,7 @@ export class MatUtil {
     return 0;
   }
 
-  static clearLines(matrix: any[][], rows: number[]) {
-    // shift rows downwards
+  static shiftDown(matrix: any[][], rows: number[]) {
     let shift = 0;
     for (let i = rows[rows.length - 1]; i >= rows.length; i--) {
       while (i - shift == rows[rows.length - 1 - shift]) {
@@ -51,6 +50,10 @@ export class MatUtil {
       }
       matrix[i] = matrix[i - shift];
     }
+  }
+
+  static clearLines(matrix: any[][], rows: number[]) {
+    this.shiftDown(matrix, rows);
     
     // create new empty rows
     for (let i = 0; i < rows.length; i++) {

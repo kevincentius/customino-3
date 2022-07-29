@@ -1,13 +1,15 @@
 import { Player } from "@shared/game/engine/player/player";
 import { RemotePlayer } from "@shared/game/engine/player/remote-player";
 import { BoardDisplay } from "app/pixi/display/board-display";
-import { ComboTimerDisplay } from "app/pixi/display/combo-timer-display";
+import { ComboTimerDisplay } from "app/pixi/display/widgets/combo-timer-display";
 import { LayoutContainer } from "app/pixi/display/layout/layout-container";
-import { PieceQueueDisplay } from "app/pixi/display/piece-queue-display";
 import { PlayerInfoDisplay } from "app/pixi/display/player-into-display";
 import { PlayerSound } from "app/pixi/display/sound/player-sound";
 import { textUtil } from "app/pixi/util/text-util";
 import { BitmapText } from "pixi.js";
+import { PieceQueueDisplay } from "app/pixi/display/widgets/piece-queue/piece-queue-display";
+import { SpeedMeterDisplay } from "app/pixi/display/widgets/speed-meter-display";
+import { LayoutAlignment } from "app/pixi/display/layout/layout-alignment";
 
 export class PlayerDisplay extends LayoutContainer {
 
@@ -17,11 +19,12 @@ export class PlayerDisplay extends LayoutContainer {
   private board: BoardDisplay;
   private pieceQueue: PieceQueueDisplay;
   private comboTimer?: ComboTimerDisplay;
+  private speedMeter?: SpeedMeterDisplay;
   
   private playerSound: PlayerSound;
 
   private rowLayout = new LayoutContainer();
-  private rightColumnLayout = new LayoutContainer(1, 200, undefined, 40);
+  private rightColumnLayout = new LayoutContainer(1, 200, undefined, 40, LayoutAlignment.MIDDLE);
 
   constructor(
     private player: Player,
@@ -47,6 +50,9 @@ export class PlayerDisplay extends LayoutContainer {
       this.rightColumnLayout.addNode(this.comboTimer);
     }
 
+    this.speedMeter = new SpeedMeterDisplay(this.player, 130);
+    this.rightColumnLayout.addNode(this.speedMeter);
+
     // this.addChild(this.debugText);
   }
   
@@ -55,9 +61,10 @@ export class PlayerDisplay extends LayoutContainer {
     this.debugText.alpha = this.player.alive ? 1 : 0.5;
   }
 
-  tick() {
+  tick(dt: number) {
     // this.updateDebugText();
-    this.board.tick();
+    this.board.tick(dt);
     this.comboTimer?.tick();
+    this.speedMeter?.tick();
   }
 }

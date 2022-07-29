@@ -4,6 +4,8 @@ export class SoundService {
   enabled = true;
   maps: Map<string, { howls: Howl[], variations: number }>[] = [];
 
+  userSettingsVolume = 1;
+
   constructor() {
     let list: { name: string, variations?: number }[] = [
       { name: 'harddrop' },
@@ -24,7 +26,8 @@ export class SoundService {
       { name: 'receivemany' },
       { name: 'receivespike' },
       { name: 'die' },
-      { name: 'combo', variations: 7 },
+      { name: 'combo', variations: 5 },
+      { name: 'high-combo-end' },
       { name: 'combotimerend' },
       { name: 'hold' },
       { name: 'colorclear' },
@@ -51,7 +54,7 @@ export class SoundService {
       this.maps.push(map);
     }
 
-    this.setVolume(1, 0.3);
+    this.updateVolumes();
   }
 
   play(name: string, channel: number, variation?: number, startPosRel=0) {
@@ -75,8 +78,20 @@ export class SoundService {
 
   setVolume(channel: number, volume: number) {
     this.maps[channel].forEach((v, k) => {
-      v.howls.forEach(h => h.volume(volume));
+      console.log(this.userSettingsVolume);
+      v.howls.forEach(h => h.volume(volume * this.userSettingsVolume));
     });
+  }
+  
+  setUserSoundVolume(volume: number) {
+    this.userSettingsVolume = volume;
+
+    this.updateVolumes();
+  }
+  
+  private updateVolumes() {
+    this.setVolume(0, 1);
+    this.setVolume(1, 0.3);
   }
 }
 

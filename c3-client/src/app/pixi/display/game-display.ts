@@ -53,7 +53,7 @@ export class GameDisplay extends Container {
     });
   }
   
-  tick() {
-    this.players.forEach(player => player.tick());
+  tick(dt: number) {
+    this.players.forEach(player => player.tick(dt));
   }
 }
