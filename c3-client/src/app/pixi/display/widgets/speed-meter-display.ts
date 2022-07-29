@@ -7,7 +7,10 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
 
   graphics = new Graphics();
   text = textUtil.create48('0');
+  textBpm = textUtil.create('BPM');
   bg: Graphics;
+  arc: Graphics;
+  arcBg: Graphics;
 
   layoutWidth: number;
   layoutHeight: number;
@@ -15,6 +18,20 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
   lastPieceMs = Date.now();
   movingAverage = 0; // bpm
   weight = 0.3;
+
+  arcConfig = {
+    bg: 0x333333,
+
+    arcRadiusNear: 0.7,
+    arcRadiusFar: 0.85,
+    arcDegreeStart: 45,
+    arcColor: 0xff0000,
+    arcOpacity: 0.7,
+    arcMaxSpeed: 240,
+
+    arcSat: 0.6,
+    arcFlashMs: 250,
+  }
 
   displayValueAtLastPiece = 0;
   displayValue = 0;
@@ -33,8 +50,28 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
 
     this.bg = this.createBackground();
     this.addChild(this.bg);
+
     this.addChild(this.graphics);
+
+    this.arcBg = new Graphics();
+    this.arcBg.position.set(this.diameter / 2, this.diameter / 2);
+    this.drawArc(this.arcBg, 360 - this.arcConfig.arcDegreeStart * 2, this.arcConfig.bg);
+    this.addChild(this.arcBg);
+
+    this.arc = new Graphics();
+    this.arc.position.set(this.diameter / 2, this.diameter / 2);
+    this.addChild(this.arc);
+    
     this.addChild(this.text);
+    this.text.position.set(this.diameter / 2, this.diameter / 2 - 7);
+    this.text.scale.set(0.9);
+    this.text.anchor.set(0.5, 0.5);
+    
+    this.addChild(this.textBpm);
+    this.textBpm.position.set(this.diameter / 2, this.diameter / 2 + 25);
+    this.textBpm.scale.set(0.6);
+    this.textBpm.anchor.set(0.5, 0.5);
+    
 
     this.player.pieceLockSubject.subscribe(() => {
       const ct = Date.now();
@@ -72,6 +109,36 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
     this.displayValue = p * this.displayValueAtLastPiece + (1 - p) * targetDisplay;
     
     this.text.text = Math.round(this.displayValue).toString();
+
+    this.drawArc(this.arc, 360 * Math.min(1, this.displayValue / this.arcConfig.arcMaxSpeed));
+  }
+
+  private drawArc(arc: Graphics, deg: number, color?: number) {
+    const c = this.arcConfig;
+    const radStart = (c.arcDegreeStart + 90) * Math.PI / 180;
+    const radEnd = radStart + deg * Math.PI / 180;
+
+    const coordEndNear = this.fromPolar(radEnd, c.arcRadiusNear);
+
+    if (color == null) {
+      const flashP = Math.min(1, (Date.now() - this.lastPieceMs) / c.arcFlashMs)
+      color = Math.round(255 - 255 *(1 - c.arcSat) * flashP) * 0x10000
+    }
+
+    arc
+      .clear()
+      .beginFill(color)
+      .arc(0, 0, c.arcRadiusFar * this.diameter / 2, radStart, radEnd)
+      .lineTo(coordEndNear.x, coordEndNear.y)
+      .arc(0, 0, c.arcRadiusNear * this.diameter / 2, radEnd, radStart, true)
+      .closePath()
+  }
+
+  private fromPolar(radians: number, radius: number) {
+    return {
+      x: radius * this.diameter / 2 * Math.cos(radians),
+      y: radius * this.diameter / 2 * Math.sin(radians),
+    };
   }
   
   createBackground() {

@@ -9,6 +9,7 @@ import { textUtil } from "app/pixi/util/text-util";
 import { BitmapText } from "pixi.js";
 import { PieceQueueDisplay } from "app/pixi/display/widgets/piece-queue/piece-queue-display";
 import { SpeedMeterDisplay } from "app/pixi/display/widgets/speed-meter-display";
+import { LayoutAlignment } from "app/pixi/display/layout/layout-alignment";
 
 export class PlayerDisplay extends LayoutContainer {
 
@@ -23,7 +24,7 @@ export class PlayerDisplay extends LayoutContainer {
   private playerSound: PlayerSound;
 
   private rowLayout = new LayoutContainer();
-  private rightColumnLayout = new LayoutContainer(1, 200, undefined, 40);
+  private rightColumnLayout = new LayoutContainer(1, 200, undefined, 40, LayoutAlignment.MIDDLE);
 
   constructor(
     private player: Player,
@@ -49,7 +50,7 @@ export class PlayerDisplay extends LayoutContainer {
       this.rightColumnLayout.addNode(this.comboTimer);
     }
 
-    this.speedMeter = new SpeedMeterDisplay(this.player, 100);
+    this.speedMeter = new SpeedMeterDisplay(this.player, 130);
     this.rightColumnLayout.addNode(this.speedMeter);
 
     // this.addChild(this.debugText);

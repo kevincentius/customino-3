@@ -6,7 +6,7 @@ import { Container } from "pixi.js";
 
 export class PieceDisplay extends Container implements LayoutChild {
 
-  layoutWidth = 0;
+  layoutWidth = 200;
   layoutHeight: number;
 
   minoGridDisplay?: MinoGridDisplay;

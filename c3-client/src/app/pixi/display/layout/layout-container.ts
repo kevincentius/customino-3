@@ -1,3 +1,4 @@
+import { LayoutAlignment } from "app/pixi/display/layout/layout-alignment";
 import { LayoutChild as LayoutNode } from "app/pixi/display/layout/layout-child";
 import { Container } from "pixi.js";
 
@@ -13,6 +14,7 @@ export class LayoutContainer extends Container implements LayoutNode {
     public forceLayoutWidth: number | null=null,
     public forceLayoutHeight: number | null=null,
     private gap=0,
+    private alignment=LayoutAlignment.START,
   ) {
     super();
 
@@ -35,6 +37,8 @@ export class LayoutContainer extends Container implements LayoutNode {
     
     let pos = 0;
     let maxBreadth = 0;
+
+    // justify
     for (let node of this.nodes) {
       if (this.axis == 0) {
         node.position.x = pos;
@@ -57,6 +61,11 @@ export class LayoutContainer extends Container implements LayoutNode {
       if (this.forceLayoutHeight == null) {
         this.layoutHeight = maxBreadth;
       }
+
+      // align
+      for (let node of this.nodes) {
+        node.position.y = this.align(maxBreadth, node.layoutHeight);
+      }
     } else {
       if (this.forceLayoutHeight == null) {
         this.layoutHeight = pos - this.gap;
@@ -65,6 +74,23 @@ export class LayoutContainer extends Container implements LayoutNode {
       if (this.forceLayoutWidth == null) {
         this.layoutWidth = maxBreadth;
       }
+
+      // align
+      for (let node of this.nodes) {
+        node.position.x = this.align(maxBreadth, node.layoutWidth);
+      }
+    }
+  }
+
+  private align(maxBreadth: number, nodeBreadth: number) {
+    if (this.alignment == LayoutAlignment.START) {
+      return 0;
+    } else if (this.alignment == LayoutAlignment.MIDDLE) {
+      return (maxBreadth - nodeBreadth) / 2;
+    } else if (this.alignment == LayoutAlignment.END) {
+      return maxBreadth - nodeBreadth;
+    } else {
+      throw new Error();
     }
   }
 }
