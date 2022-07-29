@@ -4,13 +4,14 @@ import { LayoutContainer } from "app/pixi/display/layout/layout-container";
 import { Player } from "@shared/game/engine/player/player";
 import { PieceDisplay } from "app/pixi/display/widgets/piece-queue/piece-display";
 import { Piece } from "@shared/game/engine/player/piece";
+import { LayoutAlignment } from "app/pixi/display/layout/layout-alignment";
 
 export class PieceQueueDisplay extends Container implements LayoutChild {
   layoutWidth = 200;
   layoutHeight = 200;
 
   pieceDisplays: PieceDisplay[] = [];
-  layout = new LayoutContainer(1, 200, null, 40);
+  layout = new LayoutContainer(1, 200, null, 40, LayoutAlignment.MIDDLE);
 
   constructor(
     private player: Player,
