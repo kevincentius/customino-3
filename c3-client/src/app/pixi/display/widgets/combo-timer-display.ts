@@ -10,6 +10,8 @@ const colors = [0xff0000, 0xffff00, 0x00ff00, 0x00ffff, 0x0000ff, 0xff00ff];
 export class ComboTimerDisplay extends Container implements LayoutChild {
   graphics = new Graphics();
   text = textUtil.create120('0');
+  textBpm = textUtil.create('COMBO');
+  textContainer = new Container();
   bg: Graphics;
 
   layoutWidth: number;
@@ -19,6 +21,9 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
   period = 2.5;
 
   lastComboTimestamp = Date.now();
+
+  tint = 0.5;
+  flashDuration = 2000;
 
   constructor(
     private player: Player,
@@ -34,8 +39,16 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     this.bg = this.createBackground();
     this.addChild(this.bg);
     this.addChild(this.graphics);
-    this.addChild(this.text);
-    this.text.position.set(this.diameter / 2, this.diameter / 2 - 7);
+    this.addChild(this.textContainer);
+    this.textContainer.position.set(this.diameter / 2, this.diameter / 2);
+
+    this.textContainer.addChild(this.textBpm);
+    this.textBpm.position.set(0, 50);
+    this.textBpm.scale.set(0.6);
+    this.textBpm.anchor.set(0.5, 0.5);
+    
+    this.textContainer.addChild(this.text);
+    this.text.position.set(0, -7);
     this.text.anchor.set(0.5, 0.5);
 
     this.comboTimer.comboStartSubject.subscribe(() => this.comboStartMs = Date.now());
@@ -84,12 +97,15 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
 
   private updateScale() {
     const mp = Math.pow(Math.min(1, this.comboTimer.combo / this.player.playerRule.sonicDropEffect.comboCap), 1);
-    const textMaxScale = mp * 3;
+    const textMaxScale = mp * 2;
     const graphicsMaxScale = mp * 1;
     const p = 1 / (5 * (Date.now() - this.lastComboTimestamp) / 1000 + 1);
-    this.text.scale.set(1 + p * textMaxScale);
+    this.textContainer.scale.set(1 + p * textMaxScale);
     this.graphics.scale.set(1 + p * graphicsMaxScale);
     this.graphics.position.set(-this.diameter / 2 * (p * graphicsMaxScale));
+    
+    const pTint = Math.min(1, (Date.now() - this.lastComboTimestamp) / this.flashDuration);
+    this.graphics.tint = Math.floor(255 - 255 * (1 - this.tint) * pTint) * 0x10000;
   }
 
   animateCombo(combo: number) {

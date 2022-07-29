@@ -5,7 +5,7 @@ import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { MinoDisplay } from "app/pixi/display/mino-display";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { AdjustmentFilter, GlowFilter, KawaseBlurFilter } from "pixi-filters";
-import { Container } from "pixi.js";
+import { Container, Graphics } from "pixi.js";
 
 export class MinoGridDisplay extends Container implements LayoutChild {
   // helpers
@@ -16,6 +16,9 @@ export class MinoGridDisplay extends Container implements LayoutChild {
 
   public layoutWidth: number;
   public layoutHeight: number;
+
+  debug = false;
+  debugRect?: Graphics;
 
   constructor(private tiles: (Tile | null)[][], private minoSize: number, private invisibleHeight=0) {
     super();
@@ -47,6 +50,20 @@ export class MinoGridDisplay extends Container implements LayoutChild {
         brightness: 1.3,
       })
     ];
+    
+    if (this.debug) {
+      this.debugRect = new Graphics();
+      this.addChild(this.debugRect);
+
+      this.debugRect
+        .clear()
+        .lineStyle({
+          width: 1,
+          color: 0x00ff00,
+          alpha: 0.5,
+        })
+        .drawRect(0, 0, this.layoutWidth, this.layoutHeight);
+    }
   }
   
   placeTile(e: PlaceTileEvent) {

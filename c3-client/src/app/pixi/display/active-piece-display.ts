@@ -24,7 +24,7 @@ export class ActivePieceDisplay extends Container {
     super();
 
     if (this.ghost) {
-      this.alpha = 0.3;
+      this.alpha = 0.2;
     }
 
     this.activePiece = this.player.activePiece;

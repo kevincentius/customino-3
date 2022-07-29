@@ -1,12 +1,15 @@
 import { LayoutAlignment } from "app/pixi/display/layout/layout-alignment";
 import { LayoutChild as LayoutNode } from "app/pixi/display/layout/layout-child";
-import { Container } from "pixi.js";
+import { Container, Graphics } from "pixi.js";
 
 export class LayoutContainer extends Container implements LayoutNode {
   nodes: LayoutNode[] = [];
 
   layoutWidth: number;
   layoutHeight: number;
+
+  debug = false;
+  debugRect?: Graphics;
 
   // 0 = row, 1 = column
   constructor(
@@ -20,6 +23,11 @@ export class LayoutContainer extends Container implements LayoutNode {
 
     this.layoutWidth = forceLayoutWidth ?? 0;
     this.layoutHeight = forceLayoutHeight ?? 0;
+
+    if (this.debug) {
+      this.debugRect = new Graphics();
+      this.addChild(this.debugRect);
+    }
   }
 
   addNode(node: LayoutNode) {
@@ -79,6 +87,17 @@ export class LayoutContainer extends Container implements LayoutNode {
       for (let node of this.nodes) {
         node.position.x = this.align(maxBreadth, node.layoutWidth);
       }
+    }
+
+    if (this.debug) {
+      this.debugRect!
+        .clear()
+        .lineStyle({
+          width: 1,
+          color: 0x00ff00,
+          alpha: 0.5,
+        })
+        .drawRect(0, 0, this.layoutWidth, this.layoutHeight);
     }
   }
 
