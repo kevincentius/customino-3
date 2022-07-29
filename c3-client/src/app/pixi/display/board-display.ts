@@ -1,4 +1,4 @@
-import { Board } from "@shared/game/engine/player/board";
+import { Board, LineClearEvent } from "@shared/game/engine/player/board";
 import { Player } from "@shared/game/engine/player/player";
 import { ActivePieceDisplay } from "app/pixi/display/active-piece-display";
 import { BoardOverlayDisplay } from "app/pixi/display/board-overlay-display";
@@ -43,6 +43,9 @@ export class BoardDisplay extends Container implements LayoutChild {
 
   // reference
   board: Board;
+
+  chorus = 0;
+  chorusAdjustSpeed = 2;
 
   constructor(
     private player: Player,
@@ -115,7 +118,7 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.addChild(this.overlayDisplay);
 
     this.board.placeTileSubject.subscribe(e => this.minoGridDisplay.placeTile(e));
-    this.board.lineClearSubject.subscribe(e => this.minoGridDisplay.clearLines(e));
+    this.board.lineClearSubject.subscribe(e => this.onLineClear(e));
     this.board.addRowsSubject.subscribe(e => this.minoGridDisplay.onRowsAdded(e));
     this.player.garbageGen.garbageRateSpawnSubject.subscribe(e => this.lastGarbageRateSpawn = Date.now());
     this.player.gameOverSubject.subscribe(r => this.overlayDisplay.show(this.player.alive ? 'Winner' : 'Game Over', '2nd Place'))
@@ -125,11 +128,28 @@ export class BoardDisplay extends Container implements LayoutChild {
     });
   }
 
+  onLineClear(e: LineClearEvent): void {
+    const minoSize = this.getMinoSize();
+
+    for (const row of e.rows) {
+      for (let j = 0; j < this.board.tiles[row.y].length; j++) {
+        const mino = this.minoGridDisplay.minos[row.y][j];
+        if (mino.minoDisplay) {
+          const effect2 = new MinoFlashEffect(minoSize, minoSize, 150, 1, new Sprite(Texture.WHITE));
+          effect2.position.set(mino.minoDisplay.position.x, mino.absPos);
+          this.effectContainer.addEffect(effect2);
+        }
+      }
+    }
+
+    this.minoGridDisplay.clearLines(e);
+  }
+
   getMinoSize() {
     return this.layout.minoSize;
   }
 
-  tick() {
+  tick(dt: number) {
     let garbageRateShift = 0;
     if (this.lastGarbageRateSpawn != null) {
       const p = 1 - Math.min(1, (Date.now() - this.lastGarbageRateSpawn) / (1000 / this.player.playerRule.garbageSpawnRate));
@@ -139,8 +159,19 @@ export class BoardDisplay extends Container implements LayoutChild {
 
     this.garbageIndicator.tick(garbageRateShift);
 
+    const targetChorus = Math.min(1, this.player.attackRule.comboTimer.combo / 12);
+    if (Math.abs(this.chorus - targetChorus) < this.chorusAdjustSpeed * dt / 1000) {
+      this.chorus = targetChorus;
+    } else {
+      this.chorus += Math.sign(targetChorus - this.chorus) * this.chorusAdjustSpeed * dt / 1000;
+    }
+    this.minoGridDisplay.tick(dt);
+    this.minoGridDisplay.chorus(this.chorus);
+
+    this.activePieceDisplay.tick();
+
     this.shaker.tick();
-    this.effectContainer.tick();
+    this.effectContainer.tick(dt);
   }
 
   shakeBoard(r: LockResult) {
@@ -159,12 +190,11 @@ export class BoardDisplay extends Container implements LayoutChild {
         if (tile != null) {
           const minoPos = this.minoGridDisplay.calcMinoPos(this.player.activePiece.y + i, this.player.activePiece.x + j);
           
-          const effect = new MinoFlashEffect(this.getMinoSize(), 250, 0.5);
+          const effect = new MinoFlashEffect(this.getMinoSize(), this.getMinoSize(), 500, 0.5);
           effect.position.set(minoPos.x, minoPos.y);
           this.effectContainer.addEffect(effect);
         }
       }
     }
   }
-
 }

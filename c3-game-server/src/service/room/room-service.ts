@@ -39,7 +39,7 @@ export class RoomService {
     
     this.leave(session);
 
-    const room = new Room(roomId, `Room ${roomId}`, session);
+    const room = new Room(roomId, `${session.username}'s Room`, session);
     this.roomMap.set(room.id, room);
 
     session.roomId = room.id;

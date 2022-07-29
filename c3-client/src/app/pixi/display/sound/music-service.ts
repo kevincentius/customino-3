@@ -73,7 +73,7 @@ export class MusicService {
   }
 
   private loop() {
-    const p = (Date.now() - this.volumeAdjustMs) / 2000;
+    const p = (Date.now() - this.volumeAdjustMs) / 4000;
     if (p >= 1) {
       this.currentVolume = this.targetVolume;
       this.timeout = null;

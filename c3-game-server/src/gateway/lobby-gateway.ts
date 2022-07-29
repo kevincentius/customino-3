@@ -1,6 +1,6 @@
 
 import { Logger } from '@nestjs/common';
-import { OnGatewayDisconnect, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { RoomSettings } from '@shared/game/engine/model/room-settings';
 import { GameReplay } from '@shared/game/engine/recorder/game-replay';
 import { ClientEvent } from '@shared/game/network/model/event/client-event';

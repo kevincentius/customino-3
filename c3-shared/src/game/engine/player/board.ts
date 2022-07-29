@@ -7,12 +7,13 @@ import { MatUtil } from "@shared/game/engine/util/mat-util";
 import { Subject } from "rxjs";
 
 export interface PlaceTileEvent { y: number, x: number, tile: (Tile | null) }
+export interface LineClearEvent { rows: { y: number, epicenter: number }[] }
 
 export class Board {
   // events
   resetSubject = new Subject<number[]>();
   placeTileSubject = new Subject<PlaceTileEvent>();
-  lineClearSubject = new Subject<number[]>();
+  lineClearSubject = new Subject<LineClearEvent>();
   addRowsSubject = new Subject<number>();
 
   // state
@@ -72,14 +73,19 @@ export class Board {
   }
 
   /** rows must be sorted ascending in row index (top to bottom visually in the board) */
-  clearLines(rows: number[]) {
+  clearLines(rows: number[], epicenter: number) {
     if (rows.length == 0) {
       return;
     }
 
     MatUtil.clearLines(this.tiles, rows);
 
-    this.lineClearSubject.next(rows);
+    this.lineClearSubject.next({
+      rows: rows.map(row => ({
+        y: row,
+        epicenter: epicenter,
+      }))
+    });
   }
 
   private isRowCleared(row: number) {

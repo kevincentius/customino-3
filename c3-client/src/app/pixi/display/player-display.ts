@@ -61,9 +61,9 @@ export class PlayerDisplay extends LayoutContainer {
     this.debugText.alpha = this.player.alive ? 1 : 0.5;
   }
 
-  tick() {
+  tick(dt: number) {
     // this.updateDebugText();
-    this.board.tick();
+    this.board.tick(dt);
     this.comboTimer?.tick();
     this.speedMeter?.tick();
   }

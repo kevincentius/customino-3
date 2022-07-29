@@ -218,6 +218,8 @@ export class GarbageGen {
     for (let j = 0; j < this.playerRule.width; j++) {
       if (j != holePos) {
         row[j] = this.createTile(TileType.GARBAGE);
+      } else {
+        row[j] = null;
       }
     }
     return row;

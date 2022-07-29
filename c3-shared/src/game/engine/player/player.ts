@@ -207,7 +207,7 @@ export abstract class Player {
     
     // check line clear
     const clearedLines = this.board.checkLineClear(this.activePiece.y, this.activePiece.y + this.activePiece.piece.tiles.length);
-    this.board.clearLines(clearedLines);
+    this.board.clearLines(clearedLines, this.activePiece.x + this.activePiece.piece.tiles[0].length / 2);
 
     // calculate and apply move result
     const clearedGarbageLines = clearedLines.filter(line => this.board.isGarbage(line));

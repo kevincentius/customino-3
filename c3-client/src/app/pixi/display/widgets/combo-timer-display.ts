@@ -18,7 +18,7 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
   layoutHeight: number;
 
   comboStartMs?: number;
-  period = 2.5;
+  period = 2;
 
   lastComboTimestamp = Date.now();
 
