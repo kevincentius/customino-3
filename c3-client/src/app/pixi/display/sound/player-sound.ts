@@ -53,5 +53,19 @@ export class PlayerSound {
       const combo = this.player.attackRule.comboTimer.combo;
       soundService.play('combolock', this.channel, undefined, 1 - Math.pow(Math.min(1, combo / 13), 1));
     });
+    
+    this.player.attackRule.comboTimer.comboIncreasedSubject.subscribe(combo => {
+      if (combo == 3) {
+        soundService.play('combo', this.channel, 0);
+      } else if (combo == 5) {
+        soundService.play('combo', this.channel, 1);
+      } else if (combo == 7) {
+        soundService.play('combo', this.channel, 2);
+      } else if (combo == 9) {
+        soundService.play('combo', this.channel, 3);
+      } else if (combo == 11) {
+        soundService.play('combo', this.channel, 4);
+      }
+    });
   }
 }
