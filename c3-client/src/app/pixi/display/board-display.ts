@@ -45,7 +45,7 @@ export class BoardDisplay extends Container implements LayoutChild {
   board: Board;
 
   chorus = 0;
-  chorusAdjustSpeed = 2;
+  chorusAdjustSpeed = 4;
 
   constructor(
     private player: Player,
@@ -159,12 +159,8 @@ export class BoardDisplay extends Container implements LayoutChild {
 
     this.garbageIndicator.tick(garbageRateShift);
 
-    const targetChorus = Math.min(1, this.player.attackRule.comboTimer.combo / 12);
-    if (Math.abs(this.chorus - targetChorus) < this.chorusAdjustSpeed * dt / 1000) {
-      this.chorus = targetChorus;
-    } else {
-      this.chorus += Math.sign(targetChorus - this.chorus) * this.chorusAdjustSpeed * dt / 1000;
-    }
+    this.tickChorus(dt);
+    
     this.minoGridDisplay.tick(dt);
     this.minoGridDisplay.chorus(this.chorus);
 
@@ -173,6 +169,17 @@ export class BoardDisplay extends Container implements LayoutChild {
 
     this.shaker.tick();
     this.effectContainer.tick(dt);
+  }
+
+  private tickChorus(dt: number) {
+    if (this.player.attackRule.comboTimer) {
+      const targetChorus = Math.min(1, this.player.attackRule.comboTimer.combo / 12);
+      if (Math.abs(this.chorus - targetChorus) < this.chorusAdjustSpeed * dt / 1000) {
+        this.chorus = targetChorus;
+      } else {
+        this.chorus += Math.sign(targetChorus - this.chorus) * this.chorusAdjustSpeed * dt / 1000;
+      }
+    }
   }
 
   shakeBoard(r: LockResult) {

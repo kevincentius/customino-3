@@ -28,7 +28,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
   });
 
   adjustmentFilter = new AdjustmentFilter({
-    saturation: 1.5,
+    saturation: 1.1,
     brightness: 1.1,
   });
 
@@ -82,8 +82,10 @@ export class MinoGridDisplay extends Container implements LayoutChild {
   }
 
   chorus(p: number) {
-    this.glowFilter.innerStrength = p * 1.5;
-    this.glowFilter.outerStrength = p * 1.5;
+    const waveAmpl = 0;
+    const waveP = (1 - waveAmpl) + waveAmpl * Math.abs(Math.sin(Date.now() / 500 * 2 * Math.PI));
+    this.glowFilter.innerStrength = p * 1.5 * waveP;
+    this.glowFilter.outerStrength = p * 1.5 * waveP;
   }
 
   placeTile(e: PlaceTileEvent) {

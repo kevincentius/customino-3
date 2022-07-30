@@ -5,7 +5,7 @@ import { Attack } from "@shared/game/network/model/attack/attack";
 import { AttackType } from "@shared/game/network/model/attack/attack-type";
 
 export class AttackRule {
-  public comboTimer!: ComboTimer;
+  public comboTimer?: ComboTimer;
 
   constructor(
     private player: Player,
@@ -23,12 +23,14 @@ export class AttackRule {
 
   load(state: any) {
     if (state.comboTimer) {
-      this.comboTimer.load(state.comboTimer);
+      this.comboTimer!.load(state.comboTimer);
     }
   }
 
   runFrame() {
-    this.comboTimer.runFrame();
+    if (this.comboTimer) {
+      this.comboTimer.runFrame();
+    }
   }
 
   calcAttacks(l: LockPlacementResult): Attack[] {
@@ -47,7 +49,7 @@ export class AttackRule {
 
     // combo timer
     if (this.player.playerRule.useComboTimer) {
-      const power = this.comboTimer.applyCombo(l);
+      const power = this.comboTimer!.applyCombo(l);
       if (power > 0) {
         ret.push({
           type: AttackType.DIRTY_1,

@@ -26,6 +26,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   flex-direction: column;
 }
 
+.h-flex {
+  height: 100%;
+  display: flex;
+}
+
 .screen-title-container {
   padding-left: 30px;
   padding-right: 30px;

@@ -5,7 +5,7 @@ import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { textUtil } from "app/pixi/util/text-util";
 import { Container, Graphics } from "pixi.js";
 
-const colors = [0xff0000, 0xffff00, 0x00ff00, 0x00ffff, 0x0000ff, 0xff00ff];
+const colors = [0xff0000, 0xffaa00, 0xffff00];
 
 export class ComboTimerDisplay extends Container implements LayoutChild {
   graphics = new Graphics();
@@ -18,7 +18,7 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
   layoutHeight: number;
 
   comboStartMs?: number;
-  period = 2;
+  period = 1.5;
 
   lastComboTimestamp = Date.now();
 
@@ -105,7 +105,7 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     this.graphics.position.set(-this.diameter / 2 * (p * graphicsMaxScale));
     
     const pTint = Math.min(1, (Date.now() - this.lastComboTimestamp) / this.flashDuration);
-    this.graphics.tint = Math.floor(255 - 255 * (1 - this.tint) * pTint) * 0x10000;
+    this.graphics.tint = Math.floor(255 - 255 * (1 - this.tint) * pTint) * 0x10101;
   }
 
   animateCombo(combo: number) {

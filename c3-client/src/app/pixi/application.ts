@@ -19,12 +19,16 @@ export class PixiApplication {
 
   keyboard: Keyboard = new Keyboard();
 
-  constructor(private canvas: HTMLCanvasElement, private userSettingsService: UserSettingsService) {
+  constructor(
+    private canvasContainer: HTMLDivElement,
+    private canvas: HTMLCanvasElement,
+    private userSettingsService: UserSettingsService,
+  ) {
     settings.SCALE_MODE = SCALE_MODES.NEAREST;
 
     this.app = new Application({
       view: this.canvas,
-      // resizeTo: window,
+      // resizeTo: this.canvas,
       backgroundColor: 0x111111,
 
       antialias: true,
@@ -45,8 +49,8 @@ export class PixiApplication {
 
     this.userSettingsService.settingsChangedSubject.subscribe(localSettings => this.updateKeyBindings(localSettings.control));
 
-    window.onresize = e => this.onResize();
-    this.onResize();
+    // this.canvas.onresize = e => this.onResize();
+    // this.onResize();
   }
 
   public updateKeyBindings(c: ControlSettings) {
@@ -77,15 +81,15 @@ export class PixiApplication {
       this.app.stage.removeChild(this.gameDisplay);
     }
     this.gameDisplay = new GameDisplay(game);
-    this.onResize();
+    // this.onResize();
     this.app.stage.addChild(this.gameDisplay);
   }
 
-  private onResize() {
-    this.app.renderer.resize(window.innerWidth, window.innerHeight);
+  onResize(width: number, height: number) {
+    this.app.renderer.resize(width, height);
 
     if (this.gameDisplay) {
-      this.gameDisplay.resize(window.innerWidth, window.innerHeight);
+      this.gameDisplay.resize(width, height);
     }
   }
 }

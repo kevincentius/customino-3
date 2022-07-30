@@ -1,6 +1,11 @@
 {
   "name": "customino-client",
+  "description": "Customino game client",
+  "homepage": "https://github.com/kevincentius/customino",
+  "url": "https://github.com/kevincentius/customino",
   "version": "0.0.0",
+  "author": "kevincentius",
+  "email": "game.customino@gmail.com",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -76,9 +81,8 @@
     },
     "linux": {
       "icon": "./angular-build/assets/img/icon.png",
-      "target": [
-        "AppImage"
-      ]
+      "target": "deb",
+      "maintainer": "game.customino@gmail.com"
     }
   }
 }
