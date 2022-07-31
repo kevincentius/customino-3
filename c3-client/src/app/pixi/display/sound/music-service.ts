@@ -73,7 +73,9 @@ export class MusicService {
 
   setUserMusicVolume(volume: number) {
     this.userSettingsVolume = volume;
-    this.loop();
+    if (!this.timeout) {
+      this.timeout = setTimeout(() => this.loop());
+    }
   }
 
   private setTargetVolume(volume: number) {
@@ -92,7 +94,7 @@ export class MusicService {
       this.timeout = null;
     } else {
       this.currentVolume = p * this.targetVolume + (1-p) * this.prevVolume;
-      this.timeout = setTimeout(() => this.loop());
+      this.timeout = setTimeout(() => this.loop(), 100);
     }
     this.setVolume(this.currentVolume * this.userSettingsVolume);
   }
