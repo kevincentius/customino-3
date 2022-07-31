@@ -9,20 +9,26 @@
     </div>
   </div>
 
-  <div class="screen-body-container" *ngIf="rooms">
-    <div class="gui-button-row">
-      <button (click)="onCreateRoom()" class="gui-button gui-button-main"><mat-icon>add</mat-icon><span style="width: 7px"></span>New room</button>
-      <button (click)="onRefresh()" class="gui-button"><mat-icon>refresh</mat-icon><span style="width: 7px"></span>Refresh</button>
-    </div>
-    
-    <div style="height: 30px;"></div>
+  <div class="screen-body-container">
+    <ng-container *ngIf="!rooms">
+      Connecting to the server... The server may be in sleep mode and need a couple minutes to wake up.
+    </ng-container>
 
-    <div class="room-container">
-      <div *ngFor="let room of rooms" class="room" (click)="onRoomClick(room)">
-        <div class="room-player-count"><mat-icon>person</mat-icon>{{room.slots.length}}</div>
-        <div class="room-name">{{room.name}}</div>
+    <ng-container *ngIf="rooms">
+      <div class="gui-button-row">
+        <button (click)="onCreateRoom()" class="gui-button gui-button-main"><mat-icon>add</mat-icon><span style="width: 7px"></span>New room</button>
+        <button (click)="onRefresh()" class="gui-button"><mat-icon>refresh</mat-icon><span style="width: 7px"></span>Refresh</button>
       </div>
-    </div>
+      
+      <div style="height: 30px;"></div>
+  
+      <div class="room-container">
+        <div *ngFor="let room of rooms" class="room" (click)="onRoomClick(room)">
+          <div class="room-player-count"><mat-icon>person</mat-icon>{{room.slots.length}}</div>
+          <div class="room-name">{{room.name}}</div>
+        </div>
+      </div>
+    </ng-container>
   </div>
   
 </div>

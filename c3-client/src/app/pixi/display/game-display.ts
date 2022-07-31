@@ -21,11 +21,9 @@ export class GameDisplay extends Container {
     
     this.game.players.forEach((player, index) => {
       const playerDisplay = new PlayerDisplay(player);
-      // playerDisplay.position.x = index * 600;
       this.players.push(playerDisplay);
       this.addChild(playerDisplay);
       playerDisplay.updateLayout();
-      // console.log(playerDisplay.layoutWidth, playerDisplay.layoutHeight, 'as:', playerDisplay.layoutWidth / playerDisplay.layoutHeight);
     });
   }
 

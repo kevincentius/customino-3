@@ -1,6 +1,5 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
-import { GameResult } from "@shared/game/engine/game/game-result";
-import { GameRule } from "@shared/game/engine/model/rule/game-rule";
+import { GameResult, PlayerResult } from "@shared/game/engine/game/game-result";
 import { Player } from "@shared/game/engine/player/player";
 import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
 import { Subject } from "rxjs";
@@ -40,9 +39,36 @@ export abstract class Game {
   checkGameOver() {
     if (this.players.filter(p => p.alive).length <= 1) {
       this.running = false;
-      this.gameOverSubject.next({
-        test: 'test result',
-      });
+
+      const rankings = new Array(this.players.length)
+          .fill(null)
+          .map((_, index) => index)
+          .sort((a, b) => this.players[b].statsTracker.stats.activeTime - this.players[a].statsTracker.stats.activeTime)
+
+      const deadPlayers = this.players.filter(p => !p.alive).length;
+      const playerResults: PlayerResult[] = new Array(this.players.length)
+        .fill(null)
+        .map((_, index) => {
+          const player = this.players[index];
+          if (player.alive) {
+            return {
+              rank: 0,
+              score: deadPlayers,
+            }
+          } else {
+            const worsePlayers = this.players.filter(
+              p => p != player
+              && !p.alive
+              && p.statsTracker.stats.activeTime < player.statsTracker.stats.activeTime
+            ).length;
+            return {
+              rank: this.players.length - 1 - worsePlayers,
+              score: worsePlayers,
+            };
+          }
+        });
+
+      this.gameOverSubject.next({ players: playerResults });
     }
   }
 
