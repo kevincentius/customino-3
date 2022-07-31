@@ -18,7 +18,7 @@
           <button *ngIf="lastGameReplay" class="gui-button" (click)="onDownloadLastReplayClick()">Replay</button>
   
           <!-- host buttons -->
-          <button class="gui-button" [disabled]="isRunning()" (click)="onSettingsClick()">Settings</button>
+          <button class="gui-button" [disabled]="isRunning()" (click)="onSettingsClick()">Room settings</button>
           
           <!-- debug buttons -->
           <ng-container *ngIf="debug">
@@ -31,14 +31,20 @@
 
     <ng-container *ngIf="roomInfo">
       <ng-container *ngIf="!showSettings">
-        <div class="section">
-          <div class="section-title">Players</div>
-          <div class="section-body">
-            <div class="slots-container">
-              <div *ngFor="let slot of roomInfo.slots" class="slot" [class.spectator]="!slot.playing">
-                <div class="slot-player-name" [class.local-player]="slot.player.sessionId == getSessionId()">{{slot.player.username}}</div>
+        <div class="h-flex" style="gap: 40px;">
+          <div class="section" style="flex-grow: 1; flex-basis: 0; max-width: 500px;">
+            <div class="section-title">Players</div>
+            <div class="section-body">
+              <div class="slots-container">
+                <div *ngFor="let slot of roomInfo.slots" class="slot" [class.spectator]="!slot.playing">
+                  <div class="slot-player-name" [class.local-player]="slot.player.sessionId == getSessionId()">{{slot.player.username}}</div>
+                </div>
               </div>
             </div>
+          </div>
+          
+          <div class="section" style="flex-grow: 1; flex-basis: 0; padding: 0;">
+            <div class="h-flex" #pixiTarget></div>
           </div>
         </div>
       </ng-container>

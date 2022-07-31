@@ -27,6 +27,7 @@ import { RuleSettingsComponent } from './view/menu/rule-settings/rule-settings.c
 import { FieldInputComponent } from './view/menu/field-input/field-input.component';
 import { FieldOutputComponent } from './view/menu/field-output/field-output.component';
 import { ThanksComponent } from './view/menu/thanks/thanks.component';
+import { PieceComponent } from './view/common/piece/piece.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -55,6 +56,7 @@ export function apiConfigFactory(): Configuration {
     FieldInputComponent,
     FieldOutputComponent,
     ThanksComponent,
+    PieceComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),

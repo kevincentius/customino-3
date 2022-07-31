@@ -44,6 +44,11 @@ export class LobbyGateway {
     return this.roomService.getRoom(roomId).getRoomInfo(true);
   }
 
+  @SubscribeMessage(LobbyEvent.LEAVE_ROOM)
+  getRoom(socket: Socket) {
+    return this.roomService.leave(this.sessionService.getSession(socket));
+  }
+
   @SubscribeMessage(LobbyEvent.START_GAME)
   startGame(socket: Socket) {
     const session = this.sessionService.getSession(socket);

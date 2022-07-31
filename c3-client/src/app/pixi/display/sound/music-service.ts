@@ -1,19 +1,18 @@
 import { shuffle } from "@shared/util/random";
-import { UserSettingsService } from "app/service/user-settings/user-settings.service";
 import { Howl } from "howler";
 
 export class MusicService {
   gameBgmNames = [
+    'exploration.mp3',
+    'super-sunday.mp3',
     'a-will-to-win.mp3',
     'atoms.mp3',
     'break-through.mp3',
     'cool-storm.mp3',
     'corporate-heat.mp3',
     'distressed.mp3',
-    'exploration.mp3',
     'first-quarter.mp3',
     'sermon-from-the-pit.mp3',
-    'super-sunday.mp3',
     'street-heat.mp3',
     'the-environment.mp3',
   ];
@@ -41,8 +40,14 @@ export class MusicService {
     }));
 
     this.setVolumeMenu();
-
-    shuffle(this.gameBgmHowls);
+        
+    // this is the first time
+    console.log(localStorage['visited']);
+    if (! localStorage['visited']) {
+      localStorage['visited'] = 1;
+    } else {
+      shuffle(this.gameBgmHowls);
+    }
     
     // this.gameBgmHowls.forEach(howl => howl.rate(1.25));
   }
@@ -68,7 +73,9 @@ export class MusicService {
 
   setUserMusicVolume(volume: number) {
     this.userSettingsVolume = volume;
-    this.loop();
+    if (!this.timeout) {
+      this.timeout = setTimeout(() => this.loop());
+    }
   }
 
   private setTargetVolume(volume: number) {
@@ -87,7 +94,7 @@ export class MusicService {
       this.timeout = null;
     } else {
       this.currentVolume = p * this.targetVolume + (1-p) * this.prevVolume;
-      this.timeout = setTimeout(() => this.loop());
+      this.timeout = setTimeout(() => this.loop(), 100);
     }
     this.setVolume(this.currentVolume * this.userSettingsVolume);
   }

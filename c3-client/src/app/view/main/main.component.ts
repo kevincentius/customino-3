@@ -1,9 +1,8 @@
-import { Component, ViewChild } from "@angular/core";
+import { Component, ElementRef, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { LobbyService } from "app/game-server/lobby.service";
-import { musicService } from "app/pixi/display/sound/music-service";
 import { MainScreen } from "app/view/main/main-screen";
-import { MainService } from "app/view/main/main.service";
+import { MainService, Rect } from "app/view/main/main.service";
 import { ControlsComponent } from "app/view/menu/controls/controls.component";
 import { LobbyComponent } from "app/view/menu/lobby/lobby.component";
 import { MenuComponent } from "app/view/menu/menu/menu.component";
@@ -38,15 +37,25 @@ export class MainComponent {
   @ViewChild('pixi', { static: true })
   private pixi!: PixiComponent;
 
+  @ViewChild('pixiOverlay', { static: true })
+  private pixiOverlay!: ElementRef<HTMLDivElement>;
+
   // view model
   screen = MainScreen.PRELOADER;
   initialized = false;
+
+  pixiPos: Rect;
+
+  // icon bar
+  prevScreen!: MainScreen;
 
   constructor(
     public mainService: MainService,
     private lobbyService: LobbyService,
     private route: ActivatedRoute,
   ) {
+    this.pixiPos = this.mainService.pixiPos;
+
     this.openScreen(MainScreen.PRELOADER);
 
     this.route.params.subscribe(params => {
@@ -54,11 +63,11 @@ export class MainComponent {
     });
 
     this.lobbyService.clientInfoSubject.subscribe(sessionInfo => this.mainService.sessionInfo = sessionInfo);
-
-    this.mainService.init(this);
   }
-
+  
   ngAfterViewInit() {
+    this.mainService.init(this);
+
     this.mainService.pixi = this.pixi.pixiApplication;
   }
 
@@ -70,6 +79,22 @@ export class MainComponent {
   }
 
   openScreen(screen: MainScreen) {
+    this.prevScreen = this.screen;
     this.screen = screen;
+
+    if (screen == MainScreen.LOBBY) {
+      this.lobby.onRefresh();
+    }
+  }
+
+  back() {
+    this.screen = this.prevScreen;
+  }
+
+
+
+  // icon bar
+  onSetGameView(gameView: boolean) {
+    this.room.setGameView(gameView);
   }
 }

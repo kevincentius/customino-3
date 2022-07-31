@@ -10,4 +10,5 @@ export interface PlayerState {
   pieceGen: any;
   activePiece: any;
   garbageGen: any;
+  stats: any;
 }

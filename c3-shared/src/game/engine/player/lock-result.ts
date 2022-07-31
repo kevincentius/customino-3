@@ -7,5 +7,6 @@ export interface LockPlacementResult {
 }
 
 export interface LockResult extends LockPlacementResult {
+  powers: Attack[];
   attacks: Attack[];
 }

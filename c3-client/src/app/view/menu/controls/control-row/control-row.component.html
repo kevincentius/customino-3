@@ -10,7 +10,15 @@
       <div class="mapping-list">
         <ng-container *ngIf="data">
           <div class="mapping-item" [class.edit-mode]="editMode" *ngFor="let mapping of data.mappings; let i=index;">
-            <div>{{editMode ? 'Choosing...' : mapping}}</div>
+            <div>
+              <span style="font-size: 12px;" *ngIf="editMode">
+                Press key or click again to cancel...
+              </span>
+
+              <ng-container *ngIf="!editMode">
+                {{mapping}}
+              </ng-container>
+            </div>
             <div style="flex-grow: 1"></div>
           </div>
         </ng-container>

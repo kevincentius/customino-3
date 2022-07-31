@@ -87,7 +87,8 @@ export class ActivePieceDisplay extends Container {
           // tile is the top most mino in each column
           const minoPos = this.boardMinoGridDisplay.calcMinoPos(this.activePiece.y - e.dy + i, this.activePiece.x + j);
 
-          const effect = new SonicDropEffect(this.player.playerRule.sonicDropEffect, this.spritesheet, tile, this.minoSize, e.dy + 1, this.player.attackRule.comboTimer.combo);
+          const combo = this.player.attackRule.comboTimer ? this.player.attackRule.comboTimer.combo : 0;
+          const effect = new SonicDropEffect(this.player.playerRule.sonicDropEffect, this.spritesheet, tile, this.minoSize, e.dy + 1, combo);
           effect.position.set(minoPos.x, minoPos.y);
           this.effectContainer.addEffect(effect);
           break;
