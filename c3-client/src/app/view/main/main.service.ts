@@ -33,6 +33,8 @@ export class MainService {
   private oldPos: Rect = this.pixiPos;
   private targetElement?: HTMLElement;
 
+  gameView = false;
+
   constructor(
     private idbService: IdbService,
   ) { }
@@ -45,6 +47,10 @@ export class MainService {
     this.main.openScreen(screen);
   }
 
+  back() {
+    this.main.back();
+  }
+
   movePixiContainer(element?: HTMLElement) {
     this.targetElement = element;
     
@@ -54,19 +60,18 @@ export class MainService {
   }
 
   animatePixiContainer(element?: HTMLElement) {
-    this.movePixiContainer(element);
-    // this.targetElement = element;
-    // this.lastMove = Date.now();
-    // this.oldPos = {
-    //   x: this.pixiPos.x,
-    //   y: this.pixiPos.y,
-    //   w: this.pixiPos.w,
-    //   h: this.pixiPos.h,
-    // };
+    this.targetElement = element;
+    this.lastMove = Date.now();
+    this.oldPos = {
+      x: this.pixiPos.x,
+      y: this.pixiPos.y,
+      w: this.pixiPos.w,
+      h: this.pixiPos.h,
+    };
 
-    // if (!this.timeout) {
-    //   this.loop();
-    // }
+    if (!this.timeout) {
+      this.loop();
+    }
   }
 
   private loop() {

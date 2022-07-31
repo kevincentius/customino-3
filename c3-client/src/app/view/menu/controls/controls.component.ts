@@ -1,7 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { IdbService } from 'app/service/idb.service';
 import { UserSettingsService } from 'app/service/user-settings/user-settings.service';
-import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
 import { ControlRowModel } from 'app/view/menu/controls/control-row/control-row.component';
 import { inputKeyDataArray } from 'app/view/menu/controls/input-key-data';
@@ -65,7 +64,7 @@ export class ControlsComponent {
 
   onBackClick() {
     this.editIndex = null;
-    this.mainService.openScreen(MainScreen.MENU);
+    this.mainService.back();
   }
   
   onRowClick(index: number) {

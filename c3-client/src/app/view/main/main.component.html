@@ -1,32 +1,30 @@
 
-<div class="icon-bar">
-  <mat-icon></mat-icon>
+<div class="full-screen-overlay" [hidden]="!mainService.displayGui || screen!==MainScreen.CONTROLS">
+  <app-controls #controls></app-controls>
 </div>
 
-<div class="full-screen-overlay" [hidden]="!mainService.displayGui">
+<div class="icon-bar">
+  <ng-container *ngIf="screen == MainScreen.ROOM">
+    <mat-icon *ngIf="mainService.gameView" (click)="onSetGameView(false)">logout</mat-icon>
+    <mat-icon *ngIf="!mainService.gameView" (click)="onSetGameView(true)">fit_screen</mat-icon>
+
+    <mat-icon (click)="openScreen(MainScreen.CONTROLS)">settings</mat-icon>
+  </ng-container>
+  
+</div>
+
+<div class="full-screen-underlay" [hidden]="!mainService.displayGui">
   <app-lobby #lobby [hidden]="screen!==MainScreen.LOBBY"
     (enterRoom)="onEnterRoom($event)"
   ></app-lobby>
   
-  <app-menu #menu [hidden]="screen!==MainScreen.MENU"
+  <app-menu #menu [hidden]="screen!==MainScreen.MENU"></app-menu>
 
-  ></app-menu>
+  <app-room #room [hidden]="screen!==MainScreen.ROOM"></app-room>
 
-  <app-room #room [hidden]="screen!==MainScreen.ROOM"
+  <app-replay #replay [hidden]="screen!==MainScreen.REPLAY"></app-replay>
 
-  ></app-room>
-
-  <app-replay #replay [hidden]="screen!==MainScreen.REPLAY">
-
-  </app-replay>
-
-  <app-controls #controls [hidden]="screen!==MainScreen.CONTROLS">
-
-  </app-controls>
-
-  <app-thanks #controls [hidden]="screen!==MainScreen.THANKS">
-
-  </app-thanks>
+  <app-thanks #controls [hidden]="screen!==MainScreen.THANKS"></app-thanks>
 </div>
 
 <div

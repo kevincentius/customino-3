@@ -47,8 +47,7 @@ export class MainComponent {
   pixiPos: Rect;
 
   // icon bar
-  gameView = false;
-  directToGameView = false;
+  prevScreen!: MainScreen;
 
   constructor(
     public mainService: MainService,
@@ -80,6 +79,18 @@ export class MainComponent {
   }
 
   openScreen(screen: MainScreen) {
+    this.prevScreen = this.screen;
     this.screen = screen;
+  }
+
+  back() {
+    this.screen = this.prevScreen;
+  }
+
+
+
+  // icon bar
+  onSetGameView(gameView: boolean) {
+    this.room.setGameView(gameView);
   }
 }

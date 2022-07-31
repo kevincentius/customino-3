@@ -1,5 +1,5 @@
 
-.full-screen-overlay {
+.full-screen-underlay {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -9,6 +9,43 @@
   position: absolute;
   width: 100%;
   height: 100%;
-  z-index: 1;
+  z-index: 10;
   pointer-events: none;
+}
+
+.full-screen-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+}
+
+.icon-bar {
+  position: absolute;
+  margin: 30px;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+
+  opacity: 0.25;
+  transition: 1000ms;
+
+  &:hover {
+    transition: 100ms;
+    opacity: 1;
+  }
+
+  .mat-icon {
+    cursor: pointer;
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+
+    &:hover {
+      color: white;
+      transform: scale(1.5);
+    }
+  }
 }

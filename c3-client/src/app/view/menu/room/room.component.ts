@@ -16,6 +16,7 @@ import { MainScreen } from 'app/view/main/main-screen';
 import { playerRule, PlayerRule } from '@shared/game/engine/model/rule/player-rule/player-rule';
 import { RoomSettings } from '@shared/game/engine/model/room-settings';
 import { musicService } from 'app/pixi/display/sound/music-service';
+import { RoomViewMode } from 'app/view/menu/room/room-view-mode';
 
 @Component({
   selector: 'app-room',
@@ -122,8 +123,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.game.start();
     this.mainService.pixi.bindGame(this.game);
     musicService.setVolumeGame();
-    this.mainService.displayGui = false;
-    this.mainService.animatePixiContainer(undefined);
+    this.mainService.gameView = true;
+    this.mainService.movePixiContainer(undefined);
   }
 
   onRecvServerEvent(serverEvent: ServerEvent) {
@@ -134,9 +135,18 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   async onRecvGameOver(gameResult: GameResult) {
     musicService.setVolumeMenu();
-    this.mainService.displayGui = true;
+    this.mainService.gameView = false;
     this.mainService.pixi.keyboard.enabled = false;
     this.mainService.animatePixiContainer(this.pixiTarget.nativeElement);
+  }
+
+  setGameView(gameView: boolean) {
+    this.mainService.gameView = gameView;
+    if (gameView) {
+      this.mainService.movePixiContainer(undefined);
+    } else {
+      this.mainService.animatePixiContainer(this.pixiTarget.nativeElement);
+    }
   }
 
   onLocalPlayerDeath() {
@@ -181,7 +191,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
 
-  
+
   onSettingsClick() {
     this.showSettings = true;
   }
