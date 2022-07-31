@@ -34,7 +34,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
-  private game!: ClientGame;
+  private game?: ClientGame;
 
   showSettings = false;
 
@@ -135,8 +135,8 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   private startGame() {
-    this.game.start();
-    this.mainService.pixi.bindGame(this.game);
+    this.game!.start();
+    this.mainService.pixi.bindGame(this.game!);
     musicService.setVolumeGame();
     this.mainService.gameView = true;
     this.mainService.movePixiContainer(undefined);
@@ -144,7 +144,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   onRecvServerEvent(serverEvent: ServerEvent) {
     if (this.roomId == serverEvent.roomId) {
-      this.game.handleServerEvent(serverEvent);
+      this.game!.handleServerEvent(serverEvent);
     }
   }
 
@@ -156,7 +156,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
 
     // update stats
-    this.lastGameStats = this.game.players.map(player => ({
+    this.lastGameStats = this.game!.players.map(player => ({
       playerInfo: player.playerInfo,
       stats: player.statsTracker.stats,
     }));
@@ -239,7 +239,10 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   // gui binding  
   getLastGameStats(slot: RoomSlotInfo) {
-    return this.game.players.filter(p => p.playerInfo.userId == slot.player.userId).map(p => p.statsTracker.stats);
+    return this.game == null ? null
+      : this.game.players
+        .filter(p => p.playerInfo.userId == slot.player.userId)
+        .map(p => p.statsTracker.stats);
   }
 
   // gui binding
