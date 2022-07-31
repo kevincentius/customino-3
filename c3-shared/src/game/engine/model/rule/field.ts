@@ -7,6 +7,8 @@ export interface PlayerRuleField {
   name: string;
   description: string;
   fieldType: FieldType;
+  convertToDisplay?: (value: any) => any;
+  convertFromDisplay?: (value: any) => any;
   validators?: ((value: any) => string | undefined)[];
   tags: FieldTag[];
 

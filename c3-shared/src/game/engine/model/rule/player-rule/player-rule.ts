@@ -96,7 +96,7 @@ export const playerRule: PlayerRule = {
   }
 }
 
-export function getField(rule: PlayerRule, field: PlayerRuleField) {
+export function getField(rule: any, field: PlayerRuleField) {
   let obj: any = rule;
   const parts = field.property.split('.');
   for (const part of parts) {
@@ -105,10 +105,10 @@ export function getField(rule: PlayerRule, field: PlayerRuleField) {
       throw new Error();
     }
   }
-  return obj;
+  return field.convertToDisplay ? field.convertToDisplay(obj) : obj;
 }
 
-export function setField(rule: PlayerRule, field: PlayerRuleField, value: any) {
+export function setField(rule: any, field: PlayerRuleField, value: any) {
   let obj: any = rule;
   const parts = field.property.split('.');
   const property = parts.pop()!;
@@ -118,5 +118,5 @@ export function setField(rule: PlayerRule, field: PlayerRuleField, value: any) {
       throw new Error();
     }
   }
-  obj[property] = value;
+  obj[property] = field.convertFromDisplay ? field.convertFromDisplay(value) : value;
 }

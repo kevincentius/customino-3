@@ -41,15 +41,16 @@ export class FieldInputComponent implements OnInit {
   startScroll(sign: number, index?: number) {
     const delta = sign * (this.field.stepSize ?? 1);
     if (index == undefined) {
-      if (this.validate(this.fieldValue + delta)) {
-        this.fieldValue += delta;
+      const newValue = this.removeEps(this.fieldValue + delta);
+      if (this.validate(newValue)) {
+        this.fieldValue = newValue
         this.fieldValueChange.emit(this.fieldValue);
       }
     } else {
       const newValue = [...this.fieldValue];
-      newValue[index] += delta;
+      newValue[index] = this.removeEps(newValue[index] + delta);
       if (this.validate(newValue)) {
-        this.fieldValue[index] += delta;
+        this.fieldValue[index] = newValue[index];
         this.fieldValueChange.emit(this.fieldValue);
       }
     }
@@ -66,19 +67,28 @@ export class FieldInputComponent implements OnInit {
   scrollLoop(sign: number, index?: number) {
     const delta = sign * (this.field.stepSize ?? 1);
     if (index == undefined) {
-      if (this.validate(this.fieldValue + delta)) {
-        this.fieldValue += delta;
+      const newValue = this.removeEps(this.fieldValue + delta);
+      if (this.validate(newValue)) {
+        this.fieldValue = newValue;
         this.fieldValueChange.emit(this.fieldValue);
         this.scrollTimeout = setTimeout(() => this.scrollLoop(sign, index), this.scrollRepeatInteveral);
       }
     } else {
       const newValue = [...this.fieldValue];
-      newValue[index] += delta;
+      newValue[index] = this.removeEps(newValue[index] + delta);
       if (this.validate(newValue)) {
-        this.fieldValue[index] += delta;
+        this.fieldValue[index] = newValue[index];
         this.fieldValueChange.emit(this.fieldValue);
         this.scrollTimeout = setTimeout(() => this.scrollLoop(sign, index), this.scrollRepeatInteveral);
       }
+    }
+  }
+
+  private removeEps(val: number) {
+    if (Math.abs(val - Math.floor(val)) < 0.0000001) {
+      return Math.floor(val);
+    } else {
+      return val;
     }
   }
 

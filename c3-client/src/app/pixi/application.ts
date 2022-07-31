@@ -29,7 +29,7 @@ export class PixiApplication {
     this.app = new Application({
       view: this.canvas,
       // resizeTo: this.canvas,
-      backgroundColor: 0x111111,
+      backgroundColor: 0x000022,
 
       antialias: true,
       autoDensity: true, // !!!
