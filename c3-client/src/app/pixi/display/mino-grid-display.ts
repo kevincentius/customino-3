@@ -5,8 +5,8 @@ import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { MinoDisplay } from "app/pixi/display/mino-display";
 import { MinoAnimator } from "app/pixi/display/mino-grid/mino-animator";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
-import { AdjustmentFilter, GlowFilter, KawaseBlurFilter } from "pixi-filters";
-import { Container, Graphics } from "pixi.js";
+import { GlowFilter } from "pixi-filters";
+import { Container, filters, Graphics } from "pixi.js";
 
 export class MinoGridDisplay extends Container implements LayoutChild {
   // helpers
@@ -27,10 +27,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     innerStrength: 0.5,
   });
 
-  adjustmentFilter = new AdjustmentFilter({
-    saturation: 1.5,
-    brightness: 1.1,
-  });
+  colorMatrixFilter = new filters.ColorMatrixFilter();
 
   constructor(private tiles: (Tile | null)[][], private minoSize: number, private invisibleHeight=0) {
     super();
@@ -53,7 +50,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
       }
     }
 
-    this.filters = [this.glowFilter, this.adjustmentFilter ];
+    this.filters = [this.glowFilter, this.colorMatrixFilter ];
     
     if (this.debug) {
       this.debugRect = new Graphics();
@@ -79,11 +76,15 @@ export class MinoGridDisplay extends Container implements LayoutChild {
         zeroPos = this.minos[i][j].absPos - this.minoSize;
       }
     }
+
+    this.colorMatrixFilter.saturate(0.1, false);
   }
 
   chorus(p: number) {
-    this.glowFilter.innerStrength = p * 1.5;
-    this.glowFilter.outerStrength = p * 1.5;
+    const waveAmpl = 0;
+    const waveP = (1 - waveAmpl) + waveAmpl * Math.abs(Math.sin(Date.now() / 500 * 2 * Math.PI));
+    this.glowFilter.innerStrength = p * 1.5 * waveP;
+    this.glowFilter.outerStrength = p * 1.5 * waveP;
   }
 
   placeTile(e: PlaceTileEvent) {

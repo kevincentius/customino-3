@@ -6,13 +6,17 @@ import { RemotePlayer } from "@shared/game/engine/player/remote-player";
 import { GameState } from "@shared/game/engine/serialization/game-state";
 import { ServerEvent } from "@shared/game/network/model/event/server-event";
 import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
+import { Subject } from "rxjs";
 
 /**
  * In addition to extending Game, this class handles the update loop.
  */
 export class ClientGame extends Game {
+  destroySubject = new Subject<void>();
+
   private lastUpdate!: number;
   private mainLoopTimeout: any;
+
 
   constructor(startGameData: StartGameData, private localPlayerIndex?: number) {
     super();
@@ -44,6 +48,7 @@ export class ClientGame extends Game {
   
   destroy() {
     this.stop();
+    this.destroySubject.next();
   }
 
   /** Stops the update loop. Can be used to end or pause the game. */

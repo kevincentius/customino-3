@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ClientGame } from '@shared/game/engine/game/client-game';
 import { GameResult } from '@shared/game/engine/game/game-result';
 import { LocalPlayer } from '@shared/game/engine/player/local-player';
@@ -37,6 +37,8 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   playerRule: PlayerRule = JSON.parse(JSON.stringify(playerRule));
   
+  @ViewChild('pixiTarget') private pixiTarget!: ElementRef<HTMLDivElement>;
+
   constructor(
     private roomService: RoomService,
     private mainService: MainService,
@@ -72,6 +74,10 @@ export class RoomComponent implements OnInit, OnDestroy {
       game.load(this.roomInfo.gameState);
       this.game = game;
       this.startGame();
+    } else {
+      setTimeout(() => {
+        this.mainService.movePixiContainer(this.pixiTarget.nativeElement);
+      });
     }
   }
 
@@ -79,7 +85,11 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomService.startGame();
   }
 
-  onBackClick() {
+  async onBackClick() {
+    await this.roomService.leave();
+    if (this.game) {
+      this.game.destroy();
+    }
     this.mainService.openScreen(MainScreen.LOBBY);
   }
 
@@ -116,7 +126,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.game.start();
     this.mainService.pixi.bindGame(this.game);
     musicService.setVolumeGame();
-    this.mainService.displayGui = false;
+    this.mainService.gameView = true;
+    this.mainService.movePixiContainer(undefined);
   }
 
   onRecvServerEvent(serverEvent: ServerEvent) {
@@ -127,8 +138,18 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   async onRecvGameOver(gameResult: GameResult) {
     musicService.setVolumeMenu();
-    this.mainService.displayGui = true;
+    this.mainService.gameView = false;
     this.mainService.pixi.keyboard.enabled = false;
+    this.mainService.animatePixiContainer(this.pixiTarget.nativeElement);
+  }
+
+  setGameView(gameView: boolean) {
+    this.mainService.gameView = gameView;
+    if (gameView) {
+      this.mainService.movePixiContainer(undefined);
+    } else {
+      this.mainService.animatePixiContainer(this.pixiTarget.nativeElement);
+    }
   }
 
   onLocalPlayerDeath() {
@@ -171,6 +192,8 @@ export class RoomComponent implements OnInit, OnDestroy {
   isHost() {
     return this.mainService.sessionInfo.sessionId == this.roomInfo.host.sessionId;
   }
+
+
 
   onSettingsClick() {
     this.showSettings = true;

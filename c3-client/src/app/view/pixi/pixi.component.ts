@@ -10,7 +10,10 @@ import { UserSettingsService } from 'app/service/user-settings/user-settings.ser
 export class PixiComponent implements OnInit {
   @ViewChild('canvas', { static: true })
   canvas!: ElementRef<HTMLCanvasElement>;
-
+  
+  @ViewChild('canvasContainer', { static: true })
+  canvasContainer!: ElementRef<HTMLDivElement>;
+  
   pixiApplication!: PixiApplication;
 
   constructor(
@@ -18,7 +21,7 @@ export class PixiComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.pixiApplication = new PixiApplication(this.canvas.nativeElement, this.userSettingsService);
+    this.pixiApplication = new PixiApplication(this.canvasContainer.nativeElement, this.canvas.nativeElement, this.userSettingsService);
+    this.pixiApplication.onResize(0, 0);
   }
-
 }

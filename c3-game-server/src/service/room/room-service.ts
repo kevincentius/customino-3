@@ -58,6 +58,7 @@ export class RoomService {
     if (session.roomId) {
       const room = this.getRoom(session.roomId);
       room.leave(session);
+      session.roomId = undefined;
       if (room.isEmpty()) {
         room.destroy();
         this.roomMap.delete(room.id);

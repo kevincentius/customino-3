@@ -94,10 +94,16 @@ export class Keyboard {
   tick(dt: number) {
     if (this.moveMap.get(InputKey.SOFT_DROP)?.down) {
       this.dropRepeatTimer -= dt;
-      while (this.dropRepeatTimer <= 0 && this.tryMove(InputKey.SOFT_DROP)) {
-        this.dropRepeatTimer += this.sdr;
+      while (this.dropRepeatTimer <= 0) {
+        const oldX = this.player.activePiece.x;
+        const oldY = this.player.activePiece.y;
 
-        break; // todo: remove this break when player.canMove is actually implemented
+        this.tryMove(InputKey.SOFT_DROP);
+        this.dropRepeatTimer += this.sdr;
+        
+        if (this.player.activePiece.y == oldY && this.player.activePiece.x == oldX) {
+          break;
+        }
       }
     }
 

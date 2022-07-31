@@ -1,10 +1,10 @@
 import { Application, Loader, LoaderResource, SCALE_MODES, settings } from "pixi.js";
 
 import { Keyboard } from "app/control/keyboard";
-import { Game } from "@shared/game/engine/game/game";
 import { GameDisplay } from "app/pixi/display/game-display";
 import { UserSettingsService } from "app/service/user-settings/user-settings.service";
 import { ControlSettings } from "app/service/user-settings/control-settings";
+import { ClientGame } from "@shared/game/engine/game/client-game";
 
 export let resources: Partial<Record<string, LoaderResource>>;
 
@@ -13,18 +13,22 @@ export class PixiApplication {
 
   loaded = false;
 
-  game?: Game;
+  game?: ClientGame;
 
-  gameDisplay!: GameDisplay;
+  gameDisplay?: GameDisplay;
 
   keyboard: Keyboard = new Keyboard();
 
-  constructor(private canvas: HTMLCanvasElement, private userSettingsService: UserSettingsService) {
+  constructor(
+    private canvasContainer: HTMLDivElement,
+    private canvas: HTMLCanvasElement,
+    private userSettingsService: UserSettingsService,
+  ) {
     settings.SCALE_MODE = SCALE_MODES.NEAREST;
 
     this.app = new Application({
       view: this.canvas,
-      // resizeTo: window,
+      // resizeTo: this.canvas,
       backgroundColor: 0x111111,
 
       antialias: true,
@@ -45,8 +49,8 @@ export class PixiApplication {
 
     this.userSettingsService.settingsChangedSubject.subscribe(localSettings => this.updateKeyBindings(localSettings.control));
 
-    window.onresize = e => this.onResize();
-    this.onResize();
+    // this.canvas.onresize = e => this.onResize();
+    // this.onResize();
   }
 
   public updateKeyBindings(c: ControlSettings) {
@@ -70,22 +74,29 @@ export class PixiApplication {
       });
   }
 
-  bindGame(game: Game) {
+  bindGame(game: ClientGame) {
     this.game = game;
+
+    this.game.destroySubject.subscribe(() => {
+      if (this.gameDisplay) {
+        this.app.stage.removeChild(this.gameDisplay);
+        this.gameDisplay = undefined;
+      }
+    });
 
     if (this.gameDisplay) {
       this.app.stage.removeChild(this.gameDisplay);
     }
     this.gameDisplay = new GameDisplay(game);
-    this.onResize();
+    // this.onResize();
     this.app.stage.addChild(this.gameDisplay);
   }
 
-  private onResize() {
-    this.app.renderer.resize(window.innerWidth, window.innerHeight);
+  onResize(width: number, height: number) {
+    this.app.renderer.resize(width, height);
 
     if (this.gameDisplay) {
-      this.gameDisplay.resize(window.innerWidth, window.innerHeight);
+      this.gameDisplay.resize(width, height);
     }
   }
 }

@@ -15,7 +15,7 @@ export class GarbageGen {
   attackReceivedSubject = new Subject<QueuedAttack[]>();
   
   // will be emitted whenever a queued attack is fully spawned into the board. Can be called multiple times in a single lock down.
-  fullSpawnSubject = new Subject<void>();
+  fullSpawnSubject = new Subject<number>();
 
   // will be emitted whenever a queued attack is only partially spawned due to garbage cap or spawn rate.
   partialSpawnSubject = new Subject<number>();
@@ -179,12 +179,13 @@ export class GarbageGen {
         this.cleanRow = null;
         spawnLeft -= attack.powerLeft;
         this.attackQueue.shift();
-        this.fullSpawnSubject.next();
+        this.fullSpawnSubject.next(attack.powerLeft);
       } else {
+        const spawnAmount = spawnLeft;
         rows.push(...this.generateRows(attack.attack, spawnLeft, false));
-        attack.powerLeft -= spawnLeft;
+        attack.powerLeft -= spawnAmount;
         spawnLeft = 0;
-        this.partialSpawnSubject.next(0);
+        this.partialSpawnSubject.next(spawnAmount);
       }
 
       this.player.board.addBottomRows(rows);
