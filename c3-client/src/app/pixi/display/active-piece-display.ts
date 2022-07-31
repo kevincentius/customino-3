@@ -4,6 +4,7 @@ import { EffectContainer } from "app/pixi/display/effects/effect-container";
 import { SonicDropEffect } from "app/pixi/display/effects/sonic-drop-effect";
 import { MinoGridDisplay } from "app/pixi/display/mino-grid-display";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
+import { getLocalSettings } from "app/service/user-settings/user-settings.service";
 import { Container } from "pixi.js";
 
 export class ActivePieceDisplay extends Container {
@@ -23,7 +24,7 @@ export class ActivePieceDisplay extends Container {
     super();
 
     if (this.ghost) {
-      this.alpha = 0.2;
+      this.alpha = getLocalSettings().localGraphics.ghostOpacity;
     }
 
     this.activePiece = this.player.activePiece;

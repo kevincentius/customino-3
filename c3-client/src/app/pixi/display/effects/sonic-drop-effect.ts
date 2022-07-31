@@ -3,6 +3,7 @@ import { Tile } from "@shared/game/engine/model/tile";
 import { Effect } from "app/pixi/display/effects/effect";
 import { createMinoSprite } from "app/pixi/display/effects/mino-sprite-factory";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
+import { getLocalSettings } from "app/service/user-settings/user-settings.service";
 import { AdjustmentFilter } from "pixi-filters";
 import { Emitter } from "pixi-particles";
 import { Container, Sprite } from "pixi.js";
@@ -14,7 +15,7 @@ export class SonicDropEffect extends Container implements Effect {
   private createdAt = Date.now();
   private lastUpdate = Date.now();
 
-  private emitter: Emitter;
+  private emitter?: Emitter;
   private particleTtl;
   private totalTtl: number;
   private initScale!: number;
@@ -31,7 +32,7 @@ export class SonicDropEffect extends Container implements Effect {
     super();
 
     const comboMultiplier = Math.min(1, this.combo / this.config.comboCap);
-    this.filters = [this.createAdjustmentFilter(comboMultiplier)];
+    this.filters = []; //[this.createAdjustmentFilter(comboMultiplier)];
 
     this.flashTtl = Math.min(this.config.duration, this.config.duration / 4 * rows);
     this.flashTtl *= 1 + Math.pow(comboMultiplier, 2) * (this.config.comboDurationMultiplier - 1);
@@ -46,62 +47,64 @@ export class SonicDropEffect extends Container implements Effect {
 
     this.addChild(this.sprite);
 
-    this.emitter = new Emitter(this, this.sprite.texture, 
-      {
-        "alpha": {
-          "start": this.config.particleOpacity,
-          "end": 0.1
-        },
-        "scale": {
-          "start": this.config.particleScale,
-          "end": 0,
-          "minimumScaleMultiplier": 0.5
-        },
-        "color": {
-          "start": "#ffffff",
-          "end": "#ffffff"
-        },
-        "speed": {
-          "start": this.config.particleSpeed,
-          "end": this.config.particleSpeed,
-          "minimumSpeedMultiplier": 1
-        },
-        "acceleration": {
-          "x": 0,
-          "y": -this.config.particleSpeed / (this.config.particleDuration / 1000 * 0.75)
-        },
-        "maxSpeed": 0,
-        "startRotation": {
-          "min": 90 - this.config.particleMaxAngle,
-          "max": 90 + this.config.particleMaxAngle,
-        },
-        "noRotation": false,
-        "rotationSpeed": {
-          "min": 0,
-          "max": 0
-        },
-        "lifetime": {
-          "min": this.particleTtl / 1000,
-          "max": this.particleTtl / 1000
-        },
-        "blendMode": "normal",
-        "frequency": 0.001,
-        "emitterLifetime": 0.1,
-        "maxParticles": this.config.particleCount * (1 + comboMultiplier * (this.config.comboParticleCountMultiplier - 1)),
-        "pos": {
-          "x": 0,
-          "y": 0
-        },
-        "addAtBack": false,
-        "spawnType": "rect",
-        "spawnRect": {
-          "x": 0,
-          "y": 0,
-          "w": this.minoSize,
-          "h": this.minoSize * this.rows,
+    if (getLocalSettings().localGraphics.particles) {
+      this.emitter = new Emitter(this, this.sprite.texture, 
+        {
+          "alpha": {
+            "start": this.config.particleOpacity,
+            "end": 0.1
+          },
+          "scale": {
+            "start": this.config.particleScale,
+            "end": 0,
+            "minimumScaleMultiplier": 0.5
+          },
+          "color": {
+            "start": "#ffffff",
+            "end": "#ffffff"
+          },
+          "speed": {
+            "start": this.config.particleSpeed,
+            "end": this.config.particleSpeed,
+            "minimumSpeedMultiplier": 1
+          },
+          "acceleration": {
+            "x": 0,
+            "y": -this.config.particleSpeed / (this.config.particleDuration / 1000 * 0.75)
+          },
+          "maxSpeed": 0,
+          "startRotation": {
+            "min": 90 - this.config.particleMaxAngle,
+            "max": 90 + this.config.particleMaxAngle,
+          },
+          "noRotation": false,
+          "rotationSpeed": {
+            "min": 0,
+            "max": 0
+          },
+          "lifetime": {
+            "min": this.particleTtl / 1000,
+            "max": this.particleTtl / 1000
+          },
+          "blendMode": "normal",
+          "frequency": 0.001,
+          "emitterLifetime": 0.1,
+          "maxParticles": this.config.particleCount * (1 + comboMultiplier * (this.config.comboParticleCountMultiplier - 1)),
+          "pos": {
+            "x": 0,
+            "y": 0
+          },
+          "addAtBack": false,
+          "spawnType": "rect",
+          "spawnRect": {
+            "x": 0,
+            "y": 0,
+            "w": this.minoSize,
+            "h": this.minoSize * this.rows,
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   createAdjustmentFilter(comboMultiplier: number) {
@@ -131,7 +134,9 @@ export class SonicDropEffect extends Container implements Effect {
     }
     
     if (age <= this.totalTtl) {
-      this.emitter.update(dt / 1000);
+      if (this.emitter) {
+        this.emitter.update(dt / 1000);
+      }
     } else {
       return false;      
     }

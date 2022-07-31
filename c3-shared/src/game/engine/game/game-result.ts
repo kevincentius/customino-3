@@ -1,4 +1,9 @@
 
+export interface PlayerResult {
+  rank: number; // starts from 0!
+  score: number;
+}
+
 export interface GameResult {
-  test: string,
+  players: PlayerResult[];
 }

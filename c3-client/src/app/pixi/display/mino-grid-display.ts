@@ -5,6 +5,7 @@ import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { MinoDisplay } from "app/pixi/display/mino-display";
 import { MinoAnimator } from "app/pixi/display/mino-grid/mino-animator";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
+import { getLocalSettings } from "app/service/user-settings/user-settings.service";
 import { GlowFilter } from "pixi-filters";
 import { Container, filters, Graphics } from "pixi.js";
 
@@ -50,7 +51,11 @@ export class MinoGridDisplay extends Container implements LayoutChild {
       }
     }
 
-    this.filters = [this.glowFilter, this.colorMatrixFilter ];
+    this.filters = [];
+    if (getLocalSettings().localGraphics.glowEffect) {
+      this.filters.push(this.glowFilter);
+    }
+    this.filters.push(this.colorMatrixFilter);
     
     if (this.debug) {
       this.debugRect = new Graphics();

@@ -1,13 +1,13 @@
 import { Component, HostListener } from '@angular/core';
 import { IdbService } from 'app/service/idb.service';
-import { UserSettingsService } from 'app/service/user-settings/user-settings.service';
+import { getLocalSettings, UserSettingsService } from 'app/service/user-settings/user-settings.service';
 import { MainService } from 'app/view/main/main.service';
 import { ControlRowModel } from 'app/view/menu/controls/control-row/control-row.component';
 import { inputKeyDataArray } from 'app/view/menu/controls/input-key-data';
 import { LocalSettings } from 'app/service/user-settings/local-settings';
 import { PlayerRuleField } from '@shared/game/engine/model/rule/field';
-import { FieldType } from '@shared/game/engine/model/rule/field-type';
-import { intRangeValidator } from '@shared/game/engine/model/rule/field-validators';
+import { getField, setField } from '@shared/game/engine/model/rule/player-rule/player-rule';
+import { ghostOpacity, glowEffect, musicVolumeField, particles, soundVolumeField } from 'app/view/menu/controls/settings-fields';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { soundService } from 'app/pixi/display/sound/sound-service';
 
@@ -17,28 +17,14 @@ import { soundService } from 'app/pixi/display/sound/sound-service';
   styleUrls: ['./controls.component.scss']
 })
 export class ControlsComponent {
-  soundVolumeField: PlayerRuleField = {
-    property: 'soundVolume',
-    default: 100,
-    name: 'Sound volume',
-    description: 'Controls how loud sound effects will be. Does not affect music.',
-    fieldType: FieldType.NUMBER_SCROLL,
-    validators: [ intRangeValidator(0, 100) ],
-    stepSize: 10,
-    tags: [],
-  }
-
-  musicVolumeField: PlayerRuleField = {
-    property: 'musicVolume',
-    default: 100,
-    name: 'Music volume',
-    description: 'Controls the loudness of musics. Does not affect other sound effects.',
-    fieldType: FieldType.NUMBER_SCROLL,
-    validators: [ intRangeValidator(0, 100) ],
-    stepSize: 10,
-    tags: [],
-  }
-
+  settingsFields = [
+    musicVolumeField,
+    soundVolumeField,
+    ghostOpacity,
+    glowEffect,
+    particles,
+  ];
+  
   // view model
   rows: ControlRowModel[] = inputKeyDataArray
     .filter(d => d.inputKey != null)
@@ -46,18 +32,18 @@ export class ControlsComponent {
 
   editIndex: number | null = null;
 
+  hint = '';
+
   localSettings!: LocalSettings;
 
   constructor(
     private userSettingsService: UserSettingsService,
     private mainService: MainService,
-    private idbService: IdbService,
   ) { }
 
   ngOnInit() {
     this.userSettingsService.onLoad(() => {
-      this.localSettings = this.userSettingsService.localSettings;
-      console.log(this.localSettings);
+      this.localSettings = getLocalSettings();
       this.rows.forEach(row => row.mappings = this.localSettings.control.keyMap.get(row.inputKey)!);
     });
   }
@@ -101,18 +87,33 @@ export class ControlsComponent {
     this.userSettingsService.save();
   }
 
-  // value is base 1
-  onSoundVolumeUpdated(value: number) {
-    this.localSettings.soundVolume = value;
-    soundService.setUserSoundVolume(value);
-    this.userSettingsService.save();
+  // // value is base 1
+  // onSoundVolumeUpdated(value: number) {
+  //   this.localSettings.soundVolume = value;
+  //   soundService.setUserSoundVolume(value);
+  //   this.userSettingsService.save();
     
+  // }
+
+  // // value is base 1
+  // onMusicVolumeUpdated(value: number) {
+  //   this.localSettings.musicVolume = value;
+  //   musicService.setUserMusicVolume(value);
+  //   this.userSettingsService.save();
+  // }
+
+  getFieldValue(field: PlayerRuleField) {
+    return getField(this.localSettings, field);
   }
 
-  // value is base 1
-  onMusicVolumeUpdated(value: number) {
-    this.localSettings.musicVolume = value;
-    musicService.setUserMusicVolume(value);
+  setFieldValue(field: PlayerRuleField, value: any) {
+    setField(this.localSettings, field, value);
+
+    if (field == musicVolumeField) {
+      musicService.setUserMusicVolume(value / 100);
+    } else if (field == soundVolumeField) {
+      soundService.setUserSoundVolume(value);
+    }
     this.userSettingsService.save();
   }
 }

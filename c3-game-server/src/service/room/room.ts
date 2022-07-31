@@ -114,7 +114,13 @@ export class Room {
       
       this.game.gameOverSubject.subscribe(gameResult => {
         for (const slot of this.slots) {
-          slot.session.socket.emit(LobbyEvent.GAME_OVER, gameResult);
+          if (slot.playerIndex != null) {
+            slot.addScore(gameResult.players[slot.playerIndex].score);
+          }
+        }
+        
+        for (const slot of this.slots) {
+          slot.session.socket.emit(LobbyEvent.GAME_OVER, this.getRoomInfo());
         }
       });
 

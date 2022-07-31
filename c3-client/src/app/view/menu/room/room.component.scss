@@ -1,19 +1,28 @@
 
 .slots-container {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-
-  font-size: 18px;
+  font-size: 24px;
 
   &.spectator {
     opacity: 0.5;
   }
 
-  .slot {
-    display: flex;
-    flex-direction: row;
+  .tc-text {
+    text-align: left;
   }
+
+  .tc-text-pad {
+    text-align: left;
+    padding-left: 25px;
+  }
+
+  .tc-number {
+    text-align: right;
+  }
+
+  // .slot {
+  //   display: flex;
+  //   flex-direction: row;
+  // }
 }
 
 .screen-body-container {

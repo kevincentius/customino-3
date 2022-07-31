@@ -16,6 +16,9 @@ import { MainScreen } from 'app/view/main/main-screen';
 import { playerRule, PlayerRule } from '@shared/game/engine/model/rule/player-rule/player-rule';
 import { RoomSettings } from '@shared/game/engine/model/room-settings';
 import { musicService } from 'app/pixi/display/sound/music-service';
+import { PlayerInfo } from '@shared/game/engine/player/player-info';
+import { PlayerStats } from '@shared/game/engine/player/stats/player-stats';
+import { RoomSlotInfo } from '@shared/model/room/room-slot-info';
 
 @Component({
   selector: 'app-room',
@@ -39,10 +42,20 @@ export class RoomComponent implements OnInit, OnDestroy {
   
   @ViewChild('pixiTarget') private pixiTarget!: ElementRef<HTMLDivElement>;
 
+  lastGameStats?: { playerInfo: PlayerInfo; stats: PlayerStats; }[];
+
+  displayComboCount = 7;
+
   constructor(
     private roomService: RoomService,
     private mainService: MainService,
-  ) {}
+  ) {
+    window!.onkeydown = (ev: KeyboardEvent) => {
+      if (ev.key == 'F2' && !(this.game && this.game.running)) {
+        this.onStartGameClick();
+      }
+    };
+  }
 
   getSessionId() {
     return this.mainService.sessionInfo.sessionId;
@@ -67,6 +80,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   async show(roomId: number) {
+    this.showSettings = false;
     this.roomId = roomId;
     this.roomInfo = (await this.roomService.getRoomInfo(roomId))!;
     if (this.roomInfo.gameState?.running) {
@@ -75,9 +89,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.game = game;
       this.startGame();
     } else {
-      setTimeout(() => {
-        this.mainService.movePixiContainer(this.pixiTarget.nativeElement);
-      });
+      this.repositionPixi();
     }
   }
 
@@ -136,11 +148,20 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  async onRecvGameOver(gameResult: GameResult) {
+  async onRecvGameOver(roomInfo: RoomInfo) {
     musicService.setVolumeMenu();
     this.mainService.gameView = false;
     this.mainService.pixi.keyboard.enabled = false;
     this.mainService.animatePixiContainer(this.pixiTarget.nativeElement);
+
+
+    // update stats
+    this.lastGameStats = this.game.players.map(player => ({
+      playerInfo: player.playerInfo,
+      stats: player.statsTracker.stats,
+    }));
+
+    this.roomInfo = roomInfo;
   }
 
   setGameView(gameView: boolean) {
@@ -201,10 +222,43 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   onCancelSettings() {
     this.showSettings = false;
+    
+    this.repositionPixi();
+  }
+
+  private repositionPixi() {
+    setTimeout(() => {
+      this.mainService.movePixiContainer(this.pixiTarget.nativeElement);
+    });
   }
 
   onSaveSettings(settings: RoomSettings) {
     this.showSettings = false;
     this.roomService.changeRoomSettings(settings);
+  }
+
+  // gui binding  
+  getLastGameStats(slot: RoomSlotInfo) {
+    return this.game.players.filter(p => p.playerInfo.userId == slot.player.userId).map(p => p.statsTracker.stats);
+  }
+
+  // gui binding
+  getCombos(stats: PlayerStats) {
+    const sortedCombos = Array.from(stats.combos.entries())
+      .map(e => ({combo: parseInt(e[0].substring(1)), times: e[1]}))
+      .sort((a, b) => b.combo - a.combo);
+    
+    const ret = [];
+    
+    for (let combos of sortedCombos) {
+      for (let i = 0; i < combos.times; i++) {
+        ret.push(combos.combo);
+
+        if (ret.length >= this.displayComboCount) { break };
+      }
+      if (ret.length >= this.displayComboCount) { break };
+    }
+
+    return ret;
   }
 }

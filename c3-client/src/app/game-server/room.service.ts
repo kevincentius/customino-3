@@ -16,7 +16,7 @@ import { Subject } from "rxjs";
 export class RoomService {
   roomInfoSubject = new Subject<RoomInfo>();
   startGameSubject = new Subject<StartGameData>();
-  gameOverSubject = new Subject<GameResult>();
+  gameOverSubject = new Subject<RoomInfo>();
   serverEventSubject = new Subject<ServerEvent>();
 
   constructor(
@@ -34,8 +34,8 @@ export class RoomService {
       this.serverEventSubject.next(serverEvent);
     });
 
-    this.socketService.on(LobbyEvent.GAME_OVER, (gameResult: GameResult) => {
-      this.gameOverSubject.next(gameResult);
+    this.socketService.on(LobbyEvent.GAME_OVER, (roomInfo: RoomInfo) => {
+      this.gameOverSubject.next(roomInfo);
     });
   }
 

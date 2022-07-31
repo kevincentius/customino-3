@@ -21,7 +21,7 @@ export class PixiComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.pixiApplication = new PixiApplication(this.canvasContainer.nativeElement, this.canvas.nativeElement, this.userSettingsService);
+    this.pixiApplication = new PixiApplication(this.canvas.nativeElement, this.userSettingsService);
     this.pixiApplication.onResize(0, 0);
   }
 }

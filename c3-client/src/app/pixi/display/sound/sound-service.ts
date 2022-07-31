@@ -78,7 +78,6 @@ export class SoundService {
 
   setVolume(channel: number, volume: number) {
     this.maps[channel].forEach((v, k) => {
-      console.log(this.userSettingsVolume);
       v.howls.forEach(h => h.volume(volume * this.userSettingsVolume));
     });
   }

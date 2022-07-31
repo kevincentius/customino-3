@@ -1,5 +1,5 @@
 
-<div class="full-size">  
+<div class="v-flex">  
   <app-background></app-background>
 
   <div class="screen-title-container">
@@ -10,20 +10,48 @@
   </div>
 
   <div class="v-flex screen-body-container">
-    <div *ngIf="localSettings" style="display: flex; flex-direction: column; padding: 0 100px">
-      <app-control-row [name]="'Music Volume'">
+    <div style="padding-left: 140px; color: yellow; height: 40px;">{{hint}}</div>
+
+    <div *ngIf="localSettings" style="display: flex; flex-direction: column; padding: 0 100px; flex-grow: 1;">
+      <div (mouseover)="hint = 'Key bindings'">
+        <app-control-row *ngFor="let row of rows; let i=index"
+          [data]="row"
+          [editMode]="i==this.editIndex"
+          (click)="onRowClick(i)"
+        ></app-control-row>
+    
+        <ng-container *ngIf="localSettings.control">
+          <app-control-row
+            [name]="'DAS (auto-repeat delay)'"
+            [value]="localSettings.control.das"
+            (inputBlur)="onDasUpdated($event)"
+          ></app-control-row>
+          
+          <app-control-row
+            [name]="'ARR (auto-repeat rate)'"
+            [value]="localSettings.control.arr"
+            (inputBlur)="onArrUpdated($event)"
+          ></app-control-row>
+          
+          <app-control-row
+            [name]="'Soft drop speed'"
+            [value]="localSettings.control.sdr"
+            (inputBlur)="onSdrUpdated($event)"
+          ></app-control-row>
+        </ng-container>
+      </div>
+
+
+      <div style="height: 30px;"></div>
+
+
+      <app-control-row *ngFor="let settingsField of settingsFields" [name]="settingsField.name"
+        (mouseover)="hint = settingsField.description ?? ''"
+      >
         <app-field-input
-          [field]="musicVolumeField"
-          [fieldValue]="localSettings.musicVolume * 100"
-          (fieldValueChange)="onMusicVolumeUpdated($event / 100)"
-        ></app-field-input>
-      </app-control-row>
-      
-      <app-control-row [name]="'Sound Volume'">
-        <app-field-input
-          [field]="soundVolumeField"
-          [fieldValue]="localSettings.soundVolume * 100"
-          (fieldValueChange)="onSoundVolumeUpdated($event / 100)"
+          [field]="settingsField"
+          [fieldValue]="getFieldValue(settingsField)"
+          (fieldValueChange)="setFieldValue(settingsField, $event)"
         ></app-field-input>
       </app-control-row>
 
@@ -31,37 +59,6 @@
       <div style="height: 30px;"></div>
 
 
-      <app-control-row *ngFor="let row of rows; let i=index"
-        [data]="row"
-        [editMode]="i==this.editIndex"
-        (click)="onRowClick(i)"
-      ></app-control-row>
-  
-      <ng-container *ngIf="localSettings.control">
-        <app-control-row
-          [name]="'DAS (auto-repeat delay)'"
-          [value]="localSettings.control.das"
-          (inputBlur)="onDasUpdated($event)"
-        ></app-control-row>
-        
-        <app-control-row
-          [name]="'ARR (auto-repeat rate)'"
-          [value]="localSettings.control.arr"
-          (inputBlur)="onArrUpdated($event)"
-        ></app-control-row>
-        
-        <app-control-row
-          [name]="'Soft drop speed'"
-          [value]="localSettings.control.sdr"
-          (inputBlur)="onSdrUpdated($event)"
-        ></app-control-row>
-      </ng-container>
-
-
-      <div style="height: 30px;"></div>
-
-
-      
     </div>
   </div>
 </div>
