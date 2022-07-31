@@ -43,7 +43,7 @@
                         <th class="tc-text">Player</th>
                         <th class="tc-number">Score</th>
                         <th class="tc-number">BPM</th>
-                        <th class="tc-text">Combos</th>
+                        <th class="tc-text-pad">Combos</th>
                         <th class="tc-number">Attack</th>
                         <th class="tc-number">APM</th>
                         <th class="tc-number">Block</th>
@@ -65,7 +65,7 @@
                             {{stats.pieces / stats.activeTime * 60 | number:'1.0-0'}}
                           </td>
 
-                          <td class="tc-text">
+                          <td class="tc-text-pad">
                             <ng-container *ngFor="let combo of getCombos(stats)">
                               {{combo}}
                             </ng-container>
