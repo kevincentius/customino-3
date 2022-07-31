@@ -16,7 +16,6 @@ import { MainScreen } from 'app/view/main/main-screen';
 import { playerRule, PlayerRule } from '@shared/game/engine/model/rule/player-rule/player-rule';
 import { RoomSettings } from '@shared/game/engine/model/room-settings';
 import { musicService } from 'app/pixi/display/sound/music-service';
-import { RoomViewMode } from 'app/view/menu/room/room-view-mode';
 
 @Component({
   selector: 'app-room',
@@ -86,7 +85,9 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomService.startGame();
   }
 
-  onBackClick() {
+  async onBackClick() {
+    await this.roomService.leave();
+    this.game.destroy();
     this.mainService.openScreen(MainScreen.LOBBY);
   }
 

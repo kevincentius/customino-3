@@ -43,6 +43,10 @@ export class RoomService {
     return this.socketService.emitQuery(LobbyEvent.GET_ROOM_INFO, roomId);
   }
 
+  async leave(): Promise<void> {
+    return this.socketService.emit(LobbyEvent.LEAVE_ROOM);
+  }
+
   async startGame() {
     return this.socketService.emit(LobbyEvent.START_GAME);
   }

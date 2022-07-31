@@ -1,10 +1,10 @@
 import { Application, Loader, LoaderResource, SCALE_MODES, settings } from "pixi.js";
 
 import { Keyboard } from "app/control/keyboard";
-import { Game } from "@shared/game/engine/game/game";
 import { GameDisplay } from "app/pixi/display/game-display";
 import { UserSettingsService } from "app/service/user-settings/user-settings.service";
 import { ControlSettings } from "app/service/user-settings/control-settings";
+import { ClientGame } from "@shared/game/engine/game/client-game";
 
 export let resources: Partial<Record<string, LoaderResource>>;
 
@@ -13,9 +13,9 @@ export class PixiApplication {
 
   loaded = false;
 
-  game?: Game;
+  game?: ClientGame;
 
-  gameDisplay!: GameDisplay;
+  gameDisplay?: GameDisplay;
 
   keyboard: Keyboard = new Keyboard();
 
@@ -74,8 +74,15 @@ export class PixiApplication {
       });
   }
 
-  bindGame(game: Game) {
+  bindGame(game: ClientGame) {
     this.game = game;
+
+    this.game.destroySubject.subscribe(() => {
+      if (this.gameDisplay) {
+        this.app.stage.removeChild(this.gameDisplay);
+        this.gameDisplay = undefined;
+      }
+    });
 
     if (this.gameDisplay) {
       this.app.stage.removeChild(this.gameDisplay);

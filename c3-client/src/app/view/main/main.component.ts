@@ -81,6 +81,10 @@ export class MainComponent {
   openScreen(screen: MainScreen) {
     this.prevScreen = this.screen;
     this.screen = screen;
+
+    if (screen == MainScreen.LOBBY) {
+      this.lobby.onRefresh();
+    }
   }
 
   back() {
