@@ -87,7 +87,9 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   async onBackClick() {
     await this.roomService.leave();
-    this.game.destroy();
+    if (this.game) {
+      this.game.destroy();
+    }
     this.mainService.openScreen(MainScreen.LOBBY);
   }
 

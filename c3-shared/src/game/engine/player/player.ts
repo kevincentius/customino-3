@@ -20,10 +20,12 @@ import { createRotationSystem, RotationSystem } from "@shared/game/engine/player
 import { AttackRule } from "@shared/game/engine/player/attack-rule";
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { PlayerInfo } from "@shared/game/engine/player/player-info";
+import { PlayerStatsTracker } from "@shared/game/engine/player/stats/player-stats-tracker";
+import { PlayerStats } from "@shared/game/engine/player/stats/player-stats";
 
 export abstract class Player {
   // event emitters
-  gameOverSubject = new Subject<void>();
+  gameOverSubject = new Subject<PlayerStats>();
   gameEventSubject = new Subject<GameEvent>();
   pieceLockSubject = new Subject<LockResult>();
   pieceSpawnSubject = new Subject<void>();
@@ -42,6 +44,7 @@ export abstract class Player {
   pieceGen: PieceGen;
   activePiece: ActivePiece;
   garbageGen: GarbageGen;
+  statsTracker: PlayerStatsTracker;
   
   // transient
   lastFrameMs = Date.now();
@@ -85,6 +88,7 @@ export abstract class Player {
     this.pieceQueue.push(...Array.from(Array(this.playerRule.previews)).map(() => this.pieceGen.next()));
     this.garbageGen = new GarbageGen(this, this.playerRule);
     this.attackRule = new AttackRule(this);
+    this.statsTracker = new PlayerStatsTracker(this);
 
     this.spawnPiece();
   }
@@ -114,6 +118,7 @@ export abstract class Player {
       pieceGen: this.pieceGen.serialize(),
       activePiece: this.activePiece.serialize(),
       garbageGen: this.garbageGen.serialize(),
+      stats: this.statsTracker.serialize(),
     };
   }
 
@@ -128,12 +133,14 @@ export abstract class Player {
     this.pieceGen = loadPieceGen(this.r, this.pieceList, playerState.pieceGen);
     this.activePiece.load(playerState.activePiece);
     this.garbageGen.load(playerState.garbageGen);
+    this.statsTracker.load(playerState.stats);
   }
 
   protected runFrame() {
     this.activePiece.runFrame();
     this.attackRule.runFrame();
     this.garbageGen.runFrame();
+    this.statsTracker.runFrame();
     this.frame++;
     this.lastFrameMs = Date.now();
   }
@@ -170,7 +177,7 @@ export abstract class Player {
   die() {
     if (this.alive) {
       this.alive = false;
-      this.gameOverSubject.next();
+      this.gameOverSubject.next(this.statsTracker.stats);
     }
   }
 
@@ -217,11 +224,12 @@ export abstract class Player {
       dropDistance: dropDistance,
     }
     
-    let attacks = this.attackRule.calcAttacks(lockResult);
-    attacks = this.garbageGen.applyBlock(attacks);
+  let powers = this.attackRule.calcAttacks(lockResult);
+    const attacks = this.garbageGen.applyBlock(powers.map(a => ({ power: a.power, type: a.type })));
     const attackResult: LockResult = {
       ...lockResult,
-      attacks,
+      powers: powers,
+      attacks: attacks,
     }
     this.pieceLockSubject.next(attackResult);
 

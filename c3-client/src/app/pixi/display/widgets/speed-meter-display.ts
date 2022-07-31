@@ -29,7 +29,7 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
     arcOpacity: 0.7,
     maxSpeed: 240,
 
-    tintSpeed: 60,
+    tintSpeed: 0,
     tintSpeedTint: 0xffff00,
 
     arcSat: 0.6,
@@ -39,6 +39,7 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
   displayValueAtLastPiece = 0;
   displayValue = 0;
   displayCatchSpeed = 60;
+  fixedDisplayValue?: number;
 
   lastUpdateMs = Date.now();
 
@@ -85,6 +86,8 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
       this.movingAverage = weight * (60000 / dt) + (1 - weight) * this.movingAverage;
       this.displayValueAtLastPiece = this.displayValue;
     });
+
+    this.player.gameOverSubject.subscribe(stats => this.fixedDisplayValue = stats.pieces / stats.activeTime * 60);
   }
 
   tick() {
@@ -98,19 +101,25 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
     // calculate target display (most actual speed)
     const msSinceLastPiece = ct - this.lastPieceMs;
     const expectedMsPerPiece = 60000 / this.movingAverage;
-    let targetDisplay!: number;
-    if (msSinceLastPiece < expectedMsPerPiece) {
-      targetDisplay = this.movingAverage;
+    
+    if (this.fixedDisplayValue != null) {
+      const p = Math.pow(Math.min(1, msSinceLastPiece / 1000), .1);
+      this.displayValue = p * this.fixedDisplayValue + (1 - p) * this.movingAverage;
     } else {
-      const weightMul = msSinceLastPiece / expectedMsPerPiece;
-      const weight = this.weight * weightMul / (1 + (this.weight * (weightMul - 1)));
-      targetDisplay = (weight * (60000 / msSinceLastPiece) + (1 - weight) * this.movingAverage);
+      let targetDisplay!: number;
+      if (msSinceLastPiece < expectedMsPerPiece) {
+        targetDisplay = this.movingAverage;
+      } else {
+        const weightMul = msSinceLastPiece / expectedMsPerPiece;
+        const weight = this.weight * weightMul / (1 + (this.weight * (weightMul - 1)));
+        targetDisplay = (weight * (60000 / msSinceLastPiece) + (1 - weight) * this.movingAverage);
+      }
+      
+      // display should catch up to the most actual speed gradually (animate)
+      const p = 1 / (5 * msSinceLastPiece / 1000 + 1);
+      this.displayValue = p * this.displayValueAtLastPiece + (1 - p) * targetDisplay;  
     }
-    
-    // display should catch up to the most actual speed gradually (animate)
-    const p = 1 / (msSinceLastPiece / 1000 + 1);
-    this.displayValue = p * this.displayValueAtLastPiece + (1 - p) * targetDisplay;
-    
+
     this.text.text = Math.round(this.displayValue).toString();
     const pTint = Math.max(0, Math.min(1, (this.displayValue - this.config.tintSpeed) / (this.config.maxSpeed - this.config.tintSpeed)));
     this.text.tint = 0xffff00 + (255 - (pTint * 255));
