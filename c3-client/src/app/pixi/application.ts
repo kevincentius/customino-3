@@ -20,7 +20,6 @@ export class PixiApplication {
   keyboard: Keyboard = new Keyboard();
 
   constructor(
-    private canvasContainer: HTMLDivElement,
     private canvas: HTMLCanvasElement,
     private userSettingsService: UserSettingsService,
   ) {
@@ -48,9 +47,6 @@ export class PixiApplication {
     });
 
     this.userSettingsService.settingsChangedSubject.subscribe(localSettings => this.updateKeyBindings(localSettings.control));
-
-    // this.canvas.onresize = e => this.onResize();
-    // this.onResize();
   }
 
   public updateKeyBindings(c: ControlSettings) {
@@ -88,7 +84,6 @@ export class PixiApplication {
       this.app.stage.removeChild(this.gameDisplay);
     }
     this.gameDisplay = new GameDisplay(game);
-    // this.onResize();
     this.app.stage.addChild(this.gameDisplay);
   }
 
