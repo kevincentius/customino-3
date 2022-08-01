@@ -17,7 +17,7 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
 
   lastPieceMs = Date.now();
   movingAverage = 0; // bpm
-  weight = 0.3;
+  weight = 0.25;
 
   config = {
     bg: 0x333333,
@@ -118,6 +118,9 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
       // display should catch up to the most actual speed gradually (animate)
       const p = 1 / (5 * msSinceLastPiece / 1000 + 1);
       this.displayValue = p * this.displayValueAtLastPiece + (1 - p) * targetDisplay;  
+
+      // TODO: debug only
+      // this.displayValue = this.player.attackRule.getStarsProgressFactor() * this.config.maxSpeed;
     }
 
     this.text.text = Math.round(this.displayValue).toString();

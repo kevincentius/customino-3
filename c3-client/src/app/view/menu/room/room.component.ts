@@ -44,7 +44,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   lastGameStats?: { playerInfo: PlayerInfo; stats: PlayerStats; }[];
 
-  displayComboCount = 7;
+  displayComboCount = 5;
 
   constructor(
     private roomService: RoomService,

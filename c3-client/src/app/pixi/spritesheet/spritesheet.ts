@@ -7,6 +7,7 @@ export class GameSpritesheet {
   garbageIndicatorTop = Array.from(Array(4).keys()).map(i => this.spritesheet.textures[`garbage-indicator-top-${i}.png`]);
   garbageIndicatorMiddle = Array.from(Array(4).keys()).map(i => this.spritesheet.textures[`garbage-indicator-middle-${i}.png`]);
   garbageIndicatorBottom = Array.from(Array(4).keys()).map(i => this.spritesheet.textures[`garbage-indicator-bottom-${i}.png`]);
+  star = this.spritesheet.textures['star.png'];
 }
 
 // export const gameSpritesheet = new GameSpritesheet();

@@ -1,7 +1,7 @@
 import { Player } from "@shared/game/engine/player/player";
 import { RemotePlayer } from "@shared/game/engine/player/remote-player";
 import { BoardDisplay } from "app/pixi/display/board-display";
-import { ComboTimerDisplay } from "app/pixi/display/widgets/combo-timer-display";
+import { ComboTimerDisplay } from "app/pixi/display/widgets/combo-timer/combo-timer-display";
 import { LayoutContainer } from "app/pixi/display/layout/layout-container";
 import { PlayerInfoDisplay } from "app/pixi/display/player-into-display";
 import { PlayerSound } from "app/pixi/display/sound/player-sound";
@@ -64,7 +64,7 @@ export class PlayerDisplay extends LayoutContainer {
   tick(dt: number) {
     // this.updateDebugText();
     this.board.tick(dt);
-    this.comboTimer?.tick();
+    this.comboTimer?.tick(dt);
     this.speedMeter?.tick();
   }
 }

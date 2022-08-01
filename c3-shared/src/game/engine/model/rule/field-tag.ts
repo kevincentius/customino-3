@@ -13,5 +13,6 @@
 
   // by granular topic
   GRAVITY='gravity',
+  STARS='stars',
   SONIC_DROP_EFFECTS='sonic_drop_effects',
 }
