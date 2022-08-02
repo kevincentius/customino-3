@@ -35,6 +35,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   private game?: ClientGame;
+  recorder?: GameRecorder;
 
   showSettings = false;
 
@@ -45,6 +46,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   lastGameStats?: { playerInfo: PlayerInfo; stats: PlayerStats; }[];
 
   displayComboCount = 5;
+
 
   constructor(
     private roomService: RoomService,
@@ -130,8 +132,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
     
     // record game replay
-    const recorder = new GameRecorder(this.game);
-    this.game.gameOverSubject.subscribe(r => this.lastGameReplay = recorder.asReplay());
+    this.recorder = new GameRecorder(this.game);
+    this.game.gameOverSubject.subscribe(r => this.lastGameReplay = this.recorder!.asReplay());
   }
 
   private startGame() {
@@ -263,5 +265,11 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
 
     return ret;
+  }
+
+  downloadDebug() {
+    if (this.game) {
+      saveAs(new Blob([JSON.stringify(this.recorder!.asReplay())]), `CM-Debug-Replay-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
+    }
   }
 }
