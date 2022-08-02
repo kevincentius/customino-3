@@ -108,6 +108,11 @@
       "name": "garbage-indicator-top-3.png",
       "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/garbage-indicator-top-3.png",
       "folder": ""
+    },
+    {
+      "name": "star.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/star.png",
+      "folder": ""
     }
   ],
   "folders": [],

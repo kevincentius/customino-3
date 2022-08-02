@@ -34,3 +34,14 @@
 .slot-player-name.local-player {
   font-weight: bold;
 }
+
+th {
+  position: sticky;
+  top: 0;
+  background: #000;
+  font-weight: normal;
+}
+
+td {
+  // background: #1325;
+}

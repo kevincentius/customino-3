@@ -1,7 +1,7 @@
 import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
 import { FieldTags } from "@shared/game/engine/model/rule/field-tag";
 import { FieldType } from "@shared/game/engine/model/rule/field-type";
-import { floatRangeValidator, intRangeValidator } from "@shared/game/engine/model/rule/field-validators";
+import { floatRangeValidator } from "@shared/game/engine/model/rule/field-validators";
 
 const fieldPathPrefix = 'gravity.';
 const fieldNamePrefix = 'Gravity: ';

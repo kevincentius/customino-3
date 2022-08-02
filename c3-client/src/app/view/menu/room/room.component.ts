@@ -34,7 +34,8 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
-  private game!: ClientGame;
+  private game?: ClientGame;
+  recorder?: GameRecorder;
 
   showSettings = false;
 
@@ -44,7 +45,8 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   lastGameStats?: { playerInfo: PlayerInfo; stats: PlayerStats; }[];
 
-  displayComboCount = 7;
+  displayComboCount = 5;
+
 
   constructor(
     private roomService: RoomService,
@@ -130,13 +132,13 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
     
     // record game replay
-    const recorder = new GameRecorder(this.game);
-    this.game.gameOverSubject.subscribe(r => this.lastGameReplay = recorder.asReplay());
+    this.recorder = new GameRecorder(this.game);
+    this.game.gameOverSubject.subscribe(r => this.lastGameReplay = this.recorder!.asReplay());
   }
 
   private startGame() {
-    this.game.start();
-    this.mainService.pixi.bindGame(this.game);
+    this.game!.start();
+    this.mainService.pixi.bindGame(this.game!);
     musicService.setVolumeGame();
     this.mainService.gameView = true;
     this.mainService.movePixiContainer(undefined);
@@ -144,7 +146,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   onRecvServerEvent(serverEvent: ServerEvent) {
     if (this.roomId == serverEvent.roomId) {
-      this.game.handleServerEvent(serverEvent);
+      this.game!.handleServerEvent(serverEvent);
     }
   }
 
@@ -156,7 +158,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
 
     // update stats
-    this.lastGameStats = this.game.players.map(player => ({
+    this.lastGameStats = this.game!.players.map(player => ({
       playerInfo: player.playerInfo,
       stats: player.statsTracker.stats,
     }));
@@ -239,7 +241,10 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   // gui binding  
   getLastGameStats(slot: RoomSlotInfo) {
-    return this.game.players.filter(p => p.playerInfo.userId == slot.player.userId).map(p => p.statsTracker.stats);
+    return this.game == null ? null
+      : this.game.players
+        .filter(p => p.playerInfo.userId == slot.player.userId)
+        .map(p => p.statsTracker.stats);
   }
 
   // gui binding
@@ -260,5 +265,11 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
 
     return ret;
+  }
+
+  downloadDebug() {
+    if (this.game) {
+      saveAs(new Blob([JSON.stringify(this.recorder!.asReplay())]), `CM-Debug-Replay-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
 import { GravityRule } from "@shared/game/engine/model/rule/player-rule/gravity-rule";
 import { SonicDropEffectConfig } from "@shared/game/engine/model/rule/player-rule/sonic-drop-effect-config";
+import { StarsRule } from "@shared/game/engine/model/rule/player-rule/stars-rule";
 import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
 
 export interface PlayerRule {
@@ -10,6 +11,8 @@ export interface PlayerRule {
 
   previews: number;
   rotationSystem: RotationSystemType;
+
+  gravity: GravityRule;
 
   // garbage entry
   garbageSpawnDelayTable: number[];
@@ -30,10 +33,10 @@ export interface PlayerRule {
   comboTimerTimeBonusMultiplierTable: number[]; // multiplier is not applied if time bonus is negative (e.g. penalty for not clearing lines)
 
   // attack rule
+  attackSelfIfAlone: boolean;
   multiClearAttackTable: number[];
-
-  gravity: GravityRule;
-
+  stars: StarsRule;
+    
   sonicDropEffect: SonicDropEffectConfig;
 }
 
@@ -64,16 +67,31 @@ export const playerRule: PlayerRule = {
 
   // combo timer
   useComboTimer: true,
-  comboAttackTable: [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+  comboAttackTable: [0, 0, 1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
   comboTimerInitial: 2,
   comboTimerMultiClearBonus: [-0.2, 1, 1.4, 1.7, 2],
   comboTimerSpinBonus: [0, 1.5, 2, 2.5],
   comboTimerTimeBonusMultiplierTable: [1, 0.7, 0.5, 0.3, 0.2, 0.1],
 
-  // chain
-
   // attack rule
+  attackSelfIfAlone: false,
+  
   multiClearAttackTable: [0, 0, 1, 2, 4, 6],
+
+  stars: {
+    useStars: true,
+    multipliers: [1.0, 1.2, 1.5, 2.0, 3.0, 5.0, 7.0],
+    multiplierScalesByProgress: true,
+
+    powerRequired: [25, 35, 45, 65, 100, 200],
+
+    powerDecayPerPiece: true,
+    powerDecayPerPieceRate: [0.1, 0.15, 0.2, 0.25, 0.3, 0.3],
+
+    powerDecay: true,
+    powerDecayRate: [20, 30, 40, 50, 60, 120],
+    powerDecayScalesByProgress: true,
+  },
 
   // graphics
   sonicDropEffect: {
