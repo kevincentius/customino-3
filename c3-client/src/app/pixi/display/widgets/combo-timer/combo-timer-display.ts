@@ -2,8 +2,7 @@ import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { ComboTimer } from "@shared/game/engine/player/combo-timer";
 import { Player } from "@shared/game/engine/player/player";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
-import { SpriteCircleDisplay } from "app/pixi/display/widgets/combo-timer/sprite-circle-display";
-import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
+import { drawArc } from "app/pixi/display/util/arc";
 import { textUtil } from "app/pixi/util/text-util";
 import { Container, Graphics } from "pixi.js";
 
@@ -16,8 +15,6 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
   textContainer = new Container();
   bg: Graphics;
 
-  stars: SpriteCircleDisplay;
-
   layoutWidth: number;
   layoutHeight: number;
 
@@ -28,9 +25,6 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
 
   tint = 0.5;
   flashDuration = 2000;
-
-  spritesheet = new GameSpritesheet();
-  starPosRad = 0.7;
 
   constructor(
     private player: Player,
@@ -61,19 +55,10 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     this.comboTimer.comboStartSubject.subscribe(() => this.comboStartMs = Date.now());
     this.comboTimer.comboIncreasedSubject.subscribe(combo => this.animateCombo(combo));
 
-
-    // stars
-    this.stars = new SpriteCircleDisplay(this.spritesheet.star, this.diameter / 2 * this.starPosRad, 0.4, 20);
-    this.textContainer.addChild(this.stars);
-    this.player.attackRule.starsSubject.subscribe(stars => this.stars.setStars(stars));
-
     this.comboStartMs = Date.now() - gameLoopRule.mspf * (this.player.frame - this.comboTimer.comboStartFrame);
   }
 
   tick(dt: number) {
-    console.log(this.player.attackRule.getStarsProgressFactor());
-    this.stars.tick(dt);
-    
     let s = 0;
     if (this.comboStartMs != null) {
       const msSinceComboStart = Date.now() - this.comboStartMs;
@@ -96,23 +81,15 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     let subseconds = (s / this.period - Math.floor(s / this.period));
 
     // render sub second
-    this.graphics
-      .beginFill(colors[seconds % colors.length])
-      .arc(r, r, r, Math.PI * (-0.5), Math.PI * (-0.5 + subseconds * 2))
-      .lineTo(r, r)
-      .closePath();
+    drawArc(this.graphics, r, r, r, 0, subseconds, colors[seconds % colors.length]);
 
     if (seconds > 0) {
-      this.graphics
-        .beginFill(colors[(seconds - 1) % colors.length])
-        .arc(r, r, r, Math.PI * (-0.5 + subseconds * 2), Math.PI * (1.5))
-        .lineTo(r, r)
-        .closePath();
+      drawArc(this.graphics, r, r, r, subseconds, 1, colors[(seconds - 1) % colors.length])
     }
   }
 
   private updateScale() {
-    const mp = Math.pow(Math.min(1, this.comboTimer.combo / this.player.playerRule.sonicDropEffect.comboCap), 1);
+    const mp = Math.pow(Math.min(1, (this.comboTimer.combo == 0 ? this.comboTimer.lastExpiredCombo : this.comboTimer.combo) / this.player.playerRule.sonicDropEffect.comboCap), 1);
     const textMaxScale = mp * 2;
     const graphicsMaxScale = mp * 1;
     const p = 1 / (5 * (Date.now() - this.lastComboTimestamp) / 1000 + 1);

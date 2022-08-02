@@ -41,6 +41,8 @@ export class BoardDisplay extends Container implements LayoutChild {
   private ghostPieceDisplay: ActivePieceDisplay;
   private overlayDisplay: BoardOverlayDisplay;
 
+  private border = new Graphics();
+
   // reference
   board: Board;
 
@@ -126,6 +128,18 @@ export class BoardDisplay extends Container implements LayoutChild {
       this.shakeBoard(r);
       this.spawnFlashEffect(r);
     });
+
+    // border
+    this.border = new Graphics();
+    this.addChild(this.border);
+    this.border
+      .clear()
+      .lineStyle({
+        width: 1,
+        color: 0xbbbbbb,
+        alpha: 0.5,
+      })
+      .drawRect(this.layout.offsetX + this.garbageIndicatorWidth, this.layout.offsetY, this.layout.innerWidth, this.layout.innerHeight);
   }
 
   onLineClear(e: LineClearEvent): void {

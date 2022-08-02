@@ -77,16 +77,16 @@ export const playerRule: PlayerRule = {
 
   stars: {
     useStars: true,
-    multipliers: [1.0, 1.2, 1.5, 2.0, 3.0, 5.0],
+    multipliers: [1.0, 1.2, 1.5, 2.0, 3.0, 5.0, 7.0],
     multiplierScalesByProgress: true,
 
-    powerRequired: [25, 35, 45, 65, 100],
+    powerRequired: [25, 35, 45, 65, 100, 200],
 
     powerDecayPerPiece: true,
-    powerDecayPerPieceRate: [0.1, 0.15, 0.2, 0.25, 0.3],
+    powerDecayPerPieceRate: [0.1, 0.15, 0.2, 0.25, 0.3, 0.3],
 
     powerDecay: true,
-    powerDecayRate: [20, 30, 40, 50, 60],
+    powerDecayRate: [20, 30, 40, 50, 60, 120],
     powerDecayScalesByProgress: true,
   },
 

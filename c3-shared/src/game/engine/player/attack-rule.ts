@@ -1,4 +1,5 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
+import { StarsRule } from "@shared/game/engine/model/rule/player-rule/stars-rule";
 import { ComboTimer } from "@shared/game/engine/player/combo-timer";
 import { LockPlacementResult } from "@shared/game/engine/player/lock-result";
 import { Player } from "@shared/game/engine/player/player";
@@ -45,7 +46,6 @@ export class AttackRule {
       if (stars.powerDecayScalesByProgress) {
         decayAmount *= this.getStarsProgressFactor();
       }
-      console.log(decayAmount);
       this.starsProgress = Math.max(0, this.starsProgress - decayAmount);
     }
   }
@@ -55,13 +55,7 @@ export class AttackRule {
 
     let totalPowerBeforeStars = 0;
     const stars = this.player.playerRule.stars;
-    const starsProgress = this.getStarsProgressFactor();
-    let starsMultiplier = 1;
-    if (stars.useStars) {
-      starsMultiplier = stars.multiplierScalesByProgress && this.stars < stars.multipliers.length - 2 
-        ? starsProgress * stars.multipliers[this.stars + 1] + (1 - starsProgress) * stars.multipliers[this.stars]
-        : stars.multipliers[this.stars];
-    }
+    let starsMultiplier = this.getStarsMultiplier();
 
     // multi clear
     if (l.clearedLines.length > 0) {
@@ -107,6 +101,18 @@ export class AttackRule {
     }
 
     return ret;
+  }
+
+  getStarsMultiplier() {
+    const stars = this.player.playerRule.stars;
+    const starsProgress = this.getStarsProgressFactor();
+    let starsMultiplier = 1;
+    if (stars.useStars) {
+      starsMultiplier = stars.multiplierScalesByProgress && this.stars < stars.multipliers.length - 1
+        ? starsProgress * stars.multipliers[this.stars + 1] + (1 - starsProgress) * stars.multipliers[this.stars]
+        : stars.multipliers[this.stars];
+    }
+    return starsMultiplier;
   }
 
   private arrCap<T>(arr: T[], index: number) {
