@@ -33,6 +33,7 @@ export interface PlayerRule {
   comboTimerTimeBonusMultiplierTable: number[]; // multiplier is not applied if time bonus is negative (e.g. penalty for not clearing lines)
 
   // attack rule
+  attackSelfIfAlone: boolean;
   multiClearAttackTable: number[];
   stars: StarsRule;
     
@@ -73,6 +74,8 @@ export const playerRule: PlayerRule = {
   comboTimerTimeBonusMultiplierTable: [1, 0.7, 0.5, 0.3, 0.2, 0.1],
 
   // attack rule
+  attackSelfIfAlone: false,
+  
   multiClearAttackTable: [0, 0, 1, 2, 4, 6],
 
   stars: {

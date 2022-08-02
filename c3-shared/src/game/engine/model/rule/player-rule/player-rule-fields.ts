@@ -143,6 +143,22 @@ export const playerRuleFields: PlayerRuleField[] = [
     ],
   },
   {
+    property: 'attackSelfIfAlone',
+    fieldType: FieldType.CHOICE,
+    default: false,
+    choices: [
+      { value: true, label: 'Yes' },
+      { value: false, label: 'No' },
+    ],
+
+    name: 'Attack self if alone',
+    description: 'If enabled, attacks while playing alone is not ignored and the player will receive his own attacks instaed.',
+    tags: [
+      FieldTags.BASIC,
+      FieldTags.ATTACK,
+    ],
+  },
+  {
     property: 'useComboTimer',
     fieldType: FieldType.CHOICE,
     default: true,
