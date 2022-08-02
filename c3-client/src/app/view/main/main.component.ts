@@ -97,4 +97,8 @@ export class MainComponent {
   onSetGameView(gameView: boolean) {
     this.room.setGameView(gameView);
   }
+
+  onDebugClick() {
+    this.room.downloadDebug();
+  }
 }

@@ -31,10 +31,9 @@
 
     <ng-container *ngIf="roomInfo">
       <ng-container *ngIf="!showSettings">
-        <div class="h-flex" style="gap: 40px;">
+        <div class="h-flex" style="gap: 40px; overflow: auto;">
           <div class="v-flex" style="flex-grow: 2; flex-basis: 0; max-width: 1000px;">
-            <div class="section">
-              <div class="section-title">Players</div>
+            <div class="section" style="flex-grow: 1;">
               <div class="section-body">
                 <div class="slots-container">
                   <table width="100%">
@@ -83,7 +82,6 @@
                             {{stats.blockGenerated | number:'1.0-0'}} / {{stats.attackReceived}}
                           </td>
                         </ng-container>
-
                       </tr>
                     </tbody>
                   </table>

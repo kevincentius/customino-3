@@ -4,6 +4,7 @@ import { FieldType } from "@shared/game/engine/model/rule/field-type";
 import { floatRangeValidator, intRangeValidator, listValidator } from "@shared/game/engine/model/rule/field-validators";
 import { gravityRuleFields } from "@shared/game/engine/model/rule/player-rule/gravity-rule-fields";
 import { sonicDropEffectRuleFields } from "@shared/game/engine/model/rule/player-rule/sonic-drop-effect-fields";
+import { starsRuleFields } from "@shared/game/engine/model/rule/player-rule/stars-rule-fields";
 import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
 
 export const playerRuleFields: PlayerRuleField[] = [
@@ -142,6 +143,22 @@ export const playerRuleFields: PlayerRuleField[] = [
     ],
   },
   {
+    property: 'attackSelfIfAlone',
+    fieldType: FieldType.CHOICE,
+    default: false,
+    choices: [
+      { value: true, label: 'Yes' },
+      { value: false, label: 'No' },
+    ],
+
+    name: 'Attack self if alone',
+    description: 'If enabled, attacks while playing alone is not ignored and the player will receive his own attacks instaed.',
+    tags: [
+      FieldTags.BASIC,
+      FieldTags.ATTACK,
+    ],
+  },
+  {
     property: 'useComboTimer',
     fieldType: FieldType.CHOICE,
     default: true,
@@ -234,5 +251,6 @@ export const playerRuleFields: PlayerRuleField[] = [
       FieldTags.ATTACK,
     ],
   },
+  ...starsRuleFields,
   ...sonicDropEffectRuleFields,
 ];

@@ -60,8 +60,10 @@ export class ServerGame extends Game {
     
     if (aliveOpponents.length > 0) {
       return this.r.pick(aliveOpponents);
-    } else {
+    } else if (this.players[attackerIndex].playerRule.attackSelfIfAlone) {
       return attackerIndex;
+    } else {
+      return null;
     }
   }
 }

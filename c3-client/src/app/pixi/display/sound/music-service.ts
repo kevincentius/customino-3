@@ -12,7 +12,6 @@ export class MusicService {
     'corporate-heat.mp3',
     'distressed.mp3',
     'first-quarter.mp3',
-    'sermon-from-the-pit.mp3',
     'street-heat.mp3',
     'the-environment.mp3',
   ];

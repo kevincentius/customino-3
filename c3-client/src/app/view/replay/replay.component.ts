@@ -1,6 +1,6 @@
 import { MainService } from "app/view/main/main.service";
 
-import { Component, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FileDropAreaComponent } from "app/view/common/file-drop-area/file-drop-area.component";
 import { GameReplayer } from "@shared/game/engine/replayer/game-replayer";
 
@@ -10,6 +10,9 @@ import { GameReplayer } from "@shared/game/engine/replayer/game-replayer";
   styleUrls: ['./replay.component.scss']
 })
 export class ReplayComponent {
+
+  @ViewChild('pixiTarget')
+  pixiTarget!: ElementRef<HTMLDivElement>;
 
   @ViewChild('fileDropArea')
   fileDropArea!: FileDropAreaComponent;
@@ -47,6 +50,8 @@ export class ReplayComponent {
     
     this.mainService.pixi.bindGame(this.replayer.game);
     this.mainService.pixiEnabled = true;
+
+    this.mainService.movePixiContainer(this.pixiTarget.nativeElement);
   }
 
   onResumeClick() {

@@ -1,30 +1,28 @@
 import { Player } from "@shared/game/engine/player/player";
-import { RemotePlayer } from "@shared/game/engine/player/remote-player";
 import { BoardDisplay } from "app/pixi/display/board-display";
-import { ComboTimerDisplay } from "app/pixi/display/widgets/combo-timer-display";
+import { ComboTimerDisplay } from "app/pixi/display/widgets/combo-timer/combo-timer-display";
 import { LayoutContainer } from "app/pixi/display/layout/layout-container";
 import { PlayerInfoDisplay } from "app/pixi/display/player-into-display";
 import { PlayerSound } from "app/pixi/display/sound/player-sound";
-import { textUtil } from "app/pixi/util/text-util";
-import { BitmapText } from "pixi.js";
+import { Graphics } from "pixi.js";
 import { PieceQueueDisplay } from "app/pixi/display/widgets/piece-queue/piece-queue-display";
 import { SpeedMeterDisplay } from "app/pixi/display/widgets/speed-meter-display";
 import { LayoutAlignment } from "app/pixi/display/layout/layout-alignment";
+import { StarsMeterDisplay } from "app/pixi/display/widgets/stars-meter.ts/stars-meter-display";
 
 export class PlayerDisplay extends LayoutContainer {
-
-  private debugText: BitmapText = textUtil.create('');
-
   private playerInfoDisplay: PlayerInfoDisplay;
   private board: BoardDisplay;
   private pieceQueue: PieceQueueDisplay;
   private comboTimer?: ComboTimerDisplay;
+  private starsMeter?: StarsMeterDisplay;
   private speedMeter?: SpeedMeterDisplay;
   
   private playerSound: PlayerSound;
 
   private rowLayout = new LayoutContainer();
   private rightColumnLayout = new LayoutContainer(1, 200, undefined, 40, LayoutAlignment.MIDDLE);
+
 
   constructor(
     private player: Player,
@@ -35,8 +33,6 @@ export class PlayerDisplay extends LayoutContainer {
     this.board = new BoardDisplay(this.player);
     this.pieceQueue = new PieceQueueDisplay(this.player, this.board.getMinoSize());
     this.playerSound = new PlayerSound(this.player);
-
-    this.player.gameOverSubject.subscribe(this.updateDebugText.bind(this));
 
     this.addNode(this.playerInfoDisplay);
     this.addNode(this.rowLayout);
@@ -50,21 +46,19 @@ export class PlayerDisplay extends LayoutContainer {
       this.rightColumnLayout.addNode(this.comboTimer);
     }
 
+    if (this.player.playerRule.stars.useStars) {
+      this.starsMeter = new StarsMeterDisplay(this.player, 150);
+      this.rightColumnLayout.addNode(this.starsMeter);
+    }
+
     this.speedMeter = new SpeedMeterDisplay(this.player, 130);
     this.rightColumnLayout.addNode(this.speedMeter);
-
-    // this.addChild(this.debugText);
   }
   
-  private updateDebugText() {
-    this.debugText.text = `${this.player.frame} / ${(this.player as RemotePlayer).lastReceivedFrame} (${(this.player.alive ? 'alive' : 'dead')})`;
-    this.debugText.alpha = this.player.alive ? 1 : 0.5;
-  }
-
   tick(dt: number) {
-    // this.updateDebugText();
     this.board.tick(dt);
-    this.comboTimer?.tick();
+    this.comboTimer?.tick(dt);
+    this.starsMeter?.tick(dt);
     this.speedMeter?.tick();
   }
 }
