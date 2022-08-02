@@ -65,10 +65,11 @@ export class ControlsComponent {
       this.rows[this.editIndex].mappings = this.localSettings.control.keyMap.get(inputKey)!;
       this.userSettingsService.save();
       this.editIndex++;
+      this.editIndex = null;
 
-      if (this.editIndex >= this.rows.length) {
-        this.editIndex = null;
-      }
+      // if (this.editIndex >= this.rows.length) {
+      //   this.editIndex = null;
+      // }
     }
   }
 
