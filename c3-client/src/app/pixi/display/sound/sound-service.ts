@@ -28,7 +28,7 @@ export class SoundService {
       { name: 'die' },
       { name: 'combo', variations: 5 },
       { name: 'high-combo-end' },
-      { name: 'combotimerend', variations: 2 },
+      { name: 'combotimerend' },
       { name: 'hold' },
       { name: 'colorclear' },
       { name: 'perfectclear' },
