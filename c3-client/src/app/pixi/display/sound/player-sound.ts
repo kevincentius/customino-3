@@ -24,8 +24,10 @@ export class PlayerSound {
       // combo timer end
       if (this.player.attackRule.comboTimer) {
         this.player.attackRule.comboTimer.comboEndedSubject.subscribe(combo => {
-          if (combo >= 1) {
-            soundService.play('combotimerend', this.channel);
+          if (combo >= 3) {
+            soundService.play('combotimerend', this.channel, 1);
+          } else if (combo >= 1) {
+            soundService.play('combotimerend', this.channel, 0);
           }
         });
       }
@@ -73,5 +75,10 @@ export class PlayerSound {
         }
       });
     }
+
+    this.player.attackRule.starsSubject.subscribe(e => {
+      console.log('playing stars sound');
+      soundService.play('stars', this.channel);
+    });
   }
 }

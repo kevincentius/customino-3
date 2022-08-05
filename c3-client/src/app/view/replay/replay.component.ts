@@ -49,9 +49,6 @@ export class ReplayComponent {
     this.running = true;
     
     this.mainService.pixi.bindGame(this.replayer.game);
-    this.mainService.pixiEnabled = true;
-
-    this.mainService.movePixiContainer(this.pixiTarget.nativeElement);
   }
 
   onResumeClick() {

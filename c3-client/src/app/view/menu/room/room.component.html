@@ -1,110 +1,98 @@
 
-<div class="v-flex">
-  <app-background></app-background>
+<div class="v-flex main-container" [class.transparent]="enterLeaveTransition.hiddenStyle" *ngIf="enterLeaveTransition.dom && roomInfo">
+  <ng-container *ngIf="!showSettings">
+    <div class="h-flex" style="gap: 40px; overflow: auto;">
 
-  <div class="screen-title-container">
-    <div class="screen-title">
-      <app-menu-button (click)="onBackClick()">arrow_back_ios</app-menu-button>
-      {{roomInfo?.name ?? 'Room'}}
-    </div>
-  </div>
-
-  <div class="v-flex screen-body-container">
-    <ng-container *ngIf="roomInfo">
-      <!-- Buttons -->
-      <div class="gui-button-row">
-        <ng-container *ngIf="!showSettings">
-          <button class="gui-button gui-button-main" [disabled]="isRunning() || !isHost()" (click)="onStartGameClick()">Start game</button>
-          <button *ngIf="lastGameReplay" class="gui-button" (click)="onDownloadLastReplayClick()">Replay</button>
-  
-          <!-- host buttons -->
-          <button class="gui-button" [disabled]="isRunning()" (click)="onSettingsClick()">Room settings</button>
-          
-          <!-- debug buttons -->
-          <ng-container *ngIf="debug">
-            <button *ngIf="lastGameReplay" class="gui-button" (click)="onVerifyLastReplayClick()">Verify replay</button>
-            <button class="gui-button" (click)="onDownloadGameStateClick()">Download debug state</button>
-          </ng-container>
-        </ng-container>
+      <!-- Chat -->
+      <div class="room-section" style="flex-grow: 1; flex-basis: 0;">
+        <div class="h-flex"></div>
       </div>
-    </ng-container>
 
-    <ng-container *ngIf="roomInfo">
-      <ng-container *ngIf="!showSettings">
-        <div class="h-flex" style="gap: 40px; overflow: auto;">
-          <div class="v-flex" style="flex-grow: 2; flex-basis: 0; max-width: 1000px;">
-            <div class="section" style="flex-grow: 1;">
-              <div class="section-body">
-                <div class="slots-container">
-                  <table width="100%">
-                    <thead>
-                      <tr>
-                        <th class="tc-text">Player</th>
-                        <th class="tc-number">Score</th>
-                        <th class="tc-number">BPM</th>
-                        <th class="tc-text-pad">Combos</th>
-                        <th class="tc-number">Attack</th>
-                        <th class="tc-number">APM</th>
-                        <th class="tc-number">Block</th>
-                      </tr>
-                    </thead>
+      <!-- Right Panel (room actions + player list) -->
+      <div class="room-section v-flex" style="flex-grow: 1; flex-basis: 0; max-width: 1000px;">
+        <div style="flex-grow: 1;">
 
-                    <tbody>
-                      <tr *ngFor="let slot of roomInfo.slots" [class.spectator]="!slot.playing">
-                        <td class="tc-text" [class.local-player]="slot.player.sessionId == getSessionId()">
-                          {{slot.player.username}}
-                        </td>
+          <!-- Room actions -->
+          <div class="gui-button-row">
+            <ng-container *ngIf="!showSettings">
+              <button class="gui-button gui-button-main" [disabled]="isRunning() || !isHost()" (click)="onStartGameClick()">Start game</button>
+              <button *ngIf="lastGameReplay" class="gui-button" (click)="onDownloadLastReplayClick()">Replay</button>
 
-                        <td class="tc-number">
-                          {{slot.score}}
-                        </td>
-                        <!-- The following ngFor is only for one element maximum, just used so I can set variable name here -->
-                        <ng-container *ngFor="let stats of getLastGameStats(slot)">
-                          <td class="tc-number">
-                            {{stats.pieces / stats.activeTime * 60 | number:'1.0-0'}}
-                          </td>
+              <!-- host buttons -->
+              <button class="gui-button" [disabled]="isRunning()" (click)="onSettingsClick()">Room settings</button>
+              
+              <!-- debug buttons -->
+              <ng-container *ngIf="debug">
+                <button *ngIf="lastGameReplay" class="gui-button" (click)="onVerifyLastReplayClick()">Verify replay</button>
+                <button class="gui-button" (click)="onDownloadGameStateClick()">Download debug state</button>
+              </ng-container>
+            </ng-container>
+          </div>
+          
+          <!-- Player list -->
+          <div class="slots-container">
+            <table width="100%">
+              <thead>
+                <tr>
+                  <th class="tc-text">Player</th>
+                  <th class="tc-number">Score</th>
+                  <th class="tc-number">BPM</th>
+                  <th class="tc-text-pad">Combos</th>
+                  <th class="tc-number">Attack</th>
+                  <th class="tc-number">APM</th>
+                  <th class="tc-number">Block</th>
+                </tr>
+              </thead>
 
-                          <td class="tc-text-pad">
-                            <ng-container *ngFor="let combo of getCombos(stats)">
-                              {{combo}}
-                            </ng-container>
-                          </td>
+              <tbody>
+                <tr *ngFor="let slot of roomInfo.slots" [class.spectator]="!slot.playing">
+                  <td class="tc-text" [class.local-player]="slot.player.sessionId == getSessionId()">
+                    {{slot.player.username}}
+                  </td>
 
-                          <td class="tc-number">
-                            {{stats.attackGenerated | number:'1.0-0'}}
-                          </td>
+                  <td class="tc-number">
+                    {{slot.score}}
+                  </td>
+                  <!-- The following ngFor is only for one element maximum, just used so I can set variable name here -->
+                  <ng-container *ngFor="let stats of getLastGameStats(slot)">
+                    <td class="tc-number">
+                      {{stats.pieces / stats.activeTime * 60 | number:'1.0-0'}}
+                    </td>
 
-                          <td class="tc-number">
-                            {{stats.attackGenerated / stats.activeTime * 60 | number:'1.0-0'}}
-                          </td>
+                    <td class="tc-text-pad">
+                      <ng-container *ngFor="let combo of getCombos(stats)">
+                        {{combo}}
+                      </ng-container>
+                    </td>
 
-                          <td class="tc-number">
-                            {{stats.blockGenerated | number:'1.0-0'}} / {{stats.attackReceived}}
-                          </td>
-                        </ng-container>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <div>
-                  </div>
-                </div>
-              </div>
+                    <td class="tc-number">
+                      {{stats.attackGenerated | number:'1.0-0'}}
+                    </td>
+
+                    <td class="tc-number">
+                      {{stats.attackGenerated / stats.activeTime * 60 | number:'1.0-0'}}
+                    </td>
+
+                    <td class="tc-number">
+                      {{stats.blockGenerated | number:'1.0-0'}} / {{stats.attackReceived}}
+                    </td>
+                  </ng-container>
+                </tr>
+              </tbody>
+            </table>
+            <div>
             </div>
           </div>
-          
-          <div class="section" style="flex-grow: 1; flex-basis: 0; padding: 0;">
-            <div class="h-flex" #pixiTarget></div>
-          </div>
         </div>
-      </ng-container>
+      </div>
+    </div>
+  </ng-container>
 
-      <app-room-settings
-        *ngIf="showSettings"
-        [currentSettings]="roomInfo.settings"
-        [editMode]="isHost()"
-        (save)="onSaveSettings($event)"
-        (cancel)="onCancelSettings()"
-      ></app-room-settings>
-    </ng-container>
-  </div>
+  <app-room-settings
+    *ngIf="showSettings"
+    [currentSettings]="roomInfo.settings"
+    [editMode]="isHost()"
+    (save)="onSaveSettings($event)"
+    (cancel)="onCancelSettings()"
+  ></app-room-settings>
 </div>
