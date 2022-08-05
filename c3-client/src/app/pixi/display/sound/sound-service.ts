@@ -28,11 +28,12 @@ export class SoundService {
       { name: 'die' },
       { name: 'combo', variations: 5 },
       { name: 'high-combo-end' },
-      { name: 'combotimerend' },
+      { name: 'combotimerend', variations: 2 },
       { name: 'hold' },
       { name: 'colorclear' },
       { name: 'perfectclear' },
       { name: 'combolock' },
+      { name: 'stars' },
     ];
 
     for (let channel = 0; channel < 2; channel++) {

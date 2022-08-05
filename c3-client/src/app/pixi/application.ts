@@ -27,8 +27,8 @@ export class PixiApplication {
 
     this.app = new Application({
       view: this.canvas,
-      // resizeTo: this.canvas,
-      backgroundColor: 0x000000,
+      // resizeTo: window,
+      backgroundColor: 0x000022,
 
       antialias: true,
       autoDensity: true, // !!!
@@ -47,6 +47,9 @@ export class PixiApplication {
     });
 
     this.userSettingsService.settingsChangedSubject.subscribe(localSettings => this.updateKeyBindings(localSettings.control));
+
+    window.onresize = () => this.onResize();
+    this.onResize();
   }
 
   public updateKeyBindings(c: ControlSettings) {
@@ -85,9 +88,14 @@ export class PixiApplication {
     }
     this.gameDisplay = new GameDisplay(game);
     this.app.stage.addChild(this.gameDisplay);
+    
+    this.onResize();
   }
 
-  onResize(width: number, height: number) {
+  onResize() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
     this.app.renderer.resize(width, height);
 
     if (this.gameDisplay) {

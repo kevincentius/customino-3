@@ -44,8 +44,6 @@ export class MainComponent {
   screen = MainScreen.PRELOADER;
   initialized = false;
 
-  pixiPos: Rect;
-
   // icon bar
   prevScreen!: MainScreen;
 
@@ -54,8 +52,6 @@ export class MainComponent {
     private lobbyService: LobbyService,
     private route: ActivatedRoute,
   ) {
-    this.pixiPos = this.mainService.pixiPos;
-
     this.openScreen(MainScreen.PRELOADER);
 
     this.route.params.subscribe(params => {
@@ -74,8 +70,6 @@ export class MainComponent {
   onEnterRoom(roomId: number) {
     this.screen = MainScreen.ROOM;
     this.room.show(roomId);
-
-    this.mainService.pixiEnabled = true;
   }
 
   openScreen(screen: MainScreen) {
@@ -94,8 +88,8 @@ export class MainComponent {
 
 
   // icon bar
-  onSetGameView(gameView: boolean) {
-    this.room.setGameView(gameView);
+  onLeaveRoom() {
+    this.room.onBackClick();
   }
 
   onDebugClick() {
