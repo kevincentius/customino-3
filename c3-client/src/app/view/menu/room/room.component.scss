@@ -1,4 +1,26 @@
 
+.main-container {
+  padding: 40px;
+  padding-right: 80px;
+  box-sizing: border-box;
+  backdrop-filter: blur(8px);
+
+  opacity: 1;
+
+  transition: 250ms;
+  
+  &.transparent {
+    transition: 250ms;
+    opacity: 0;
+  }
+}
+
+.room-section {
+  background: #000a;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
 .slots-container {
   font-size: 24px;
 

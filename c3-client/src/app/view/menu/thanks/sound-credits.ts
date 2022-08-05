@@ -97,5 +97,12 @@ export const soundCredits: CreditGroup =
       url: 'https://freesound.org/people/Joao_Janz/sounds/478336/',
       note: 'combos',
     },
+    {
+      name: 'Coin flip.m4a',
+      author: 'eZZin',
+      license: 'CC0 1.0',
+      url: 'https://freesound.org/people/eZZin/sounds/545857/',
+      note: 'stars',
+    }
   ],
 };

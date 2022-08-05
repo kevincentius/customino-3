@@ -146,7 +146,7 @@ export class Room {
           this.lastGameReplay = recorder.asReplay();
         });
       }
-
+      
       this.game.start();
     }
   }

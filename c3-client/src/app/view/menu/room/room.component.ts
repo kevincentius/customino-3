@@ -1,6 +1,5 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ClientGame } from '@shared/game/engine/game/client-game';
-import { GameResult } from '@shared/game/engine/game/game-result';
 import { LocalPlayer } from '@shared/game/engine/player/local-player';
 import { GameRecorder } from '@shared/game/engine/recorder/game-recorder';
 import { GameReplay } from '@shared/game/engine/recorder/game-replay';
@@ -19,6 +18,7 @@ import { musicService } from 'app/pixi/display/sound/music-service';
 import { PlayerInfo } from '@shared/game/engine/player/player-info';
 import { PlayerStats } from '@shared/game/engine/player/stats/player-stats';
 import { RoomSlotInfo } from '@shared/model/room/room-slot-info';
+import { EnterLeaveTransition } from 'app/view/util/enter-leave-transition';
 
 @Component({
   selector: 'app-room',
@@ -41,20 +41,21 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   playerRule: PlayerRule = JSON.parse(JSON.stringify(playerRule));
   
-  @ViewChild('pixiTarget') private pixiTarget!: ElementRef<HTMLDivElement>;
-
   lastGameStats?: { playerInfo: PlayerInfo; stats: PlayerStats; }[];
 
   displayComboCount = 5;
 
+  enterLeaveTransition = new EnterLeaveTransition(250);
 
   constructor(
     private roomService: RoomService,
-    private mainService: MainService,
+    public mainService: MainService,
   ) {
     window!.onkeydown = (ev: KeyboardEvent) => {
       if (ev.key == 'F2' && !(this.game && this.game.running)) {
         this.onStartGameClick();
+      } else if (ev.key == '`' && this.game) {
+        this.setHideGui(this.enterLeaveTransition.state);
       }
     };
   }
@@ -81,9 +82,15 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
+  setHideGui(hideGui: boolean) {
+    this.enterLeaveTransition.setState(!hideGui);
+  }
+
   async show(roomId: number) {
     this.showSettings = false;
     this.roomId = roomId;
+    this.lastGameStats = undefined;
+    this.roomInfo = undefined!;
     this.roomInfo = (await this.roomService.getRoomInfo(roomId))!;
     if (this.roomInfo.gameState?.running) {
       const game = new ClientGame(this.roomInfo.gameState.startGameData, undefined);
@@ -91,7 +98,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.game = game;
       this.startGame();
     } else {
-      this.repositionPixi();
+      this.setHideGui(false);
     }
   }
 
@@ -103,6 +110,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     await this.roomService.leave();
     if (this.game) {
       this.game.destroy();
+      this.game = undefined;
     }
     this.mainService.openScreen(MainScreen.LOBBY);
   }
@@ -140,8 +148,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.game!.start();
     this.mainService.pixi.bindGame(this.game!);
     musicService.setVolumeGame();
-    this.mainService.gameView = true;
-    this.mainService.movePixiContainer(undefined);
+    this.setHideGui(true);
   }
 
   onRecvServerEvent(serverEvent: ServerEvent) {
@@ -152,9 +159,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   async onRecvGameOver(roomInfo: RoomInfo) {
     musicService.setVolumeMenu();
-    this.mainService.gameView = false;
     this.mainService.pixi.keyboard.enabled = false;
-    this.mainService.animatePixiContainer(this.pixiTarget.nativeElement);
 
 
     // update stats
@@ -164,15 +169,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     }));
 
     this.roomInfo = roomInfo;
-  }
 
-  setGameView(gameView: boolean) {
-    this.mainService.gameView = gameView;
-    if (gameView) {
-      this.mainService.movePixiContainer(undefined);
-    } else {
-      this.mainService.animatePixiContainer(this.pixiTarget.nativeElement);
-    }
+    this.setHideGui(false);
   }
 
   onLocalPlayerDeath() {
@@ -224,14 +222,6 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   onCancelSettings() {
     this.showSettings = false;
-    
-    this.repositionPixi();
-  }
-
-  private repositionPixi() {
-    setTimeout(() => {
-      this.mainService.movePixiContainer(this.pixiTarget.nativeElement);
-    });
   }
 
   onSaveSettings(settings: RoomSettings) {
@@ -259,9 +249,9 @@ export class RoomComponent implements OnInit, OnDestroy {
       for (let i = 0; i < combos.times; i++) {
         ret.push(combos.combo);
 
-        if (ret.length >= this.displayComboCount) { break };
+        if (ret.length >= this.displayComboCount) { break }
       }
-      if (ret.length >= this.displayComboCount) { break };
+      if (ret.length >= this.displayComboCount) { break }
     }
 
     return ret;
