@@ -25,6 +25,7 @@ import { PlayerStats } from "@shared/game/engine/player/stats/player-stats";
 
 export abstract class Player {
   // event emitters
+  gameOverCheckSubject = new Subject<void>(); // fired when global game over needs to be checked
   gameOverSubject = new Subject<PlayerStats>();
   gameEventSubject = new Subject<GameEvent>();
   pieceLockSubject = new Subject<LockResult>();
@@ -178,7 +179,12 @@ export abstract class Player {
     if (this.alive) {
       this.alive = false;
       this.gameOverSubject.next(this.statsTracker.stats);
+      this.gameOverCheckSubject.next();
     }
+  }
+
+  win() {
+    this.gameOverSubject.next(this.statsTracker.stats);
   }
 
   canMove(move: InputKey) {

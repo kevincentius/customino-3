@@ -88,11 +88,14 @@
     </div>
   </ng-container>
 
-  <app-room-settings
-    *ngIf="showSettings"
-    [currentSettings]="roomInfo.settings"
-    [editMode]="isHost()"
-    (save)="onSaveSettings($event)"
-    (cancel)="onCancelSettings()"
-  ></app-room-settings>
+  <ng-container *ngIf="showSettings">
+    <div class="v-flex room-section">
+      <app-room-settings
+        [currentSettings]="roomInfo.settings"
+        [editMode]="isHost()"
+        (save)="onSaveSettings($event)"
+        (cancel)="onCancelSettings()"
+      ></app-room-settings>
+    </div>
+  </ng-container>
 </div>

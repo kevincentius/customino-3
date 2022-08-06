@@ -56,6 +56,8 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.onStartGameClick();
       } else if (ev.key == '`' && this.game) {
         this.setHideGui(this.enterLeaveTransition.state);
+      } else if (ev.key == 'F8') {
+        this.mainService.pixi.togglePerformanceDisplay();
       }
     };
   }

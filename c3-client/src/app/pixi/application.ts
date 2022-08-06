@@ -5,6 +5,8 @@ import { GameDisplay } from "app/pixi/display/game-display";
 import { UserSettingsService } from "app/service/user-settings/user-settings.service";
 import { ControlSettings } from "app/service/user-settings/control-settings";
 import { ClientGame } from "@shared/game/engine/game/client-game";
+import { RunningTracker } from "app/pixi/benchmark/running-tracker";
+import { PerformanceTracker } from "app/pixi/benchmark/performance-tracker";
 
 export let resources: Partial<Record<string, LoaderResource>>;
 
@@ -19,6 +21,9 @@ export class PixiApplication {
 
   keyboard: Keyboard = new Keyboard();
 
+  performanceTracker = new PerformanceTracker();
+  showPerformance = false;
+
   constructor(
     private canvas: HTMLCanvasElement,
     private userSettingsService: UserSettingsService,
@@ -32,7 +37,7 @@ export class PixiApplication {
 
       antialias: true,
       autoDensity: true, // !!!
-      resolution: 2,
+      resolution: 1,
     });
 
     this.loadResources();
@@ -40,10 +45,13 @@ export class PixiApplication {
     this.app.ticker.add(() => {
       let dt = this.app.ticker.deltaMS;
 
+      const microSecs = window.performance.now();
       if (this.gameDisplay) {
         this.gameDisplay.tick(dt);
         this.keyboard.tick(dt);
       }
+      const logicTickDuration = (window.performance.now() - microSecs) / 1000;
+      this.performanceTracker.tick(dt, logicTickDuration);
     });
 
     this.userSettingsService.settingsChangedSubject.subscribe(localSettings => this.updateKeyBindings(localSettings.control));
@@ -89,7 +97,22 @@ export class PixiApplication {
     this.gameDisplay = new GameDisplay(game);
     this.app.stage.addChild(this.gameDisplay);
     
+    // bring to front
+    if (this.showPerformance) {
+      this.app.stage.removeChild(this.performanceTracker);
+      this.app.stage.addChild(this.performanceTracker);
+    }
+
     this.onResize();
+  }
+
+  togglePerformanceDisplay() {
+    this.showPerformance = !this.showPerformance;
+    if (this.showPerformance) {
+      this.app.stage.addChild(this.performanceTracker);
+    } else {
+      this.app.stage.removeChild(this.performanceTracker);
+    }
   }
 
   onResize() {
