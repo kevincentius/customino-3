@@ -10,6 +10,7 @@
   ATTACK='attack',
   DEFENSE='defense',
   VISUAL='visual',
+  DEBUG='debug',
 
   // by granular topic
   GRAVITY='gravity',

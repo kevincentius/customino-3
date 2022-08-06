@@ -25,7 +25,7 @@ export abstract class Game {
   init(startGameData: StartGameData) {
     this.startGameData = startGameData;
     this.players = this.createPlayers(startGameData);
-    this.players.forEach(player => player.gameOverSubject.subscribe(this.checkGameOver.bind(this)));
+    this.players.forEach(player => player.gameOverCheckSubject.subscribe(this.checkGameOver.bind(this)));
   }
   
   start() {
@@ -68,6 +68,7 @@ export abstract class Game {
           }
         });
 
+      this.players.filter(p => p.alive).forEach(p => p.win());
       this.gameOverSubject.next({ players: playerResults });
     }
   }

@@ -20,10 +20,12 @@ export class GameDisplay extends Container {
     this.removeChildren();
     
     this.game.players.forEach((player, index) => {
-      const playerDisplay = new PlayerDisplay(player);
-      this.players.push(playerDisplay);
-      this.addChild(playerDisplay);
-      playerDisplay.updateLayout();
+        for (let i = 0; i < player.playerRule.playerDisplayDupes; i++) {
+        const playerDisplay = new PlayerDisplay(player);
+        this.players.push(playerDisplay);
+        this.addChild(playerDisplay);
+        playerDisplay.updateLayout();
+      }
     });
   }
 

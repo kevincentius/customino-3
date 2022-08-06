@@ -38,6 +38,9 @@ export interface PlayerRule {
   stars: StarsRule;
     
   sonicDropEffect: SonicDropEffectConfig;
+
+  // debug
+  playerDisplayDupes: number;
 }
 
 export const playerRule: PlayerRule = {
@@ -111,7 +114,9 @@ export const playerRule: PlayerRule = {
     comboBrightnessMultiplier: 4,
     comboDurationMultiplier: 2,
     comboParticleCountMultiplier: 2,
-  }
+  },
+
+  playerDisplayDupes: 1,
 }
 
 export function getField(rule: any, field: PlayerRuleField) {

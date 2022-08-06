@@ -253,4 +253,17 @@ export const playerRuleFields: PlayerRuleField[] = [
   },
   ...starsRuleFields,
   ...sonicDropEffectRuleFields,
+  {
+    property: 'playerDisplayDupes',
+    fieldType: FieldType.NUMBER_SCROLL,
+    default: 1,
+    validators: [ intRangeValidator(1, 1000) ],
+
+    name: 'Duplicate player displays',
+    description: 'Enables disco mode, i. e. displaying each player on multiple board copies (for graphics performance testing).',
+    tags: [
+      FieldTags.ALL,
+      FieldTags.DEBUG,
+    ]
+  }
 ];

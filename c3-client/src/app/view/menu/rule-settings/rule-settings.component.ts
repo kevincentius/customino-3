@@ -55,6 +55,10 @@ const categoryDatas: RuleCategoryData[] = [
     tag: FieldTags.DEFENSE,
   },
   {
+    name: 'Debug',
+    tag: FieldTags.DEBUG,
+  },
+  {
     name: 'Others',
   }
 ];
