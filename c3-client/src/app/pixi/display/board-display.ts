@@ -183,6 +183,8 @@ export class BoardDisplay extends Container implements LayoutChild {
 
     this.shaker.tick();
     this.effectContainer.tick(dt);
+
+    this.overlayDisplay.tick(dt);
   }
 
   private tickChorus(dt: number) {

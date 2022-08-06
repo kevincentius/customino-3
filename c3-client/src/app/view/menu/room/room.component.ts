@@ -172,7 +172,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
     this.roomInfo = roomInfo;
 
-    this.setHideGui(false);
+    setTimeout(() => this.setHideGui(false), 500);
   }
 
   onLocalPlayerDeath() {
