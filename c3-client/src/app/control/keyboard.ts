@@ -10,7 +10,7 @@ export enum InputState {
 export class Keyboard {
 
   // State
-  public enabled = false;
+  public state = InputState.DISABLED;
 
   private keyMap = new Map<string, Control>();
   private moveMap = new Map<InputKey, Control>();
@@ -36,8 +36,6 @@ export class Keyboard {
     this.player = player;
 
     this.moveMap.forEach((control, key) => control.down = false);
-
-    this.enabled = false;
   }
 
   unbindAllKeys() {
@@ -53,7 +51,7 @@ export class Keyboard {
 
   // Event Handling
   onKeyDown(e: KeyboardEvent) {
-    if (!this.enabled || e.repeat)
+    if (this.state == InputState.DISABLED || e.repeat)
       return;
 
     // Ensure key event only affects game
@@ -82,7 +80,7 @@ export class Keyboard {
   }
 
   onKeyUp(e: KeyboardEvent) {
-    if (!this.enabled || e.repeat)
+    if (this.state == InputState.DISABLED || e.repeat)
       return;
 
     // Ensure Key event doesn't do anything weird
@@ -129,7 +127,7 @@ export class Keyboard {
   }
 
   private tryMove(key: InputKey) {
-    if (this.player.isRunning()) {
+    if (this.player.isRunning() && this.state == InputState.ENABLED) {
       (this.player as LocalPlayer).handleInput(key);
       return true;
     } else {

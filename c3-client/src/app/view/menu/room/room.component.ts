@@ -19,6 +19,7 @@ import { PlayerInfo } from '@shared/game/engine/player/player-info';
 import { PlayerStats } from '@shared/game/engine/player/stats/player-stats';
 import { RoomSlotInfo } from '@shared/model/room/room-slot-info';
 import { EnterLeaveTransition } from 'app/view/util/enter-leave-transition';
+import { InputState } from 'app/control/keyboard';
 
 @Component({
   selector: 'app-room',
@@ -138,8 +139,8 @@ export class RoomComponent implements OnInit, OnDestroy {
       localPlayer.eventsSubject.subscribe(clientEvent => this.roomService.flushGameEvents(clientEvent));
       localPlayer.gameOverSubject.subscribe(() => this.onLocalPlayerDeath());
       this.mainService.pixi.keyboard.bindToPlayer(localPlayer);
-      this.mainService.pixi.keyboard.enabled = false;
-      this.game.clockStartSubject.subscribe(() => this.mainService.pixi.keyboard.enabled = true);
+      this.mainService.pixi.keyboard.state = InputState.PRECLOCK;
+      this.game.clockStartSubject.subscribe(() => this.mainService.pixi.keyboard.state = InputState.ENABLED);
     }
     
     // record game replay
@@ -162,8 +163,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   async onRecvGameOver(roomInfo: RoomInfo) {
     musicService.setVolumeMenu();
-    this.mainService.pixi.keyboard.enabled = false;
-
+    this.mainService.pixi.keyboard.state = InputState.DISABLED;
 
     // update stats
     this.lastGameStats = this.game!.players.map(player => ({
@@ -177,7 +177,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   onLocalPlayerDeath() {
-    this.mainService.pixi.keyboard.enabled = false;
+    this.mainService.pixi.keyboard.state = InputState.DISABLED;
   }
 
   async onDownloadLastReplayClick() {
