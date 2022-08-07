@@ -138,7 +138,8 @@ export class RoomComponent implements OnInit, OnDestroy {
       localPlayer.eventsSubject.subscribe(clientEvent => this.roomService.flushGameEvents(clientEvent));
       localPlayer.gameOverSubject.subscribe(() => this.onLocalPlayerDeath());
       this.mainService.pixi.keyboard.bindToPlayer(localPlayer);
-      this.mainService.pixi.keyboard.enabled = true;
+      this.mainService.pixi.keyboard.enabled = false;
+      this.game.clockStartSubject.subscribe(() => this.mainService.pixi.keyboard.enabled = true);
     }
     
     // record game replay

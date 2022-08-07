@@ -79,6 +79,20 @@ export const playerRuleFields: PlayerRuleField[] = [
   },
   ...gravityRuleFields,
   {
+    property: 'countdownMs',
+    fieldType: FieldType.NUMBER_SCROLL,
+    default: 3250,
+    stepSize: 250,
+    validators: [ intRangeValidator(0, 10000) ],
+
+    name: 'Piece previews',
+    description: 'The number of next incoming pieces displayed.',
+    tags: [
+      FieldTags.BASIC,
+      FieldTags.GENERAL,
+    ],
+  },
+  {
     property: 'garbageSpawnDelayTable',
     fieldType: FieldType.NUMBER_LIST,
     default: [0, 1],

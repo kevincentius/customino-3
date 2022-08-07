@@ -13,10 +13,11 @@ export abstract class Game {
   running = false;
   startGameData!: StartGameData;
 
-  protected startMs!: number;
+  clockStartMs!: number;
 
   // event emitters
   gameStartSubject = new Subject<void>();
+  clockStartSubject = new Subject<void>();
   gameOverSubject = new Subject<GameResult>();
 
   abstract createPlayers(startGameData: StartGameData): Player[];
@@ -31,7 +32,9 @@ export abstract class Game {
   start() {
     this.running = true;
 
-    this.startMs = Date.now();
+    const countdownMs = this.players[0].playerRule.countdownMs;
+    this.clockStartMs = Date.now() + countdownMs;
+    setTimeout(() => this.clockStartSubject.next(), countdownMs);
 
     this.gameStartSubject.next();
   }
@@ -75,6 +78,6 @@ export abstract class Game {
 
   /** The minimum frame number according to maxDelay. If the game is behind this frame number, it should try to catch up by doing updates faster. */
   getTargetMinFrame() {
-    return Math.floor((Date.now() - this.startMs - gameLoopRule.maxDelay) / gameLoopRule.mspf);
+    return Math.floor((Date.now() - this.clockStartMs - gameLoopRule.maxDelay) / gameLoopRule.mspf);
   }
 }

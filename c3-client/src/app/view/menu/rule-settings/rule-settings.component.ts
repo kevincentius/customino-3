@@ -93,7 +93,7 @@ export class RuleSettingsComponent implements OnInit {
   displayedRule!: any;
   viewMode = viewModes[0];
   categories = categories;
-  groupByCategory = false;
+  groupByCategory = true;
   selectedPreset?: RulePreset = rulePresets[0];
 
   constructor() { }

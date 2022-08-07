@@ -32,6 +32,8 @@ export class Keyboard {
     this.player = player;
 
     this.moveMap.forEach((control, key) => control.down = false);
+
+    this.enabled = false;
   }
 
   unbindAllKeys() {
@@ -52,7 +54,6 @@ export class Keyboard {
 
     // Ensure key event only affects game
     e.preventDefault();
-
 
     // Check what control the key corresponds to
     const control = this.keyMap.get(e.code);

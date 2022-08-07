@@ -103,6 +103,13 @@ export const soundCredits: CreditGroup =
       license: 'CC0 1.0',
       url: 'https://freesound.org/people/eZZin/sounds/545857/',
       note: 'stars',
+    },
+    {
+      name: 'Drip Echo',
+      author: 'SpiceProgram',
+      license: 'CC BY 3.0',
+      url: 'https://freesound.org/people/SpiceProgram/sounds/399191/',
+      note: 'countdown',
     }
   ],
 };

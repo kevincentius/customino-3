@@ -29,7 +29,7 @@ export const starsRuleFields: PlayerRuleField[] = [
   {
     property: 'multipliers',
     fieldType: FieldType.NUMBER_LIST,
-    default: [1.0, 1.2, 1.4, 1.6, 1.8, 2.0],
+    default: [1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3],
     stepSize: 0.1,
     decimalPlaces: 1,
     validators: [ listValidator(floatRangeValidator(0, 10)) ],
@@ -59,7 +59,7 @@ export const starsRuleFields: PlayerRuleField[] = [
   {
     property: 'powerRequired',
     fieldType: FieldType.NUMBER_LIST,
-    default: [25, 50, 75, 100, 125],
+    default: [25, 35, 50, 70, 100, 200],
     stepSize: 5,
     validators: [ listValidator(intRangeValidator(5, 1000)) ],
     startIndex: 0,
@@ -88,7 +88,7 @@ export const starsRuleFields: PlayerRuleField[] = [
   {
     property: 'powerDecayPerPieceRate',
     fieldType: FieldType.NUMBER_LIST,
-    default: [0.1, 0.15, 0.2, 0.25, 0.3],
+    default: [0.1, 0.15, 0.2, 0.25, 0.3, 0.3],
     decimalPlaces: 2,
     stepSize: 0.01,
     validators: [ listValidator(floatRangeValidator(0, 3)) ],
@@ -118,7 +118,7 @@ export const starsRuleFields: PlayerRuleField[] = [
   {
     property: 'powerDecayRate',
     fieldType: FieldType.NUMBER_LIST,
-    default: [20, 30, 40, 50, 60],
+    default: [20, 30, 40, 50, 60, 90],
     stepSize: 5,
     validators: [ listValidator(intRangeValidator(5, 1000)) ],
     startIndex: 0,
