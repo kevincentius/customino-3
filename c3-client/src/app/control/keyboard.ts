@@ -3,6 +3,10 @@ import { Player } from "@shared/game/engine/player/player";
 import { InputKey } from "@shared/game/network/model/input-key";
 import { Control } from "app/control/control";
 
+export enum InputState {
+  DISABLED, PRECLOCK, ENABLED,
+}
+
 export class Keyboard {
 
   // State
