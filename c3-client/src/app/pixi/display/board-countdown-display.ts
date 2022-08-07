@@ -1,5 +1,6 @@
 import { CountEffect } from "app/pixi/display/effects/count-effect";
 import { EffectContainer } from "app/pixi/display/effects/effect-container";
+import { LineWaveEffect } from "app/pixi/display/effects/line-wave-effect";
 import { soundService } from "app/pixi/display/sound/sound-service";
 import { BoardLayout } from "app/pixi/layout/board-layout";
 import { Container } from "pixi.js";
@@ -31,6 +32,17 @@ export class BoardCountdownDisplay extends Container {
     super();
     
     this.lastCount = Math.ceil((this.clockStartMs - Date.now()) / this.config.countInterval);
+    
+    const effect = new LineWaveEffect(
+      this.layout.innerWidth,
+      this.layout.innerHeight,
+      this.layout.minoSize * 4,
+      this.clockStartMs,
+      2000,
+      2,
+    );
+    effect.alpha = 0.1;
+    this.effectContainer.addEffect(effect);
   }
 
   tick(dt: number) {

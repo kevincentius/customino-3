@@ -60,7 +60,7 @@ export const playerRule: PlayerRule = {
     lockDelay: 0.5,
   },
 
-  countdownMs: 3250,
+  countdownMs: 2250,
 
   // garbage entry
   garbageSpawnDelayTable: [0, 1],

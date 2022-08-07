@@ -81,12 +81,12 @@ export const playerRuleFields: PlayerRuleField[] = [
   {
     property: 'countdownMs',
     fieldType: FieldType.NUMBER_SCROLL,
-    default: 3250,
-    stepSize: 250,
+    default: 2250,
+    stepSize: 1000,
     validators: [ intRangeValidator(0, 10000) ],
 
-    name: 'Piece previews',
-    description: 'The number of next incoming pieces displayed.',
+    name: 'Countdown (milliseconds)',
+    description: 'The duration of the countdown at the beginning of a round.',
     tags: [
       FieldTags.BASIC,
       FieldTags.GENERAL,
