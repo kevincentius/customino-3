@@ -1,12 +1,16 @@
+import { DisplacementFilter } from "@pixi/filter-displacement";
 import { Effect } from "app/pixi/display/effects/effect";
+import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { textureUtil } from "app/pixi/util/texture-util";
 import { Container, Sprite } from "pixi.js";;
 
 export class LineWaveEffect extends Container implements Effect {
   
   private sprite: Sprite;
+  // private displacementMapSprite: Sprite;
 
   constructor(
+    private spritesheet: GameSpritesheet,
     private bgWidth: number,
     private bgHeight: number,
     private waveHeight: number,
@@ -21,7 +25,12 @@ export class LineWaveEffect extends Container implements Effect {
       { offset: 1, color: '#fff0', },
     ]));
 
-    // this.filters = [ new DisplacementFilter()) ]
+    // this.displacementMapSprite = new Sprite(this.spritesheet.noise);
+    // this.displacementMapSprite.scale.set(10);
+    // // this.displacementMapSprite.visible = false;
+    // this.addChild(this.displacementMapSprite);
+    
+    // this.filters = [ new DisplacementFilter(this.displacementMapSprite, 1) ]
 
     this.sprite.scale.set(this.bgWidth / this.sprite.texture.width, this.waveHeight / this.sprite.texture.height);
     this.sprite.position.set(0, this.bgHeight + this.waveHeight);

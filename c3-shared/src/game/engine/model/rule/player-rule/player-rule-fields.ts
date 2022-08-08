@@ -81,7 +81,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   {
     property: 'countdownMs',
     fieldType: FieldType.NUMBER_SCROLL,
-    default: 2250,
+    default: 3250,
     stepSize: 1000,
     validators: [ intRangeValidator(0, 10000) ],
 

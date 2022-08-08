@@ -3,6 +3,7 @@ import { EffectContainer } from "app/pixi/display/effects/effect-container";
 import { LineWaveEffect } from "app/pixi/display/effects/line-wave-effect";
 import { soundService } from "app/pixi/display/sound/sound-service";
 import { BoardLayout } from "app/pixi/layout/board-layout";
+import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { Container } from "pixi.js";
 import { Subject } from "rxjs";
 
@@ -24,6 +25,8 @@ export class BoardCountdownDisplay extends Container {
     countExitEasing: 10,
   }
 
+  spritesheet = new GameSpritesheet();
+
   constructor(
     private layout: BoardLayout,
     private clockStartMs: number,
@@ -34,11 +37,13 @@ export class BoardCountdownDisplay extends Container {
     this.lastCount = Math.ceil((this.clockStartMs - Date.now()) / this.config.countInterval);
     
     const effect = new LineWaveEffect(
+      this.spritesheet,
       this.layout.innerWidth,
       this.layout.innerHeight,
-      this.layout.minoSize * 4,
+      // this.layout.minoSize * 4,
+      this.layout.innerHeight,
       this.clockStartMs,
-      2000,
+      3000,
       2,
     );
     effect.alpha = 0.1;
