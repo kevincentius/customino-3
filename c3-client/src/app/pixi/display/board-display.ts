@@ -12,6 +12,7 @@ import { Shaker } from "app/pixi/display/effects/shaker";
 import { LockResult } from "@shared/game/engine/player/lock-result";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { MinoFlashEffect } from "app/pixi/display/effects/mino-flash-effect";
+import { BoardCountdownDisplay } from "app/pixi/display/board-countdown-display";
 
 export class BoardDisplay extends Container implements LayoutChild {
 
@@ -40,6 +41,7 @@ export class BoardDisplay extends Container implements LayoutChild {
   private activePieceDisplay: ActivePieceDisplay;
   private ghostPieceDisplay: ActivePieceDisplay;
   private overlayDisplay: BoardOverlayDisplay;
+  countdownDisplay: BoardCountdownDisplay;
 
   private border = new Graphics();
 
@@ -51,6 +53,7 @@ export class BoardDisplay extends Container implements LayoutChild {
 
   constructor(
     private player: Player,
+    private clockStartMs: number,
   ) {
     super();
 
@@ -119,6 +122,9 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.overlayDisplay = new BoardOverlayDisplay(this.layoutWidth, this.layoutHeight);
     this.addChild(this.overlayDisplay);
 
+    // countdown
+    this.countdownDisplay = new BoardCountdownDisplay(this.layout, this.clockStartMs, this.effectContainer);
+
     this.board.placeTileSubject.subscribe(e => this.minoGridDisplay.placeTile(e));
     this.board.lineClearSubject.subscribe(e => this.onLineClear(e));
     this.board.addRowsSubject.subscribe(e => this.minoGridDisplay.onRowsAdded(e));
@@ -183,6 +189,9 @@ export class BoardDisplay extends Container implements LayoutChild {
 
     this.shaker.tick();
     this.effectContainer.tick(dt);
+
+    this.overlayDisplay.tick(dt);
+    this.countdownDisplay.tick(dt);
   }
 
   private tickChorus(dt: number) {
