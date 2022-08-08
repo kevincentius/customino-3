@@ -14,6 +14,8 @@ export interface PlayerRule {
 
   gravity: GravityRule;
 
+  countdownMs: number;
+
   // garbage entry
   garbageSpawnDelayTable: number[];
   garbageSpawnRate: number;
@@ -58,6 +60,8 @@ export const playerRule: PlayerRule = {
     lockDelay: 0.5,
   },
 
+  countdownMs: 3250,
+
   // garbage entry
   garbageSpawnDelayTable: [0, 1],
   garbageSpawnRate: 1,
@@ -83,16 +87,16 @@ export const playerRule: PlayerRule = {
 
   stars: {
     useStars: true,
-    multipliers: [1.0, 1.2, 1.5, 2.0, 3.0, 5.0, 7.0],
+    multipliers: [1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3],
     multiplierScalesByProgress: true,
 
-    powerRequired: [25, 35, 45, 65, 100, 200],
+    powerRequired: [25, 35, 50, 70, 100, 200],
 
     powerDecayPerPiece: true,
     powerDecayPerPieceRate: [0.1, 0.15, 0.2, 0.25, 0.3, 0.3],
 
     powerDecay: true,
-    powerDecayRate: [20, 30, 40, 50, 60, 120],
+    powerDecayRate: [20, 30, 40, 50, 60, 90],
     powerDecayScalesByProgress: true,
   },
 

@@ -23,7 +23,7 @@ export class ClientGame extends Game {
 
     this.init(startGameData);
     
-    this.gameStartSubject.subscribe(() => this.startUpdateLoop());
+    this.clockStartSubject.subscribe(() => this.startUpdateLoop());
 
     this.gameOverSubject.subscribe(() => {
       console.log('GAME OVER');

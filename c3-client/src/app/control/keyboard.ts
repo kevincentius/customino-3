@@ -3,10 +3,14 @@ import { Player } from "@shared/game/engine/player/player";
 import { InputKey } from "@shared/game/network/model/input-key";
 import { Control } from "app/control/control";
 
+export enum InputState {
+  DISABLED, PRECLOCK, ENABLED,
+}
+
 export class Keyboard {
 
   // State
-  public enabled = false;
+  public state = InputState.DISABLED;
 
   private keyMap = new Map<string, Control>();
   private moveMap = new Map<InputKey, Control>();
@@ -47,12 +51,11 @@ export class Keyboard {
 
   // Event Handling
   onKeyDown(e: KeyboardEvent) {
-    if (!this.enabled || e.repeat)
+    if (this.state == InputState.DISABLED || e.repeat)
       return;
 
     // Ensure key event only affects game
     e.preventDefault();
-
 
     // Check what control the key corresponds to
     const control = this.keyMap.get(e.code);
@@ -77,7 +80,7 @@ export class Keyboard {
   }
 
   onKeyUp(e: KeyboardEvent) {
-    if (!this.enabled || e.repeat)
+    if (this.state == InputState.DISABLED || e.repeat)
       return;
 
     // Ensure Key event doesn't do anything weird
@@ -124,7 +127,7 @@ export class Keyboard {
   }
 
   private tryMove(key: InputKey) {
-    if (this.player.isRunning()) {
+    if (this.player.isRunning() && this.state == InputState.ENABLED) {
       (this.player as LocalPlayer).handleInput(key);
       return true;
     } else {

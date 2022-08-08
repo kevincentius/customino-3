@@ -4,7 +4,6 @@ import { ComboTimerDisplay } from "app/pixi/display/widgets/combo-timer/combo-ti
 import { LayoutContainer } from "app/pixi/display/layout/layout-container";
 import { PlayerInfoDisplay } from "app/pixi/display/player-into-display";
 import { PlayerSound } from "app/pixi/display/sound/player-sound";
-import { Graphics } from "pixi.js";
 import { PieceQueueDisplay } from "app/pixi/display/widgets/piece-queue/piece-queue-display";
 import { SpeedMeterDisplay } from "app/pixi/display/widgets/speed-meter-display";
 import { LayoutAlignment } from "app/pixi/display/layout/layout-alignment";
@@ -26,13 +25,14 @@ export class PlayerDisplay extends LayoutContainer {
 
   constructor(
     private player: Player,
+    private clockStartMs: number,
   ) {
     super(1);
 
     this.playerInfoDisplay = new PlayerInfoDisplay(this.player.playerInfo);
-    this.board = new BoardDisplay(this.player);
+    this.board = new BoardDisplay(this.player, this.clockStartMs);
     this.pieceQueue = new PieceQueueDisplay(this.player, this.board.getMinoSize());
-    this.playerSound = new PlayerSound(this.player);
+    this.playerSound = new PlayerSound(this.player, this);
 
     this.addNode(this.playerInfoDisplay);
     this.addNode(this.rowLayout);
@@ -60,5 +60,9 @@ export class PlayerDisplay extends LayoutContainer {
     this.comboTimer?.tick(dt);
     this.starsMeter?.tick(dt);
     this.speedMeter?.tick();
+  }
+
+  getCountdownSubject() {
+    return this.board.countdownDisplay.countdownSubject;
   }
 }

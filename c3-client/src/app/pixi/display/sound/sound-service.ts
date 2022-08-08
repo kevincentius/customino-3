@@ -34,6 +34,8 @@ export class SoundService {
       { name: 'perfectclear' },
       { name: 'combolock' },
       { name: 'stars' },
+      { name: 'countdown', variations: 2 },
+      { name: 'countdownlast' },
     ];
 
     for (let channel = 0; channel < 2; channel++) {

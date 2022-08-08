@@ -110,6 +110,11 @@
       "folder": ""
     },
     {
+      "name": "noise.png",
+      "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/noise.png",
+      "folder": ""
+    },
+    {
       "name": "star.png",
       "path": "S:/Projects/C3/try-monorepo/c3-client/src/assets/spritesheet/game/star.png",
       "folder": ""

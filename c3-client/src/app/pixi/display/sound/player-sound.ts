@@ -1,5 +1,6 @@
 import { LocalPlayer } from "@shared/game/engine/player/local-player";
 import { Player } from "@shared/game/engine/player/player";
+import { PlayerDisplay } from "app/pixi/display/player-display";
 import { soundService } from "app/pixi/display/sound/sound-service";
 
 
@@ -7,7 +8,10 @@ import { soundService } from "app/pixi/display/sound/sound-service";
 export class PlayerSound {
   channel: number;
 
-  constructor(private player: Player) {
+  constructor(
+    private player: Player,
+    private playerDisplay: PlayerDisplay,
+  ) {
     const isLocal = this.player instanceof LocalPlayer;
     this.channel = isLocal ? 0 : 1;
     
@@ -29,6 +33,15 @@ export class PlayerSound {
           }
         });
       }
+
+      // countdown (TODO: spectator = no sound?)
+      this.playerDisplay.getCountdownSubject().subscribe(count => {
+        if (count > 0) {
+          soundService.play('countdown', this.channel, 0);
+        } else {
+          soundService.play('countdown', this.channel, 1);
+        }
+      });
     }
 
     this.player.pieceLockSubject.subscribe(e => {

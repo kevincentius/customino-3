@@ -42,7 +42,7 @@ export class BoardOverlayDisplay extends Container {
     this.subText.anchor.x = 0.5;
     this.addChild(this.subText);
 
-    this.visible = false;
+    this.hide();
   }
 
   show(mainText: string, subText?: string) {
@@ -53,5 +53,12 @@ export class BoardOverlayDisplay extends Container {
 
   hide() {
     this.visible = false;
+    this.alpha = 0;
+  }
+
+  tick(dt: number) {
+    if (this.visible) {
+      this.alpha = Math.min(1, this.alpha + dt / 500);
+    }
   }
 }

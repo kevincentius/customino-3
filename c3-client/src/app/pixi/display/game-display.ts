@@ -21,7 +21,7 @@ export class GameDisplay extends Container {
     
     this.game.players.forEach((player, index) => {
         for (let i = 0; i < player.playerRule.playerDisplayDupes; i++) {
-        const playerDisplay = new PlayerDisplay(player);
+        const playerDisplay = new PlayerDisplay(player, this.game.clockStartMs);
         this.players.push(playerDisplay);
         this.addChild(playerDisplay);
         playerDisplay.updateLayout();
