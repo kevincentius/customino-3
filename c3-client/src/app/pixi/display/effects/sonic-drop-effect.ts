@@ -143,4 +143,11 @@ export class SonicDropEffect extends Container implements Effect {
     
     return true;
   }
+  
+  override destroy() {
+    this.sprite.destroy();
+    this.emitter?.destroy();
+
+    super.destroy();
+  }
 }

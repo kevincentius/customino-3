@@ -108,4 +108,10 @@ export class ActivePieceDisplay extends Container {
       this.minoGridDisplay.position.set(pos.x, pos.y);
     }
   }
+
+  override destroy() {
+    this.minoGridDisplay?.destroy();
+    
+    super.destroy();
+  }
 }

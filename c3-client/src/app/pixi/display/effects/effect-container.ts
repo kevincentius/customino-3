@@ -14,6 +14,7 @@ export class EffectContainer extends Container {
       const result = effect.tick(dt);
       if (!result) {
         this.removeChild(effect);
+        effect.destroy();
       }
       return result;
     });

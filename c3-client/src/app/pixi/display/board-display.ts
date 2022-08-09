@@ -34,8 +34,9 @@ export class BoardDisplay extends Container implements LayoutChild {
   private shaker: Shaker;
 
   private innerContainer: Container;
-  private effectContainer: EffectContainer = new EffectContainer();
+  private effectContainer = new EffectContainer();
 
+  private maskGraphics: Graphics;
   private background: Sprite;
   private minoGridDisplay: MinoGridDisplay;
   private activePieceDisplay: ActivePieceDisplay;
@@ -88,13 +89,13 @@ export class BoardDisplay extends Container implements LayoutChild {
 
     // mask container: stencil effect
     this.maskContainer = new Container();
-    const maskGraphics = new Graphics();
-    maskGraphics.cacheAsBitmap = true;
-    maskGraphics.beginFill();
-    maskGraphics.drawRect(0, 0, this.layout.innerWidth, this.layout.innerHeight);
-    maskGraphics.endFill();
-    this.fieldContainer.addChild(maskGraphics);
-    this.maskContainer.mask = maskGraphics;
+    this.maskGraphics = new Graphics();
+    this.maskGraphics.cacheAsBitmap = true;
+    this.maskGraphics.beginFill();
+    this.maskGraphics.drawRect(0, 0, this.layout.innerWidth, this.layout.innerHeight);
+    this.maskGraphics.endFill();
+    this.fieldContainer.addChild(this.maskGraphics);
+    this.maskContainer.mask = this.maskGraphics;
     this.fieldContainer.addChild(this.maskContainer);
 
     // spawn rate offset: shifts the board overtime to animate garbage entering the field.
@@ -157,7 +158,7 @@ export class BoardDisplay extends Container implements LayoutChild {
       for (let j = 0; j < this.board.tiles[row.y].length; j++) {
         const mino = this.minoGridDisplay.minos[row.y][j];
         if (mino.minoDisplay) {
-          const effect2 = new MinoFlashEffect(minoSize, minoSize, 150, 0.5, new Sprite(Texture.WHITE));
+          const effect2 = new MinoFlashEffect(minoSize, minoSize, 150, 0.5);
           effect2.position.set(mino.minoDisplay.position.x, mino.absPos);
           this.effectContainer.addEffect(effect2);
         }
@@ -229,5 +230,27 @@ export class BoardDisplay extends Container implements LayoutChild {
         }
       }
     }
+  }
+
+  override destroy() {
+    this.maskGraphics.destroy();
+    this.border.destroy();
+
+    this.offsetContainer.destroy();
+    this.shakeContainer.destroy();
+    this.fieldContainer.destroy();
+    this.maskContainer.destroy();
+    this.spawnRateOffsetContainer.destroy();
+    this.innerContainer.destroy();
+
+    this.activePieceDisplay.destroy();
+    this.countdownDisplay.destroy();
+    this.overlayDisplay.destroy();
+    this.garbageIndicator.destroy();
+    this.minoGridDisplay.destroy();
+    this.effectContainer.destroy();
+    this.background.destroy();
+
+    super.destroy();
   }
 }

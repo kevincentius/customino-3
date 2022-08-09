@@ -158,4 +158,15 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
     g.alpha = 0.2;
     return g;
   }
+
+  override destroy() {
+    this.arcBg.destroy();
+    this.arc.destroy();
+    this.bg.destroy();
+
+    this.text.destroy();
+    this.textBpm.destroy();
+
+    super.destroy();
+  }
 }

@@ -158,4 +158,16 @@ export class StarsMeterDisplay extends Container implements LayoutChild {
     g.alpha = 0.2;
     return g;
   }
+
+  override destroy() {
+    this.graphics.destroy();
+    this.arcBg.destroy();
+    this.arc.destroy();
+    this.bg.destroy();
+    this.stars.destroy();
+    this.text.destroy();
+    this.textBpm.destroy();
+
+    super.destroy();
+  }
 }

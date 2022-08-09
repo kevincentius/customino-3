@@ -45,7 +45,7 @@ export class GarbageIndicatorDisplay extends Container implements LayoutChild {
 
   private popBox() {
     this.boxContainer.removeChild(this.boxes[0]);
-    this.boxes.shift();
+    this.boxes.shift()!.destroy();
   }
 
   private updateBoxes() {
@@ -73,6 +73,7 @@ export class GarbageIndicatorDisplay extends Container implements LayoutChild {
     for (let i = e.deleteList.length - 1; i >= 0; i--) {
       const deleteIndex = e.deleteList[i];
       this.boxContainer.removeChild(this.boxes[deleteIndex]);
+      this.boxes[deleteIndex].destroy();
       this.boxes.splice(deleteIndex, 1);
     }
   }
@@ -80,5 +81,13 @@ export class GarbageIndicatorDisplay extends Container implements LayoutChild {
   tick(garbageRateShift: number) {
     this.boxContainer.position.y = -garbageRateShift;
     this.updateBoxes();
+  }
+
+  override destroy() {
+    this.boxContainer.destroy();
+
+    this.boxes.forEach(box => box.destroy());
+
+    super.destroy();
   }
 }

@@ -22,4 +22,10 @@ export class PlayerInfoDisplay extends Container implements LayoutChild {
     this.playerName.position.x = 50;
     this.playerName.position.y = this.layoutHeight / 2;
   }
+
+  override destroy() {
+    this.playerName.destroy();
+
+    super.destroy();
+  }
 }

@@ -121,4 +121,15 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     g.alpha = 0.2;
     return g;
   }
+
+  override destroy() {
+    this.graphics.destroy();
+    this.bg.destroy();
+
+    this.textContainer.destroy();
+    this.text.destroy();
+    this.textBpm.destroy();
+
+    super.destroy();
+  }
 }

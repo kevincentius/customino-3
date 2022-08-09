@@ -39,4 +39,10 @@ export class PieceDisplay extends Container implements LayoutChild {
       this.addChild(this.minoGridDisplay);
     }
   }
+
+  override destroy() {
+    this.minoGridDisplay?.destroy();
+    
+    super.destroy();
+  }
 }

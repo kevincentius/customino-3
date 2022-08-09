@@ -7,7 +7,7 @@ import { MinoAnimator } from "app/pixi/display/mino-grid/mino-animator";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { getLocalSettings } from "app/service/user-settings/user-settings.service";
 import { GlowFilter } from "pixi-filters";
-import { Container, filters, Graphics } from "pixi.js";
+import { Container, Graphics } from "pixi.js";
 
 export class MinoGridDisplay extends Container implements LayoutChild {
   // helpers
@@ -90,6 +90,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
   placeTile(e: PlaceTileEvent) {
     if (this.minos[e.y][e.x].minoDisplay != undefined) {
       this.removeChild(this.minos[e.y][e.x].minoDisplay!);
+      this.minos[e.y][e.x].minoDisplay!.destroy();
       this.minos[e.y][e.x].minoDisplay = undefined;
     }
 
@@ -168,6 +169,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
       for (let mino of this.minos[row]) {
         if (mino.minoDisplay != null) {
           this.removeChild(mino.minoDisplay);
+          mino.minoDisplay.destroy();
         }
       }
     }
@@ -184,6 +186,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
       for (let mino of this.minos[i]) {
         if (mino.minoDisplay != null) {
           this.removeChild(mino.minoDisplay);
+          mino.minoDisplay.destroy();
         }
       }
     }
@@ -207,5 +210,19 @@ export class MinoGridDisplay extends Container implements LayoutChild {
         this.updateMinoPosition(i, j);
       }
     }
+  }
+
+  override destroy() {
+    if (this.debug) {
+      this.debugRect!.destroy();
+    }
+
+    for (let row of this.minos) {
+      for (let mino of row) {
+        mino.destroy();
+      }
+    }
+
+    super.destroy();
   }
 }

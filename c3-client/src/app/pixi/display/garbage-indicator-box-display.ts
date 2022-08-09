@@ -88,4 +88,15 @@ export class GarbageIndicatorBoxDisplay extends Container {
       this.spriteTop.position.y = bgHeight - fgHeight;
     }
   }
+
+  override destroy() {
+    this.spriteTop.destroy();
+    this.spriteBgTop.destroy();
+    this.spriteMiddle.destroy();
+    this.spriteBgMiddle.destroy();
+    this.spriteBottom.destroy();
+    this.spriteBgBottom.destroy();
+
+    super.destroy();
+  }
 }

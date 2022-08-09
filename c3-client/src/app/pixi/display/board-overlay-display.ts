@@ -61,4 +61,14 @@ export class BoardOverlayDisplay extends Container {
       this.alpha = Math.min(1, this.alpha + dt / 500);
     }
   }
+
+  override destroy() {
+    this.subText.destroy();
+    this.mainText.destroy();
+
+    this.fullBackground.destroy();
+    this.bannerBackground.destroy();
+
+    super.destroy();
+  }
 }

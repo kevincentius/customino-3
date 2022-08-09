@@ -58,4 +58,11 @@ export class GameDisplay extends Container {
   tick(dt: number) {
     this.players.forEach(player => player.tick(dt));
   }
+
+  override destroy() {
+    console.log('destroy game display');
+    this.players.forEach(player => player.destroy());
+
+    super.destroy();
+  }
 }

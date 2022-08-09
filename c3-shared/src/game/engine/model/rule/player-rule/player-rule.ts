@@ -120,7 +120,7 @@ export const playerRule: PlayerRule = {
     comboParticleCountMultiplier: 2,
   },
 
-  playerDisplayDupes: 1,
+  playerDisplayDupes: 100,
 }
 
 export function getField(rule: any, field: PlayerRuleField) {

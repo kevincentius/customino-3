@@ -18,6 +18,10 @@ export class MinoAnimator {
   ) {}
 
   setTile(tile: Tile) {
+    if (this.minoDisplay) {
+      this.minoDisplay.destroy();
+    }
+
     if (tile) {
       this.minoDisplay = new MinoDisplay(this.spritesheet, tile, this.minoSize);
     }
@@ -36,6 +40,12 @@ export class MinoAnimator {
     this.absPos = zeroPos + this.pos;
     if (this.minoDisplay) {
       this.minoDisplay.position.y = this.absPos;
+    }
+  }
+
+  destroy() {
+    if (this.minoDisplay) {
+      this.minoDisplay.destroy();
     }
   }
 }

@@ -112,4 +112,12 @@ export class LayoutContainer extends Container implements LayoutNode {
       throw new Error();
     }
   }
+  
+  override destroy() {
+    if (this.debug) {
+      this.debugRect!.destroy();
+    }
+
+    super.destroy();
+  }
 }

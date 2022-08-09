@@ -1,4 +1,3 @@
-import { DisplacementFilter } from "@pixi/filter-displacement";
 import { Effect } from "app/pixi/display/effects/effect";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { textureUtil } from "app/pixi/util/texture-util";
@@ -7,7 +6,6 @@ import { Container, Sprite } from "pixi.js";;
 export class LineWaveEffect extends Container implements Effect {
   
   private sprite: Sprite;
-  // private displacementMapSprite: Sprite;
 
   constructor(
     private spritesheet: GameSpritesheet,
@@ -20,17 +18,7 @@ export class LineWaveEffect extends Container implements Effect {
   ) {
     super();
 
-    this.sprite = new Sprite(textureUtil.gradient([
-      { offset: 0, color: '#ffff', },
-      { offset: 1, color: '#fff0', },
-    ]));
-
-    // this.displacementMapSprite = new Sprite(this.spritesheet.noise);
-    // this.displacementMapSprite.scale.set(10);
-    // // this.displacementMapSprite.visible = false;
-    // this.addChild(this.displacementMapSprite);
-    
-    // this.filters = [ new DisplacementFilter(this.displacementMapSprite, 1) ]
+    this.sprite = new Sprite(textureUtil.lineWaveGradient);
 
     this.sprite.scale.set(this.bgWidth / this.sprite.texture.width, this.waveHeight / this.sprite.texture.height);
     this.sprite.position.set(0, this.bgHeight + this.waveHeight);
@@ -49,5 +37,11 @@ export class LineWaveEffect extends Container implements Effect {
       this.sprite.position.y = this.bgHeight + this.waveHeight - (this.bgHeight + 2 * this.waveHeight) * (1 - Math.pow(1 - p, this.pow));
       return true;
     }
+  }
+
+  override destroy() {
+    this.sprite.destroy();
+
+    super.destroy();
   }
 }

@@ -6,7 +6,12 @@ export interface GradientStop {
 }
 
 export class TextureUtil {
-  gradient(colorStops: GradientStop[]) {
+  lineWaveGradient = this.gradient([
+    { offset: 0, color: '#ffff', },
+    { offset: 1, color: '#fff0', },
+  ]);
+
+  private gradient(colorStops: GradientStop[]) {
     const c = document.createElement("canvas");
     c.width = 1024;
     c.height = 1024;
