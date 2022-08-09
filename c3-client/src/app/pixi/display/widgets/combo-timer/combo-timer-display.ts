@@ -1,6 +1,7 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { ComboTimer } from "@shared/game/engine/player/combo-timer";
 import { Player } from "@shared/game/engine/player/player";
+import { enableGraphics } from "app/pixi/benchmark/config";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { drawArc } from "app/pixi/display/util/arc";
 import { textUtil } from "app/pixi/util/text-util";
@@ -38,8 +39,10 @@ export class ComboTimerDisplay extends Container implements LayoutChild {
     this.layoutHeight = this.diameter;
 
     this.bg = this.createBackground();
-    this.addChild(this.bg);
-    this.addChild(this.graphics);
+    if (enableGraphics) {
+      this.addChild(this.bg);
+      this.addChild(this.graphics);
+    }
     this.addChild(this.textContainer);
     this.textContainer.position.set(this.diameter / 2, this.diameter / 2);
 

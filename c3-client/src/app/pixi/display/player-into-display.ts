@@ -14,6 +14,8 @@ export class PlayerInfoDisplay extends Container implements LayoutChild {
   ) {
     super();
 
+    this.cacheAsBitmap = true;
+
     this.playerName = textUtil.create(this.playerInfo.name);
     this.addChild(this.playerName);
     this.playerName.anchor.set(0, 0.5);

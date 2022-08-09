@@ -33,6 +33,7 @@
     "@types/offscreencanvas": "^2019.6.4",
     "date-fns": "^2.28.0",
     "file-saver": "^2.0.5",
+    "gamestats.js": "^1.0.3",
     "howler": "^2.2.3",
     "pixi-filters": "^4.1.6",
     "pixi-particles": "^4.3.1",

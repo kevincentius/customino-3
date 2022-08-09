@@ -1,11 +1,10 @@
-import { Application, Loader, LoaderResource, SCALE_MODES, settings } from "pixi.js";
+import { Application, Loader, LoaderResource, MIPMAP_MODES, RENDERER_TYPE, SCALE_MODES, settings } from "pixi.js";
 
 import { Keyboard } from "app/control/keyboard";
 import { GameDisplay } from "app/pixi/display/game-display";
 import { UserSettingsService } from "app/service/user-settings/user-settings.service";
 import { ControlSettings } from "app/service/user-settings/control-settings";
 import { ClientGame } from "@shared/game/engine/game/client-game";
-import { RunningTracker } from "app/pixi/benchmark/running-tracker";
 import { PerformanceTracker } from "app/pixi/benchmark/performance-tracker";
 
 export let resources: Partial<Record<string, LoaderResource>>;
@@ -23,6 +22,8 @@ export class PixiApplication {
 
   performanceTracker = new PerformanceTracker();
   showPerformance = false;
+  
+  drawCount = 0;
 
   constructor(
     private canvas: HTMLCanvasElement,
@@ -32,12 +33,11 @@ export class PixiApplication {
 
     this.app = new Application({
       view: this.canvas,
-      // resizeTo: window,
+      useContextAlpha: false,
+      clearBeforeRender: false,
+      powerPreference: 'high-performance',
+      sharedTicker: false,
       backgroundColor: 0x000022,
-
-      antialias: true,
-      autoDensity: true, // !!!
-      resolution: 1,
     });
 
     this.loadResources();
@@ -51,13 +51,30 @@ export class PixiApplication {
         this.keyboard.tick(dt);
       }
       const logicTickDuration = (window.performance.now() - microSecs) / 1000;
-      this.performanceTracker.tick(dt, logicTickDuration);
+      this.performanceTracker.tick(dt, logicTickDuration, this.drawCount);
+      this.drawCount = 0;
     });
 
     this.userSettingsService.settingsChangedSubject.subscribe(localSettings => this.updateKeyBindings(localSettings.control));
 
     window.onresize = () => this.onResize();
     this.onResize();
+
+
+    const renderer = this.app.renderer as any;
+    const drawElements = renderer.gl.drawElements;
+    renderer.gl.drawElements = (...args: any[]) => {
+      drawElements.call(renderer.gl, ...args);
+      this.drawCount++;
+    }; // rewrite drawElements to count draws
+    
+    if (renderer.type == RENDERER_TYPE.WEBGL){
+      console.log('Rendering with WebGL');
+    } else if (renderer.type == RENDERER_TYPE.CANVAS) {
+      console.warn('Rendering with Canvas! Performance will be bad!');
+    } else {
+      console.warn('Rendering with unknown renderer type!')
+    }
   }
 
   public updateKeyBindings(c: ControlSettings) {
@@ -73,7 +90,8 @@ export class PixiApplication {
 
     loader
       .add('sample', 'assets/img/sample.png')
-      .add('gameSpritesheet', 'assets/spritesheet/game/texture.json')
+      .add('gameSpritesheet', 'assets/spritesheet/game/normal/texture.json')
+      .add('gameSpritesheetSmall', 'assets/spritesheet/game/small/texture.json')
       .load((loader, res) => {
         resources = res;
 

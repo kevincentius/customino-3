@@ -28,8 +28,6 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     innerStrength: 0.5,
   });
 
-  colorMatrixFilter = new filters.ColorMatrixFilter();
-
   constructor(private tiles: (Tile | null)[][], private minoSize: number, private invisibleHeight=0) {
     super();
 
@@ -55,7 +53,6 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     if (getLocalSettings().localGraphics.glowEffect) {
       this.filters.push(this.glowFilter);
     }
-    this.filters.push(this.colorMatrixFilter);
     
     if (this.debug) {
       this.debugRect = new Graphics();
@@ -81,8 +78,6 @@ export class MinoGridDisplay extends Container implements LayoutChild {
         zeroPos = this.minos[i][j].absPos - this.minoSize;
       }
     }
-
-    this.colorMatrixFilter.saturate(0.1, false);
   }
 
   chorus(p: number) {

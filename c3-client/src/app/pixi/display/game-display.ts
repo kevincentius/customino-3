@@ -15,6 +15,8 @@ export class GameDisplay extends Container {
   ) {
     super();
     
+    this.interactiveChildren = false;
+    
     this.game = game;
 
     this.removeChildren();

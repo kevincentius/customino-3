@@ -43,7 +43,7 @@ export class BoardDisplay extends Container implements LayoutChild {
   private overlayDisplay: BoardOverlayDisplay;
   countdownDisplay: BoardCountdownDisplay;
 
-  private border = new Graphics();
+  private border;
 
   // reference
   board: Board;
@@ -89,6 +89,7 @@ export class BoardDisplay extends Container implements LayoutChild {
     // mask container: stencil effect
     this.maskContainer = new Container();
     const maskGraphics = new Graphics();
+    maskGraphics.cacheAsBitmap = true;
     maskGraphics.beginFill();
     maskGraphics.drawRect(0, 0, this.layout.innerWidth, this.layout.innerHeight);
     maskGraphics.endFill();
@@ -137,6 +138,7 @@ export class BoardDisplay extends Container implements LayoutChild {
 
     // border
     this.border = new Graphics();
+    this.border.cacheAsBitmap = true;
     this.addChild(this.border);
     this.border
       .clear()
