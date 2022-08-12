@@ -6,4 +6,6 @@ export interface LocalSettings {
   musicVolume: number;
   soundVolume: number;
   localGraphics: LocalGraphicsSettings;
+
+  
 }

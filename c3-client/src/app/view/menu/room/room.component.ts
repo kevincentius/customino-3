@@ -12,7 +12,7 @@ import {saveAs} from 'file-saver';
 import { format } from 'date-fns';
 import { StartGameData } from '@shared/game/network/model/start-game/start-game-data';
 import { MainScreen } from 'app/view/main/main-screen';
-import { playerRule, PlayerRule } from '@shared/game/engine/model/rule/player-rule/player-rule';
+import { getDefaultPlayerRule, PlayerRule } from '@shared/game/engine/model/rule/player-rule/player-rule';
 import { RoomSettings } from '@shared/game/engine/model/room-settings';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { PlayerInfo } from '@shared/game/engine/player/player-info';
@@ -40,7 +40,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   showSettings = false;
 
-  playerRule: PlayerRule = JSON.parse(JSON.stringify(playerRule));
+  playerRule: PlayerRule = getDefaultPlayerRule();
   
   lastGameStats?: { playerInfo: PlayerInfo; stats: PlayerStats; }[];
 

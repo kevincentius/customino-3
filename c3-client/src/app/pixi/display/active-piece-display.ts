@@ -1,6 +1,6 @@
 import { ActivePiece, PieceMoveEvent } from "@shared/game/engine/player/active-piece";
 import { Player } from "@shared/game/engine/player/player";
-import { EffectContainer } from "app/pixi/display/effects/effect-container";
+import { BoardDisplayDelegate } from "app/pixi/display/board-display-delegate";
 import { SonicDropEffect } from "app/pixi/display/effects/sonic-drop-effect";
 import { MinoGridDisplay } from "app/pixi/display/mino-grid-display";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
@@ -15,8 +15,7 @@ export class ActivePieceDisplay extends Container {
   activePiece: ActivePiece;
 
   constructor(
-    private boardMinoGridDisplay: MinoGridDisplay,
-    private effectContainer: EffectContainer,
+    private boardDisplay: BoardDisplayDelegate,
     private player: Player,
     private minoSize: number,
     private ghost=false,
@@ -86,12 +85,12 @@ export class ActivePieceDisplay extends Container {
         const tile = tiles[i][j];
         if (tile != null) {
           // tile is the top most mino in each column
-          const minoPos = this.boardMinoGridDisplay.calcMinoPos(this.activePiece.y - e.dy + i, this.activePiece.x + j);
+          const minoPos = this.boardDisplay.calcMinoPosForEffect(this.activePiece.y - e.dy + i, this.activePiece.x + j);
 
           const combo = this.player.attackRule.comboTimer ? this.player.attackRule.comboTimer.combo : 0;
           const effect = new SonicDropEffect(this.player.playerRule.sonicDropEffect, this.spritesheet, tile, this.minoSize, e.dy + 1, combo);
           effect.position.set(minoPos.x, minoPos.y);
-          this.effectContainer.addEffect(effect);
+          this.boardDisplay.addEffect(effect);
           break;
         }
       }
@@ -104,7 +103,7 @@ export class ActivePieceDisplay extends Container {
     }
 
     if (this.minoGridDisplay) {
-      const pos = this.boardMinoGridDisplay.calcMinoPos(this.activePiece.y + this.ghostDistance, this.activePiece.x);
+      const pos = this.boardDisplay.calcMinoPosForEffect(this.activePiece.y + this.ghostDistance, this.activePiece.x);
       this.minoGridDisplay.position.set(pos.x, pos.y);
     }
   }

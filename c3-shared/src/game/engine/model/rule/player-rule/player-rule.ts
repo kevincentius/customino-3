@@ -1,5 +1,6 @@
 import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
 import { GravityRule } from "@shared/game/engine/model/rule/player-rule/gravity-rule";
+import { playerRuleFields } from "@shared/game/engine/model/rule/player-rule/player-rule-fields";
 import { SonicDropEffectConfig } from "@shared/game/engine/model/rule/player-rule/sonic-drop-effect-config";
 import { StarsRule } from "@shared/game/engine/model/rule/player-rule/stars-rule";
 import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
@@ -45,82 +46,12 @@ export interface PlayerRule {
   playerDisplayDupes: number;
 }
 
-export const playerRule: PlayerRule = {
-  width: 10,
-  height: 18,
-  invisibleHeight: 18,
-
-  previews: 1,
-  rotationSystem: RotationSystemType.NEAREST,
-
-  gravity: {
-    speed: 1,
-    cap: 10,
-    acceleration: 0,
-    lockDelay: 0.5,
-  },
-
-  countdownMs: 3250,
-
-  // garbage entry
-  garbageSpawnDelayTable: [0, 1],
-  garbageSpawnRate: 1,
-  lineClearDelaysGarbage: true,
-  garbageSpawnCap: 0,
-
-  // garbage blocking
-  garbageBlockingFactor: 1,
-  garbagePierceFactor: 0,
-
-  // combo timer
-  useComboTimer: true,
-  comboAttackTable: [0, 0, 1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
-  comboTimerInitial: 2,
-  comboTimerMultiClearBonus: [-0.2, 1, 1.4, 1.7, 2],
-  comboTimerSpinBonus: [0, 1.5, 2, 2.5],
-  comboTimerTimeBonusMultiplierTable: [1, 0.7, 0.5, 0.3, 0.2, 0.1],
-
-  // attack rule
-  attackSelfIfAlone: false,
-  
-  multiClearAttackTable: [0, 0, 1, 2, 4, 6],
-
-  stars: {
-    useStars: true,
-    multipliers: [1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3],
-    multiplierScalesByProgress: true,
-
-    powerRequired: [25, 35, 50, 70, 100, 200],
-
-    powerDecayPerPiece: true,
-    powerDecayPerPieceRate: [0.1, 0.15, 0.2, 0.25, 0.3, 0.3],
-
-    powerDecay: true,
-    powerDecayRate: [20, 30, 40, 50, 60, 90],
-    powerDecayScalesByProgress: true,
-  },
-
-  // graphics
-  sonicDropEffect: {
-    duration: 200,
-    decay: 2,
-
-    particleCount: 2,
-    particleOpacity: 0.3,
-    particleScale: 0.2,
-    particleDuration: 1500,
-    particleSpeed: 250,
-    particleMaxAngle: 10,
-    particleBrightness: 1,
-    particleSaturation: 1,
-    
-    comboCap: 12,
-    comboBrightnessMultiplier: 4,
-    comboDurationMultiplier: 2,
-    comboParticleCountMultiplier: 2,
-  },
-
-  playerDisplayDupes: 100,
+export function getDefaultPlayerRule(): PlayerRule {
+  const playerRule = {} as PlayerRule;
+  for (const field of playerRuleFields) {
+    setField(playerRule, field, field.default, true);
+  }
+  return playerRule;
 }
 
 export function getField(rule: any, field: PlayerRuleField) {
@@ -135,15 +66,19 @@ export function getField(rule: any, field: PlayerRuleField) {
   return field.convertToDisplay ? field.convertToDisplay(obj) : obj;
 }
 
-export function setField(rule: any, field: PlayerRuleField, value: any) {
+export function setField(rule: any, field: PlayerRuleField, value: any, objectCreation=false) {
   let obj: any = rule;
   const parts = field.property.split('.');
   const property = parts.pop()!;
   for (const part of parts) {
-    obj = obj[part];
-    if (obj === undefined) {
-      throw new Error();
+    if (obj[part] == undefined) {
+      if (objectCreation) {
+        obj[part] = {};
+      } else {
+        throw new Error(`Error occurred in PlayerRule binding: ${part} is not found.`);
+      }
     }
+    obj = obj[part];
   }
   obj[property] = field.convertFromDisplay ? field.convertFromDisplay(value) : value;
 }

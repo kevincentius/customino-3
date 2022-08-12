@@ -14,7 +14,7 @@ export const sonicDropEffectRuleFields: PlayerRuleField[] = [
   {
     property: 'duration',
     fieldType: FieldType.NUMBER_SCROLL,
-    default: 400,
+    default: 200,
     stepSize: 50,
     validators: [ intRangeValidator(50, 3000) ],
 
@@ -41,7 +41,7 @@ export const sonicDropEffectRuleFields: PlayerRuleField[] = [
   {
     property: 'particleCount',
     fieldType: FieldType.NUMBER_SCROLL,
-    default: 10,
+    default: 2,
     validators: [ intRangeValidator(1, 100) ],
 
     name: 'particle count',
@@ -94,7 +94,7 @@ export const sonicDropEffectRuleFields: PlayerRuleField[] = [
   {
     property: 'particleSpeed',
     fieldType: FieldType.NUMBER_SCROLL,
-    default: -50,
+    default: 250,
     stepSize: 50,
     validators: [ intRangeValidator(-1000, 1000) ],
 
@@ -148,7 +148,7 @@ export const sonicDropEffectRuleFields: PlayerRuleField[] = [
   {
     property: 'comboCap',
     fieldType: FieldType.NUMBER_SCROLL,
-    default: 10,
+    default: 12,
     stepSize: 1,
     validators: [ intRangeValidator(1, 20) ],
 
@@ -176,7 +176,7 @@ export const sonicDropEffectRuleFields: PlayerRuleField[] = [
     property: 'comboDurationMultiplier',
     fieldType: FieldType.NUMBER_SCROLL,
     decimalPlaces: 1,
-    default: 4,
+    default: 2,
     stepSize: 0.1,
     validators: [ floatRangeValidator(1, 10) ],
 
@@ -190,7 +190,7 @@ export const sonicDropEffectRuleFields: PlayerRuleField[] = [
     property: 'comboParticleCountMultiplier',
     fieldType: FieldType.NUMBER_SCROLL,
     decimalPlaces: 1,
-    default: 8,
+    default: 4,
     stepSize: 0.1,
     validators: [ floatRangeValidator(1, 20) ],
 

@@ -37,7 +37,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   {
     property: 'invisibleHeight',
     fieldType: FieldType.NUMBER_SCROLL,
-    default: 20,
+    default: 18,
     validators: [ intRangeValidator(0, 100) ],
 
     name: 'Hidden rows',
@@ -191,7 +191,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   {
     property: 'comboAttackTable',
     fieldType: FieldType.NUMBER_LIST,
-    default: [0, 0, 1, 1, 1, 2, 2, 2, 3],
+    default: [0, 0, 1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
     validators: [ listValidator(intRangeValidator(0, 100)) ],
     startIndex: 1,
 
@@ -205,7 +205,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   {
     property: 'comboTimerInitial',
     fieldType: FieldType.NUMBER_SCROLL,
-    default: 1,
+    default: 2,
     stepSize: 0.1,
     decimalPlaces: 1,
     validators: [ floatRangeValidator(0, 10) ],
@@ -236,7 +236,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   {
     property: 'comboTimerSpinBonus',
     fieldType: FieldType.NUMBER_LIST,
-    default: [-0.2, 1, 1.4, 1.7, 2],
+    default: [0, 1.5, 2, 2.5],
     stepSize: 0.1,
     decimalPlaces: 1,
     validators: [ listValidator(floatRangeValidator(-10, 10)) ],
@@ -252,7 +252,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   {
     property: 'comboTimerTimeBonusMultiplierTable',
     fieldType: FieldType.NUMBER_LIST,
-    default: [-0.2, 1, 1.4, 1.7, 2],
+    default: [1, 0.7, 0.5, 0.3, 0.2, 0.1],
     stepSize: 0.1,
     decimalPlaces: 1,
     validators: [ listValidator(floatRangeValidator(-10, 10)) ],
@@ -260,6 +260,20 @@ export const playerRuleFields: PlayerRuleField[] = [
     
     name: 'Speed combo time bonus multiplier',
     description: 'Determines the time bonus multiplier for each combo-level. This can be set to gradually decreasing values to make it harder to regain time at higher combos.',
+    tags: [
+      FieldTags.ADVANCED,
+      FieldTags.ATTACK,
+    ],
+  },
+  {
+    property: 'multiClearAttackTable',
+    fieldType: FieldType.NUMBER_LIST,
+    default: [0, 0, 1, 2, 4, 6],
+    validators: [ listValidator(intRangeValidator(0, 100)) ],
+    startIndex: 0,
+    
+    name: 'Line-clear attack table.',
+    description: 'Defines the amount of lines sent when clearing multiple lines at once.',
     tags: [
       FieldTags.ADVANCED,
       FieldTags.ATTACK,

@@ -13,8 +13,10 @@ import { LockResult } from "@shared/game/engine/player/lock-result";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { MinoFlashEffect } from "app/pixi/display/effects/mino-flash-effect";
 import { BoardCountdownDisplay } from "app/pixi/display/board-countdown-display";
+import { Effect } from "app/pixi/display/effects/effect";
+import { BoardDisplayDelegate } from "app/pixi/display/board-display-delegate";
 
-export class BoardDisplay extends Container implements LayoutChild {
+export class BoardDisplay extends Container implements LayoutChild, BoardDisplayDelegate {
 
   layoutWidth = 520;
   layoutHeight = 800;
@@ -51,6 +53,10 @@ export class BoardDisplay extends Container implements LayoutChild {
 
   chorus = 0;
   chorusAdjustSpeed = 4;
+
+  delegate = {
+    boardDisplay: this,
+  };
 
   constructor(
     private player: Player,
@@ -113,11 +119,11 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.innerContainer.addChild(this.minoGridDisplay);
 
     // ghost piece
-    this.ghostPieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.effectContainer, this.player, this.layout.minoSize, true);
+    this.ghostPieceDisplay = new ActivePieceDisplay(this, this.player, this.layout.minoSize, true);
     this.innerContainer.addChild(this.ghostPieceDisplay);
     
     // active piece
-    this.activePieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.effectContainer, this.player, this.layout.minoSize);
+    this.activePieceDisplay = new ActivePieceDisplay(this, this.player, this.layout.minoSize);
     this.innerContainer.addChild(this.activePieceDisplay);
 
     // overlay
@@ -125,7 +131,7 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.addChild(this.overlayDisplay);
 
     // countdown
-    this.countdownDisplay = new BoardCountdownDisplay(this.layout, this.clockStartMs, this.effectContainer);
+    this.countdownDisplay = new BoardCountdownDisplay(this, this.clockStartMs);
 
     this.board.placeTileSubject.subscribe(e => this.minoGridDisplay.placeTile(e));
     this.board.lineClearSubject.subscribe(e => this.onLineClear(e));
@@ -252,5 +258,20 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.background.destroy();
 
     super.destroy();
+  }
+
+
+  // methods to be accessed by children
+  getInnerWidth() { return this.layout.innerWidth; }
+  getInnerHeight() { return this.layout.innerHeight; }
+  calcMinoPosForEffect(row: number, col: number) {
+    const minoPos = this.minoGridDisplay.calcMinoPos(row, col)
+    return {
+      x: minoPos.x,
+      y: minoPos.y + this.spawnRateOffsetContainer.position.y,
+    };
+  }
+  addEffect(effect: Effect) {
+    this.effectContainer.addEffect(effect);
   }
 }

@@ -68,7 +68,7 @@ export class PixiApplication {
 
       width: 800,
       height: 600,
-      backgroundColor: 0x1099bb,
+      // backgroundColor: 0x1099bb,
       view: this.canvas,
     });
     

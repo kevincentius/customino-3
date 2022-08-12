@@ -15,7 +15,7 @@ export const gravityRuleFields: PlayerRuleField[] = [
     property: 'speed',
     fieldType: FieldType.NUMBER_SCROLL,
     decimalPlaces: 1,
-    default: 0.5,
+    default: 1,
     stepSize: 0.1,
     validators: [ floatRangeValidator(0, 1000) ],
 
@@ -28,7 +28,7 @@ export const gravityRuleFields: PlayerRuleField[] = [
   {
     property: 'cap',
     fieldType: FieldType.NUMBER_SCROLL,
-    default: 20,
+    default: 10,
     stepSize: 1,
     validators: [ floatRangeValidator(0, 100) ],
 
@@ -42,7 +42,7 @@ export const gravityRuleFields: PlayerRuleField[] = [
     property: 'acceleration',
     fieldType: FieldType.NUMBER_SCROLL,
     decimalPlaces: 2,
-    default: 0.1,
+    default: 0,
     stepSize: 0.01,
     validators: [ floatRangeValidator(0, 1) ],
 

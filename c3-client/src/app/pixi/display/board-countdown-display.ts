@@ -1,7 +1,7 @@
+import { BoardDisplayDelegate } from "app/pixi/display/board-display-delegate";
 import { CountEffect } from "app/pixi/display/effects/count-effect";
 import { EffectContainer } from "app/pixi/display/effects/effect-container";
 import { LineWaveEffect } from "app/pixi/display/effects/line-wave-effect";
-import { soundService } from "app/pixi/display/sound/sound-service";
 import { BoardLayout } from "app/pixi/layout/board-layout";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { Container } from "pixi.js";
@@ -28,9 +28,8 @@ export class BoardCountdownDisplay extends Container {
   spritesheet = new GameSpritesheet();
 
   constructor(
-    private layout: BoardLayout,
+    private boardDisplay: BoardDisplayDelegate,
     private clockStartMs: number,
-    private effectContainer: EffectContainer,
   ) {
     super();
     
@@ -38,16 +37,16 @@ export class BoardCountdownDisplay extends Container {
     
     const effect = new LineWaveEffect(
       this.spritesheet,
-      this.layout.innerWidth,
-      this.layout.innerHeight,
+      this.boardDisplay.getInnerWidth(),
+      this.boardDisplay.getInnerHeight(),
       // this.layout.minoSize * 4,
-      this.layout.innerHeight,
+      this.boardDisplay.getInnerHeight(),
       this.clockStartMs,
       3000,
       2,
     );
     effect.alpha = 0.1;
-    this.effectContainer.addEffect(effect);
+    this.boardDisplay.addEffect(effect);
   }
 
   tick(dt: number) {
@@ -62,9 +61,9 @@ export class BoardCountdownDisplay extends Container {
   
           if (countEffect > 0) {
             const effect = new CountEffect(this.config, ct, countEffect);
-            effect.position.set(this.layout.innerWidth / 2, this.layout.innerHeight / 2);
+            effect.position.set(this.boardDisplay.getInnerWidth() / 2, this.boardDisplay.getInnerHeight() / 2);
             effect.scale.set(3);
-            this.effectContainer.addEffect(effect);
+            this.boardDisplay.addEffect(effect);
           }
         }
       }

@@ -12,7 +12,7 @@ import { GameRecorder } from "@shared/game/engine/recorder/game-recorder";
 import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
 import { RandomGen } from "@shared/game/engine/util/random-gen";
 import { RoomSettings } from "@shared/game/engine/model/room-settings";
-import { playerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
+import { getDefaultPlayerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
 
 export class Room {
   createdAt = Date.now();
@@ -20,7 +20,7 @@ export class Room {
   slots: RoomSlot[];
   settings: RoomSettings = {
     gameRule: { 
-      globalRule: playerRule,
+      globalRule: getDefaultPlayerRule(),
     },
   };
   host!: Session;
