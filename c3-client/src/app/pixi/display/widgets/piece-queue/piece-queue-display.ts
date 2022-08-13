@@ -39,7 +39,7 @@ export class PieceQueueDisplay extends Container implements LayoutChild {
   }
 
   private pushNewPieceDisplay(newPiece: Piece) {
-    const pieceDisplay = new PieceDisplay(newPiece, this.minoSize, this.minoSize * 2);
+    const pieceDisplay = new PieceDisplay(newPiece, this.minoSize, this.minoSize * 2, this.player.playerRule);
     this.pieceDisplays.push(pieceDisplay);
     this.layout.addNode(pieceDisplay);
   }

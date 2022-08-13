@@ -1,3 +1,4 @@
+import { PlayerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
 import { Piece } from "@shared/game/engine/player/piece";
 import { MatUtil } from "@shared/game/engine/util/mat-util";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
@@ -15,6 +16,7 @@ export class PieceDisplay extends Container implements LayoutChild {
     private piece: Piece,
     private minoSize: number,
     height: number,
+    private playerRule: PlayerRule,
   ) {
     super();
 
@@ -30,7 +32,7 @@ export class PieceDisplay extends Container implements LayoutChild {
     }
 
     if (piece) {
-      this.minoGridDisplay = new MinoGridDisplay(this.piece.tiles, this.minoSize);
+      this.minoGridDisplay = new MinoGridDisplay(this.piece.tiles, this.minoSize, 0, this.playerRule);
       this.minoGridDisplay.position.set(
         Math.max(0, this.layoutWidth - this.piece.tiles[0].length * this.minoSize) / 2,
         // Math.max(0, 4 - this.piece.tiles[0].length) / 2 * this.minoSize,

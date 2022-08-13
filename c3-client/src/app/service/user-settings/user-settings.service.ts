@@ -32,14 +32,6 @@ export class UserSettingsService {
       if (localSettings.control.sdr == null) { localSettings.control.sdr = 1; }
       if (localSettings.musicVolume == null) { localSettings.musicVolume = 1; }
       if (localSettings.soundVolume == null) { localSettings.soundVolume = 1; }
-      if (localSettings.localGraphics == null) { localSettings.localGraphics = {
-        glowEffect: true,
-        particles: true,
-        ghostOpacity: 0.5,
-      }}
-      if (localSettings.localGraphics.glowEffect == null) { localSettings.localGraphics.glowEffect = true; }
-      if (localSettings.localGraphics.particles == null) { localSettings.localGraphics.particles = true; }
-      if (localSettings.localGraphics.ghostOpacity == null) { localSettings.localGraphics.ghostOpacity = 0.5; }
 
       musicService.setUserMusicVolume(localSettings.musicVolume);
       soundService.setUserSoundVolume(localSettings.soundVolume);
@@ -63,11 +55,6 @@ export class UserSettingsService {
       control: this.createDefaultControlSettings(),
       musicVolume: 1,
       soundVolume: 1,
-      localGraphics: {
-        glowEffect: true,
-        particles: true,
-        ghostOpacity: 0.5,
-      },
     }
   }
   

@@ -2,12 +2,14 @@ import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
 import { FieldTags } from "@shared/game/engine/model/rule/field-tag";
 import { FieldType } from "@shared/game/engine/model/rule/field-type";
 import { floatRangeValidator, intRangeValidator, listValidator } from "@shared/game/engine/model/rule/field-validators";
+import { graphicsRuleFields } from "@shared/game/engine/model/rule/player-rule/graphics-rule-fields";
 import { gravityRuleFields } from "@shared/game/engine/model/rule/player-rule/gravity-rule-fields";
 import { sonicDropEffectRuleFields } from "@shared/game/engine/model/rule/player-rule/sonic-drop-effect-fields";
 import { starsRuleFields } from "@shared/game/engine/model/rule/player-rule/stars-rule-fields";
 import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
 
 export const playerRuleFields: PlayerRuleField[] = [
+  ...graphicsRuleFields,
   {
     property: 'width',
     fieldType: FieldType.NUMBER_SCROLL,
@@ -293,5 +295,5 @@ export const playerRuleFields: PlayerRuleField[] = [
       FieldTags.ALL,
       FieldTags.DEBUG,
     ]
-  }
+  },
 ];

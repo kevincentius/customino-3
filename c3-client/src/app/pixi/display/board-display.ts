@@ -115,7 +115,7 @@ export class BoardDisplay extends Container implements LayoutChild, BoardDisplay
     this.maskContainer.addChild(this.effectContainer);
 
     // mino grid
-    this.minoGridDisplay = new MinoGridDisplay(this.board.tiles, this.layout.minoSize, this.board.tiles.length - this.board.visibleHeight);
+    this.minoGridDisplay = new MinoGridDisplay(this.board.tiles, this.layout.minoSize, this.board.tiles.length - this.board.visibleHeight, this.player.playerRule);
     this.innerContainer.addChild(this.minoGridDisplay);
 
     // ghost piece

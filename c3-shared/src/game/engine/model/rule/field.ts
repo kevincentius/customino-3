@@ -12,6 +12,8 @@ export interface PlayerRuleField {
   validators?: ((value: any) => string | undefined)[];
   tags: FieldTag[];
 
+  overridable?: boolean;
+
   // NUMBERS
   stepSize?: number;
   decimalPlaces?: number;

@@ -1,3 +1,4 @@
+import { PlayerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
 import { Tile } from "@shared/game/engine/model/tile";
 import { LineClearEvent, PlaceTileEvent } from "@shared/game/engine/player/board";
 import { MatUtil } from "@shared/game/engine/util/mat-util";
@@ -5,7 +6,6 @@ import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { MinoDisplay } from "app/pixi/display/mino-display";
 import { MinoAnimator } from "app/pixi/display/mino-grid/mino-animator";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
-import { getLocalSettings } from "app/service/user-settings/user-settings.service";
 import { GlowFilter } from "pixi-filters";
 import { Container, Graphics } from "pixi.js";
 
@@ -28,7 +28,12 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     innerStrength: 0.5,
   });
 
-  constructor(private tiles: (Tile | null)[][], private minoSize: number, private invisibleHeight=0) {
+  constructor(
+    private tiles: (Tile | null)[][],
+    private minoSize: number,
+    private invisibleHeight: number,
+    private playerRule: PlayerRule,
+  ) {
     super();
 
     this.layoutWidth = this.minoSize * tiles[0].length;
@@ -50,7 +55,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     }
 
     this.filters = [];
-    if (getLocalSettings().localGraphics.glowEffect) {
+    if (this.playerRule.graphics.chorusIntensity >= 0.01) {
       this.filters.push(this.glowFilter);
     }
     
@@ -83,8 +88,8 @@ export class MinoGridDisplay extends Container implements LayoutChild {
   chorus(p: number) {
     const waveAmpl = 0;
     const waveP = (1 - waveAmpl) + waveAmpl * Math.abs(Math.sin(Date.now() / 500 * 2 * Math.PI));
-    this.glowFilter.innerStrength = p * 1.5 * waveP;
-    this.glowFilter.outerStrength = p * 1.5 * waveP;
+    this.glowFilter.innerStrength = p * this.playerRule.graphics.chorusIntensity * waveP;
+    this.glowFilter.outerStrength = p * this.playerRule.graphics.chorusIntensity * waveP;
   }
 
   placeTile(e: PlaceTileEvent) {

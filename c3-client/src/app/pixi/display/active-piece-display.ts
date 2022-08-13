@@ -4,7 +4,6 @@ import { BoardDisplayDelegate } from "app/pixi/display/board-display-delegate";
 import { SonicDropEffect } from "app/pixi/display/effects/sonic-drop-effect";
 import { MinoGridDisplay } from "app/pixi/display/mino-grid-display";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
-import { getLocalSettings } from "app/service/user-settings/user-settings.service";
 import { Container } from "pixi.js";
 
 export class ActivePieceDisplay extends Container {
@@ -23,7 +22,9 @@ export class ActivePieceDisplay extends Container {
     super();
 
     if (this.ghost) {
-      this.alpha = getLocalSettings().localGraphics.ghostOpacity;
+      console.log('ghostOpacity', this.player.playerRule.graphics.ghostOpacity);
+      console.log('ghostOpacity', this.player.playerRule);
+      this.alpha = this.player.playerRule.graphics.ghostOpacity;
     }
 
     this.activePiece = this.player.activePiece;
@@ -40,7 +41,7 @@ export class ActivePieceDisplay extends Container {
     }
 
     if (this.activePiece.piece) {
-      this.minoGridDisplay = new MinoGridDisplay(this.activePiece.piece.tiles, this.minoSize);
+      this.minoGridDisplay = new MinoGridDisplay(this.activePiece.piece.tiles, this.minoSize, 0, this.player.playerRule);
       
       if (!this.ghost) {
         this.minoGridDisplay.glowFilter.innerStrength = 1;
@@ -74,6 +75,8 @@ export class ActivePieceDisplay extends Container {
       
       if (!this.ghost) {
         this.minoGridDisplay.glowFilter.innerStrength = glow;
+      } else {
+        this.minoGridDisplay.glowFilter.innerStrength = 0;
       }
     }
   }
@@ -88,7 +91,7 @@ export class ActivePieceDisplay extends Container {
           const minoPos = this.boardDisplay.calcMinoPosForEffect(this.activePiece.y - e.dy + i, this.activePiece.x + j);
 
           const combo = this.player.attackRule.comboTimer ? this.player.attackRule.comboTimer.combo : 0;
-          const effect = new SonicDropEffect(this.player.playerRule.sonicDropEffect, this.spritesheet, tile, this.minoSize, e.dy + 1, combo);
+          const effect = new SonicDropEffect(this.player.playerRule.sonicDropEffect, this.spritesheet, tile, this.minoSize, e.dy + 1, combo, this.player.playerRule.graphics.particles);
           effect.position.set(minoPos.x, minoPos.y);
           this.boardDisplay.addEffect(effect);
           break;

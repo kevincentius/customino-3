@@ -1,4 +1,5 @@
 import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
+import { GraphicsRule } from "@shared/game/engine/model/rule/player-rule/graphics-rule";
 import { GravityRule } from "@shared/game/engine/model/rule/player-rule/gravity-rule";
 import { playerRuleFields } from "@shared/game/engine/model/rule/player-rule/player-rule-fields";
 import { SonicDropEffectConfig } from "@shared/game/engine/model/rule/player-rule/sonic-drop-effect-config";
@@ -44,6 +45,8 @@ export interface PlayerRule {
 
   // debug
   playerDisplayDupes: number;
+
+  graphics: GraphicsRule;
 }
 
 export function getDefaultPlayerRule(): PlayerRule {

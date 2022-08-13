@@ -43,6 +43,10 @@ interface RuleCategory {
 }
 const categoryDatas: RuleCategoryData[] = [
   {
+    name: 'Graphics',
+    tag: FieldTags.GFX_GLOBAL,
+  },
+  {
     name: 'General',
     tag: FieldTags.GENERAL,
   },
@@ -89,6 +93,7 @@ export class RuleSettingsComponent implements OnInit {
 
   @Input() gameRule!: GameRule;
   @Input() editMode = false;
+  @Input() localMode = false;
 
   displayedRule!: any;
   viewMode = viewModes[0];

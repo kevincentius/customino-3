@@ -6,7 +6,7 @@ import { floatRangeValidator, intRangeValidator } from "@shared/game/engine/mode
 const fieldPathPrefix = 'sonicDropEffect.';
 const fieldNamePrefix = 'Sonic drop FX: ';
 const fieldDefaultTags = [
-  FieldTags.VISUAL,
+  FieldTags.GFX_VISUAL,
   FieldTags.SONIC_DROP_EFFECTS,
 ];
 
