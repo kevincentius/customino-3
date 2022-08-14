@@ -12,7 +12,6 @@ import {saveAs} from 'file-saver';
 import { format } from 'date-fns';
 import { StartGameData } from '@shared/game/network/model/start-game/start-game-data';
 import { MainScreen } from 'app/view/main/main-screen';
-import { getDefaultPlayerRule, PlayerRule } from '@shared/game/engine/model/rule/player-rule/player-rule';
 import { RoomSettings } from '@shared/game/engine/model/room-settings';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { PlayerInfo } from '@shared/game/engine/player/player-info';
@@ -20,6 +19,9 @@ import { PlayerStats } from '@shared/game/engine/player/stats/player-stats';
 import { RoomSlotInfo } from '@shared/model/room/room-slot-info';
 import { EnterLeaveTransition } from 'app/view/util/enter-leave-transition';
 import { InputState } from 'app/control/keyboard';
+import { PlayerRule } from '@shared/game/engine/model/rule/player-rule';
+import { getDefaultRoomRule } from '@shared/game/engine/model/rule/room-rule/room-rule';
+import { getLocalSettings } from 'app/service/user-settings/user-settings.service';
 
 @Component({
   selector: 'app-room',
@@ -40,7 +42,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   showSettings = false;
 
-  playerRule: PlayerRule = getDefaultPlayerRule();
+  // playerRule: PlayerRule = {...getDefaultRoomRule(), ...getLocalSettings().localRule};
   
   lastGameStats?: { playerInfo: PlayerInfo; stats: PlayerStats; }[];
 
