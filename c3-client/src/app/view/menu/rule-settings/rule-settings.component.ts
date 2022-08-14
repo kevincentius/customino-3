@@ -1,86 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DataField } from '@shared/game/engine/model/rule/data-field/data-field';
-import { FieldTags } from '@shared/game/engine/model/rule/data-field/field-tag';
 import { GameRule } from '@shared/game/engine/model/rule/game-rule';
 import { playerRuleFields } from '@shared/game/engine/model/rule/room-rule/player-rule-fields';
 import { getField, setField } from '@shared/game/engine/model/rule/data-field/data-field';
 import { RulePreset, rulePresets } from 'app/view/menu/rule-settings/rule-presets';
 import { saveAs } from 'file-saver';
-
-interface ViewMode {
-  name: string;
-  forbiddenTags: FieldTags[];
-  allowCategories: boolean;
-  hideRuleFields?: boolean;
-}
-const viewModes: ViewMode[] = [
-  {
-    name: 'Presets mode',
-    forbiddenTags: [ FieldTags.ALL, FieldTags.ADVANCED, FieldTags.BASIC, ],
-    allowCategories: false,
-    hideRuleFields: true,
-  },
-  {
-    name: 'Simple mode',
-    forbiddenTags: [ FieldTags.ALL, FieldTags.ADVANCED, ],
-    allowCategories: false,
-  },
-  {
-    name: 'Advanced mode',
-    forbiddenTags: [ FieldTags.ALL, ],
-    allowCategories: true,
-  },
-  {
-    name: 'View all',
-    forbiddenTags: [],
-    allowCategories: true,
-  }
-];
-
-interface RuleCategory {
-  name: string;
-  fields: DataField[];
-}
-const categoryDatas: RuleCategoryData[] = [
-  {
-    name: 'Graphics',
-    tag: FieldTags.GFX_GLOBAL,
-  },
-  {
-    name: 'General',
-    tag: FieldTags.GENERAL,
-  },
-  {
-    name: 'Attack',
-    tag: FieldTags.ATTACK,
-  },
-  {
-    name: 'Defense',
-    tag: FieldTags.DEFENSE,
-  },
-  {
-    name: 'Debug',
-    tag: FieldTags.DEBUG,
-  },
-  {
-    name: 'Others',
-  }
-];
-
-interface RuleCategoryData {
-  name: string;
-  tag?: FieldTags;
-}
-const categories: RuleCategory[] = categoryDatas.map(d => ({...d, fields: []}));
-for (let field of playerRuleFields) {
-  for (let i = 0; i < categoryDatas.length; i++) {
-    if (!categoryDatas[i].tag || field.tags.indexOf(categoryDatas[i].tag!) != -1) {
-      categories[i].fields.push(field);
-      break;
-    }
-  }
-}
-
+import { LocalRule } from '@shared/game/engine/model/rule/local-rule/local-rule';
+import { ViewMode, viewModeAdvanced, viewModeAll, viewModePresets, viewModeSimple } from 'app/view/menu/rule-settings/rule-settings-view-mode';
+import { createCategories, DataFieldCategory, DataFieldCategoryData } from 'app/view/menu/rule-settings/rule-settings-category';
 
 @Component({
   selector: 'app-rule-settings',
@@ -91,20 +18,33 @@ export class RuleSettingsComponent implements OnInit {
   playerRuleFields = playerRuleFields;
   presets: RulePreset[] = rulePresets;
 
-  @Input() gameRule!: GameRule;
+  // either gameRule OR localRule must be provided by the parent
+  @Input() gameRule?: GameRule;
+  @Input() localRule?: LocalRule;
   @Input() editMode = false;
-  @Input() localMode = false;
-
+  @Input() dataFields!: DataField[];
+  @Input() dataFieldCategories!: DataFieldCategoryData[];
+  
+  viewModes!: ViewMode[];
+  viewMode!: ViewMode;
+  categories!: DataFieldCategory[];
+  
   displayedRule!: any;
-  viewMode = viewModes[0];
-  categories = categories;
   groupByCategory = true;
   selectedPreset?: RulePreset = rulePresets[0];
-
-  constructor() { }
+  
+  constructor() {
+  }
 
   ngOnInit(): void {
-    this.displayedRule = this.gameRule.roomRule;
+    this.viewModes = this.gameRule != null
+      ? [viewModePresets, viewModeSimple, viewModeAdvanced, viewModeAll]
+      : [viewModeSimple, viewModeAdvanced, viewModeAll];
+    this.viewMode = this.viewModes[0];
+    console.log('hello', this.dataFieldCategories);
+    this.categories = createCategories(this.dataFieldCategories, this.dataFields);
+    
+    this.displayedRule = this.gameRule?.roomRule ?? this.localRule!;
   }
 
   getFieldValue(field: DataField) {
@@ -116,9 +56,9 @@ export class RuleSettingsComponent implements OnInit {
   }
 
   toggleViewMode() {
-    this.viewMode = viewModes[(viewModes.indexOf(this.viewMode) + 1) % viewModes.length]
+    this.viewMode = this.viewModes[(this.viewModes.indexOf(this.viewMode) + 1) % this.viewModes.length]
 
-    if (this.viewMode != viewModes[0]) {
+    if (!this.viewMode.hideRuleFields) {
       this.selectedPreset = undefined;
     }
   }
@@ -136,15 +76,17 @@ export class RuleSettingsComponent implements OnInit {
   }
 
   async onRuleUpload(files: File[]) {
-    const gameRule = await this.readFileAsJsObject(files[0]);
-    this.loadRule(gameRule);
+    const data = await this.readFileAsJsObject(files[0]);
+    this.loadRule(data);
   }
 
-  private loadRule(gameRule: GameRule) {
+  private loadRule(data: any) {
     const unknownProperties: string[] = [];
-    for (const key of Object.keys(gameRule.roomRule)) {
-      if (key in this.gameRule.roomRule) {
-        (this.gameRule.roomRule as any)[key] = (gameRule.roomRule as any)[key];
+    for (const key of Object.keys(data.roomRule)) {
+      if (this.gameRule && key in this.gameRule!.roomRule) {
+        (this.gameRule!.roomRule as any)[key] = data.roomRule[key];
+      } else if (this.localRule && key in this.localRule) {
+        (this.localRule as any)[key] = data[key];
       } else {
         unknownProperties.push(key);
       }
@@ -155,7 +97,7 @@ export class RuleSettingsComponent implements OnInit {
     }
   }
 
-  private async readFileAsJsObject(file: File): Promise<GameRule> {
+  private async readFileAsJsObject(file: File): Promise<any> {
     return new Promise(resolve => {
       const reader = new FileReader();
       reader.onload = e => {

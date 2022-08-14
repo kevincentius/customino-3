@@ -10,6 +10,11 @@ import { musicService } from 'app/pixi/display/sound/music-service';
 import { soundService } from 'app/pixi/display/sound/sound-service';
 import { DataField } from '@shared/game/engine/model/rule/data-field/data-field';
 
+// {
+//   name: 'Graphics',
+//   tag: FieldTags.GFX_GLOBAL,
+// }
+
 @Component({
   selector: 'app-controls',
   templateUrl: './controls.component.html',

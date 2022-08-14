@@ -8,7 +8,12 @@
   
   <div class="section" style="flex-grow: 1">
     <ng-container *ngIf="data">
-      <app-rule-settings [gameRule]="data.gameRule" [editMode]="editMode"></app-rule-settings>
+      <app-rule-settings
+        [gameRule]="data.gameRule"
+        [editMode]="editMode"
+        [dataFieldCategories]="dataFieldCategories"
+        [dataFields]="dataFields"
+      ></app-rule-settings>
     </ng-container>
   </div>
 </div>
