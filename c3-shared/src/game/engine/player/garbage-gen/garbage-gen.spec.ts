@@ -1,5 +1,5 @@
 
-import { getDefaultLocalRule } from '@shared/game/engine/model/rule/local-rule/local-rule';
+import { getDefaultUserRule } from '@shared/game/engine/model/rule/user-rule/user-rule';
 import { PlayerRule } from '@shared/game/engine/model/rule/player-rule';
 import { getDefaultRoomRule } from '@shared/game/engine/model/rule/room-rule/room-rule';
 import { GarbageGen } from '@shared/game/engine/player/garbage-gen/garbage-gen';
@@ -11,7 +11,7 @@ import 'jest';
 
 describe('Environment', () => {
   it('should get the current environment', async () => {
-    const rule: PlayerRule = { ...getDefaultRoomRule(), ...getDefaultLocalRule() };
+    const rule: PlayerRule = { ...getDefaultRoomRule(), ...getDefaultUserRule() };
     rule.garbageBlockingFactor = 0.35;
     rule.garbagePierceFactor = 0.25;
 

@@ -1,7 +1,7 @@
 
 export enum LobbyEvent {
   // events fired by the client
-  UPDATE_LOCAL_RULE    = 'e',
+  UPDATE_USER_RULE    = 'e',
 
   GET_ROOMS            = '1',
   CREATE_ROOM          = '2',

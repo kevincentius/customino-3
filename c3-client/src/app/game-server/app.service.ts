@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LocalRule } from '@shared/game/engine/model/rule/local-rule/local-rule';
+import { UserRule } from '@shared/game/engine/model/rule/user-rule/user-rule';
 import { LobbyEvent } from '@shared/model/room/lobby-event';
 import { SocketService } from 'app/service/socket.service';
 
@@ -12,7 +12,7 @@ export class AppService {
     private socketService: SocketService
   ) {}
 
-  updateLocalRule(localRule: LocalRule) {
-    this.socketService.emit(LobbyEvent.UPDATE_LOCAL_RULE, localRule);
+  updateUserRule(userRule: UserRule) {
+    this.socketService.emit(LobbyEvent.UPDATE_USER_RULE, userRule);
   }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { getDefaultLocalRule } from '@shared/game/engine/model/rule/local-rule/local-rule';
+import { getDefaultUserRule } from '@shared/game/engine/model/rule/user-rule/user-rule';
 import { InputKey } from '@shared/game/network/model/input-key';
 import { AppService } from 'app/game-server/app.service';
 import { musicService } from 'app/pixi/display/sound/music-service';
@@ -35,6 +36,7 @@ export class UserSettingsService {
       if (localSettings.control.sdr == null) { localSettings.control.sdr = 1; }
       if (localSettings.musicVolume == null) { localSettings.musicVolume = 1; }
       if (localSettings.soundVolume == null) { localSettings.soundVolume = 1; }
+      if (localSettings.userRule == null) { localSettings.userRule = getDefaultUserRule(); }
       if (localSettings.localRule == null) { localSettings.localRule = getDefaultLocalRule(); }
 
       musicService.setUserMusicVolume(localSettings.musicVolume);
@@ -47,13 +49,13 @@ export class UserSettingsService {
     this.onLoadCallbacks.forEach(c => c());
     this.onLoadCallbacks = [];
     this.settingsChangedSubject.next(localSettings);
-    this.appService.updateLocalRule(localSettings.localRule);
+    this.appService.updateUserRule(localSettings.userRule);
   }
 
   async save() {
     this.idbService.setLocalSettings(localSettings);
     this.settingsChangedSubject.next(localSettings);
-    this.appService.updateLocalRule(localSettings.localRule);
+    this.appService.updateUserRule(localSettings.userRule);
   }
 
   private createDefaultSettings(): LocalSettings {
@@ -61,6 +63,7 @@ export class UserSettingsService {
       control: this.createDefaultControlSettings(),
       musicVolume: 1,
       soundVolume: 1,
+      userRule: getDefaultUserRule(),
       localRule: getDefaultLocalRule(),
     }
   }

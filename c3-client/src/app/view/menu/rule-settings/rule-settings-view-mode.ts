@@ -18,6 +18,12 @@ export const viewModeSimple =
   forbiddenTags: [ FieldTags.ALL, FieldTags.ADVANCED, ],
   allowCategories: false,
 };
+export const viewModeSimpleCategorized = 
+{
+  name: 'Simple mode',
+  forbiddenTags: [ FieldTags.ALL, FieldTags.ADVANCED, ],
+  allowCategories: true,
+};
 export const viewModeAdvanced = {
   name: 'Advanced mode',
   forbiddenTags: [ FieldTags.ALL, ],

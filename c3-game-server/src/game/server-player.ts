@@ -15,7 +15,7 @@ export class ServerPlayer extends Player {
   attackOutgoingBuffer: AttackDistribution[] = [];
 
   constructor(protected game: ServerGame, public startPlayerData: StartPlayerData, private playerIndex: number) {
-    super(game, startPlayerData);
+    super(game, startPlayerData, undefined);
     
     this.pieceLockSubject.subscribe(lockResult => {
       const attackDistribution = this.game.distributeAttacks(this, lockResult.attacks);

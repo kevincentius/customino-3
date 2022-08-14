@@ -5,15 +5,14 @@ import { ControlRowModel } from 'app/view/menu/controls/control-row/control-row.
 import { inputKeyDataArray } from 'app/view/menu/controls/input-key-data';
 import { LocalSettings } from 'app/service/user-settings/local-settings';
 import { getField, setField } from '@shared/game/engine/model/rule/data-field/data-field';
-import { ghostOpacity, glowEffect, musicVolumeField, particles, soundVolumeField } from 'app/view/menu/controls/settings-fields';
+import { musicVolumeField, soundVolumeField } from 'app/view/menu/controls/settings-fields';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { soundService } from 'app/pixi/display/sound/sound-service';
 import { DataField } from '@shared/game/engine/model/rule/data-field/data-field';
-
-// {
-//   name: 'Graphics',
-//   tag: FieldTags.GFX_GLOBAL,
-// }
+import { userRuleFields } from '@shared/game/engine/model/rule/user-rule/user-rule-fields';
+import { DataFieldCategoryData } from 'app/view/menu/rule-settings/rule-settings-category';
+import { FieldTags } from '@shared/game/engine/model/rule/data-field/field-tag';
+import { localRuleFields } from '@shared/game/engine/model/rule/local-rule/local-rule-fields';
 
 @Component({
   selector: 'app-controls',
@@ -24,10 +23,16 @@ export class ControlsComponent {
   settingsFields = [
     musicVolumeField,
     soundVolumeField,
-    ghostOpacity,
-    glowEffect,
-    particles,
   ];
+
+  userRuleFields = userRuleFields;
+  localRuleFields = localRuleFields;
+  dataFieldCategories: DataFieldCategoryData[] = [
+    {
+      name: 'Graphics',
+      tag: FieldTags.GFX_GLOBAL,
+    }
+  ]
   
   // view model
   rows: ControlRowModel[] = inputKeyDataArray
@@ -47,6 +52,7 @@ export class ControlsComponent {
 
   ngOnInit() {
     this.userSettingsService.onLoad(() => {
+      console.log(getLocalSettings());
       this.localSettings = getLocalSettings();
       this.rows.forEach(row => row.mappings = this.localSettings.control.keyMap.get(row.inputKey)!);
     });
@@ -54,6 +60,7 @@ export class ControlsComponent {
 
   onBackClick() {
     this.editIndex = null;
+    this.userSettingsService.save();
     this.mainService.back();
   }
   

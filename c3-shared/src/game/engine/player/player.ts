@@ -22,6 +22,7 @@ import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { PlayerInfo } from "@shared/game/engine/player/player-info";
 import { PlayerStatsTracker } from "@shared/game/engine/player/stats/player-stats-tracker";
 import { PlayerStats } from "@shared/game/engine/player/stats/player-stats";
+import { LocalRule } from "@shared/game/engine/model/rule/local-rule/local-rule";
 
 export abstract class Player {
   // event emitters
@@ -71,6 +72,7 @@ export abstract class Player {
     protected game: Game,
 
     startPlayerData: StartPlayerData,
+    localRule: LocalRule | undefined,
   ) {
     this.playerInfo = {
       name: startPlayerData.clientInfo.username,
@@ -79,7 +81,7 @@ export abstract class Player {
 
     this.init();
 
-    this.playerRule = computePlayerRule(this.game.startGameData.roomRule, startPlayerData.slotRule, startPlayerData.localRule);
+    this.playerRule = computePlayerRule(this.game.startGameData.roomRule, startPlayerData.slotRule, startPlayerData.userRule, localRule);
 
     this.r = new RandomGen(startPlayerData.randomSeed);
     this.board = new Board(this.playerRule);

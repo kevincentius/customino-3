@@ -1,5 +1,5 @@
 
-<div class="v-flex">  
+<div class="v-flex room-section">  
   <app-background></app-background>
 
   <div class="screen-title-container">
@@ -41,13 +41,7 @@
         </ng-container>
       </div>
 
-
-      <div style="height: 30px;"></div>
-
-      <!-- <app-rule-settings
       
-      ></app-rule-settings> -->
-
       <app-control-row *ngFor="let settingsField of settingsFields" [name]="settingsField.name"
         (mouseover)="hint = settingsField.description"
       >
@@ -62,6 +56,20 @@
       <div style="height: 30px;"></div>
 
 
+      <ng-container *ngIf="localSettings">
+        <app-rule-settings
+          [userRule]="localSettings.userRule"
+          [localRule]="localSettings.localRule"
+          [editMode]="true"
+          [dataFieldCategories]="dataFieldCategories"
+          [userRuleFields]="userRuleFields"
+          [localRuleFields]="localRuleFields"
+
+        ></app-rule-settings>
+      </ng-container>
+
+
+      <div style="height: 30px;"></div>
     </div>
   </div>
 </div>

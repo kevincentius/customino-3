@@ -98,7 +98,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.roomInfo = undefined!;
     this.roomInfo = (await this.roomService.getRoomInfo(roomId))!;
     if (this.roomInfo.gameState?.running) {
-      const game = new ClientGame(this.roomInfo.gameState.startGameData, undefined);
+      const game = new ClientGame(this.roomInfo.gameState.startGameData, getLocalSettings().localRule, undefined);
       game.load(this.roomInfo.gameState);
       this.game = game;
       this.startGame();
@@ -132,7 +132,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     
     // start new game
     const localPlayerIndex = startGameData.players.findIndex(p => p.clientInfo.sessionId == this.mainService.sessionInfo.sessionId);
-    this.game = new ClientGame(startGameData, localPlayerIndex);
+    this.game = new ClientGame(startGameData, getLocalSettings().localRule, localPlayerIndex);
     this.startGame();
 
     // if not spectator, setup local player

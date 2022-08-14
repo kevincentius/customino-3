@@ -3,6 +3,7 @@ import { MainService } from "app/view/main/main.service";
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FileDropAreaComponent } from "app/view/common/file-drop-area/file-drop-area.component";
 import { GameReplayer } from "@shared/game/engine/replayer/game-replayer";
+import { getLocalSettings } from "app/service/user-settings/user-settings.service";
 
 @Component({
   selector: 'app-replay',
@@ -24,7 +25,7 @@ export class ReplayComponent {
   running = false;
 
   constructor(
-    private mainService: MainService
+    private mainService: MainService,
   ) { }
 
   onFileChange(files: any) {
@@ -44,7 +45,7 @@ export class ReplayComponent {
   private startReplay(replayString: string) {
     const replay = JSON.parse(replayString);
     
-    this.replayer = new GameReplayer(replay);
+    this.replayer = new GameReplayer(replay, getLocalSettings().localRule);
     this.replayer.start();
     this.running = true;
     

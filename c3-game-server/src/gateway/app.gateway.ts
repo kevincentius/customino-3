@@ -2,6 +2,7 @@
 import { Logger } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { LocalRule } from '@shared/game/engine/model/rule/local-rule/local-rule';
+import { UserRule } from '@shared/game/engine/model/rule/user-rule/user-rule';
 import { LobbyEvent } from '@shared/model/room/lobby-event';
 import { SessionInfo } from '@shared/model/session/session-info';
 import { websocketGatewayOptions } from 'config/config';
@@ -25,11 +26,11 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     this.logger.log('Received debug message from a client:', message);
   }
 
-  @SubscribeMessage(LobbyEvent.UPDATE_LOCAL_RULE)
-  updateLocalRule(socket: Socket, localRule: LocalRule) {
+  @SubscribeMessage(LobbyEvent.UPDATE_USER_RULE)
+  updateUserRule(socket: Socket, userRule: UserRule) {
     const session = this.sessionService.getSession(socket);
-    session.localRule = localRule;
-    console.debug('Player updated his localRule', JSON.stringify(localRule));
+    session.userRule = userRule;
+    console.debug('Player updated his localRule', JSON.stringify(userRule));
   }
 
   afterInit() {

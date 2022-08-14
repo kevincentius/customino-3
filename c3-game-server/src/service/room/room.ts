@@ -109,7 +109,7 @@ export class Room {
             randomSeed: globalSeed,
             slotRule: {}, // slotRule not yet implemented
             slotSettings: slot.settings,
-            localRule: this.sessionService.getSessionById(clientInfo.sessionId).localRule,
+            userRule: this.sessionService.getSessionById(clientInfo.sessionId).userRule,
           };
           return startPlayerData;
         }),

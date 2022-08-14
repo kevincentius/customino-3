@@ -1,13 +1,15 @@
 import { ClientGame } from "@shared/game/engine/game/client-game";
+import { LocalRule } from "@shared/game/engine/model/rule/local-rule/local-rule";
 import { GameReplay } from "@shared/game/engine/recorder/game-replay";
 
 export class GameReplayer {
   game: ClientGame;
 
   constructor(
-    private replay: GameReplay
+    private replay: GameReplay,
+    localRule: LocalRule,
   ) {
-    this.game = new ClientGame(this.replay.startGameData);
+    this.game = new ClientGame(this.replay.startGameData, localRule);
 
     const frames = Math.max(...this.replay.playerReplays.map(p => p.gameEvents.length == 0 ? 0 : p.gameEvents[p.gameEvents.length - 1].frame));
 

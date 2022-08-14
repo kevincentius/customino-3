@@ -31,7 +31,7 @@ export function getField(rule: any, field: DataField) {
   for (const part of parts) {
     obj = obj[part];
     if (obj === undefined) {
-      throw new Error();
+      throw new Error(`Field not found: ${field.property}`);
     }
   }
   return field.convertToDisplay ? field.convertToDisplay(obj) : obj;

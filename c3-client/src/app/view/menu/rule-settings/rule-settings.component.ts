@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DataField } from '@shared/game/engine/model/rule/data-field/data-field';
 import { GameRule } from '@shared/game/engine/model/rule/game-rule';
-import { playerRuleFields } from '@shared/game/engine/model/rule/room-rule/player-rule-fields';
 import { getField, setField } from '@shared/game/engine/model/rule/data-field/data-field';
 import { RulePreset, rulePresets } from 'app/view/menu/rule-settings/rule-presets';
 import { saveAs } from 'file-saver';
-import { LocalRule } from '@shared/game/engine/model/rule/local-rule/local-rule';
-import { ViewMode, viewModeAdvanced, viewModeAll, viewModePresets, viewModeSimple } from 'app/view/menu/rule-settings/rule-settings-view-mode';
+import { UserRule } from '@shared/game/engine/model/rule/user-rule/user-rule';
+import { ViewMode, viewModeAdvanced, viewModeAll, viewModePresets, viewModeSimple, viewModeSimpleCategorized } from 'app/view/menu/rule-settings/rule-settings-view-mode';
 import { createCategories, DataFieldCategory, DataFieldCategoryData } from 'app/view/menu/rule-settings/rule-settings-category';
+import { LocalRule } from '@shared/game/engine/model/rule/local-rule/local-rule';
 
 @Component({
   selector: 'app-rule-settings',
@@ -15,16 +15,24 @@ import { createCategories, DataFieldCategory, DataFieldCategoryData } from 'app/
   styleUrls: ['./rule-settings.component.scss']
 })
 export class RuleSettingsComponent implements OnInit {
-  playerRuleFields = playerRuleFields;
   presets: RulePreset[] = rulePresets;
 
-  // either gameRule OR localRule must be provided by the parent
-  @Input() gameRule?: GameRule;
-  @Input() localRule?: LocalRule;
+  // required inputs
   @Input() editMode = false;
-  @Input() dataFields!: DataField[];
   @Input() dataFieldCategories!: DataFieldCategoryData[];
   
+  // required inputs for Room Settings (i. e. GameRule)
+  @Input() gameRule?: GameRule;
+  @Input() dataFields!: DataField[];
+
+  // requiredinputs for User Settings
+  @Input() userRule?: UserRule;
+  @Input() userRuleFields?: DataField[];
+  @Input() localRule?: LocalRule;
+  @Input() localRuleFields?: DataField[];
+
+  userRuleFieldSet!: Set<DataField>;
+
   viewModes!: ViewMode[];
   viewMode!: ViewMode;
   categories!: DataFieldCategory[];
@@ -33,26 +41,33 @@ export class RuleSettingsComponent implements OnInit {
   groupByCategory = true;
   selectedPreset?: RulePreset = rulePresets[0];
   
-  constructor() {
-  }
-
   ngOnInit(): void {
-    this.viewModes = this.gameRule != null
-      ? [viewModePresets, viewModeSimple, viewModeAdvanced, viewModeAll]
-      : [viewModeSimple, viewModeAdvanced, viewModeAll];
-    this.viewMode = this.viewModes[0];
-    console.log('hello', this.dataFieldCategories);
-    this.categories = createCategories(this.dataFieldCategories, this.dataFields);
+    if (this.gameRule) {
+      this.viewModes = [viewModePresets, viewModeSimple, viewModeAdvanced, viewModeAll];
+    } else {
+      this.dataFields = [...this.userRuleFields!, ...this.localRuleFields!];
+      this.viewModes = [viewModeSimpleCategorized, viewModeAdvanced, viewModeAll]
+      this.userRuleFieldSet = new Set(this.userRuleFields!);
+    }
     
-    this.displayedRule = this.gameRule?.roomRule ?? this.localRule!;
+    this.viewMode = this.viewModes[0];
+    console.log('viewMode', this.viewMode);
+    this.categories = createCategories(this.dataFieldCategories, this.dataFields);
+    this.displayedRule = this.gameRule?.roomRule ?? undefined;
   }
 
   getFieldValue(field: DataField) {
-    return getField(this.displayedRule, field);
+    return getField(this.getBoundRule(field), field);
   }
 
   setFieldValue(field: DataField, value: any) {
-    setField(this.displayedRule, field, value);
+    setField(this.getBoundRule(field), field, value);
+  }
+
+  private getBoundRule(field: DataField) {
+    return this.gameRule ? this.displayedRule
+      : this.userRuleFieldSet.has(field) ? this.userRule!
+      : this.localRule!;
   }
 
   toggleViewMode() {
