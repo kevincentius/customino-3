@@ -1,15 +1,13 @@
-import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
-import { FieldTags } from "@shared/game/engine/model/rule/field-tag";
-import { FieldType } from "@shared/game/engine/model/rule/field-type";
-import { floatRangeValidator, intRangeValidator, listValidator } from "@shared/game/engine/model/rule/field-validators";
-import { graphicsRuleFields } from "@shared/game/engine/model/rule/player-rule/graphics-rule-fields";
-import { gravityRuleFields } from "@shared/game/engine/model/rule/player-rule/gravity-rule-fields";
-import { sonicDropEffectRuleFields } from "@shared/game/engine/model/rule/player-rule/sonic-drop-effect-fields";
-import { starsRuleFields } from "@shared/game/engine/model/rule/player-rule/stars-rule-fields";
+import { DataField } from "@shared/game/engine/model/rule/data-field/data-field";
+import { FieldTags } from "@shared/game/engine/model/rule/data-field/field-tag";
+import { FieldType } from "@shared/game/engine/model/rule/data-field/field-type";
+import { floatRangeValidator, intRangeValidator, listValidator } from "@shared/game/engine/model/rule/data-field/field-validators";
+import { gravityRuleFields } from "@shared/game/engine/model/rule/room-rule/gravity-rule-fields";
+import { sonicDropEffectRuleFields } from "@shared/game/engine/model/rule/room-rule/sonic-drop-effect-fields";
+import { starsRuleFields } from "@shared/game/engine/model/rule/room-rule/stars-rule-fields";
 import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
 
-export const playerRuleFields: PlayerRuleField[] = [
-  ...graphicsRuleFields,
+export const playerRuleFields: DataField[] = [
   {
     property: 'width',
     fieldType: FieldType.NUMBER_SCROLL,

@@ -1,17 +1,17 @@
-import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
-import { FieldTags } from "@shared/game/engine/model/rule/field-tag";
-import { FieldType } from "@shared/game/engine/model/rule/field-type";
-import { floatRangeValidator } from "@shared/game/engine/model/rule/field-validators";
-import { yesNoChoice } from "@shared/game/engine/model/rule/player-rule/yes-no-choice";
+import { DataField } from "@shared/game/engine/model/rule/data-field/data-field";
+import { FieldTags } from "@shared/game/engine/model/rule/data-field/field-tag";
+import { FieldType } from "@shared/game/engine/model/rule/data-field/field-type";
+import { floatRangeValidator } from "@shared/game/engine/model/rule/data-field/field-validators";
+import { yesNoChoice } from "@shared/game/engine/model/rule/data-field/yes-no-choice";
 
 const fieldPathPrefix = 'graphics.';
-const fieldNamePrefix = 'Graphics global: ';
+const fieldNamePrefix = 'Graphics: ';
 const fieldDefaultTags = [
   FieldTags.GFX_GLOBAL,
   FieldTags.OVERRIDABLE
 ];
 
-export const graphicsRuleFields: PlayerRuleField[] = [
+export const graphicsRuleFields: DataField[] = [
   {
     property: 'chorusIntensity',
     fieldType: FieldType.NUMBER_SCROLL,

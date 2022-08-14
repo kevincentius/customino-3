@@ -1,7 +1,7 @@
-import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
-import { FieldTags } from "@shared/game/engine/model/rule/field-tag";
-import { FieldType } from "@shared/game/engine/model/rule/field-type";
-import { floatRangeValidator } from "@shared/game/engine/model/rule/field-validators";
+import { DataField } from "@shared/game/engine/model/rule/data-field/data-field";
+import { FieldTags } from "@shared/game/engine/model/rule/data-field/field-tag";
+import { FieldType } from "@shared/game/engine/model/rule/data-field/field-type";
+import { floatRangeValidator } from "@shared/game/engine/model/rule/data-field/field-validators";
 
 const fieldPathPrefix = 'gravity.';
 const fieldNamePrefix = 'Gravity: ';
@@ -10,7 +10,7 @@ const fieldDefaultTags = [
   FieldTags.GRAVITY,
 ];
 
-export const gravityRuleFields: PlayerRuleField[] = [
+export const gravityRuleFields: DataField[] = [
   {
     property: 'speed',
     fieldType: FieldType.NUMBER_SCROLL,

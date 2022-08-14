@@ -46,7 +46,7 @@
 
 
       <app-control-row *ngFor="let settingsField of settingsFields" [name]="settingsField.name"
-        (mouseover)="hint = settingsField.description ?? ''"
+        (mouseover)="hint = settingsField.description"
       >
         <app-field-input
           [field]="settingsField"

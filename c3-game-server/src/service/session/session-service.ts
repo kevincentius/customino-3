@@ -13,6 +13,7 @@ export class SessionService {
   eventEmitter = new EventEmitter();
 
   private socketToSessionMap = new Map<Socket, Session>();
+  private idToSessionMap = new Map<number, Session>();
 
   private nextSessionId = 1;
 
@@ -32,6 +33,7 @@ export class SessionService {
     const session = new Session(socket, this.nextSessionId++, userId, username);
 
     this.socketToSessionMap.set(socket, session);
+    this.idToSessionMap.set(session.sessionId, session);
 
     return session;
   }
@@ -45,9 +47,14 @@ export class SessionService {
     this.eventEmitter.emit(SessionServiceEvent.SESSION_DESTROYED, session);
 
     this.socketToSessionMap.delete(socket);
+    this.idToSessionMap.delete(session.sessionId);
   }
   
   getSession(socket: Socket): Session {
     return this.socketToSessionMap.get(socket)!;
+  }
+
+  getSessionById(sessionId: number): Session {
+    return this.idToSessionMap.get(sessionId)!;
   }
 }

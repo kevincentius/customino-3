@@ -12,7 +12,9 @@ import { GameRecorder } from "@shared/game/engine/recorder/game-recorder";
 import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
 import { RandomGen } from "@shared/game/engine/util/random-gen";
 import { RoomSettings } from "@shared/game/engine/model/room-settings";
-import { getDefaultPlayerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
+import { getDefaultRoomRule } from "@shared/game/engine/model/rule/room-rule/room-rule";
+import { SessionService } from "service/session/session-service";
+import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
 
 export class Room {
   createdAt = Date.now();
@@ -20,7 +22,7 @@ export class Room {
   slots: RoomSlot[];
   settings: RoomSettings = {
     gameRule: { 
-      globalRule: getDefaultPlayerRule(),
+      roomRule: getDefaultRoomRule(),
     },
   };
   host!: Session;
@@ -36,6 +38,7 @@ export class Room {
     public id: number,
     public name: string,
     public creator: Session,
+    private sessionService: SessionService,
   ) {
     this.slots =[new RoomSlot(creator, true)];
     this.host = creator;
@@ -98,11 +101,18 @@ export class Room {
       const globalSeed = this.r.int();
       
       const startGameData: StartGameData = {
-        gameRule: this.settings.gameRule,
-        players: players.map(p => ({
-          clientInfo: p,
-          randomSeed: globalSeed,
-        })),
+        roomRule: this.settings.gameRule.roomRule,
+        players: playerSlots.map(slot => {
+          const clientInfo = slot.session.getClientInfo()
+          const startPlayerData: StartPlayerData = {
+            clientInfo: clientInfo,
+            randomSeed: globalSeed,
+            slotRule: {}, // slotRule not yet implemented
+            slotSettings: slot.settings,
+            localRule: this.sessionService.getSessionById(clientInfo.sessionId).localRule,
+          };
+          return startPlayerData;
+        }),
         randomSeed: this.r.int(),
       }
 

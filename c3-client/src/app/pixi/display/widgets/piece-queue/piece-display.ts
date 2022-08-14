@@ -1,4 +1,4 @@
-import { PlayerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
+import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { Piece } from "@shared/game/engine/player/piece";
 import { MatUtil } from "@shared/game/engine/util/mat-util";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";

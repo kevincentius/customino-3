@@ -1,6 +1,6 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { QueuedAttack } from "@shared/game/engine/model/queued-attack";
-import { PlayerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
+import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { cloneTile, Tile } from "@shared/game/engine/model/tile";
 import { TileType } from "@shared/game/engine/model/tile-type";
 import { BlockEvent } from "@shared/game/engine/player/garbage-gen/block-event";

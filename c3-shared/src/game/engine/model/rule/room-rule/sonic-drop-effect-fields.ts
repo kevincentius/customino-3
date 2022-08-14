@@ -1,7 +1,7 @@
-import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
-import { FieldTags } from "@shared/game/engine/model/rule/field-tag";
-import { FieldType } from "@shared/game/engine/model/rule/field-type";
-import { floatRangeValidator, intRangeValidator } from "@shared/game/engine/model/rule/field-validators";
+import { DataField } from "@shared/game/engine/model/rule/data-field/data-field";
+import { FieldTags } from "@shared/game/engine/model/rule/data-field/field-tag";
+import { FieldType } from "@shared/game/engine/model/rule/data-field/field-type";
+import { floatRangeValidator, intRangeValidator } from "@shared/game/engine/model/rule/data-field/field-validators";
 
 const fieldPathPrefix = 'sonicDropEffect.';
 const fieldNamePrefix = 'Sonic drop FX: ';
@@ -10,7 +10,7 @@ const fieldDefaultTags = [
   FieldTags.SONIC_DROP_EFFECTS,
 ];
 
-export const sonicDropEffectRuleFields: PlayerRuleField[] = [
+export const sonicDropEffectRuleFields: DataField[] = [
   {
     property: 'duration',
     fieldType: FieldType.NUMBER_SCROLL,

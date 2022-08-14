@@ -1,4 +1,4 @@
-import { PlayerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
+import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { Tile } from "@shared/game/engine/model/tile";
 import { LineClearEvent, PlaceTileEvent } from "@shared/game/engine/player/board";
 import { MatUtil } from "@shared/game/engine/util/mat-util";

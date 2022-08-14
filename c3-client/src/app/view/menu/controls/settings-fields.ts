@@ -1,8 +1,8 @@
-import { PlayerRuleField } from "@shared/game/engine/model/rule/field"
-import { FieldType } from "@shared/game/engine/model/rule/field-type"
-import { intRangeValidator } from "@shared/game/engine/model/rule/field-validators"
+import { DataField } from "@shared/game/engine/model/rule/data-field/data-field"
+import { FieldType } from "@shared/game/engine/model/rule/data-field/field-type"
+import { intRangeValidator } from "@shared/game/engine/model/rule/data-field/field-validators"
 
-export const soundVolumeField: PlayerRuleField = {
+export const soundVolumeField: DataField = {
   property: 'soundVolume',
   default: 100,
   name: 'Sound volume',
@@ -15,7 +15,7 @@ export const soundVolumeField: PlayerRuleField = {
   tags: [],
 }
 
-export const musicVolumeField: PlayerRuleField = {
+export const musicVolumeField: DataField = {
   property: 'musicVolume',
   default: 100,
   name: 'Music volume',
@@ -28,7 +28,7 @@ export const musicVolumeField: PlayerRuleField = {
   tags: [],
 }
 
-export const glowEffect: PlayerRuleField = {
+export const glowEffect: DataField = {
   property: 'localGraphics.glowEffect',
   default: true,
   name: 'Glow effects',
@@ -41,7 +41,7 @@ export const glowEffect: PlayerRuleField = {
   tags: [],
 }
 
-export const particles: PlayerRuleField = {
+export const particles: DataField = {
   property: 'localGraphics.particles',
   default: true,
   name: 'Particle effects',
@@ -54,7 +54,7 @@ export const particles: PlayerRuleField = {
   tags: [],
 }
 
-export const ghostOpacity: PlayerRuleField = {
+export const ghostOpacity: DataField = {
   property: 'localGraphics.ghostOpacity',
   default: true,
   name: 'Ghost opacity',

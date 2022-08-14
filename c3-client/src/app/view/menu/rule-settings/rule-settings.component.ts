@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { PlayerRuleField } from '@shared/game/engine/model/rule/field';
-import { FieldTags } from '@shared/game/engine/model/rule/field-tag';
+import { DataField } from '@shared/game/engine/model/rule/data-field/data-field';
+import { FieldTags } from '@shared/game/engine/model/rule/data-field/field-tag';
 import { GameRule } from '@shared/game/engine/model/rule/game-rule';
-import { getField, setField } from '@shared/game/engine/model/rule/player-rule/player-rule';
-import { playerRuleFields } from '@shared/game/engine/model/rule/player-rule/player-rule-fields';
+import { playerRuleFields } from '@shared/game/engine/model/rule/room-rule/player-rule-fields';
+import { getField, setField } from '@shared/game/engine/model/rule/data-field/data-field';
 import { RulePreset, rulePresets } from 'app/view/menu/rule-settings/rule-presets';
 import { saveAs } from 'file-saver';
 
@@ -39,7 +39,7 @@ const viewModes: ViewMode[] = [
 
 interface RuleCategory {
   name: string;
-  fields: PlayerRuleField[];
+  fields: DataField[];
 }
 const categoryDatas: RuleCategoryData[] = [
   {
@@ -104,14 +104,14 @@ export class RuleSettingsComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.displayedRule = this.gameRule.globalRule;
+    this.displayedRule = this.gameRule.roomRule;
   }
 
-  getFieldValue(field: PlayerRuleField) {
+  getFieldValue(field: DataField) {
     return getField(this.displayedRule, field);
   }
 
-  setFieldValue(field: PlayerRuleField, value: any) {
+  setFieldValue(field: DataField, value: any) {
     setField(this.displayedRule, field, value);
   }
 
@@ -127,7 +127,7 @@ export class RuleSettingsComponent implements OnInit {
     this.groupByCategory = !this.groupByCategory;
   }
   
-  passesFilter(field: PlayerRuleField) {
+  passesFilter(field: DataField) {
     return this.viewMode.forbiddenTags.every(forbiddenTag => field.tags.indexOf(forbiddenTag) == -1);
   }
   
@@ -142,9 +142,9 @@ export class RuleSettingsComponent implements OnInit {
 
   private loadRule(gameRule: GameRule) {
     const unknownProperties: string[] = [];
-    for (const key of Object.keys(gameRule.globalRule)) {
-      if (key in this.gameRule.globalRule) {
-        (this.gameRule.globalRule as any)[key] = (gameRule.globalRule as any)[key];
+    for (const key of Object.keys(gameRule.roomRule)) {
+      if (key in this.gameRule.roomRule) {
+        (this.gameRule.roomRule as any)[key] = (gameRule.roomRule as any)[key];
       } else {
         unknownProperties.push(key);
       }

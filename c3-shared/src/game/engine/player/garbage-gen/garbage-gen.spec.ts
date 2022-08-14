@@ -1,13 +1,17 @@
 
-import { playerRule, PlayerRule } from '@shared/game/engine/model/rule/player-rule/player-rule';
+import { getDefaultLocalRule } from '@shared/game/engine/model/rule/local-rule/local-rule';
+import { PlayerRule } from '@shared/game/engine/model/rule/player-rule';
+import { getDefaultRoomRule } from '@shared/game/engine/model/rule/room-rule/room-rule';
 import { GarbageGen } from '@shared/game/engine/player/garbage-gen/garbage-gen';
 import { Attack } from '@shared/game/network/model/attack/attack';
 import { AttackType } from '@shared/game/network/model/attack/attack-type';
 import 'jest';
 
+
+
 describe('Environment', () => {
   it('should get the current environment', async () => {
-    const rule: PlayerRule = { ...playerRule };
+    const rule: PlayerRule = { ...getDefaultRoomRule(), ...getDefaultLocalRule() };
     rule.garbageBlockingFactor = 0.35;
     rule.garbagePierceFactor = 0.25;
 

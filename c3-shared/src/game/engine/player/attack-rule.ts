@@ -1,5 +1,5 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
-import { StarsRule } from "@shared/game/engine/model/rule/player-rule/stars-rule";
+import { StarsRule } from "@shared/game/engine/model/rule/room-rule/stars-rule";
 import { ComboTimer } from "@shared/game/engine/player/combo-timer";
 import { LockPlacementResult } from "@shared/game/engine/player/lock-result";
 import { Player } from "@shared/game/engine/player/player";

@@ -1,15 +1,14 @@
 import { Component, HostListener } from '@angular/core';
-import { IdbService } from 'app/service/idb.service';
 import { getLocalSettings, UserSettingsService } from 'app/service/user-settings/user-settings.service';
 import { MainService } from 'app/view/main/main.service';
 import { ControlRowModel } from 'app/view/menu/controls/control-row/control-row.component';
 import { inputKeyDataArray } from 'app/view/menu/controls/input-key-data';
 import { LocalSettings } from 'app/service/user-settings/local-settings';
-import { PlayerRuleField } from '@shared/game/engine/model/rule/field';
-import { getField, setField } from '@shared/game/engine/model/rule/player-rule/player-rule';
+import { getField, setField } from '@shared/game/engine/model/rule/data-field/data-field';
 import { ghostOpacity, glowEffect, musicVolumeField, particles, soundVolumeField } from 'app/view/menu/controls/settings-fields';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { soundService } from 'app/pixi/display/sound/sound-service';
+import { DataField } from '@shared/game/engine/model/rule/data-field/data-field';
 
 @Component({
   selector: 'app-controls',
@@ -83,26 +82,11 @@ export class ControlsComponent {
     this.userSettingsService.save();
   }
 
-  // // value is base 1
-  // onSoundVolumeUpdated(value: number) {
-  //   this.localSettings.soundVolume = value;
-  //   soundService.setUserSoundVolume(value);
-  //   this.userSettingsService.save();
-    
-  // }
-
-  // // value is base 1
-  // onMusicVolumeUpdated(value: number) {
-  //   this.localSettings.musicVolume = value;
-  //   musicService.setUserMusicVolume(value);
-  //   this.userSettingsService.save();
-  // }
-
-  getFieldValue(field: PlayerRuleField) {
+  getFieldValue(field: DataField) {
     return getField(this.localSettings, field);
   }
 
-  setFieldValue(field: PlayerRuleField, value: any) {
+  setFieldValue(field: DataField, value: any) {
     setField(this.localSettings, field, value);
 
     if (field == musicVolumeField) {
