@@ -4,7 +4,7 @@ import { RoomRule } from "@shared/game/engine/model/rule/room-rule/room-rule";
 
 export interface PlayerRule extends RoomRule, UserRule, LocalRule {}
 
-export function computePlayerRule(roomRule: RoomRule, slotRule: Partial<RoomRule>, userRule: UserRule, localRule?: UserRule) {
+export function computePlayerRule(roomRule: RoomRule, slotRule: Partial<RoomRule>, userRule: UserRule, localRule?: LocalRule) {
   return {
     ...JSON.parse(JSON.stringify(roomRule)),
     ...slotRule,

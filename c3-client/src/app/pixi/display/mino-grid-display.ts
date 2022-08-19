@@ -40,7 +40,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     this.layoutHeight = this.minoSize * tiles.length;
 
     this.minos = Array.from(Array(this.tiles.length),
-      () => Array.from(Array(this.tiles[0].length), () => new MinoAnimator(this.spritesheet, this.minoSize)));
+      () => Array.from(Array(this.tiles[0].length), () => new MinoAnimator(this.spritesheet, this.minoSize, this.playerRule)));
 
     for (let i = 0; i < this.tiles.length; i++) {
       for (let j = 0; j < this.tiles[i].length; j++) {
@@ -157,7 +157,9 @@ export class MinoGridDisplay extends Container implements LayoutChild {
       for (let j = 0; j < this.minos[fallRow.pos].length; j++) {
         const mino = this.minos[fallRow.pos][j];
         mino.speed = 0;
-        mino.delay = Math.max(mino.delay, Math.abs(j - fallRow.epicenterSum / fallRow.dist) / this.minos[0].length * 0 * Math.min(4, e.rows.length + 4));
+        if (mino.delay == 0) {
+          mino.delay = this.playerRule.lineClearEffect.fallDelay + Math.abs(j - fallRow.epicenterSum / fallRow.dist) / this.minos[0].length * this.playerRule.lineClearEffect.fallSpreadDelay * Math.min(4, e.rows.length + 4);
+        }
 
         // calc fall distance
         mino.pos -= this.minoSize * fallRow.dist;
@@ -182,7 +184,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     MatUtil.shiftDown(this.minos, rows);
     
     for (let i = 0; i < rows.length; i++) {
-      this.minos[i] = Array.from(Array(this.tiles[0].length), () => new MinoAnimator(this.spritesheet, this.minoSize));
+      this.minos[i] = Array.from(Array(this.tiles[0].length), () => new MinoAnimator(this.spritesheet, this.minoSize, this.playerRule));
     }
   }
 
@@ -199,7 +201,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     let rows: (MinoAnimator)[][] = [];
     for (let i = 0; i < numRows; i++) {
       rows.push(this.tiles[this.tiles.length - numRows + i].map(tile => {
-        const mino = new MinoAnimator(this.spritesheet, this.minoSize);
+        const mino = new MinoAnimator(this.spritesheet, this.minoSize, this.playerRule);
         if (tile != null) {
           mino.minoDisplay = new MinoDisplay(this.spritesheet, tile, this.minoSize);
           this.addChild(mino.minoDisplay);

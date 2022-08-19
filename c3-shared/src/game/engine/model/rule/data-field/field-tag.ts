@@ -18,6 +18,7 @@
   GRAVITY='gravity',
   STARS='stars',
   SONIC_DROP_EFFECTS='sonic_drop_effects',
+  LINE_CLEAR_EFFECTS='line_clear_effects',
 
   // functional tags
   OVERRIDABLE='overridable',

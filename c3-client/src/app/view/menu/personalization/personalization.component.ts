@@ -20,7 +20,7 @@ export class PersonalizationComponent implements OnInit {
     {
       name: 'Graphics',
       tag: FieldTags.GFX_GLOBAL,
-    }
+    },
   ]
   
   localSettings!: LocalSettings;

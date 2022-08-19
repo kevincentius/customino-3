@@ -1,5 +1,6 @@
 import { setField } from "@shared/game/engine/model/rule/data-field/data-field";
 import { GravityRule } from "@shared/game/engine/model/rule/room-rule/gravity-rule";
+import { LineClearEffectRule } from "@shared/game/engine/model/rule/room-rule/line-clear-effect-rule";
 import { playerRuleFields } from "@shared/game/engine/model/rule/room-rule/player-rule-fields";
 import { SonicDropEffectConfig } from "@shared/game/engine/model/rule/room-rule/sonic-drop-effect-config";
 import { StarsRule } from "@shared/game/engine/model/rule/room-rule/stars-rule";
@@ -41,6 +42,7 @@ export interface RoomRule {
   stars: StarsRule;
     
   sonicDropEffect: SonicDropEffectConfig;
+  lineClearEffect: LineClearEffectRule;
 
   // debug
   playerDisplayDupes: number;
