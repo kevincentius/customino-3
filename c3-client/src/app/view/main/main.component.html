@@ -1,6 +1,7 @@
 
 <div class="full-screen-overlay">
   <app-controls #controls [hidden]="screen!==MainScreen.CONTROLS"></app-controls>
+  <app-personalization #personalization [hidden]="screen!==MainScreen.PERSONALIZATION"></app-personalization>
   
   <app-lobby #lobby [hidden]="screen!==MainScreen.LOBBY"
     (enterRoom)="onEnterRoom($event)"
@@ -12,7 +13,7 @@
 
   <app-replay #replay [hidden]="screen!==MainScreen.REPLAY"></app-replay>
 
-  <app-thanks #controls [hidden]="screen!==MainScreen.THANKS"></app-thanks>
+  <app-thanks #thanks [hidden]="screen!==MainScreen.THANKS"></app-thanks>
 </div>
 
 <div class="icon-bar">

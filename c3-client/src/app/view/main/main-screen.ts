@@ -3,6 +3,7 @@ export enum MainScreen {
   PRELOADER='',
   MENU='menu',
   CONTROLS='controls',
+  PERSONALIZATION='personalization',
   LOBBY='lobby',
   ROOM='room',
   REPLAY='replay',

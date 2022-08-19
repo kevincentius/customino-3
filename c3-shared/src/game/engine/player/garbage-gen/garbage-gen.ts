@@ -148,6 +148,8 @@ export class GarbageGen {
     return type == null ? null : { color: -1, type: type };
   }
 
+  tmpNextFrame = 0;
+
   runFrame() {
     if (this.attackQueue.length > 0 && this.attackQueue[0].frameReady <= this.player.frame) {
       const spawnFramesPerLine = gameLoopRule.fps / this.playerRule.garbageSpawnRate;
@@ -162,6 +164,17 @@ export class GarbageGen {
       this.spawnRateFrameCounter--;
     } else {
       this.spawnRateFrameCounter = Math.max(0, this.spawnRateFrameCounter - 1);
+    }
+    
+    
+    if (this.player.frame == this.tmpNextFrame) {
+      const powPerSec = 2;
+      const pow = this.player.r.int(10) + 10;
+      this.queueAttack([{
+        power: Math.floor(pow),
+        type: AttackType.DIRTY_1,
+      }]);
+      this.tmpNextFrame += gameLoopRule.fps * pow / powPerSec;
     }
   }
 

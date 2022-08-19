@@ -28,6 +28,7 @@ import { FieldInputComponent } from './view/menu/field-input/field-input.compone
 import { FieldOutputComponent } from './view/menu/field-output/field-output.component';
 import { ThanksComponent } from './view/menu/thanks/thanks.component';
 import { PieceComponent } from './view/common/piece/piece.component';
+import { PersonalizationComponent } from './view/menu/personalization/personalization.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -57,6 +58,7 @@ export function apiConfigFactory(): Configuration {
     FieldOutputComponent,
     ThanksComponent,
     PieceComponent,
+    PersonalizationComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),

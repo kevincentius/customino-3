@@ -9,10 +9,7 @@ import { musicVolumeField, soundVolumeField } from 'app/view/menu/controls/setti
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { soundService } from 'app/pixi/display/sound/sound-service';
 import { DataField } from '@shared/game/engine/model/rule/data-field/data-field';
-import { userRuleFields } from '@shared/game/engine/model/rule/user-rule/user-rule-fields';
-import { DataFieldCategoryData } from 'app/view/menu/rule-settings/rule-settings-category';
-import { FieldTags } from '@shared/game/engine/model/rule/data-field/field-tag';
-import { localRuleFields } from '@shared/game/engine/model/rule/local-rule/local-rule-fields';
+import { MainScreen } from 'app/view/main/main-screen';
 
 @Component({
   selector: 'app-controls',
@@ -25,15 +22,6 @@ export class ControlsComponent {
     soundVolumeField,
   ];
 
-  userRuleFields = userRuleFields;
-  localRuleFields = localRuleFields;
-  dataFieldCategories: DataFieldCategoryData[] = [
-    {
-      name: 'Graphics',
-      tag: FieldTags.GFX_GLOBAL,
-    }
-  ]
-  
   // view model
   rows: ControlRowModel[] = inputKeyDataArray
     .filter(d => d.inputKey != null)
@@ -107,5 +95,9 @@ export class ControlsComponent {
       soundService.setUserSoundVolume(value);
     }
     this.userSettingsService.save();
+  }
+
+  onMoreClick() {
+    this.mainService.openScreen(MainScreen.PERSONALIZATION);
   }
 }

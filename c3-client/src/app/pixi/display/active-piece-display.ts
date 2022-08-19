@@ -22,17 +22,17 @@ export class ActivePieceDisplay extends Container {
     super();
 
     if (this.ghost) {
-      console.log('ghostOpacity', this.player.playerRule.graphics.ghostOpacity);
-      console.log('ghostOpacity', this.player.playerRule);
       this.alpha = this.player.playerRule.graphics.ghostOpacity;
     }
 
     this.activePiece = this.player.activePiece;
     this.activePiece.spawnSubject.subscribe(this.onSpawn.bind(this));
     this.activePiece.moveSubject.subscribe(this.onMove.bind(this));
+    this.player.board.addRowsSubject.subscribe(() => this.updatePosition());
 
     this.onSpawn();
     this.updatePosition();
+
   }
 
   onSpawn() {
@@ -106,7 +106,7 @@ export class ActivePieceDisplay extends Container {
     }
 
     if (this.minoGridDisplay) {
-      const pos = this.boardDisplay.calcMinoPosForEffect(this.activePiece.y + this.ghostDistance, this.activePiece.x);
+      const pos = this.boardDisplay.calcMinoPos(this.activePiece.y + this.ghostDistance, this.activePiece.x);
       this.minoGridDisplay.position.set(pos.x, pos.y);
     }
   }

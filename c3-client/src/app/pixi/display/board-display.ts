@@ -264,6 +264,7 @@ export class BoardDisplay extends Container implements LayoutChild, BoardDisplay
   // methods to be accessed by children
   getInnerWidth() { return this.layout.innerWidth; }
   getInnerHeight() { return this.layout.innerHeight; }
+  calcMinoPos(row: number, col: number) { return this.minoGridDisplay.calcMinoPos(row, col); }
   calcMinoPosForEffect(row: number, col: number) {
     const minoPos = this.minoGridDisplay.calcMinoPos(row, col)
     return {

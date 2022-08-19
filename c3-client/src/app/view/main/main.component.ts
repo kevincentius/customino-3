@@ -6,6 +6,7 @@ import { MainService, Rect } from "app/view/main/main.service";
 import { ControlsComponent } from "app/view/menu/controls/controls.component";
 import { LobbyComponent } from "app/view/menu/lobby/lobby.component";
 import { MenuComponent } from "app/view/menu/menu/menu.component";
+import { PersonalizationComponent } from "app/view/menu/personalization/personalization.component";
 import { RoomComponent } from "app/view/menu/room/room.component";
 import { PixiComponent } from "app/view/pixi/pixi.component";
 import { ReplayComponent } from "app/view/replay/replay.component";
@@ -33,6 +34,9 @@ export class MainComponent {
 
   @ViewChild('controls', { static: true })
   private controls!: ControlsComponent;
+
+  @ViewChild('personalization', { static: true })
+  private personalization!: PersonalizationComponent;
 
   @ViewChild('pixi', { static: true })
   private pixi!: PixiComponent;
@@ -73,7 +77,9 @@ export class MainComponent {
   }
 
   openScreen(screen: MainScreen) {
-    this.prevScreen = this.screen;
+    if (this.screen != MainScreen.CONTROLS) {
+      this.prevScreen = this.screen;
+    }
     this.screen = screen;
 
     if (screen == MainScreen.LOBBY) {
@@ -82,7 +88,11 @@ export class MainComponent {
   }
 
   back() {
-    this.screen = this.prevScreen;
+    if (this.screen == MainScreen.PERSONALIZATION) {
+      this.screen = MainScreen.CONTROLS;
+    } else {
+      this.screen = this.prevScreen;
+    }
   }
 
 
