@@ -33,7 +33,6 @@ export class ActivePieceDisplay extends Container {
 
     this.onSpawn();
     this.updatePosition();
-
   }
 
   onSpawn() {

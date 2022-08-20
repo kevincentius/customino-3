@@ -107,7 +107,6 @@ export class Room {
           const startPlayerData: StartPlayerData = {
             clientInfo: clientInfo,
             randomSeed: globalSeed,
-            slotRule: {}, // slotRule not yet implemented
             slotSettings: slot.settings,
             userRule: this.sessionService.getSessionById(clientInfo.sessionId).userRule,
           };
@@ -165,6 +164,16 @@ export class Room {
     if (this.host == session) {
       this.settings = roomSettings;
       this.broadcastRoomInfo();
+    }
+  }
+
+  changeSlotTeam(session: Session, slotIndex: number, team: number) {
+    if (this.host == session && this.slots.length > slotIndex) {
+      const slot = this.slots[slotIndex];
+      if (slot.settings.team != team) {
+        this.slots[slotIndex].settings.team = team;
+        this.broadcastRoomInfo();
+      }
     }
   }
   

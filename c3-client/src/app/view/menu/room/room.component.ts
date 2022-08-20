@@ -19,9 +19,8 @@ import { PlayerStats } from '@shared/game/engine/player/stats/player-stats';
 import { RoomSlotInfo } from '@shared/model/room/room-slot-info';
 import { EnterLeaveTransition } from 'app/view/util/enter-leave-transition';
 import { InputState } from 'app/control/keyboard';
-import { PlayerRule } from '@shared/game/engine/model/rule/player-rule';
-import { getDefaultRoomRule } from '@shared/game/engine/model/rule/room-rule/room-rule';
 import { getLocalSettings } from 'app/service/user-settings/user-settings.service';
+import { teamStyles } from 'app/style/team-styles';
 
 @Component({
   selector: 'app-room',
@@ -50,6 +49,8 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   enterLeaveTransition = new EnterLeaveTransition(250);
 
+  waitForTeamChange = false;
+
   constructor(
     private roomService: RoomService,
     public mainService: MainService,
@@ -72,6 +73,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.subscriptions.push(... [
       this.roomService.roomInfoSubject.subscribe(roomInfo => {
+        console.log('received roomInfo', roomInfo);
         if (this.roomId == roomInfo.id) {
           this.roomInfo = roomInfo;
         }
@@ -93,6 +95,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   async show(roomId: number) {
     this.showSettings = false;
+    this.waitForTeamChange = false;
     this.roomId = roomId;
     this.lastGameStats = undefined;
     this.roomInfo = undefined!;
@@ -265,6 +268,21 @@ export class RoomComponent implements OnInit, OnDestroy {
   downloadDebug() {
     if (this.game) {
       saveAs(new Blob([JSON.stringify(this.recorder!.asReplay())]), `CM-Debug-Replay-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
+    }
+  }
+
+  getTeamBgColor(team: number) {
+    return '#' + teamStyles[team].roomIconColor.toString(16).padStart(6, '0');
+  }
+
+  onTeamIconClick(slotIndex: number) {
+    if (this.isHost()) {
+      const prevTeam = this.roomInfo.slots[slotIndex].settings.team;
+      const team = prevTeam == null ? 0
+        : prevTeam == teamStyles.length - 1 ? null
+        : prevTeam + 1;
+
+      this.roomService.changeSlotTeam(slotIndex, team);
     }
   }
 }

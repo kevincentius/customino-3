@@ -57,7 +57,13 @@ export class ServerGame extends Game {
     const aliveOpponents = Array(this.players.length)
       .fill(0)
       .map((_, index) => index)
-      .filter(index => index != attackerIndex && this.players[index].alive);
+      .filter(index => {
+        const other = this.players[index];
+        const attacker = this.players[attackerIndex];
+        return index != attackerIndex
+          && other.alive
+          && (other.playerRule.team == null || other.playerRule.team != attacker.playerRule.team)
+      });
     
     if (aliveOpponents.length > 0) {
       return this.r.pick(aliveOpponents);

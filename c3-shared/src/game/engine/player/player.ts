@@ -81,7 +81,9 @@ export abstract class Player {
 
     this.init();
 
-    this.playerRule = computePlayerRule(this.game.startGameData.roomRule, startPlayerData.slotRule, startPlayerData.userRule, localRule);
+    this.playerRule = computePlayerRule(this.game.startGameData.roomRule, startPlayerData.slotSettings, startPlayerData.userRule, localRule);
+
+    console.log(this.playerRule);
 
     this.r = new RandomGen(startPlayerData.randomSeed);
     this.board = new Board(this.playerRule);

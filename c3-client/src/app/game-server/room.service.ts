@@ -62,4 +62,8 @@ export class RoomService {
   async changeRoomSettings(roomSettings: RoomSettings) {
     this.socketService.emit(LobbyEvent.CHANGE_ROOM_SETTINGS, roomSettings);
   }
+
+  async changeSlotTeam(slotIndex: number, team: number | null) {
+    return this.socketService.emit(LobbyEvent.CHANGE_SLOT_TEAM, slotIndex, team);
+  }
 }

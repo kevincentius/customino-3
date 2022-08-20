@@ -34,6 +34,7 @@
             <table width="100%">
               <thead>
                 <tr>
+                  <th><!--team--></th>
                   <th class="tc-text">Player</th>
                   <th class="tc-number">Score</th>
                   <th class="tc-number">BPM</th>
@@ -45,7 +46,25 @@
               </thead>
 
               <tbody>
-                <tr *ngFor="let slot of roomInfo.slots" [class.spectator]="!slot.playing">
+                <tr *ngFor="let slot of roomInfo.slots; let i=index" [class.spectator]="!slot.playing">
+                  <td>
+                    <ng-container *ngIf="slot.settings.team != null">
+                      <div
+                        class="team-icon"
+                        [style.background]="getTeamBgColor(slot.settings.team)"
+                        (click)="onTeamIconClick(i)"
+                      >team</div>
+                    </ng-container>
+
+                    <ng-container *ngIf="slot.settings.team == null">
+                      <div
+                        class="team-icon"
+                        style="background: #777;"
+                        (click)="onTeamIconClick(i)"
+                      >&nbsp;</div>
+                    </ng-container>
+                  </td>
+
                   <td class="tc-text" [class.local-player]="slot.player.sessionId == getSessionId()">
                     {{slot.player.username}}
                   </td>

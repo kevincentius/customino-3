@@ -45,7 +45,9 @@ export abstract class Game {
   }
 
   checkGameOver() {
-    if (this.players.filter(p => p.alive).length <= 1) {
+    const alivePlayers = this.players.filter(p => p.alive);
+    const aliveTeams = new Set(alivePlayers.map(p => p.playerRule.team));
+    if (alivePlayers.length <= 1 || (aliveTeams.size <= 1 && !aliveTeams.has(null))) {
       this.running = false;
 
       const rankings = new Array(this.players.length)

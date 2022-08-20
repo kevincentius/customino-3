@@ -167,15 +167,15 @@ export class GarbageGen {
     }
     
     
-    if (this.player.frame == this.tmpNextFrame) {
-      const powPerSec = 2;
-      const pow = this.player.r.int(10) + 10;
-      this.queueAttack([{
-        power: Math.floor(pow),
-        type: AttackType.DIRTY_1,
-      }]);
-      this.tmpNextFrame += gameLoopRule.fps * pow / powPerSec;
-    }
+    // if (this.player.frame == this.tmpNextFrame) {
+    //   const powPerSec = 2;
+    //   const pow = this.player.r.int(10) + 10;
+    //   this.queueAttack([{
+    //     power: Math.floor(pow),
+    //     type: AttackType.DIRTY_1,
+    //   }]);
+    //   this.tmpNextFrame += gameLoopRule.fps * pow / powPerSec;
+    // }
   }
 
   /* Spawns up to spawnAmount lines of garbage.

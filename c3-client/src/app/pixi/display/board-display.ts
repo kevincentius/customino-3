@@ -15,6 +15,7 @@ import { MinoFlashEffect } from "app/pixi/display/effects/mino-flash-effect";
 import { BoardCountdownDisplay } from "app/pixi/display/board-countdown-display";
 import { Effect } from "app/pixi/display/effects/effect";
 import { BoardDisplayDelegate } from "app/pixi/display/board-display-delegate";
+import { teamStyles } from "app/style/team-styles";
 
 export class BoardDisplay extends Container implements LayoutChild, BoardDisplayDelegate {
 
@@ -154,8 +155,8 @@ export class BoardDisplay extends Container implements LayoutChild, BoardDisplay
     this.border
       .clear()
       .lineStyle({
-        width: 2,
-        color: 0xbbbbbb,
+        width: 4,
+        color: this.player.playerRule.team == null ? 0xbbbbbb : teamStyles[this.player.playerRule.team].boardBorderColor,
         alpha: 0.5,
       })
       .drawRect(this.layout.offsetX + this.garbageIndicatorWidth, this.layout.offsetY, this.layout.innerWidth, this.layout.innerHeight);

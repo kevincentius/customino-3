@@ -143,3 +143,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     overflow: auto;
   }
 }
+
+
+.cdk-overlay-connected-position-bounding-box {
+  position: absolute;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  min-width: 1px;
+  min-height: 1px;
+}
