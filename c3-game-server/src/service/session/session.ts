@@ -11,7 +11,7 @@ export class Session {
   constructor(
     public socket: Socket,
     public sessionId: number,
-    public userId: number,
+    public userId: number | null,
     public username: string,
   ) {}
   

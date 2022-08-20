@@ -3,7 +3,7 @@ import { CreditGroup } from "app/view/menu/thanks/thanks.component";
 export const musicCredits: CreditGroup =
 {
   name: 'freesfx.co.uk',
-  description: 'The music comes from here!',
+  description: 'The source of the musics of the base game.',
   url: 'https://www.freesfx.co.uk',
   items: [
     'A Will to Win',
@@ -14,7 +14,6 @@ export const musicCredits: CreditGroup =
     'Distressed',
     'Exploration',
     'First Quarter',
-    'Sermon from the Pit',
     'Super Sunday',
     'Street Heat',
     'The Environment',

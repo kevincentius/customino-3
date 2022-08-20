@@ -3,7 +3,7 @@ import { CreditGroup } from "app/view/menu/thanks/thanks.component";
 export const soundCredits: CreditGroup =
 {
   name: 'freesound.org',
-  description: 'All kinds of sound effects!',
+  description: 'The source of the sound effects in the base game.',
   url: 'freesound.org',
   items: [
     {

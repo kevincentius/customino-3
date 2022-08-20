@@ -28,9 +28,8 @@ export class SessionService {
    */
   createSession(socket: Socket): Session {
     // TODO: get userId & username via jwt?
-    const userId = this.nextDummyUserId++;
-    const username = `${this.randomNames[this.nextDummyUserId % this.randomNames.length]} #${userId}`;
-    const session = new Session(socket, this.nextSessionId++, userId, username);
+    const username = `${this.randomNames[this.nextDummyUserId % this.randomNames.length]} #${this.nextDummyUserId++}`;
+    const session = new Session(socket, this.nextSessionId++, null, username);
 
     this.socketToSessionMap.set(socket, session);
     this.idToSessionMap.set(session.sessionId, session);
