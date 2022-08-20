@@ -93,7 +93,7 @@ export class ActivePieceDisplay extends Container {
           const combo = this.player.attackRule.comboTimer ? this.player.attackRule.comboTimer.combo : 0;
           const effect = new SonicDropEffect(this.player.playerRule.sonicDropEffect, this.spritesheet, tile, this.minoSize, e.dy + 1, combo, this.player.playerRule.graphics.particles);
           effect.position.set(minoPos.x, minoPos.y);
-          this.boardDisplay.addEffect(effect);
+          this.boardDisplay.addEffectToBoard(effect);
           break;
         }
       }

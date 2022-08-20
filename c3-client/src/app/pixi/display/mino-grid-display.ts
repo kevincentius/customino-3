@@ -109,7 +109,6 @@ export class MinoGridDisplay extends Container implements LayoutChild {
 
       if (flash) {
         const effect = new MinoFlashEffect(this.minoSize, this.minoSize, 500, 0.5);
-        // effect.position.set(minoPos.x, minoPos.y);
         this.minos[e.y][e.x].minoDisplay!.addChild(effect);
         this.board!.addEffect(effect);
       }

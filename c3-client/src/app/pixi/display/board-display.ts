@@ -219,23 +219,6 @@ export class BoardDisplay extends Container implements LayoutChild, BoardDisplay
     }
   }
   
-  // private spawnFlashEffect(r: LockResult) {
-  //   const tiles = this.player.activePiece.piece!.tiles;
-  //   for (let i = 0; i < tiles.length; i++) {
-  //     for (let j = 0; j < tiles[i].length; j++) {
-  //       const tile = tiles[i][j];
-  //       if (tile != null) {
-  //         const minoPos = this.minoGridDisplay.calcMinoPos(this.player.activePiece.y + i, this.player.activePiece.x + j);
-          
-  //         const effect = new MinoFlashEffect(this.getMinoSize(), this.getMinoSize(), 500, 0.5);
-  //         effect.position.set(minoPos.x, minoPos.y);
-  //         this.minoGridDisplay.minos[i][j].minoDisplay!.addChild(effect);
-  //         this.effectContainer.addEffect(effect);
-  //       }
-  //     }
-  //   }
-  // }
-
   override destroy() {
     this.maskGraphics.destroy();
     this.border.destroy();
@@ -272,5 +255,9 @@ export class BoardDisplay extends Container implements LayoutChild, BoardDisplay
   }
   addEffect(effect: Effect) {
     this.effectContainer.addEffect(effect);
+  }
+  addEffectToBoard(effect: Effect) {
+    this.maskContainer.addChild(effect);
+    this.addEffect(effect);
   }
 }

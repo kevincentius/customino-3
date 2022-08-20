@@ -1,8 +1,6 @@
 import { BoardDisplayDelegate } from "app/pixi/display/board-display-delegate";
 import { CountEffect } from "app/pixi/display/effects/count-effect";
-import { EffectContainer } from "app/pixi/display/effects/effect-container";
 import { LineWaveEffect } from "app/pixi/display/effects/line-wave-effect";
-import { BoardLayout } from "app/pixi/layout/board-layout";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { Container } from "pixi.js";
 import { Subject } from "rxjs";
@@ -46,7 +44,7 @@ export class BoardCountdownDisplay extends Container {
       2,
     );
     effect.alpha = 0.1;
-    this.boardDisplay.addEffect(effect);
+    this.boardDisplay.addEffectToBoard(effect);
   }
 
   tick(dt: number) {
@@ -63,7 +61,7 @@ export class BoardCountdownDisplay extends Container {
             const effect = new CountEffect(this.config, ct, countEffect);
             effect.position.set(this.boardDisplay.getInnerWidth() / 2, this.boardDisplay.getInnerHeight() / 2);
             effect.scale.set(3);
-            this.boardDisplay.addEffect(effect);
+            this.boardDisplay.addEffectToBoard(effect);
           }
         }
       }
