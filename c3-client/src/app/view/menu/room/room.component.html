@@ -19,6 +19,7 @@
               <button *ngIf="lastGameReplay" class="gui-button" (click)="onDownloadLastReplayClick()">Replay</button>
 
               <!-- host buttons -->
+              <button class="gui-button" [disabled]="isRunning()" (click)="onResetScoresClick()">Reset scores</button>
               <button class="gui-button" [disabled]="isRunning()" (click)="onSettingsClick()">Room settings</button>
               
               <!-- debug buttons -->

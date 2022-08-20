@@ -223,6 +223,9 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
 
+  onResetScoresClick() {
+    this.roomService.resetScores();
+  }
 
   onSettingsClick() {
     this.showSettings = true;

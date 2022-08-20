@@ -59,6 +59,10 @@ export class RoomService {
     return this.socketService.emitQuery(LobbyEvent.GET_REPLAY);
   }
 
+  async resetScores(): Promise<void> {
+    return this.socketService.emit(LobbyEvent.RESET_SCORES);
+  }
+
   async changeRoomSettings(roomSettings: RoomSettings) {
     this.socketService.emit(LobbyEvent.CHANGE_ROOM_SETTINGS, roomSettings);
   }

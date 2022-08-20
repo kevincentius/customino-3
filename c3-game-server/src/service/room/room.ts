@@ -177,6 +177,13 @@ export class Room {
     }
   }
   
+  resetScores(session: Session) {
+    if (this.host == session) {
+      this.slots.forEach(slot => slot.resetScore());
+      this.broadcastRoomInfo();
+    }
+  }
+
   isInRoom(session: Session) {
     return this.slots.find(slot => slot.session == session);
   }
