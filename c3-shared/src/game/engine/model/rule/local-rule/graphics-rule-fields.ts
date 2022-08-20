@@ -13,6 +13,31 @@ const fieldDefaultTags = [
 
 export const graphicsRuleFields: DataField[] = [
   {
+    ...yesNoChoice,
+    property: 'pieceGlow',
+    default: true,
+
+    name: 'Piece glow',
+    description: 'The current piece will glow. Turning this off can considerably improve performance.',
+    tags: [
+      FieldTags.BASIC,
+    ],
+  },
+  {
+    property: 'pieceHighlightIntensity',
+    fieldType: FieldType.NUMBER_SCROLL,
+    decimalPlaces: 2,
+    default: 1,
+    stepSize: 0.05,
+    validators: [ floatRangeValidator(0, 1) ],
+
+    name: 'Piece highlight intensity',
+    description: 'How visible the highlight animation for the current piece will be.',
+    tags: [
+      FieldTags.BASIC,
+    ],
+  },
+  {
     property: 'chorusIntensity',
     fieldType: FieldType.NUMBER_SCROLL,
     decimalPlaces: 1,

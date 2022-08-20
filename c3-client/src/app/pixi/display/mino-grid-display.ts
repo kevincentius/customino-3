@@ -35,7 +35,8 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     private minoSize: number,
     private invisibleHeight: number,
     private playerRule: PlayerRule,
-    private board?: BoardDisplayDelegate
+    private glow: boolean,
+    private board?: BoardDisplayDelegate,
   ) {
     super();
 
@@ -58,7 +59,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     }
 
     this.filters = [];
-    if (this.playerRule.graphics.chorusIntensity >= 0.01) {
+    if (this.glow) {
       this.filters.push(this.glowFilter);
     }
     

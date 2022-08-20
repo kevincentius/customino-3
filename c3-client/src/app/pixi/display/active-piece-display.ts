@@ -1,4 +1,5 @@
 import { ActivePiece, PieceMoveEvent } from "@shared/game/engine/player/active-piece";
+import { LocalPlayer } from "@shared/game/engine/player/local-player";
 import { Player } from "@shared/game/engine/player/player";
 import { BoardDisplayDelegate } from "app/pixi/display/board-display-delegate";
 import { SonicDropEffect } from "app/pixi/display/effects/sonic-drop-effect";
@@ -41,7 +42,7 @@ export class ActivePieceDisplay extends Container {
     }
 
     if (this.activePiece.piece) {
-      this.minoGridDisplay = new MinoGridDisplay(this.activePiece.piece.tiles, this.minoSize, 0, this.player.playerRule);
+      this.minoGridDisplay = new MinoGridDisplay(this.activePiece.piece.tiles, this.minoSize, 0, this.player.playerRule, this.player.playerRule.graphics.pieceGlow && this.player instanceof LocalPlayer);
       
       if (!this.ghost) {
         this.minoGridDisplay.glowFilter.innerStrength = 1;
@@ -70,13 +71,19 @@ export class ActivePieceDisplay extends Container {
 
   tick() {
     if (this.minoGridDisplay) {
-      const glow = 0.5 + 0.5 * Math.abs(Math.sin(Date.now() * Math.PI * 2 / 1000));
-      this.minoGridDisplay.glowFilter.outerStrength = glow;
-      
-      if (!this.ghost) {
-        this.minoGridDisplay.glowFilter.innerStrength = glow;
+      const p = this.player.playerRule.graphics.pieceHighlightIntensity * Math.abs(Math.sin(Date.now() * Math.PI * 2 / 1000));
+
+      if (this.player.playerRule.graphics.pieceGlow) {
+        const glow = 0.5 + p * 0.5;
+        this.minoGridDisplay.glowFilter.outerStrength = glow;
+        
+        if (!this.ghost) {
+          this.minoGridDisplay.glowFilter.innerStrength = glow;
+        } else {
+          this.minoGridDisplay.glowFilter.innerStrength = 0;
+        }
       } else {
-        this.minoGridDisplay.glowFilter.innerStrength = 0;
+        
       }
     }
   }
