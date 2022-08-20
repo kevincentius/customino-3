@@ -1,7 +1,7 @@
 import { DataField } from "@shared/game/engine/model/rule/data-field/data-field";
 import { FieldTags } from "@shared/game/engine/model/rule/data-field/field-tag";
 import { FieldType } from "@shared/game/engine/model/rule/data-field/field-type";
-import { floatRangeValidator } from "@shared/game/engine/model/rule/data-field/field-validators";
+import { floatRangeValidator, intRangeValidator } from "@shared/game/engine/model/rule/data-field/field-validators";
 
 const fieldPathPrefix = 'lineClearEffect.';
 const fieldNamePrefix = 'Line Clear: ';
@@ -22,7 +22,7 @@ export const lineClearEffectRuleFields: DataField[] = [
     name: 'Fall acceleration',
     description: 'Acceleration of blocks falling down when a line below them has been cleared.',
     tags: [
-      FieldTags.ADVANCED,
+      FieldTags.BASIC,
     ],
   },
   {
@@ -36,7 +36,7 @@ export const lineClearEffectRuleFields: DataField[] = [
     name: 'Fall delay',
     description: 'How long it takes before blocks starts falling when a line is clear. Same concent as the infamous "cartoon effect".',
     tags: [
-      FieldTags.ADVANCED,
+      FieldTags.BASIC,
     ],
   },
   {
@@ -49,7 +49,34 @@ export const lineClearEffectRuleFields: DataField[] = [
     name: 'Fall spread delay',
     description: 'How slow the falling animation spreads horizontally when a line is cleared. A high value may cause the field to be hard to understand while blocks are falling down.',
     tags: [
-      FieldTags.ADVANCED,
+      FieldTags.BASIC,
+    ],
+  },
+  {
+    property: 'flashDuration',
+    fieldType: FieldType.NUMBER_SCROLL,
+    default: 150,
+    stepSize: 25,
+    validators: [ intRangeValidator(0, 1000) ],
+
+    name: 'Flash duration',
+    description: 'Duration of the white flash animation when a row is cleared. Setting this to 0 will disable the flash effect completely.',
+    tags: [
+      FieldTags.BASIC,
+    ],
+  },
+  {
+    property: 'flashOpacity',
+    fieldType: FieldType.NUMBER_SCROLL,
+    default: 0.5,
+    stepSize: 0.05,
+    decimalPlaces: 2,
+    validators: [ floatRangeValidator(0, 1) ],
+
+    name: 'Flash opacity',
+    description: 'The opacity of the flash animation when a row is cleared. Setting this to 0 will disable the flash effect completely.',
+    tags: [
+      FieldTags.BASIC,
     ],
   },
 ];

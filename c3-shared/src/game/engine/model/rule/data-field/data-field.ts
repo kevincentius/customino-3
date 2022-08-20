@@ -25,13 +25,17 @@ export interface DataField {
   startIndex?: number;
 }
 
-export function getField(rule: any, field: DataField) {
+export function getField(rule: any, field: DataField, nullable=false) {
   let obj: any = rule;
   const parts = field.property.split('.');
   for (const part of parts) {
     obj = obj[part];
     if (obj === undefined) {
-      throw new Error(`Field not found: ${field.property}`);
+      if (nullable) {
+        return null;
+      } else {
+        throw new Error(`Field not found: ${field.property}`);
+      }
     }
   }
   return field.convertToDisplay ? field.convertToDisplay(obj) : obj;

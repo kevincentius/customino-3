@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { getDefaultLocalRule } from '@shared/game/engine/model/rule/local-rule/local-rule';
-import { getDefaultUserRule } from '@shared/game/engine/model/rule/user-rule/user-rule';
+import { localRuleFields } from '@shared/game/engine/model/rule/local-rule/local-rule-fields';
+import { fillDefaultRules } from '@shared/game/engine/model/rule/player-rule';
+import { userRuleFields } from '@shared/game/engine/model/rule/user-rule/user-rule-fields';
 import { InputKey } from '@shared/game/network/model/input-key';
 import { AppService } from 'app/game-server/app.service';
 import { musicService } from 'app/pixi/display/sound/music-service';
@@ -36,9 +37,13 @@ export class UserSettingsService {
       if (localSettings.control.sdr == null) { localSettings.control.sdr = 1; }
       if (localSettings.musicVolume == null) { localSettings.musicVolume = 1; }
       if (localSettings.soundVolume == null) { localSettings.soundVolume = 1; }
-      if (localSettings.userRule == null) { localSettings.userRule = getDefaultUserRule(); }
-      if (localSettings.localRule == null) { localSettings.localRule = getDefaultLocalRule(); }
-
+      
+      if (localSettings.userRule == null) { localSettings.userRule = {} as any; }
+      fillDefaultRules(localSettings.userRule, userRuleFields);
+      
+      if (localSettings.localRule == null) { localSettings.localRule = {} as any; }
+      fillDefaultRules(localSettings.localRule, localRuleFields);
+      
       musicService.setUserMusicVolume(localSettings.musicVolume);
       soundService.setUserSoundVolume(localSettings.soundVolume);
     } else {
@@ -59,15 +64,20 @@ export class UserSettingsService {
   }
 
   private createDefaultSettings(): LocalSettings {
-    return {
+    const settings = {
       control: this.createDefaultControlSettings(),
       musicVolume: 1,
       soundVolume: 1,
-      userRule: getDefaultUserRule(),
-      localRule: getDefaultLocalRule(),
-    }
+      userRule: {},
+      localRule: {},
+    } as LocalSettings;
+
+    fillDefaultRules(settings.userRule, userRuleFields);
+    fillDefaultRules(settings.localRule, localRuleFields);
+    return settings;
+    
   }
-  
+
   private createDefaultControlSettings(): ControlSettings {
     const keyMap = new Map<InputKey, string[]>();
     for (const inputKeyData of inputKeyDataArray) {

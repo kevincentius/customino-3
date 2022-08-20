@@ -18,9 +18,13 @@ export class PersonalizationComponent implements OnInit {
   localRuleFields = localRuleFields;
   dataFieldCategories: DataFieldCategoryData[] = [
     {
-      name: 'Graphics',
+      name: 'General',
       tag: FieldTags.GFX_GLOBAL,
     },
+    {
+      name: 'Line clear',
+      tag: FieldTags.LINE_CLEAR_EFFECTS
+    }
   ]
   
   localSettings!: LocalSettings;

@@ -2,6 +2,8 @@ import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { Tile } from "@shared/game/engine/model/tile";
 import { LineClearEvent, PlaceTileEvent } from "@shared/game/engine/player/board";
 import { MatUtil } from "@shared/game/engine/util/mat-util";
+import { BoardDisplayDelegate } from "app/pixi/display/board-display-delegate";
+import { MinoFlashEffect } from "app/pixi/display/effects/mino-flash-effect";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { MinoDisplay } from "app/pixi/display/mino-display";
 import { MinoAnimator } from "app/pixi/display/mino-grid/mino-animator";
@@ -33,6 +35,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     private minoSize: number,
     private invisibleHeight: number,
     private playerRule: PlayerRule,
+    private board?: BoardDisplayDelegate
   ) {
     super();
 
@@ -92,7 +95,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     this.glowFilter.outerStrength = p * this.playerRule.graphics.chorusIntensity * waveP;
   }
 
-  placeTile(e: PlaceTileEvent) {
+  placeTile(e: PlaceTileEvent, flash=false) {
     if (this.minos[e.y][e.x].minoDisplay != undefined) {
       this.removeChild(this.minos[e.y][e.x].minoDisplay!);
       this.minos[e.y][e.x].minoDisplay!.destroy();
@@ -103,6 +106,13 @@ export class MinoGridDisplay extends Container implements LayoutChild {
       this.minos[e.y][e.x].minoDisplay = new MinoDisplay(this.spritesheet, e.tile, this.minoSize);
       this.updateMinoPosition(e.y, e.x);
       this.addChild(this.minos[e.y][e.x].minoDisplay!);
+
+      if (flash) {
+        const effect = new MinoFlashEffect(this.minoSize, this.minoSize, 500, 0.5);
+        // effect.position.set(minoPos.x, minoPos.y);
+        this.minos[e.y][e.x].minoDisplay!.addChild(effect);
+        this.board!.addEffect(effect);
+      }
     }
   }
 

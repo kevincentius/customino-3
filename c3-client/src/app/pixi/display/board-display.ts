@@ -112,10 +112,8 @@ export class BoardDisplay extends Container implements LayoutChild, BoardDisplay
     this.innerContainer = new Container();
     this.spawnRateOffsetContainer.addChild(this.innerContainer);
     
-    this.maskContainer.addChild(this.effectContainer);
-
     // mino grid
-    this.minoGridDisplay = new MinoGridDisplay(this.board.tiles, this.layout.minoSize, this.board.tiles.length - this.board.visibleHeight, this.player.playerRule);
+    this.minoGridDisplay = new MinoGridDisplay(this.board.tiles, this.layout.minoSize, this.board.tiles.length - this.board.visibleHeight, this.player.playerRule, this);
     this.innerContainer.addChild(this.minoGridDisplay);
 
     // ghost piece
@@ -133,14 +131,14 @@ export class BoardDisplay extends Container implements LayoutChild, BoardDisplay
     // countdown
     this.countdownDisplay = new BoardCountdownDisplay(this, this.clockStartMs);
 
-    this.board.placeTileSubject.subscribe(e => this.minoGridDisplay.placeTile(e));
+    this.board.placeTileSubject.subscribe(e => this.minoGridDisplay.placeTile(e, true));
     this.board.lineClearSubject.subscribe(e => this.onLineClear(e));
     this.board.addRowsSubject.subscribe(e => this.minoGridDisplay.onRowsAdded(e));
     this.player.garbageGen.garbageRateSpawnSubject.subscribe(e => this.lastGarbageRateSpawn = Date.now());
     this.player.gameOverSubject.subscribe(r => this.overlayDisplay.show(this.player.alive ? 'Winner' : 'Game Over', '2nd Place'))
     this.player.pieceLockSubject.subscribe(r => {
       this.shakeBoard(r);
-      this.spawnFlashEffect(r);
+      // this.spawnFlashEffect(r);
     });
 
     // border
@@ -160,14 +158,13 @@ export class BoardDisplay extends Container implements LayoutChild, BoardDisplay
   onLineClear(e: LineClearEvent): void {
     const minoSize = this.getMinoSize();
 
-    for (const row of e.rows) {
-      for (let j = 0; j < this.board.tiles[row.y].length; j++) {
-        const mino = this.minoGridDisplay.minos[row.y][j];
-        if (mino.minoDisplay) {
-          const effect2 = new MinoFlashEffect(minoSize, minoSize, 150, 0.5);
-          effect2.position.set(mino.minoDisplay.position.x, mino.absPos);
-          this.effectContainer.addEffect(effect2);
-        }
+    const fxRule = this.player.playerRule.lineClearEffect;
+    if (fxRule.flashDuration > 0 && fxRule.flashOpacity > 0) {
+      for (const row of e.rows) {
+        const effect = new MinoFlashEffect(minoSize * this.board.tiles[0].length, minoSize, fxRule.flashDuration, fxRule.flashOpacity);
+        effect.position.set(0, this.calcMinoPosForEffect(row.y, 0).y);
+        this.maskContainer.addChild(effect);
+        this.effectContainer.addEffect(effect);
       }
     }
 
@@ -222,21 +219,22 @@ export class BoardDisplay extends Container implements LayoutChild, BoardDisplay
     }
   }
   
-  private spawnFlashEffect(r: LockResult) {
-    const tiles = this.player.activePiece.piece!.tiles;
-    for (let i = 0; i < tiles.length; i++) {
-      for (let j = 0; j < tiles[i].length; j++) {
-        const tile = tiles[i][j];
-        if (tile != null) {
-          const minoPos = this.minoGridDisplay.calcMinoPos(this.player.activePiece.y + i, this.player.activePiece.x + j);
+  // private spawnFlashEffect(r: LockResult) {
+  //   const tiles = this.player.activePiece.piece!.tiles;
+  //   for (let i = 0; i < tiles.length; i++) {
+  //     for (let j = 0; j < tiles[i].length; j++) {
+  //       const tile = tiles[i][j];
+  //       if (tile != null) {
+  //         const minoPos = this.minoGridDisplay.calcMinoPos(this.player.activePiece.y + i, this.player.activePiece.x + j);
           
-          const effect = new MinoFlashEffect(this.getMinoSize(), this.getMinoSize(), 500, 0.5);
-          effect.position.set(minoPos.x, minoPos.y);
-          this.effectContainer.addEffect(effect);
-        }
-      }
-    }
-  }
+  //         const effect = new MinoFlashEffect(this.getMinoSize(), this.getMinoSize(), 500, 0.5);
+  //         effect.position.set(minoPos.x, minoPos.y);
+  //         this.minoGridDisplay.minos[i][j].minoDisplay!.addChild(effect);
+  //         this.effectContainer.addEffect(effect);
+  //       }
+  //     }
+  //   }
+  // }
 
   override destroy() {
     this.maskGraphics.destroy();
