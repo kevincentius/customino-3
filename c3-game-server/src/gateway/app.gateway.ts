@@ -30,7 +30,6 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   updateUserRule(socket: Socket, userRule: UserRule) {
     const session = this.sessionService.getSession(socket);
     session.userRule = userRule;
-    console.debug('Player updated his localRule', JSON.stringify(userRule));
   }
 
   afterInit() {

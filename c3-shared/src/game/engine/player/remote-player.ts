@@ -1,7 +1,6 @@
 import { Player } from "@shared/game/engine/player/player";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { GameEvent } from "@shared/game/network/model/event/game-event";
-import { ServerPlayerEvent } from "@shared/game/network/model/event/server-event";
 
 export class RemotePlayer extends Player {
   // events will be buffered and executed later during update(). If lastReceivedFrame is behind, the update has to be paused (lag).

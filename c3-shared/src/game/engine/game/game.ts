@@ -33,10 +33,15 @@ export abstract class Game {
     this.running = true;
 
     const countdownMs = this.players[0].playerRule.countdownMs;
-    this.clockStartMs = Date.now() + countdownMs;
-    setTimeout(() => this.clockStartSubject.next(), countdownMs);
-
+    if (this.clockStartMs == null) {
+      this.clockStartMs = Date.now() + countdownMs;
+    }
     this.gameStartSubject.next();
+    setTimeout(() => this.startClock(), this.clockStartMs - Date.now());
+  }
+
+  protected startClock() {
+    this.clockStartSubject.next();
   }
 
   checkGameOver() {

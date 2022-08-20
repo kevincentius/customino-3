@@ -46,7 +46,7 @@ export class BoardDisplay extends Container implements LayoutChild, BoardDisplay
   private overlayDisplay: BoardOverlayDisplay;
   countdownDisplay: BoardCountdownDisplay;
 
-  private border;
+  private border: Graphics;
 
   // reference
   board: Board;
@@ -148,7 +148,7 @@ export class BoardDisplay extends Container implements LayoutChild, BoardDisplay
     this.border
       .clear()
       .lineStyle({
-        width: 1,
+        width: 2,
         color: 0xbbbbbb,
         alpha: 0.5,
       })

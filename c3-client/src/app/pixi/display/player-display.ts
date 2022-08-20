@@ -65,7 +65,7 @@ export class PlayerDisplay extends LayoutContainer {
   getCountdownSubject() {
     return this.board.countdownDisplay.countdownSubject;
   }
-
+  
   override destroy() {
     this.board.destroy();
     this.playerInfoDisplay.destroy();

@@ -62,6 +62,7 @@ export class PlayerStatsTracker {
 
   load(stats: string) {
     this.stats = JSON.parse(stats);
+    this.stats.combos = new Map(Object.entries(this.stats.combos));
   }
 
   runFrame() {

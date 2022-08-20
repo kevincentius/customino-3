@@ -60,7 +60,6 @@ export class GameDisplay extends Container {
   }
 
   override destroy() {
-    console.log('destroy game display');
     this.players.forEach(player => player.destroy());
 
     super.destroy();

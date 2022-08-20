@@ -31,6 +31,7 @@ export class ServerGame extends Game {
       startGameData: this.startGameData,
       players: this.players.map(p => p.serialize()),
       running: this.running,
+      clockTimeMs: Date.now() - this.clockStartMs,
     };
   }
 

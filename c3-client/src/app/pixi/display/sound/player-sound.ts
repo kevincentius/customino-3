@@ -88,7 +88,6 @@ export class PlayerSound {
     }
 
     this.player.attackRule.starsSubject.subscribe(e => {
-      console.log('playing stars sound');
       soundService.play('stars', this.channel);
     });
   }

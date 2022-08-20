@@ -45,6 +45,14 @@ export class ClientGame extends Game {
     for (let i = 0; i < this.players.length; i++) {
       this.players[i].load(gameState.players[i]);
     }
+
+    const ct = Date.now();
+    this.clockStartMs = ct - gameState.clockTimeMs;
+    // if (ct >= this.clockStartMs) {
+    //   this.startClock();
+    // } else {
+
+    // }
   }
   
   destroy() {
@@ -71,6 +79,7 @@ export class ClientGame extends Game {
   }
 
   startUpdateLoop() {
+    console.log('startUpdateLoop!');
     this.stop();
     this.lastUpdate = Date.now();
     this.mainLoopTimeout = setTimeout(this.updateLoop.bind(this), gameLoopRule.mspf);
