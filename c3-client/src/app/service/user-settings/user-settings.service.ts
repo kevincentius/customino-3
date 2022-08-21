@@ -34,7 +34,7 @@ export class UserSettingsService {
 
       if (localSettings.control.arr == null) { localSettings.control.arr = 15; }
       if (localSettings.control.das == null) { localSettings.control.das = 100; }
-      if (localSettings.control.sdr == null) { localSettings.control.sdr = 1; }
+      if (localSettings.control.sdr == null) { localSettings.control.sdr = 15; }
       if (localSettings.musicVolume == null) { localSettings.musicVolume = 1; }
       if (localSettings.soundVolume == null) { localSettings.soundVolume = 1; }
       
