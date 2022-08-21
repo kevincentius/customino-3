@@ -248,7 +248,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   getLastGameStats(slot: RoomSlotInfo) {
     return this.game == null ? null
       : this.game.players
-        .filter(p => p.playerInfo.userId == slot.player.userId)
+        .filter(p => p.playerInfo.name == slot.player.username)
         .map(p => p.statsTracker.stats);
   }
 
