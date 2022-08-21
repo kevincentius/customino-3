@@ -40,4 +40,10 @@ export class CountEffect extends Container implements Effect {
     }
     return true;
   }
+
+  override destroy() {
+    this.text.destroy();
+
+    super.destroy();
+  }
 }

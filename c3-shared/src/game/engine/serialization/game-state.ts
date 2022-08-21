@@ -5,4 +5,5 @@ export interface GameState {
   startGameData: StartGameData;
   players: PlayerState[];
   running: boolean;
+  clockTimeMs: number;
 }

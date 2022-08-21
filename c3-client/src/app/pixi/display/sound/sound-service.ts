@@ -8,6 +8,7 @@ export class SoundService {
 
   constructor() {
     let list: { name: string, variations?: number }[] = [
+      { name: 'login' },
       { name: 'harddrop' },
       { name: 'locked' },
       
@@ -60,7 +61,7 @@ export class SoundService {
     this.updateVolumes();
   }
 
-  play(name: string, channel: number, variation?: number, startPosRel=0) {
+  play(name: string, channel: number=0, variation?: number, startPosRel=0) {
     if (!this.enabled) return;
 
     let entry = this.maps[channel].get(name)!;

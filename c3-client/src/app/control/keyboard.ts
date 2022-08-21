@@ -11,6 +11,7 @@ export class Keyboard {
 
   // State
   public state = InputState.DISABLED;
+  private enabled = true;
 
   private keyMap = new Map<string, Control>();
   private moveMap = new Map<InputKey, Control>();
@@ -49,9 +50,17 @@ export class Keyboard {
     this.keyMap.set(code, control);
   }
 
+  setEnabled(enabled: boolean) {
+    this.enabled = enabled;
+    if (!enabled) {
+      this.repeatKey = undefined;
+      this.moveMap.get(InputKey.SOFT_DROP)!.down = false;
+    }
+  }
+
   // Event Handling
   onKeyDown(e: KeyboardEvent) {
-    if (this.state == InputState.DISABLED || e.repeat)
+    if (this.state == InputState.DISABLED || this.enabled || e.repeat)
       return;
 
     // Ensure key event only affects game
@@ -80,7 +89,7 @@ export class Keyboard {
   }
 
   onKeyUp(e: KeyboardEvent) {
-    if (this.state == InputState.DISABLED || e.repeat)
+    if (this.state == InputState.DISABLED || this.enabled || e.repeat)
       return;
 
     // Ensure Key event doesn't do anything weird

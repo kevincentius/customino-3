@@ -1,13 +1,14 @@
-import { PlayerRuleField } from "@shared/game/engine/model/rule/field";
-import { FieldTags } from "@shared/game/engine/model/rule/field-tag";
-import { FieldType } from "@shared/game/engine/model/rule/field-type";
-import { floatRangeValidator, intRangeValidator, listValidator } from "@shared/game/engine/model/rule/field-validators";
-import { gravityRuleFields } from "@shared/game/engine/model/rule/player-rule/gravity-rule-fields";
-import { sonicDropEffectRuleFields } from "@shared/game/engine/model/rule/player-rule/sonic-drop-effect-fields";
-import { starsRuleFields } from "@shared/game/engine/model/rule/player-rule/stars-rule-fields";
+import { DataField } from "@shared/game/engine/model/rule/data-field/data-field";
+import { FieldTags } from "@shared/game/engine/model/rule/data-field/field-tag";
+import { FieldType } from "@shared/game/engine/model/rule/data-field/field-type";
+import { floatRangeValidator, intRangeValidator, listValidator } from "@shared/game/engine/model/rule/data-field/field-validators";
+import { gravityRuleFields } from "@shared/game/engine/model/rule/room-rule/gravity-rule-fields";
+import { lineClearEffectRuleFields } from "@shared/game/engine/model/rule/room-rule/line-clear-effect-rule-fields";
+import { sonicDropEffectRuleFields } from "@shared/game/engine/model/rule/room-rule/sonic-drop-effect-fields";
+import { starsRuleFields } from "@shared/game/engine/model/rule/room-rule/stars-rule-fields";
 import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
 
-export const playerRuleFields: PlayerRuleField[] = [
+export const playerRuleFields: DataField[] = [
   {
     property: 'width',
     fieldType: FieldType.NUMBER_SCROLL,
@@ -37,7 +38,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   {
     property: 'invisibleHeight',
     fieldType: FieldType.NUMBER_SCROLL,
-    default: 20,
+    default: 18,
     validators: [ intRangeValidator(0, 100) ],
 
     name: 'Hidden rows',
@@ -191,7 +192,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   {
     property: 'comboAttackTable',
     fieldType: FieldType.NUMBER_LIST,
-    default: [0, 0, 1, 1, 1, 2, 2, 2, 3],
+    default: [0, 0, 1, 1, 2, 2, 3, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
     validators: [ listValidator(intRangeValidator(0, 100)) ],
     startIndex: 1,
 
@@ -205,7 +206,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   {
     property: 'comboTimerInitial',
     fieldType: FieldType.NUMBER_SCROLL,
-    default: 1,
+    default: 2,
     stepSize: 0.1,
     decimalPlaces: 1,
     validators: [ floatRangeValidator(0, 10) ],
@@ -236,7 +237,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   {
     property: 'comboTimerSpinBonus',
     fieldType: FieldType.NUMBER_LIST,
-    default: [-0.2, 1, 1.4, 1.7, 2],
+    default: [0, 1.5, 2, 2.5],
     stepSize: 0.1,
     decimalPlaces: 1,
     validators: [ listValidator(floatRangeValidator(-10, 10)) ],
@@ -252,7 +253,7 @@ export const playerRuleFields: PlayerRuleField[] = [
   {
     property: 'comboTimerTimeBonusMultiplierTable',
     fieldType: FieldType.NUMBER_LIST,
-    default: [-0.2, 1, 1.4, 1.7, 2],
+    default: [1, 0.7, 0.5, 0.3, 0.2, 0.1],
     stepSize: 0.1,
     decimalPlaces: 1,
     validators: [ listValidator(floatRangeValidator(-10, 10)) ],
@@ -265,8 +266,23 @@ export const playerRuleFields: PlayerRuleField[] = [
       FieldTags.ATTACK,
     ],
   },
+  {
+    property: 'multiClearAttackTable',
+    fieldType: FieldType.NUMBER_LIST,
+    default: [0, 0, 1, 2, 4, 6],
+    validators: [ listValidator(intRangeValidator(0, 100)) ],
+    startIndex: 0,
+    
+    name: 'Line-clear attack table.',
+    description: 'Defines the amount of lines sent when clearing multiple lines at once.',
+    tags: [
+      FieldTags.ADVANCED,
+      FieldTags.ATTACK,
+    ],
+  },
   ...starsRuleFields,
   ...sonicDropEffectRuleFields,
+  ...lineClearEffectRuleFields,
   {
     property: 'playerDisplayDupes',
     fieldType: FieldType.NUMBER_SCROLL,
@@ -279,5 +295,5 @@ export const playerRuleFields: PlayerRuleField[] = [
       FieldTags.ALL,
       FieldTags.DEBUG,
     ]
-  }
+  },
 ];

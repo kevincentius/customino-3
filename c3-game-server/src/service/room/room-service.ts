@@ -3,7 +3,6 @@ import { RoomInfo } from "@shared/model/room/room-info";
 import { Room } from "service/room/room";
 import { Session } from "service/session/session";
 import { SessionService, SessionServiceEvent } from "service/session/session-service";
-import { Socket } from "socket.io";
 
 /**
  * This service is aware of all rooms in the server, and guarantees that each client can only be in one room at any given time.
@@ -39,7 +38,7 @@ export class RoomService {
     
     this.leave(session);
 
-    const room = new Room(roomId, `${session.username}'s Room`, session);
+    const room = new Room(roomId, `${session.username}'s Room`, session, this.sessionService);
     this.roomMap.set(room.id, room);
 
     session.roomId = room.id;

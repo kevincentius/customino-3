@@ -24,4 +24,10 @@ export class MinoDisplay extends Container {
     this.sprite = new Sprite(this.spritesheet.mino[textureMinoId]);
     this.sprite.scale.set(this.minoSize / this.spritesheet.mino[0].width);
   }
+
+  override destroy() {
+    this.sprite.destroy();
+
+    super.destroy();
+  }
 }

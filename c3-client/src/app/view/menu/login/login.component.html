@@ -1,0 +1,30 @@
+
+<div class="full-size login-background">
+  <div class="full-center">
+
+    <div style="text-align: center; font-size: 24px;">
+      Pick a name
+
+      <span style="
+          display: inline-block;
+          transform: scale(1.5) translate(0, 4px);
+          margin: 4px;
+      ">
+        <app-icon-button [iconName]="'magic'" (click)="setRandomName()"></app-icon-button>
+      </span>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div style="display: flex; align-items: center; justify-content: center;">
+      <input #inp [(ngModel)]="inpData" placeholder="username" maxlength="15" class="main-input" (keyup.enter)="onSubmit()">
+    </div>
+    {{ inp.focus() }}
+
+    <div class="spacer"></div>
+
+    <div>
+      <img (click)="onSubmit()" class="banner-btn" src="assets/img/default/banner.ico"/>
+    </div>
+  </div>
+</div>

@@ -1,9 +1,8 @@
-import { SonicDropEffectConfig } from "@shared/game/engine/model/rule/player-rule/sonic-drop-effect-config";
+import { SonicDropEffectConfig } from "@shared/game/engine/model/rule/room-rule/sonic-drop-effect-config";
 import { Tile } from "@shared/game/engine/model/tile";
 import { Effect } from "app/pixi/display/effects/effect";
 import { createMinoSprite } from "app/pixi/display/effects/mino-sprite-factory";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
-import { getLocalSettings } from "app/service/user-settings/user-settings.service";
 import { AdjustmentFilter } from "pixi-filters";
 import { Emitter } from "pixi-particles";
 import { Container, Sprite } from "pixi.js";
@@ -28,6 +27,7 @@ export class SonicDropEffect extends Container implements Effect {
     private minoSize: number,
     private rows: number,
     private combo: number,
+    particles: boolean,
   ) {
     super();
 
@@ -47,7 +47,7 @@ export class SonicDropEffect extends Container implements Effect {
 
     this.addChild(this.sprite);
 
-    if (getLocalSettings().localGraphics.particles) {
+    if (particles) {
       this.emitter = new Emitter(this, this.sprite.texture, 
         {
           "alpha": {
@@ -142,5 +142,12 @@ export class SonicDropEffect extends Container implements Effect {
     }
     
     return true;
+  }
+  
+  override destroy() {
+    this.sprite.destroy();
+    this.emitter?.destroy();
+
+    super.destroy();
   }
 }

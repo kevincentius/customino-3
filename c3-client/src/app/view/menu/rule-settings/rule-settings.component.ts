@@ -1,82 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { PlayerRuleField } from '@shared/game/engine/model/rule/field';
-import { FieldTags } from '@shared/game/engine/model/rule/field-tag';
+import { DataField } from '@shared/game/engine/model/rule/data-field/data-field';
 import { GameRule } from '@shared/game/engine/model/rule/game-rule';
-import { getField, setField } from '@shared/game/engine/model/rule/player-rule/player-rule';
-import { playerRuleFields } from '@shared/game/engine/model/rule/player-rule/player-rule-fields';
+import { getField, setField } from '@shared/game/engine/model/rule/data-field/data-field';
 import { RulePreset, rulePresets } from 'app/view/menu/rule-settings/rule-presets';
 import { saveAs } from 'file-saver';
-
-interface ViewMode {
-  name: string;
-  forbiddenTags: FieldTags[];
-  allowCategories: boolean;
-  hideRuleFields?: boolean;
-}
-const viewModes: ViewMode[] = [
-  {
-    name: 'Presets mode',
-    forbiddenTags: [ FieldTags.ALL, FieldTags.ADVANCED, FieldTags.BASIC, ],
-    allowCategories: false,
-    hideRuleFields: true,
-  },
-  {
-    name: 'Simple mode',
-    forbiddenTags: [ FieldTags.ALL, FieldTags.ADVANCED, ],
-    allowCategories: false,
-  },
-  {
-    name: 'Advanced mode',
-    forbiddenTags: [ FieldTags.ALL, ],
-    allowCategories: true,
-  },
-  {
-    name: 'View all',
-    forbiddenTags: [],
-    allowCategories: true,
-  }
-];
-
-interface RuleCategory {
-  name: string;
-  fields: PlayerRuleField[];
-}
-const categoryDatas: RuleCategoryData[] = [
-  {
-    name: 'General',
-    tag: FieldTags.GENERAL,
-  },
-  {
-    name: 'Attack',
-    tag: FieldTags.ATTACK,
-  },
-  {
-    name: 'Defense',
-    tag: FieldTags.DEFENSE,
-  },
-  {
-    name: 'Debug',
-    tag: FieldTags.DEBUG,
-  },
-  {
-    name: 'Others',
-  }
-];
-
-interface RuleCategoryData {
-  name: string;
-  tag?: FieldTags;
-}
-const categories: RuleCategory[] = categoryDatas.map(d => ({...d, fields: []}));
-for (let field of playerRuleFields) {
-  for (let i = 0; i < categoryDatas.length; i++) {
-    if (!categoryDatas[i].tag || field.tags.indexOf(categoryDatas[i].tag!) != -1) {
-      categories[i].fields.push(field);
-      break;
-    }
-  }
-}
-
+import { UserRule } from '@shared/game/engine/model/rule/user-rule/user-rule';
+import { ViewMode, viewModeAdvanced, viewModeAll, viewModePresets, viewModeSimple, viewModeSimpleCategorized } from 'app/view/menu/rule-settings/rule-settings-view-mode';
+import { createCategories, DataFieldCategory, DataFieldCategoryData } from 'app/view/menu/rule-settings/rule-settings-category';
+import { LocalRule } from '@shared/game/engine/model/rule/local-rule/local-rule';
 
 @Component({
   selector: 'app-rule-settings',
@@ -84,36 +15,65 @@ for (let field of playerRuleFields) {
   styleUrls: ['./rule-settings.component.scss']
 })
 export class RuleSettingsComponent implements OnInit {
-  playerRuleFields = playerRuleFields;
   presets: RulePreset[] = rulePresets;
 
-  @Input() gameRule!: GameRule;
+  // required inputs
   @Input() editMode = false;
+  @Input() dataFieldCategories!: DataFieldCategoryData[];
+  
+  // required inputs for Room Settings (i. e. GameRule)
+  @Input() gameRule?: GameRule;
+  @Input() dataFields!: DataField[];
 
+  // requiredinputs for User Settings
+  @Input() userRule?: UserRule;
+  @Input() userRuleFields?: DataField[];
+  @Input() localRule?: LocalRule;
+  @Input() localRuleFields?: DataField[];
+
+  userRuleFieldSet!: Set<DataField>;
+
+  viewModes!: ViewMode[];
+  viewMode!: ViewMode;
+  categories!: DataFieldCategory[];
+  
   displayedRule!: any;
-  viewMode = viewModes[0];
-  categories = categories;
   groupByCategory = true;
   selectedPreset?: RulePreset = rulePresets[0];
-
-  constructor() { }
-
+  
   ngOnInit(): void {
-    this.displayedRule = this.gameRule.globalRule;
+    if (this.gameRule) {
+      this.viewModes = [viewModePresets, viewModeSimple, viewModeAdvanced, viewModeAll];
+    } else {
+      this.dataFields = [...this.userRuleFields!, ...this.localRuleFields!];
+      this.viewModes = [viewModeSimpleCategorized, viewModeAdvanced, viewModeAll]
+      this.userRuleFieldSet = new Set(this.userRuleFields!);
+    }
+    
+    this.viewMode = this.viewModes[0];
+    console.log('viewMode', this.viewMode);
+    this.categories = createCategories(this.dataFieldCategories, this.dataFields);
+    this.displayedRule = this.gameRule?.roomRule ?? undefined;
   }
 
-  getFieldValue(field: PlayerRuleField) {
-    return getField(this.displayedRule, field);
+  getFieldValue(field: DataField) {
+    return getField(this.getBoundRule(field), field);
   }
 
-  setFieldValue(field: PlayerRuleField, value: any) {
-    setField(this.displayedRule, field, value);
+  setFieldValue(field: DataField, value: any) {
+    setField(this.getBoundRule(field), field, value);
+  }
+
+  private getBoundRule(field: DataField) {
+    return this.gameRule ? this.displayedRule
+      : this.userRuleFieldSet.has(field) ? this.userRule!
+      : this.localRule!;
   }
 
   toggleViewMode() {
-    this.viewMode = viewModes[(viewModes.indexOf(this.viewMode) + 1) % viewModes.length]
+    this.viewMode = this.viewModes[(this.viewModes.indexOf(this.viewMode) + 1) % this.viewModes.length]
 
-    if (this.viewMode != viewModes[0]) {
+    if (!this.viewMode.hideRuleFields) {
       this.selectedPreset = undefined;
     }
   }
@@ -122,7 +82,7 @@ export class RuleSettingsComponent implements OnInit {
     this.groupByCategory = !this.groupByCategory;
   }
   
-  passesFilter(field: PlayerRuleField) {
+  passesFilter(field: DataField) {
     return this.viewMode.forbiddenTags.every(forbiddenTag => field.tags.indexOf(forbiddenTag) == -1);
   }
   
@@ -131,15 +91,17 @@ export class RuleSettingsComponent implements OnInit {
   }
 
   async onRuleUpload(files: File[]) {
-    const gameRule = await this.readFileAsJsObject(files[0]);
-    this.loadRule(gameRule);
+    const data = await this.readFileAsJsObject(files[0]);
+    this.loadRule(data);
   }
 
-  private loadRule(gameRule: GameRule) {
+  private loadRule(data: any) {
     const unknownProperties: string[] = [];
-    for (const key of Object.keys(gameRule.globalRule)) {
-      if (key in this.gameRule.globalRule) {
-        (this.gameRule.globalRule as any)[key] = (gameRule.globalRule as any)[key];
+    for (const key of Object.keys(data.roomRule)) {
+      if (this.gameRule && key in this.gameRule!.roomRule) {
+        (this.gameRule!.roomRule as any)[key] = data.roomRule[key];
+      } else if (this.localRule && key in this.localRule) {
+        (this.localRule as any)[key] = data[key];
       } else {
         unknownProperties.push(key);
       }
@@ -150,7 +112,7 @@ export class RuleSettingsComponent implements OnInit {
     }
   }
 
-  private async readFileAsJsObject(file: File): Promise<GameRule> {
+  private async readFileAsJsObject(file: File): Promise<any> {
     return new Promise(resolve => {
       const reader = new FileReader();
       reader.onload = e => {

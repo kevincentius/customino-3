@@ -12,7 +12,10 @@ import { GameRecorder } from "@shared/game/engine/recorder/game-recorder";
 import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
 import { RandomGen } from "@shared/game/engine/util/random-gen";
 import { RoomSettings } from "@shared/game/engine/model/room-settings";
-import { playerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
+import { getDefaultRoomRule } from "@shared/game/engine/model/rule/room-rule/room-rule";
+import { SessionService } from "service/session/session-service";
+import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
+import { ChatMessage } from "@shared/model/room/chat-message";
 
 export class Room {
   createdAt = Date.now();
@@ -20,7 +23,7 @@ export class Room {
   slots: RoomSlot[];
   settings: RoomSettings = {
     gameRule: { 
-      globalRule: playerRule,
+      roomRule: getDefaultRoomRule(),
     },
   };
   host!: Session;
@@ -36,8 +39,9 @@ export class Room {
     public id: number,
     public name: string,
     public creator: Session,
+    private sessionService: SessionService,
   ) {
-    this.slots =[new RoomSlot(creator, true)];
+    this.slots =[new RoomSlot(creator)];
     this.host = creator;
   }
 
@@ -88,8 +92,8 @@ export class Room {
   }
 
   startGame(session: Session) {
-    if (!this.isRunning() && this.host == session && this.isInRoom(session)) {
-      const playerSlots = this.slots.filter(slot => slot.playing);
+    if (!this.isRunning() && this.host == session && this.isInRoom(session) && this.slots.filter(slot => slot.settings.playing).length > 0) {
+      const playerSlots = this.slots.filter(slot => slot.settings.playing);
       this.slots.forEach(slot => slot.playerIndex = null);
       playerSlots.forEach((playerSlot, index) => playerSlot.playerIndex = index);
 
@@ -98,11 +102,17 @@ export class Room {
       const globalSeed = this.r.int();
       
       const startGameData: StartGameData = {
-        gameRule: this.settings.gameRule,
-        players: players.map(p => ({
-          clientInfo: p,
-          randomSeed: globalSeed,
-        })),
+        roomRule: this.settings.gameRule.roomRule,
+        players: playerSlots.map(slot => {
+          const clientInfo = slot.session.getClientInfo()
+          const startPlayerData: StartPlayerData = {
+            clientInfo: clientInfo,
+            randomSeed: globalSeed,
+            slotSettings: slot.settings,
+            userRule: this.sessionService.getSessionById(clientInfo.sessionId).userRule,
+          };
+          return startPlayerData;
+        }),
         randomSeed: this.r.int(),
       }
 
@@ -157,7 +167,32 @@ export class Room {
       this.broadcastRoomInfo();
     }
   }
+
+  changeSlotTeam(session: Session, slotIndex: number, team: number) {
+    if (this.host == session && this.slots.length > slotIndex) {
+      const slot = this.slots[slotIndex];
+      if (slot.settings.team != team) {
+        this.slots[slotIndex].settings.team = team;
+        this.broadcastRoomInfo();
+      }
+    }
+  }
   
+  setSpectatorMode(session: Session, spectator: boolean) {
+    const slot = this.slots.filter(slot => slot.session == session)[0];
+    if (slot) {
+      slot.settings.playing = !spectator;
+      this.broadcastRoomInfo();
+    }
+  }
+
+  resetScores(session: Session) {
+    if (this.host == session) {
+      this.slots.forEach(slot => slot.resetScore());
+      this.broadcastRoomInfo();
+    }
+  }
+
   isInRoom(session: Session) {
     return this.slots.find(slot => slot.session == session);
   }
@@ -209,5 +244,16 @@ export class Room {
 
     // simulate game immediately
     this.game!.players[playerIndex].handleEvent(clientEvent);
+  }
+
+  postChatMessage(session: Session, message: string) {
+    const chatMessage: ChatMessage = {
+      username: session.username!,
+      timestamp: Date.now(),
+      message: message,
+    };
+    for (const slot of this.slots) {
+      slot.session.socket.emit(LobbyEvent.POST_CHAT_MESSAGE, chatMessage);
+    }
   }
 }

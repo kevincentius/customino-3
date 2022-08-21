@@ -1,13 +1,15 @@
+import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { Tile } from "@shared/game/engine/model/tile";
 import { LineClearEvent, PlaceTileEvent } from "@shared/game/engine/player/board";
 import { MatUtil } from "@shared/game/engine/util/mat-util";
+import { BoardDisplayDelegate } from "app/pixi/display/board-display-delegate";
+import { MinoFlashEffect } from "app/pixi/display/effects/mino-flash-effect";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { MinoDisplay } from "app/pixi/display/mino-display";
 import { MinoAnimator } from "app/pixi/display/mino-grid/mino-animator";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
-import { getLocalSettings } from "app/service/user-settings/user-settings.service";
 import { GlowFilter } from "pixi-filters";
-import { Container, filters, Graphics } from "pixi.js";
+import { Container, Graphics } from "pixi.js";
 
 export class MinoGridDisplay extends Container implements LayoutChild {
   // helpers
@@ -28,16 +30,21 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     innerStrength: 0.5,
   });
 
-  colorMatrixFilter = new filters.ColorMatrixFilter();
-
-  constructor(private tiles: (Tile | null)[][], private minoSize: number, private invisibleHeight=0) {
+  constructor(
+    private tiles: (Tile | null)[][],
+    private minoSize: number,
+    private invisibleHeight: number,
+    private playerRule: PlayerRule,
+    private glow: boolean,
+    private board?: BoardDisplayDelegate,
+  ) {
     super();
 
     this.layoutWidth = this.minoSize * tiles[0].length;
     this.layoutHeight = this.minoSize * tiles.length;
 
     this.minos = Array.from(Array(this.tiles.length),
-      () => Array.from(Array(this.tiles[0].length), () => new MinoAnimator(this.spritesheet, this.minoSize)));
+      () => Array.from(Array(this.tiles[0].length), () => new MinoAnimator(this.spritesheet, this.minoSize, this.playerRule)));
 
     for (let i = 0; i < this.tiles.length; i++) {
       for (let j = 0; j < this.tiles[i].length; j++) {
@@ -52,10 +59,9 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     }
 
     this.filters = [];
-    if (getLocalSettings().localGraphics.glowEffect) {
+    if (this.glow) {
       this.filters.push(this.glowFilter);
     }
-    this.filters.push(this.colorMatrixFilter);
     
     if (this.debug) {
       this.debugRect = new Graphics();
@@ -81,20 +87,19 @@ export class MinoGridDisplay extends Container implements LayoutChild {
         zeroPos = this.minos[i][j].absPos - this.minoSize;
       }
     }
-
-    this.colorMatrixFilter.saturate(0.1, false);
   }
 
   chorus(p: number) {
     const waveAmpl = 0;
     const waveP = (1 - waveAmpl) + waveAmpl * Math.abs(Math.sin(Date.now() / 500 * 2 * Math.PI));
-    this.glowFilter.innerStrength = p * 1.5 * waveP;
-    this.glowFilter.outerStrength = p * 1.5 * waveP;
+    this.glowFilter.innerStrength = p * this.playerRule.graphics.chorusIntensity * waveP;
+    this.glowFilter.outerStrength = p * this.playerRule.graphics.chorusIntensity * waveP;
   }
 
-  placeTile(e: PlaceTileEvent) {
+  placeTile(e: PlaceTileEvent, flash=false) {
     if (this.minos[e.y][e.x].minoDisplay != undefined) {
       this.removeChild(this.minos[e.y][e.x].minoDisplay!);
+      this.minos[e.y][e.x].minoDisplay!.destroy();
       this.minos[e.y][e.x].minoDisplay = undefined;
     }
 
@@ -102,6 +107,12 @@ export class MinoGridDisplay extends Container implements LayoutChild {
       this.minos[e.y][e.x].minoDisplay = new MinoDisplay(this.spritesheet, e.tile, this.minoSize);
       this.updateMinoPosition(e.y, e.x);
       this.addChild(this.minos[e.y][e.x].minoDisplay!);
+
+      if (flash) {
+        const effect = new MinoFlashEffect(this.minoSize, this.minoSize, 500, 0.5);
+        this.minos[e.y][e.x].minoDisplay!.addChild(effect);
+        this.board!.addEffect(effect);
+      }
     }
   }
 
@@ -156,7 +167,9 @@ export class MinoGridDisplay extends Container implements LayoutChild {
       for (let j = 0; j < this.minos[fallRow.pos].length; j++) {
         const mino = this.minos[fallRow.pos][j];
         mino.speed = 0;
-        mino.delay = Math.max(mino.delay, Math.abs(j - fallRow.epicenterSum / fallRow.dist) / this.minos[0].length * 0 * Math.min(4, e.rows.length + 4));
+        if (mino.delay == 0) {
+          mino.delay = this.playerRule.lineClearEffect.fallDelay + Math.abs(j - fallRow.epicenterSum / fallRow.dist) / this.minos[0].length * this.playerRule.lineClearEffect.fallSpreadDelay * Math.min(4, e.rows.length + 4);
+        }
 
         // calc fall distance
         mino.pos -= this.minoSize * fallRow.dist;
@@ -173,6 +186,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
       for (let mino of this.minos[row]) {
         if (mino.minoDisplay != null) {
           this.removeChild(mino.minoDisplay);
+          mino.minoDisplay.destroy();
         }
       }
     }
@@ -180,7 +194,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     MatUtil.shiftDown(this.minos, rows);
     
     for (let i = 0; i < rows.length; i++) {
-      this.minos[i] = Array.from(Array(this.tiles[0].length), () => new MinoAnimator(this.spritesheet, this.minoSize));
+      this.minos[i] = Array.from(Array(this.tiles[0].length), () => new MinoAnimator(this.spritesheet, this.minoSize, this.playerRule));
     }
   }
 
@@ -189,6 +203,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
       for (let mino of this.minos[i]) {
         if (mino.minoDisplay != null) {
           this.removeChild(mino.minoDisplay);
+          mino.minoDisplay.destroy();
         }
       }
     }
@@ -196,7 +211,7 @@ export class MinoGridDisplay extends Container implements LayoutChild {
     let rows: (MinoAnimator)[][] = [];
     for (let i = 0; i < numRows; i++) {
       rows.push(this.tiles[this.tiles.length - numRows + i].map(tile => {
-        const mino = new MinoAnimator(this.spritesheet, this.minoSize);
+        const mino = new MinoAnimator(this.spritesheet, this.minoSize, this.playerRule);
         if (tile != null) {
           mino.minoDisplay = new MinoDisplay(this.spritesheet, tile, this.minoSize);
           this.addChild(mino.minoDisplay);
@@ -212,5 +227,19 @@ export class MinoGridDisplay extends Container implements LayoutChild {
         this.updateMinoPosition(i, j);
       }
     }
+  }
+
+  override destroy() {
+    if (this.debug) {
+      this.debugRect!.destroy();
+    }
+
+    for (let row of this.minos) {
+      for (let mino of row) {
+        mino.destroy();
+      }
+    }
+
+    super.destroy();
   }
 }

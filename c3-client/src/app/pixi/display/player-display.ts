@@ -24,7 +24,7 @@ export class PlayerDisplay extends LayoutContainer {
 
 
   constructor(
-    private player: Player,
+    public player: Player,
     private clockStartMs: number,
   ) {
     super(1);
@@ -64,5 +64,18 @@ export class PlayerDisplay extends LayoutContainer {
 
   getCountdownSubject() {
     return this.board.countdownDisplay.countdownSubject;
+  }
+  
+  override destroy() {
+    this.board.destroy();
+    this.playerInfoDisplay.destroy();
+    this.rowLayout.destroy();
+    this.rightColumnLayout.destroy();
+    this.speedMeter?.destroy();
+    this.comboTimer?.destroy();
+    this.pieceQueue.destroy();
+    this.starsMeter?.destroy();
+
+    super.destroy();
   }
 }

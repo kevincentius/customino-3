@@ -1,30 +1,33 @@
 
 <div class="full-screen-overlay">
   <app-controls #controls [hidden]="screen!==MainScreen.CONTROLS"></app-controls>
+  <app-personalization #personalization [hidden]="screen!==MainScreen.PERSONALIZATION"></app-personalization>
   
   <app-lobby #lobby [hidden]="screen!==MainScreen.LOBBY"
     (enterRoom)="onEnterRoom($event)"
   ></app-lobby>
   
+  <app-login #menu [hidden]="screen!==MainScreen.LOGIN"></app-login>
+
   <app-menu #menu [hidden]="screen!==MainScreen.MENU"></app-menu>
 
   <app-room #room [hidden]="screen!==MainScreen.ROOM"></app-room>
 
   <app-replay #replay [hidden]="screen!==MainScreen.REPLAY"></app-replay>
 
-  <app-thanks #controls [hidden]="screen!==MainScreen.THANKS"></app-thanks>
+  <app-thanks #thanks [hidden]="screen!==MainScreen.THANKS"></app-thanks>
 </div>
 
 <div class="icon-bar">
   <ng-container *ngIf="screen == MainScreen.ROOM">
-    <mat-icon (click)="onLeaveRoom()">logout</mat-icon>
+    <mat-icon class="icon-button" (click)="onLeaveRoom()">logout</mat-icon>
 
-    <mat-icon *ngIf="!room.enterLeaveTransition.state" (click)="room.setHideGui(false)">visibility_off</mat-icon>
-    <mat-icon *ngIf="room.enterLeaveTransition.state" (click)="room.setHideGui(true)">visibility</mat-icon>
+    <mat-icon class="icon-button" *ngIf="!room.enterLeaveTransition.state" (click)="room.setHideGui(false)">visibility_off</mat-icon>
+    <mat-icon class="icon-button" *ngIf="room.enterLeaveTransition.state" (click)="room.setHideGui(true)">visibility</mat-icon>
 
-    <mat-icon (click)="openScreen(MainScreen.CONTROLS)">settings</mat-icon>
+    <mat-icon class="icon-button" (click)="openScreen(MainScreen.CONTROLS)">settings</mat-icon>
 
-    <mat-icon (click)="onDebugClick()">bug_report</mat-icon>
+    <mat-icon class="icon-button" (click)="onDebugClick()">bug_report</mat-icon>
   </ng-container>
   
 </div>

@@ -1,7 +1,6 @@
 import { Effect } from "app/pixi/display/effects/effect";
-import { getLocalSettings } from "app/service/user-settings/user-settings.service";
 import { Emitter } from "pixi-particles";
-import { Container, Sprite, Texture } from "pixi.js";
+import { Container, Texture } from "pixi.js";
 
 export class MinoDestroyedEffect extends Container implements Effect {
   
@@ -25,11 +24,12 @@ export class MinoDestroyedEffect extends Container implements Effect {
     width: number,
     height: number,
     private texture: Texture,
+    particles: boolean,
   ) {
     texture = Texture.WHITE;
     super();
 
-    if (getLocalSettings().localGraphics.particles) {
+    if (particles) {
       this.emitter = new Emitter(this, this.texture, 
         {
           "alpha": {
@@ -99,5 +99,11 @@ export class MinoDestroyedEffect extends Container implements Effect {
       }
       return true;
     }
+  }
+
+  override destroy() {
+    this.emitter?.destroy();
+
+    super.destroy();
   }
 }

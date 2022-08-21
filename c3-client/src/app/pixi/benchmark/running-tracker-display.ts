@@ -21,4 +21,11 @@ export class RunningTrackerDisplay extends Container {
     this.avgText.text = this.propName + ': ' + this.tracker.avg.toFixed(3);
     this.maxText.text = 'max: ' + this.tracker.max.toFixed(3);
   }
+
+  override destroy() {
+    this.avgText.destroy();
+    this.maxText.destroy();
+
+    super.destroy();
+  }
 }

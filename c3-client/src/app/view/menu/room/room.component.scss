@@ -16,16 +16,10 @@
   }
 }
 
-.room-section {
-  background: #000d;
-  padding: 30px;
-  box-sizing: border-box;
-}
-
 .slots-container {
   font-size: 24px;
 
-  &.spectator {
+  .spectator {
     opacity: 0.5;
   }
 
@@ -67,4 +61,12 @@ th {
 
 td {
   // background: #1325;
+}
+
+.team-icon {
+  border: solid 1px #0006;
+  text-align: center;
+  font-size: 70%;
+  width: 50px;
+  cursor: pointer;
 }

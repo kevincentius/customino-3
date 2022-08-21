@@ -1,5 +1,5 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
-import { GravityRule } from "@shared/game/engine/model/rule/player-rule/gravity-rule";
+import { GravityRule } from "@shared/game/engine/model/rule/room-rule/gravity-rule";
 import { Board } from "@shared/game/engine/player/board";
 import { Piece } from "@shared/game/engine/player/piece";
 import { MatUtil } from "@shared/game/engine/util/mat-util";
