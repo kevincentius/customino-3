@@ -51,7 +51,6 @@ export class RuleSettingsComponent implements OnInit {
     }
     
     this.viewMode = this.viewModes[0];
-    console.log('viewMode', this.viewMode);
     this.categories = createCategories(this.dataFieldCategories, this.dataFields);
     this.displayedRule = this.gameRule?.roomRule ?? undefined;
   }
