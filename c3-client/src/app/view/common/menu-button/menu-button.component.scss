@@ -1,10 +1,16 @@
 
+:host {
+  height: 100%;
+}
+
 .menu-button {
   transition: 500ms;
-  display: inline-block;
+  display: flex;
   width: 100px;
-  text-align: center;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  height: 90%;
 
   &:hover {
     transition: 50ms;
