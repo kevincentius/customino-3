@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { AccountService } from "app/game-server/account.service";
+import { UserSettingsService } from "app/service/user-settings/user-settings.service";
 import { MainScreen } from "app/view/main/main-screen";
 import { MainService } from "app/view/main/main.service";
 import { ControlsComponent } from "app/view/menu/controls/controls.component";
@@ -53,9 +54,10 @@ export class MainComponent {
 
   constructor(
     public mainService: MainService,
-    private accountService: AccountService,
     private route: ActivatedRoute,
+    private userSettingsService: UserSettingsService, // inject so its constructor is called
   ) {
+    
     this.openScreen(MainScreen.PRELOADER);
 
     this.route.params.subscribe(params => {
