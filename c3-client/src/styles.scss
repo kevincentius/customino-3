@@ -32,16 +32,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .screen-title-container {
-  padding-left: 30px;
-  padding-right: 30px;
-  padding-top: 30px;
   margin-bottom: 30px;
-  
-  .screen-title {
-    font-size: $screen-title-size;
+
+  .screen-title-underline {
+    font-size: 48px;
     border-bottom: solid 1px #fff8;
-    padding: 0 40px;
-    padding-bottom: 20px;
+    padding: 10px 0 0 40px;
+
+    .screen-title-row {
+      display: flex;
+      height: 70px;
+      align-items: center;
+    }
   }
 }
 
