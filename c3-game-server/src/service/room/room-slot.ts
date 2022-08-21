@@ -7,6 +7,7 @@ export class RoomSlot {
   public playerIndex: number | null = null;
   public settings: RoomSlotSettings = {
     team: null,
+    playing: true,
   };
 
   private score = 0;
@@ -14,13 +15,11 @@ export class RoomSlot {
 
   constructor(
     public session: Session,
-    public playing = true,
   ) {}
   
   getRoomSlotInfo(): RoomSlotInfo {
     return {
       player: this.session.getClientInfo(),
-      playing: this.playing,
       score: this.score,
       settings: this.settings,
     };

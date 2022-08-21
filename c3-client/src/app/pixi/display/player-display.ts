@@ -24,7 +24,7 @@ export class PlayerDisplay extends LayoutContainer {
 
 
   constructor(
-    private player: Player,
+    public player: Player,
     private clockStartMs: number,
   ) {
     super(1);

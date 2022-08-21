@@ -41,7 +41,7 @@ export class GameDisplay extends Container {
       height: height,
       main: mainIndex != -1 ? mainIndex : 0,
       playerAspectRatio: aspectRatio,
-      teams: this.players.map((p, i) => this.game.players[i].playerRule.team ?? -1),
+      teams: this.players.map((p, i) => p.player.playerRule.team ?? -1),
     });
 
     this.players.forEach((player, index) => {

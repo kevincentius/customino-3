@@ -79,6 +79,16 @@ export class LobbyGateway {
     }
   }
 
+  @SubscribeMessage(LobbyEvent.SET_SPECTATOR_MODE)
+  setSpectatorMode(socket: Socket, spectator: boolean) {
+    const session = this.sessionService.getSession(socket);
+    const room = this.roomService.getRoom(session.roomId!);
+
+    if (room) {
+      room.setSpectatorMode(session, spectator);
+    }
+  }
+
   @SubscribeMessage(LobbyEvent.RESET_SCORES)
   resetScores(socket: Socket) {
     const session = this.sessionService.getSession(socket);

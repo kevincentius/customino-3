@@ -70,4 +70,8 @@ export class RoomService {
   async changeSlotTeam(slotIndex: number, team: number | null) {
     return this.socketService.emit(LobbyEvent.CHANGE_SLOT_TEAM, slotIndex, team);
   }
+
+  async setSpectatorMode(spectator: boolean) {
+    this.socketService.emit(LobbyEvent.SET_SPECTATOR_MODE, spectator);
+  }
 }

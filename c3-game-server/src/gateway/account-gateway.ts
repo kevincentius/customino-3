@@ -18,8 +18,6 @@ export class AccountGateway {
 
   @SubscribeMessage(LobbyEvent.LOGIN)
   async login(socket: Socket, args: any[]): Promise<SessionInfo | null> {
-    console.log(socket, args);
-
     const registered: boolean | null = args[0];
     const username: string = (args[1] as string).trim();
 

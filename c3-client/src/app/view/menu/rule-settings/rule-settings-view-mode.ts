@@ -30,7 +30,7 @@ export const viewModeAdvanced = {
   allowCategories: true,
 };
 export const viewModeAll = {
-  name: 'View all',
+  name: 'Unfiltered',
   forbiddenTags: [],
   allowCategories: true,
 };

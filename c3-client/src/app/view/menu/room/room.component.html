@@ -15,7 +15,7 @@
           <!-- Room actions -->
           <div class="gui-button-row">
             <ng-container *ngIf="!showSettings">
-              <button class="gui-button gui-button-main" [disabled]="isRunning() || !isHost()" (click)="onStartGameClick()">Start game</button>
+              <button class="gui-button gui-button-main" [disabled]="isRunning() || !isHost() || !isPlayersReady()" (click)="onStartGameClick()">Start game</button>
               <button *ngIf="lastGameReplay" class="gui-button" (click)="onDownloadLastReplayClick()">Replay</button>
 
               <!-- host buttons -->
@@ -27,6 +27,10 @@
                 <button *ngIf="lastGameReplay" class="gui-button" (click)="onVerifyLastReplayClick()">Verify replay</button>
                 <button class="gui-button" (click)="onDownloadGameStateClick()">Download debug state</button>
               </ng-container>
+
+              <div style="flex-grow: 1;"></div>
+
+              <button class="gui-button" (click)="onToggleSpectatorModeClick()">{{isSpectator() ? 'Watching' : 'Playing'}}</button>
             </ng-container>
           </div>
           
@@ -47,7 +51,7 @@
               </thead>
 
               <tbody>
-                <tr *ngFor="let slot of roomInfo.slots; let i=index" [class.spectator]="!slot.playing">
+                <tr *ngFor="let slot of roomInfo.slots; let i=index" [class.spectator]="!slot.settings.playing">
                   <td>
                     <ng-container *ngIf="slot.settings.team != null">
                       <div

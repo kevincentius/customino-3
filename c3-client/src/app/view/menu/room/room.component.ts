@@ -110,6 +110,10 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
   }
 
+  isPlayersReady() {
+    return this.roomInfo.slots.filter(slot => slot.settings.playing).length > 0;
+  }
+
   onStartGameClick() {
     this.roomService.startGame();
   }
@@ -288,4 +292,14 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.roomService.changeSlotTeam(slotIndex, team);
     }
   }
+
+  // spectator mode
+  isSpectator() {
+    return !this.roomInfo.slots.filter(slot => slot.player.sessionId == this.getSessionId())[0].settings.playing;
+  }
+
+  onToggleSpectatorModeClick() {
+    this.roomService.setSpectatorMode(!this.isSpectator())
+  }
+  // --------------
 }

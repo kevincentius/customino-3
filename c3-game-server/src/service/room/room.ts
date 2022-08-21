@@ -40,7 +40,7 @@ export class Room {
     public creator: Session,
     private sessionService: SessionService,
   ) {
-    this.slots =[new RoomSlot(creator, true)];
+    this.slots =[new RoomSlot(creator)];
     this.host = creator;
   }
 
@@ -91,8 +91,8 @@ export class Room {
   }
 
   startGame(session: Session) {
-    if (!this.isRunning() && this.host == session && this.isInRoom(session)) {
-      const playerSlots = this.slots.filter(slot => slot.playing);
+    if (!this.isRunning() && this.host == session && this.isInRoom(session) && this.slots.filter(slot => slot.settings.playing).length > 0) {
+      const playerSlots = this.slots.filter(slot => slot.settings.playing);
       this.slots.forEach(slot => slot.playerIndex = null);
       playerSlots.forEach((playerSlot, index) => playerSlot.playerIndex = index);
 
@@ -177,6 +177,14 @@ export class Room {
     }
   }
   
+  setSpectatorMode(session: Session, spectator: boolean) {
+    const slot = this.slots.filter(slot => slot.session == session)[0];
+    if (slot) {
+      slot.settings.playing = !spectator;
+      this.broadcastRoomInfo();
+    }
+  }
+
   resetScores(session: Session) {
     if (this.host == session) {
       this.slots.forEach(slot => slot.resetScore());
