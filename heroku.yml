@@ -1,4 +1,4 @@
 
 build:
   docker:
-    web: main-server.dockerfile
+    web: game-server.dockerfile
