@@ -58,12 +58,12 @@ export class PixiApplication {
   private createRenderer(): Renderer {
     const renderer = new Renderer({
       antialias: false,
-      autoDensity: false,
       backgroundAlpha: 1,
       clearBeforeRender: false,
       powerPreference: 'high-performance',
       preserveDrawingBuffer: false,
       resolution: 1,
+      autoDensity: true,
       useContextAlpha: true,
 
       width: 800,
