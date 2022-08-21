@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ChatMessage } from '@shared/model/room/chat-message';
 import { RoomService } from 'app/game-server/room.service';
 
@@ -11,6 +11,8 @@ export class ChatContainerComponent {
   @Input() roomId?: number;
   @Input() chatMessageInput!: string;
   @Output() chatMessageInputChange = new EventEmitter<string>();
+
+  @ViewChild('chatScroll') chatScroll!: ElementRef<HTMLDivElement>;
 
   chatMessages: ChatMessage[] = [];
 
@@ -30,6 +32,13 @@ export class ChatContainerComponent {
     this.chatMessages.push(chatMessage);
     while (this.chatMessages.length > 100) {
       this.chatMessages.shift();
+    }
+    
+    const el = this.chatScroll.nativeElement;
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < 1) {
+      setTimeout(() => {
+        el.scrollTop = el.scrollHeight;
+      });
     }
   }
 }
