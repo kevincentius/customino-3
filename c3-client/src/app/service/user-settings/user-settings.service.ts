@@ -23,9 +23,7 @@ export class UserSettingsService {
   constructor(
     private idbService: IdbService,
     private appService: AppService,
-  ) {
-    this.init();
-  }
+  ) {}
 
   async init() {
     const saved = await this.idbService.getLocalSettings();
