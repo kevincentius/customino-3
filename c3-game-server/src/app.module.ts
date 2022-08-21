@@ -4,13 +4,14 @@ import { LobbyGateway } from 'gateway/lobby-gateway';
 import { RoomService } from 'service/room/room-service';
 import { SessionService } from 'service/session/session-service';
 import { AppGateway } from './gateway/app.gateway';
-import { APP_FILTER } from '@nestjs/core';
+import { AccountGateway } from 'gateway/account-gateway';
 
 @Module({
   imports: [ConfigModule.forRoot()],
   controllers: [],
   providers: [
     AppGateway,
+    AccountGateway,
     LobbyGateway,
     
     SessionService,

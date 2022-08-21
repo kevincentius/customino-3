@@ -13,8 +13,11 @@ import { LockResult } from "@shared/game/engine/player/lock-result";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
 import { MinoFlashEffect } from "app/pixi/display/effects/mino-flash-effect";
 import { BoardCountdownDisplay } from "app/pixi/display/board-countdown-display";
+import { Effect } from "app/pixi/display/effects/effect";
+import { BoardDisplayDelegate } from "app/pixi/display/board-display-delegate";
+import { teamStyles } from "app/style/team-styles";
 
-export class BoardDisplay extends Container implements LayoutChild {
+export class BoardDisplay extends Container implements LayoutChild, BoardDisplayDelegate {
 
   layoutWidth = 520;
   layoutHeight = 800;
@@ -34,8 +37,9 @@ export class BoardDisplay extends Container implements LayoutChild {
   private shaker: Shaker;
 
   private innerContainer: Container;
-  private effectContainer: EffectContainer = new EffectContainer();
+  private effectContainer = new EffectContainer();
 
+  private maskGraphics: Graphics;
   private background: Sprite;
   private minoGridDisplay: MinoGridDisplay;
   private activePieceDisplay: ActivePieceDisplay;
@@ -43,13 +47,17 @@ export class BoardDisplay extends Container implements LayoutChild {
   private overlayDisplay: BoardOverlayDisplay;
   countdownDisplay: BoardCountdownDisplay;
 
-  private border = new Graphics();
+  private border: Graphics;
 
   // reference
   board: Board;
 
   chorus = 0;
   chorusAdjustSpeed = 4;
+
+  delegate = {
+    boardDisplay: this,
+  };
 
   constructor(
     private player: Player,
@@ -88,12 +96,13 @@ export class BoardDisplay extends Container implements LayoutChild {
 
     // mask container: stencil effect
     this.maskContainer = new Container();
-    const maskGraphics = new Graphics();
-    maskGraphics.beginFill();
-    maskGraphics.drawRect(0, 0, this.layout.innerWidth, this.layout.innerHeight);
-    maskGraphics.endFill();
-    this.fieldContainer.addChild(maskGraphics);
-    this.maskContainer.mask = maskGraphics;
+    this.maskGraphics = new Graphics();
+    this.maskGraphics.cacheAsBitmap = true;
+    this.maskGraphics.beginFill();
+    this.maskGraphics.drawRect(0, 0, this.layout.innerWidth, this.layout.innerHeight);
+    this.maskGraphics.endFill();
+    this.fieldContainer.addChild(this.maskGraphics);
+    this.maskContainer.mask = this.maskGraphics;
     this.fieldContainer.addChild(this.maskContainer);
 
     // spawn rate offset: shifts the board overtime to animate garbage entering the field.
@@ -104,18 +113,22 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.innerContainer = new Container();
     this.spawnRateOffsetContainer.addChild(this.innerContainer);
     
-    this.maskContainer.addChild(this.effectContainer);
-
     // mino grid
-    this.minoGridDisplay = new MinoGridDisplay(this.board.tiles, this.layout.minoSize, this.board.tiles.length - this.board.visibleHeight);
+    this.minoGridDisplay = new MinoGridDisplay(
+      this.board.tiles,
+      this.layout.minoSize,
+      this.board.tiles.length - this.board.visibleHeight,
+      this.player.playerRule,
+      this.player.playerRule.graphics.chorusIntensity >= 0.01,
+      this);
     this.innerContainer.addChild(this.minoGridDisplay);
 
     // ghost piece
-    this.ghostPieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.effectContainer, this.player, this.layout.minoSize, true);
+    this.ghostPieceDisplay = new ActivePieceDisplay(this, this.player, this.layout.minoSize, true);
     this.innerContainer.addChild(this.ghostPieceDisplay);
     
     // active piece
-    this.activePieceDisplay = new ActivePieceDisplay(this.minoGridDisplay, this.effectContainer, this.player, this.layout.minoSize);
+    this.activePieceDisplay = new ActivePieceDisplay(this, this.player, this.layout.minoSize);
     this.innerContainer.addChild(this.activePieceDisplay);
 
     // overlay
@@ -123,26 +136,27 @@ export class BoardDisplay extends Container implements LayoutChild {
     this.addChild(this.overlayDisplay);
 
     // countdown
-    this.countdownDisplay = new BoardCountdownDisplay(this.layout, this.clockStartMs, this.effectContainer);
+    this.countdownDisplay = new BoardCountdownDisplay(this, this.clockStartMs);
 
-    this.board.placeTileSubject.subscribe(e => this.minoGridDisplay.placeTile(e));
+    this.board.placeTileSubject.subscribe(e => this.minoGridDisplay.placeTile(e, true));
     this.board.lineClearSubject.subscribe(e => this.onLineClear(e));
     this.board.addRowsSubject.subscribe(e => this.minoGridDisplay.onRowsAdded(e));
     this.player.garbageGen.garbageRateSpawnSubject.subscribe(e => this.lastGarbageRateSpawn = Date.now());
     this.player.gameOverSubject.subscribe(r => this.overlayDisplay.show(this.player.alive ? 'Winner' : 'Game Over', '2nd Place'))
     this.player.pieceLockSubject.subscribe(r => {
       this.shakeBoard(r);
-      this.spawnFlashEffect(r);
+      // this.spawnFlashEffect(r);
     });
 
     // border
     this.border = new Graphics();
+    this.border.cacheAsBitmap = true;
     this.addChild(this.border);
     this.border
       .clear()
       .lineStyle({
-        width: 1,
-        color: 0xbbbbbb,
+        width: 4,
+        color: this.player.playerRule.team == null ? 0xbbbbbb : teamStyles[this.player.playerRule.team].boardBorderColor,
         alpha: 0.5,
       })
       .drawRect(this.layout.offsetX + this.garbageIndicatorWidth, this.layout.offsetY, this.layout.innerWidth, this.layout.innerHeight);
@@ -151,14 +165,13 @@ export class BoardDisplay extends Container implements LayoutChild {
   onLineClear(e: LineClearEvent): void {
     const minoSize = this.getMinoSize();
 
-    for (const row of e.rows) {
-      for (let j = 0; j < this.board.tiles[row.y].length; j++) {
-        const mino = this.minoGridDisplay.minos[row.y][j];
-        if (mino.minoDisplay) {
-          const effect2 = new MinoFlashEffect(minoSize, minoSize, 150, 0.5, new Sprite(Texture.WHITE));
-          effect2.position.set(mino.minoDisplay.position.x, mino.absPos);
-          this.effectContainer.addEffect(effect2);
-        }
+    const fxRule = this.player.playerRule.lineClearEffect;
+    if (fxRule.flashDuration > 0 && fxRule.flashOpacity > 0) {
+      for (const row of e.rows) {
+        const effect = new MinoFlashEffect(minoSize * this.board.tiles[0].length, minoSize, fxRule.flashDuration, fxRule.flashOpacity);
+        effect.position.set(0, this.calcMinoPosForEffect(row.y, 0).y);
+        this.maskContainer.addChild(effect);
+        this.effectContainer.addEffect(effect);
       }
     }
 
@@ -213,19 +226,45 @@ export class BoardDisplay extends Container implements LayoutChild {
     }
   }
   
-  private spawnFlashEffect(r: LockResult) {
-    const tiles = this.player.activePiece.piece!.tiles;
-    for (let i = 0; i < tiles.length; i++) {
-      for (let j = 0; j < tiles[i].length; j++) {
-        const tile = tiles[i][j];
-        if (tile != null) {
-          const minoPos = this.minoGridDisplay.calcMinoPos(this.player.activePiece.y + i, this.player.activePiece.x + j);
-          
-          const effect = new MinoFlashEffect(this.getMinoSize(), this.getMinoSize(), 500, 0.5);
-          effect.position.set(minoPos.x, minoPos.y);
-          this.effectContainer.addEffect(effect);
-        }
-      }
-    }
+  override destroy() {
+    this.maskGraphics.destroy();
+    this.border.destroy();
+
+    this.offsetContainer.destroy();
+    this.shakeContainer.destroy();
+    this.fieldContainer.destroy();
+    this.maskContainer.destroy();
+    this.spawnRateOffsetContainer.destroy();
+    this.innerContainer.destroy();
+
+    this.activePieceDisplay.destroy();
+    this.countdownDisplay.destroy();
+    this.overlayDisplay.destroy();
+    this.garbageIndicator.destroy();
+    this.minoGridDisplay.destroy();
+    this.effectContainer.destroy();
+    this.background.destroy();
+
+    super.destroy();
+  }
+
+
+  // methods to be accessed by children
+  getInnerWidth() { return this.layout.innerWidth; }
+  getInnerHeight() { return this.layout.innerHeight; }
+  calcMinoPos(row: number, col: number) { return this.minoGridDisplay.calcMinoPos(row, col); }
+  calcMinoPosForEffect(row: number, col: number) {
+    const minoPos = this.minoGridDisplay.calcMinoPos(row, col)
+    return {
+      x: minoPos.x,
+      y: minoPos.y + this.spawnRateOffsetContainer.position.y,
+    };
+  }
+  addEffect(effect: Effect) {
+    this.effectContainer.addEffect(effect);
+  }
+  addEffectToBoard(effect: Effect) {
+    this.maskContainer.addChild(effect);
+    this.addEffect(effect);
   }
 }

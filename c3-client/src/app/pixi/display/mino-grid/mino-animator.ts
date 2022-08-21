@@ -1,8 +1,7 @@
+import { PlayerRule } from "@shared/game/engine/model/rule/player-rule";
 import { Tile } from "@shared/game/engine/model/tile";
 import { MinoDisplay } from "app/pixi/display/mino-display";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
-
-const accel = 1.5;
 
 export class MinoAnimator {
   speed = 0;
@@ -15,9 +14,14 @@ export class MinoAnimator {
   constructor(
     private spritesheet: GameSpritesheet,
     private minoSize: number,
+    private playerRule: PlayerRule,
   ) {}
 
   setTile(tile: Tile) {
+    if (this.minoDisplay) {
+      this.minoDisplay.destroy();
+    }
+
     if (tile) {
       this.minoDisplay = new MinoDisplay(this.spritesheet, tile, this.minoSize);
     }
@@ -29,13 +33,19 @@ export class MinoAnimator {
     } else {
       this.pos = Math.min(0, this.pos + this.speed);
       if (this.pos != 0) {
-        this.speed += accel * this.minoSize * dt / 1000;
+        this.speed += this.playerRule.lineClearEffect.fallAcceleration * this.minoSize * dt / 1000;
       }
     }
 
     this.absPos = zeroPos + this.pos;
     if (this.minoDisplay) {
       this.minoDisplay.position.y = this.absPos;
+    }
+  }
+
+  destroy() {
+    if (this.minoDisplay) {
+      this.minoDisplay.destroy();
     }
   }
 }

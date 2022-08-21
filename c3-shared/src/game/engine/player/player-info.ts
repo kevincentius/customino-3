@@ -1,5 +1,5 @@
 
 export interface PlayerInfo {
   name: string,
-  userId: number,
+  userId: number | null,
 }

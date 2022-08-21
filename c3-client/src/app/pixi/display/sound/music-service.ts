@@ -67,6 +67,17 @@ export class MusicService {
     }
   }
 
+  skip() {
+    const isPlaying = this.isPlaying;
+    this.stop();
+
+    this.currentMusic = (this.currentMusic + 1) % this.gameBgmHowls.length;
+
+    if (isPlaying) {
+      this.start();
+    }
+  }
+
   setVolumeMenu() { this.setTargetVolume( this.volumeMenu); }
   setVolumeGame() { this.setTargetVolume( this.volumeGame); }
 

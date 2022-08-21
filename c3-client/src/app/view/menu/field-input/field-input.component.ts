@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { PlayerRuleField } from '@shared/game/engine/model/rule/field';
-import { FieldType } from '@shared/game/engine/model/rule/field-type';
+import { DataField } from '@shared/game/engine/model/rule/data-field/data-field';
+import { FieldType } from '@shared/game/engine/model/rule/data-field/field-type';
 
 @Component({
   selector: 'app-field-input',
@@ -8,7 +8,7 @@ import { FieldType } from '@shared/game/engine/model/rule/field-type';
   styleUrls: ['./field-input.component.scss']
 })
 export class FieldInputComponent implements OnInit {
-  @Input() field!: PlayerRuleField;
+  @Input() field!: DataField;
   @Input() fieldValue: any;
   @Output() fieldValueChange = new EventEmitter<any>();
 

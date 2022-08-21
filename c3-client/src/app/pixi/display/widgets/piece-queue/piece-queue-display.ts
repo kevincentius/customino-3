@@ -26,7 +26,9 @@ export class PieceQueueDisplay extends Container implements LayoutChild {
 
     this.player.pieceSpawnSubject.subscribe(() => {
       if (this.pieceDisplays.length > 0) {
-        this.layout.removeNode(this.pieceDisplays.shift()!);
+        const pieceDisplay = this.pieceDisplays.shift()!;
+        this.layout.removeNode(pieceDisplay);
+        pieceDisplay.destroy();
 
         const newPiece = this.player.pieceQueue[this.player.pieceQueue.length - 1];
         this.pushNewPieceDisplay(newPiece);
@@ -37,7 +39,7 @@ export class PieceQueueDisplay extends Container implements LayoutChild {
   }
 
   private pushNewPieceDisplay(newPiece: Piece) {
-    const pieceDisplay = new PieceDisplay(newPiece, this.minoSize, this.minoSize * 2);
+    const pieceDisplay = new PieceDisplay(newPiece, this.minoSize, this.minoSize * 2, this.player.playerRule);
     this.pieceDisplays.push(pieceDisplay);
     this.layout.addNode(pieceDisplay);
   }
@@ -47,5 +49,12 @@ export class PieceQueueDisplay extends Container implements LayoutChild {
 
     this.layoutWidth = this.layout.layoutWidth;
     this.layoutHeight = this.layout.layoutHeight;
+  }
+
+  override destroy() {
+    this.layout.destroy();
+    this.pieceDisplays.forEach(pieceDisplay => pieceDisplay.destroy());
+
+    super.destroy();
   }
 }

@@ -1,4 +1,5 @@
 import { Player } from "@shared/game/engine/player/player";
+import { enableGraphics } from "app/pixi/benchmark/config";
 import { LayoutChild } from "app/pixi/display/layout/layout-child";
 import { drawTopArcStrip } from "app/pixi/display/util/arc";
 import { textUtil } from "app/pixi/util/text-util";
@@ -6,11 +7,11 @@ import { Container, Graphics } from "pixi.js";
 
 export class SpeedMeterDisplay extends Container implements LayoutChild {
 
-  graphics = new Graphics();
   text = textUtil.create48('0');
+  arc: Graphics;
+  
   textBpm = textUtil.create('BPM');
   bg: Graphics;
-  arc: Graphics;
   arcBg: Graphics;
 
   layoutWidth: number;
@@ -56,9 +57,8 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
     this.bg = this.createBackground();
     this.addChild(this.bg);
 
-    this.addChild(this.graphics);
-
     this.arcBg = new Graphics();
+    this.arcBg.cacheAsBitmap = true;
     this.arcBg.position.set(this.diameter / 2, this.diameter / 2);
     drawTopArcStrip(
       this.arcBg,
@@ -72,7 +72,9 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
 
     this.arc = new Graphics();
     this.arc.position.set(this.diameter / 2, this.diameter / 2);
-    this.addChild(this.arc);
+    if (enableGraphics) {
+      this.addChild(this.arc);
+    }
     
     this.addChild(this.text);
     this.text.position.set(this.diameter / 2, this.diameter / 2 - 3);
@@ -99,8 +101,6 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
   }
 
   tick() {
-    this.graphics.clear();
-
     // clock
     const ct = Date.now();
     const dt = ct - this.lastUpdateMs;
@@ -146,6 +146,7 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
 
   createBackground() {
     const g = new Graphics();
+    g.cacheAsBitmap = true;
     g.beginFill(0x666666);
     g.lineStyle({
       width: 10,
@@ -156,5 +157,16 @@ export class SpeedMeterDisplay extends Container implements LayoutChild {
     
     g.alpha = 0.2;
     return g;
+  }
+
+  override destroy() {
+    this.arcBg.destroy();
+    this.arc.destroy();
+    this.bg.destroy();
+
+    this.text.destroy();
+    this.textBpm.destroy();
+
+    super.destroy();
   }
 }

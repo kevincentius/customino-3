@@ -1,5 +1,6 @@
 import { Game } from "@shared/game/engine/game/game";
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
+import { LocalRule } from "@shared/game/engine/model/rule/local-rule/local-rule";
 import { LocalPlayer } from "@shared/game/engine/player/local-player";
 import { Player } from "@shared/game/engine/player/player";
 import { RemotePlayer } from "@shared/game/engine/player/remote-player";
@@ -18,7 +19,7 @@ export class ClientGame extends Game {
   private mainLoopTimeout: any;
 
 
-  constructor(startGameData: StartGameData, private localPlayerIndex?: number) {
+  constructor(startGameData: StartGameData, private localRule: LocalRule, private localPlayerIndex?: number) {
     super();
 
     this.init(startGameData);
@@ -35,8 +36,8 @@ export class ClientGame extends Game {
     return startGameData.players.map(
       (startPlayerData, index) => 
         index == this.localPlayerIndex
-          ? new LocalPlayer(this, startPlayerData)
-          : new RemotePlayer(this, startPlayerData));
+          ? new LocalPlayer(this, startPlayerData, this.localRule)
+          : new RemotePlayer(this, startPlayerData, this.localRule));
   }
 
   /** The startGameData will be ignored here as it should already be passed in the constructor. */
@@ -44,6 +45,14 @@ export class ClientGame extends Game {
     for (let i = 0; i < this.players.length; i++) {
       this.players[i].load(gameState.players[i]);
     }
+
+    const ct = Date.now();
+    this.clockStartMs = ct - gameState.clockTimeMs;
+    // if (ct >= this.clockStartMs) {
+    //   this.startClock();
+    // } else {
+
+    // }
   }
   
   destroy() {

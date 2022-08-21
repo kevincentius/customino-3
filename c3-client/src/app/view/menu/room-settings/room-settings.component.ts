@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { RoomSettings } from '@shared/game/engine/model/room-settings';
+import { FieldTags } from '@shared/game/engine/model/rule/data-field/field-tag';
+import { playerRuleFields } from '@shared/game/engine/model/rule/room-rule/player-rule-fields';
+import { DataFieldCategoryData } from 'app/view/menu/rule-settings/rule-settings-category';
 
 @Component({
   selector: 'app-room-settings',
@@ -14,6 +17,29 @@ export class RoomSettingsComponent implements OnInit {
   @Input() currentSettings!: RoomSettings;
   @Input() editMode = false;
 
+  dataFields = playerRuleFields;
+  dataFieldCategories: DataFieldCategoryData[] = [
+    {
+      name: 'General',
+      tag: FieldTags.GENERAL,
+    },
+    {
+      name: 'Attack',
+      tag: FieldTags.ATTACK,
+    },
+    {
+      name: 'Defense',
+      tag: FieldTags.DEFENSE,
+    },
+    {
+      name: 'Debug',
+      tag: FieldTags.DEBUG,
+    },
+    {
+      name: 'Others',
+    }
+  ];
+  
   constructor() { }
 
   ngOnInit(): void {

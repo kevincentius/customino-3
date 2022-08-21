@@ -1,17 +1,16 @@
-import { Application, Loader, LoaderResource, SCALE_MODES, settings } from "pixi.js";
+import { Container, Loader, LoaderResource, Renderer, RENDERER_TYPE, SCALE_MODES, settings } from "pixi.js";
 
 import { Keyboard } from "app/control/keyboard";
 import { GameDisplay } from "app/pixi/display/game-display";
 import { UserSettingsService } from "app/service/user-settings/user-settings.service";
 import { ControlSettings } from "app/service/user-settings/control-settings";
 import { ClientGame } from "@shared/game/engine/game/client-game";
-import { RunningTracker } from "app/pixi/benchmark/running-tracker";
 import { PerformanceTracker } from "app/pixi/benchmark/performance-tracker";
 
 export let resources: Partial<Record<string, LoaderResource>>;
 
 export class PixiApplication {
-  app!: Application;
+  // app!: Application;
 
   loaded = false;
 
@@ -23,6 +22,12 @@ export class PixiApplication {
 
   performanceTracker = new PerformanceTracker();
   showPerformance = false;
+  
+  drawCount = 0;
+
+  renderer: Renderer;
+  stage = new Container();
+  lastTick = Date.now();
 
   constructor(
     private canvas: HTMLCanvasElement,
@@ -30,34 +35,76 @@ export class PixiApplication {
   ) {
     settings.SCALE_MODE = SCALE_MODES.NEAREST;
 
-    this.app = new Application({
-      view: this.canvas,
-      // resizeTo: window,
-      backgroundColor: 0x000022,
-
-      antialias: true,
-      autoDensity: true, // !!!
-      resolution: 1,
-    });
-
+    this.renderer = this.createRenderer();
+    
     this.loadResources();
-
-    this.app.ticker.add(() => {
-      let dt = this.app.ticker.deltaMS;
-
-      const microSecs = window.performance.now();
-      if (this.gameDisplay) {
-        this.gameDisplay.tick(dt);
-        this.keyboard.tick(dt);
-      }
-      const logicTickDuration = (window.performance.now() - microSecs) / 1000;
-      this.performanceTracker.tick(dt, logicTickDuration);
-    });
 
     this.userSettingsService.settingsChangedSubject.subscribe(localSettings => this.updateKeyBindings(localSettings.control));
 
     window.onresize = () => this.onResize();
     this.onResize();
+
+    if (this.renderer.type == RENDERER_TYPE.WEBGL){
+      console.log('Rendering with WebGL');
+    } else if (this.renderer.type == RENDERER_TYPE.CANVAS) {
+      console.warn('Rendering with Canvas! Performance will be bad!');
+    } else {
+      console.warn('Rendering with unknown renderer type!')
+    }
+    
+    this.startMainLoop();
+  }
+
+  private createRenderer(): Renderer {
+    const renderer = new Renderer({
+      antialias: false,
+      autoDensity: false,
+      backgroundAlpha: 1,
+      clearBeforeRender: false,
+      powerPreference: 'high-performance',
+      preserveDrawingBuffer: false,
+      resolution: 1,
+      useContextAlpha: true,
+
+      width: 800,
+      height: 600,
+      // backgroundColor: 0x1099bb,
+      view: this.canvas,
+    });
+    
+    const drawElements = renderer.gl.drawElements;
+    renderer.gl.drawElements = (mode, count, type, offset) => {
+      drawElements.call(renderer.gl, mode, count, type, offset);
+      this.drawCount++;
+    }; // rewrite drawElements to count draws
+    
+    return renderer;
+  }
+
+  startMainLoop() {
+    requestAnimationFrame(this.mainLoop.bind(this));
+  }
+
+  private mainLoop() {
+    const ct = Date.now();
+    const dt = ct - this.lastTick;
+    this.lastTick = ct;	
+
+    let microSecs = window.performance.now();
+    if (this.gameDisplay) {
+      this.gameDisplay.tick(dt);
+      this.keyboard.tick(dt);
+    }
+    const logicTickDuration = (window.performance.now() - microSecs) / 1000;
+
+    microSecs = window.performance.now();
+    this.renderer.render(this.stage);
+    const renderTickDuration = (window.performance.now() - microSecs) / 1000;
+    
+    this.performanceTracker.tick(dt, renderTickDuration, logicTickDuration, this.drawCount);
+    this.drawCount = 0;
+
+    requestAnimationFrame(this.mainLoop.bind(this));
   }
 
   public updateKeyBindings(c: ControlSettings) {
@@ -73,7 +120,8 @@ export class PixiApplication {
 
     loader
       .add('sample', 'assets/img/sample.png')
-      .add('gameSpritesheet', 'assets/spritesheet/game/texture.json')
+      .add('gameSpritesheet', 'assets/spritesheet/game/normal/texture.json')
+      .add('gameSpritesheetSmall', 'assets/spritesheet/game/small/texture.json')
       .load((loader, res) => {
         resources = res;
 
@@ -86,21 +134,23 @@ export class PixiApplication {
 
     this.game.destroySubject.subscribe(() => {
       if (this.gameDisplay) {
-        this.app.stage.removeChild(this.gameDisplay);
+        this.stage.removeChild(this.gameDisplay);
+        this.gameDisplay.destroy();
         this.gameDisplay = undefined;
       }
     });
 
     if (this.gameDisplay) {
-      this.app.stage.removeChild(this.gameDisplay);
+      this.stage.removeChild(this.gameDisplay);
+      this.gameDisplay.destroy();
     }
     this.gameDisplay = new GameDisplay(game);
-    this.app.stage.addChild(this.gameDisplay);
+    this.stage.addChild(this.gameDisplay);
     
     // bring to front
     if (this.showPerformance) {
-      this.app.stage.removeChild(this.performanceTracker);
-      this.app.stage.addChild(this.performanceTracker);
+      this.stage.removeChild(this.performanceTracker);
+      this.stage.addChild(this.performanceTracker);
     }
 
     this.onResize();
@@ -109,9 +159,9 @@ export class PixiApplication {
   togglePerformanceDisplay() {
     this.showPerformance = !this.showPerformance;
     if (this.showPerformance) {
-      this.app.stage.addChild(this.performanceTracker);
+      this.stage.addChild(this.performanceTracker);
     } else {
-      this.app.stage.removeChild(this.performanceTracker);
+      this.stage.removeChild(this.performanceTracker);
     }
   }
 
@@ -119,10 +169,17 @@ export class PixiApplication {
     const width = window.innerWidth;
     const height = window.innerHeight;
 
-    this.app.renderer.resize(width, height);
+    this.renderer.resize(width, height);
 
     if (this.gameDisplay) {
       this.gameDisplay.resize(width, height);
     }
+  }
+
+  destroy() {
+    this.gameDisplay?.destroy();
+    this.performanceTracker.destroy();
+    this.renderer.destroy();
+    this.stage.destroy();
   }
 }

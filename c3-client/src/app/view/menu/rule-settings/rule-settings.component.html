@@ -75,7 +75,7 @@
     </mat-tab-group>
 
     <ng-container *ngIf="!(viewMode.allowCategories && groupByCategory)">
-      <ng-container *ngTemplateOutlet="categoryContent; context: {fields: playerRuleFields}"></ng-container>
+      <ng-container *ngTemplateOutlet="categoryContent; context: {fields: dataFields}"></ng-container>
     </ng-container>
     
     <ng-template #categoryContent let-fields='fields'>

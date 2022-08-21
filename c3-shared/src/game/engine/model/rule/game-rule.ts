@@ -1,5 +1,5 @@
-import { PlayerRule } from "@shared/game/engine/model/rule/player-rule/player-rule";
+import { RoomRule } from "@shared/game/engine/model/rule/room-rule/room-rule";
 
 export interface GameRule {
-  globalRule: PlayerRule;
+  roomRule: RoomRule;
 }

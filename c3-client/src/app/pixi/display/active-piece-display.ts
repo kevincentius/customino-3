@@ -1,10 +1,10 @@
 import { ActivePiece, PieceMoveEvent } from "@shared/game/engine/player/active-piece";
+import { LocalPlayer } from "@shared/game/engine/player/local-player";
 import { Player } from "@shared/game/engine/player/player";
-import { EffectContainer } from "app/pixi/display/effects/effect-container";
+import { BoardDisplayDelegate } from "app/pixi/display/board-display-delegate";
 import { SonicDropEffect } from "app/pixi/display/effects/sonic-drop-effect";
 import { MinoGridDisplay } from "app/pixi/display/mino-grid-display";
 import { GameSpritesheet } from "app/pixi/spritesheet/spritesheet";
-import { getLocalSettings } from "app/service/user-settings/user-settings.service";
 import { Container } from "pixi.js";
 
 export class ActivePieceDisplay extends Container {
@@ -15,8 +15,7 @@ export class ActivePieceDisplay extends Container {
   activePiece: ActivePiece;
 
   constructor(
-    private boardMinoGridDisplay: MinoGridDisplay,
-    private effectContainer: EffectContainer,
+    private boardDisplay: BoardDisplayDelegate,
     private player: Player,
     private minoSize: number,
     private ghost=false,
@@ -24,12 +23,13 @@ export class ActivePieceDisplay extends Container {
     super();
 
     if (this.ghost) {
-      this.alpha = getLocalSettings().localGraphics.ghostOpacity;
+      this.alpha = this.player.playerRule.graphics.ghostOpacity;
     }
 
     this.activePiece = this.player.activePiece;
     this.activePiece.spawnSubject.subscribe(this.onSpawn.bind(this));
     this.activePiece.moveSubject.subscribe(this.onMove.bind(this));
+    this.player.board.addRowsSubject.subscribe(() => this.updatePosition());
 
     this.onSpawn();
     this.updatePosition();
@@ -41,7 +41,7 @@ export class ActivePieceDisplay extends Container {
     }
 
     if (this.activePiece.piece) {
-      this.minoGridDisplay = new MinoGridDisplay(this.activePiece.piece.tiles, this.minoSize);
+      this.minoGridDisplay = new MinoGridDisplay(this.activePiece.piece.tiles, this.minoSize, 0, this.player.playerRule, this.player.playerRule.graphics.pieceGlow && this.player instanceof LocalPlayer);
       
       if (!this.ghost) {
         this.minoGridDisplay.glowFilter.innerStrength = 1;
@@ -70,11 +70,19 @@ export class ActivePieceDisplay extends Container {
 
   tick() {
     if (this.minoGridDisplay) {
-      const glow = 0.5 + 0.5 * Math.abs(Math.sin(Date.now() * Math.PI * 2 / 1000));
-      this.minoGridDisplay.glowFilter.outerStrength = glow;
-      
-      if (!this.ghost) {
-        this.minoGridDisplay.glowFilter.innerStrength = glow;
+      const p = this.player.playerRule.graphics.pieceHighlightIntensity * Math.abs(Math.sin(Date.now() * Math.PI * 2 / 1000));
+
+      if (this.player.playerRule.graphics.pieceGlow) {
+        const glow = 0.5 + p * 0.5;
+        this.minoGridDisplay.glowFilter.outerStrength = glow;
+        
+        if (!this.ghost) {
+          this.minoGridDisplay.glowFilter.innerStrength = glow;
+        } else {
+          this.minoGridDisplay.glowFilter.innerStrength = 0;
+        }
+      } else {
+        
       }
     }
   }
@@ -86,12 +94,12 @@ export class ActivePieceDisplay extends Container {
         const tile = tiles[i][j];
         if (tile != null) {
           // tile is the top most mino in each column
-          const minoPos = this.boardMinoGridDisplay.calcMinoPos(this.activePiece.y - e.dy + i, this.activePiece.x + j);
+          const minoPos = this.boardDisplay.calcMinoPosForEffect(this.activePiece.y - e.dy + i, this.activePiece.x + j);
 
           const combo = this.player.attackRule.comboTimer ? this.player.attackRule.comboTimer.combo : 0;
-          const effect = new SonicDropEffect(this.player.playerRule.sonicDropEffect, this.spritesheet, tile, this.minoSize, e.dy + 1, combo);
+          const effect = new SonicDropEffect(this.player.playerRule.sonicDropEffect, this.spritesheet, tile, this.minoSize, e.dy + 1, combo, this.player.playerRule.graphics.particles);
           effect.position.set(minoPos.x, minoPos.y);
-          this.effectContainer.addEffect(effect);
+          this.boardDisplay.addEffectToBoard(effect);
           break;
         }
       }
@@ -104,8 +112,14 @@ export class ActivePieceDisplay extends Container {
     }
 
     if (this.minoGridDisplay) {
-      const pos = this.boardMinoGridDisplay.calcMinoPos(this.activePiece.y + this.ghostDistance, this.activePiece.x);
+      const pos = this.boardDisplay.calcMinoPos(this.activePiece.y + this.ghostDistance, this.activePiece.x);
       this.minoGridDisplay.position.set(pos.x, pos.y);
     }
+  }
+
+  override destroy() {
+    this.minoGridDisplay?.destroy();
+    
+    super.destroy();
   }
 }

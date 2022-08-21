@@ -67,6 +67,50 @@ export class LobbyGateway {
     }
   }
 
+  @SubscribeMessage(LobbyEvent.CHANGE_SLOT_TEAM)
+  changeSlotTeam(socket: Socket, args: any[]) {
+    const slotIndex: number = args[0];
+    const team: number = args[1];
+
+    const session = this.sessionService.getSession(socket);
+    const room = this.roomService.getRoom(session.roomId!);
+    if (room) {
+      room.changeSlotTeam(session, slotIndex, team);
+    }
+  }
+
+  @SubscribeMessage(LobbyEvent.SET_SPECTATOR_MODE)
+  setSpectatorMode(socket: Socket, spectator: boolean) {
+    const session = this.sessionService.getSession(socket);
+    const room = this.roomService.getRoom(session.roomId!);
+
+    if (room) {
+      room.setSpectatorMode(session, spectator);
+    }
+  }
+
+  @SubscribeMessage(LobbyEvent.POST_CHAT_MESSAGE)
+  postChatMessage(socket: Socket, message: string) {
+    const session = this.sessionService.getSession(socket);
+
+    // must login before chat
+    if (session.username == null) { return; }
+
+    const room = this.roomService.getRoom(session.roomId!);
+    if (room) {
+      room.postChatMessage(session, message);
+    }
+  }
+
+  @SubscribeMessage(LobbyEvent.RESET_SCORES)
+  resetScores(socket: Socket) {
+    const session = this.sessionService.getSession(socket);
+    const room = this.roomService.getRoom(session.roomId!);
+    if (room) {
+      room.resetScores(session);
+    }
+  }
+
   @SubscribeMessage(LobbyEvent.GAME_EVENTS)
   flushGameEvents(socket: Socket, clientEvent: ClientEvent) {
     const session = this.sessionService.getSession(socket);

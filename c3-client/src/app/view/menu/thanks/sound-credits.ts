@@ -3,7 +3,7 @@ import { CreditGroup } from "app/view/menu/thanks/thanks.component";
 export const soundCredits: CreditGroup =
 {
   name: 'freesound.org',
-  description: 'All kinds of sound effects!',
+  description: 'The source of the sound effects in the base game.',
   url: 'freesound.org',
   items: [
     {
@@ -110,6 +110,13 @@ export const soundCredits: CreditGroup =
       license: 'CC BY 3.0',
       url: 'https://freesound.org/people/SpiceProgram/sounds/399191/',
       note: 'countdown',
+    },
+    {
+      name: 'UI_1 Sweet saw',
+      author: 'newlocknew',
+      license: 'CC BY 4.0',
+      url: 'https://freesound.org/people/newlocknew/sounds/515830/',
+      note: 'login',
     }
   ],
 };

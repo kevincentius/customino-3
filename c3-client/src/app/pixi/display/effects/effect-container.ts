@@ -1,11 +1,9 @@
 import { Effect } from "app/pixi/display/effects/effect";
-import { Container } from "pixi.js";
 
-export class EffectContainer extends Container {
+export class EffectContainer {
   effects: Effect[] = [];
 
   addEffect(effect: Effect) {
-    this.addChild(effect);
     this.effects.push(effect);
   }
 
@@ -13,9 +11,16 @@ export class EffectContainer extends Container {
     this.effects = this.effects.filter(effect => {
       const result = effect.tick(dt);
       if (!result) {
-        this.removeChild(effect);
+        effect.parent?.removeChild(effect);
+        effect.destroy();
       }
       return result;
     });
+  }
+
+  destroy() {
+    for (const effect of this.effects) {
+      effect.destroy();
+    }
   }
 }

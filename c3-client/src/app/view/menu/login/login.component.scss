@@ -1,0 +1,39 @@
+
+.login-background {
+  background: #102;
+}
+
+.full-center {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-input {
+  text-align: center;
+  font-size: 48px;
+}
+
+.main-input::placeholder {
+  color: #0002;
+}
+
+.spacer {
+  height: 24px;
+}
+
+.banner-btn {
+  cursor: pointer;
+  transition: 500ms;
+  &:hover {
+    transition: 100ms;
+    transform: scale(1.2);
+    filter: brightness(160%);
+    -webkit-filter: brightness(160%);
+    -moz-filter: brightness(160%);
+    -o-filter: brightness(160%);
+    -ms-filter: brightness(160%);
+  }
+}

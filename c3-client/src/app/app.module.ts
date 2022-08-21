@@ -4,6 +4,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatMenuModule} from '@angular/material/menu';
 
 import { DebugComponent } from 'app/view/debug/debug.component';
 import { MainComponent } from 'app/view/main/main.component';
@@ -28,6 +29,11 @@ import { FieldInputComponent } from './view/menu/field-input/field-input.compone
 import { FieldOutputComponent } from './view/menu/field-output/field-output.component';
 import { ThanksComponent } from './view/menu/thanks/thanks.component';
 import { PieceComponent } from './view/common/piece/piece.component';
+import { PersonalizationComponent } from './view/menu/personalization/personalization.component';
+import { LoginComponent } from './view/menu/login/login.component';
+import { IconButtonComponent } from 'app/view/common/icon-button/icon-button.component';
+import { ChatContainerComponent } from './view/chat/chat-container/chat-container.component';
+import { ChatMessageComponent } from './view/chat/chat-message/chat-message.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -57,6 +63,11 @@ export function apiConfigFactory(): Configuration {
     FieldOutputComponent,
     ThanksComponent,
     PieceComponent,
+    PersonalizationComponent,
+    LoginComponent,
+    IconButtonComponent,
+    ChatContainerComponent,
+    ChatMessageComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),
@@ -67,6 +78,7 @@ export function apiConfigFactory(): Configuration {
     BrowserAnimationsModule,
     FormsModule,
     MatTabsModule,
+    MatMenuModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

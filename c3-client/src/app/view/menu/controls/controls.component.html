@@ -1,5 +1,5 @@
 
-<div class="v-flex">  
+<div class="v-flex" style="background: #0002">  
   <app-background></app-background>
 
   <div class="screen-title-container">
@@ -13,6 +13,16 @@
     <div style="padding-left: 140px; color: yellow; height: 40px;">{{hint}}</div>
 
     <div *ngIf="localSettings" style="display: flex; flex-direction: column; padding: 0 100px; flex-grow: 1;">
+      <app-control-row *ngFor="let settingsField of settingsFields" [name]="settingsField.name"
+        (mouseover)="hint = settingsField.description"
+      >
+        <app-field-input
+          [field]="settingsField"
+          [fieldValue]="getFieldValue(settingsField)"
+          (fieldValueChange)="setFieldValue(settingsField, $event)"
+        ></app-field-input>
+      </app-control-row>
+      
       <div (mouseover)="hint = 'Key bindings'">
         <app-control-row *ngFor="let row of rows; let i=index"
           [data]="row"
@@ -43,22 +53,11 @@
 
 
       <div style="height: 30px;"></div>
+      
 
-
-      <app-control-row *ngFor="let settingsField of settingsFields" [name]="settingsField.name"
-        (mouseover)="hint = settingsField.description ?? ''"
-      >
-        <app-field-input
-          [field]="settingsField"
-          [fieldValue]="getFieldValue(settingsField)"
-          (fieldValueChange)="setFieldValue(settingsField, $event)"
-        ></app-field-input>
-      </app-control-row>
-
-
-      <div style="height: 30px;"></div>
-
-
+      <div class="gui-button-row">
+        <div class="gui-button" (click)="onMoreClick()">More...</div>
+      </div>
     </div>
   </div>
 </div>

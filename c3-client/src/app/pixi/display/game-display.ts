@@ -15,6 +15,8 @@ export class GameDisplay extends Container {
   ) {
     super();
     
+    this.interactiveChildren = false;
+    
     this.game = game;
 
     this.removeChildren();
@@ -39,7 +41,7 @@ export class GameDisplay extends Container {
       height: height,
       main: mainIndex != -1 ? mainIndex : 0,
       playerAspectRatio: aspectRatio,
-      teams: this.players.map(p => -1),
+      teams: this.players.map((p, i) => p.player.playerRule.team ?? -1),
     });
 
     this.players.forEach((player, index) => {
@@ -55,5 +57,11 @@ export class GameDisplay extends Container {
   
   tick(dt: number) {
     this.players.forEach(player => player.tick(dt));
+  }
+
+  override destroy() {
+    this.players.forEach(player => player.destroy());
+
+    super.destroy();
   }
 }

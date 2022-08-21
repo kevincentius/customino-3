@@ -55,7 +55,7 @@ export class SpriteCircleDisplay extends Container {
         
         this.prevMs = Date.now();
       }
-      this.items.splice(this.stars);
+      this.items.splice(this.stars).forEach(deletedItem => deletedItem.sprite.destroy());
       this.updateItemPos();
     }
   }
@@ -80,5 +80,11 @@ export class SpriteCircleDisplay extends Container {
       );
       item.sprite.scale.set(easeOut(20, Date.now() - item.spawnMs, 20, 1) * this.spriteScale);
     }
+  }
+  
+  override destroy() {
+    this.items.forEach(item => item.sprite.destroy());
+
+    super.destroy();
   }
 }

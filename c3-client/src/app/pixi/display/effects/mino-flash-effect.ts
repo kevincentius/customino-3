@@ -6,12 +6,13 @@ export class MinoFlashEffect extends Container implements Effect {
   private spawnMs = Date.now();
   private pow = 3;
 
+  private sprite = new Sprite(Texture.WHITE);
+
   constructor(
     width: number,
     height: number,
     private ttl: number,
     private startAlpha: number,
-    private sprite = new Sprite(Texture.WHITE),
   ) {
     super();
 
@@ -28,5 +29,11 @@ export class MinoFlashEffect extends Container implements Effect {
       this.sprite.alpha = this.startAlpha * Math.pow(1 - p, this.pow);
       return true;
     }
+  }
+
+  override destroy() {
+    this.sprite.destroy();
+
+    super.destroy();
   }
 }
