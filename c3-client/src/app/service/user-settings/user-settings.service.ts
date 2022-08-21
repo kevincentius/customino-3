@@ -44,9 +44,13 @@ export class UserSettingsService {
       
       musicService.setUserMusicVolume(localSettings.musicVolume);
       soundService.setUserSoundVolume(localSettings.soundVolume);
+
+      console.log('loaded settings', JSON.stringify(localSettings));
     } else {
       localSettings = this.createDefaultSettings();
       this.save();
+      
+      console.log('default settings', JSON.stringify(localSettings));
     }
 
     this.onLoadCallbacks.forEach(c => c());
