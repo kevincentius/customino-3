@@ -36,7 +36,6 @@ function mergeRule(target: PlayerRule, source: Partial<PlayerRule>, fields: Data
 
 export function fillDefaultRules(rule: any, fields: DataField[]) {
   for (const field of fields) {
-    console.log(field.property, getField(rule, field, true) == null);
     if (getField(rule, field, true) == null) {
       setField(rule, field, field.default, true);
     }

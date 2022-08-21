@@ -93,7 +93,7 @@ export class MemoryPieceGen implements PieceGen {
   ) {
     this.bag = getBag(pieceList);
     if (memSize >= this.bag.length) {
-      console.log('INVALID MEM SIZE piece gen');
+      console.warn('INVALID MEM SIZE piece gen');
       memSize = this.bag.length - 1;
     }
     this.mem = this.bag.splice(this.bag.length - memSize);
