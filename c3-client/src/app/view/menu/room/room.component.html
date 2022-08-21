@@ -5,7 +5,7 @@
 
       <!-- Chat -->
       <div class="room-section" style="flex-grow: 1; flex-basis: 0;">
-        <div class="h-flex"></div>
+        <app-chat-container #chat [roomId]="roomInfo.id" [(chatMessageInput)]="chatMessageInput"></app-chat-container>
       </div>
 
       <!-- Right Panel (room actions + player list) -->
@@ -51,7 +51,7 @@
               </thead>
 
               <tbody>
-                <tr *ngFor="let slot of roomInfo.slots; let i=index" [class.spectator]="!slot.settings.playing">
+                <tr *ngFor="let slot of roomInfo.slots; let i=index" [class.spectator]="!slot.settings.playing" [style.color]="getTeamTextColor(slot.settings.team)">
                   <td>
                     <ng-container *ngIf="slot.settings.team != null">
                       <div
@@ -64,7 +64,7 @@
                     <ng-container *ngIf="slot.settings.team == null">
                       <div
                         class="team-icon"
-                        style="background: #777;"
+                        [style.background]="getTeamBgColor(slot.settings.team)"
                         (click)="onTeamIconClick(i)"
                       >&nbsp;</div>
                     </ng-container>

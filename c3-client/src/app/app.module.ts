@@ -32,6 +32,8 @@ import { PieceComponent } from './view/common/piece/piece.component';
 import { PersonalizationComponent } from './view/menu/personalization/personalization.component';
 import { LoginComponent } from './view/menu/login/login.component';
 import { IconButtonComponent } from 'app/view/common/icon-button/icon-button.component';
+import { ChatContainerComponent } from './view/chat/chat-container/chat-container.component';
+import { ChatMessageComponent } from './view/chat/chat-message/chat-message.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -64,6 +66,8 @@ export function apiConfigFactory(): Configuration {
     PersonalizationComponent,
     LoginComponent,
     IconButtonComponent,
+    ChatContainerComponent,
+    ChatMessageComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),

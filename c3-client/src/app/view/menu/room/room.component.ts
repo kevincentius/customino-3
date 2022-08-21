@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ClientGame } from '@shared/game/engine/game/client-game';
 import { LocalPlayer } from '@shared/game/engine/player/local-player';
 import { GameRecorder } from '@shared/game/engine/recorder/game-recorder';
@@ -20,7 +20,8 @@ import { RoomSlotInfo } from '@shared/model/room/room-slot-info';
 import { EnterLeaveTransition } from 'app/view/util/enter-leave-transition';
 import { InputState } from 'app/control/keyboard';
 import { getLocalSettings } from 'app/service/user-settings/user-settings.service';
-import { teamStyles } from 'app/style/team-styles';
+import { soloStyle, teamStyles } from 'app/style/team-styles';
+import { ChatContainerComponent } from 'app/view/chat/chat-container/chat-container.component';
 
 @Component({
   selector: 'app-room',
@@ -28,6 +29,8 @@ import { teamStyles } from 'app/style/team-styles';
   styleUrls: ['./room.component.scss']
 })
 export class RoomComponent implements OnInit, OnDestroy {
+
+  @ViewChild('chat', { static: false }) chat!: ChatContainerComponent;
 
   private roomId!: number;
   roomInfo!: RoomInfo;
@@ -51,17 +54,27 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   waitForTeamChange = false;
 
+  chatMessageInput = '';
+
   constructor(
     private roomService: RoomService,
     public mainService: MainService,
   ) {
     window!.onkeydown = (ev: KeyboardEvent) => {
+      let handled = true;
       if (ev.key == 'F2' && !(this.game && this.game.running)) {
         this.onStartGameClick();
       } else if (ev.key == '`' && this.game) {
         this.setHideGui(this.enterLeaveTransition.state);
       } else if (ev.key == 'F8') {
         this.mainService.pixi.togglePerformanceDisplay();
+      } else {
+        handled = false;
+      }
+
+      if (handled) {
+        ev.stopPropagation();
+        ev.preventDefault();
       }
     };
   }
@@ -79,6 +92,8 @@ export class RoomComponent implements OnInit, OnDestroy {
         }
       }),
 
+      this.roomService.roomChatMessageSubject.subscribe(chatMessage => this.chat.pushChatMessage(chatMessage)),
+
       this.roomService.startGameSubject.subscribe(this.onRecvStartGame.bind(this)),
       this.roomService.serverEventSubject.subscribe(this.onRecvServerEvent.bind(this)),
       this.roomService.gameOverSubject.subscribe(this.onRecvGameOver.bind(this)),
@@ -91,6 +106,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   setHideGui(hideGui: boolean) {
     this.enterLeaveTransition.setState(!hideGui);
+    this.mainService.pixi.keyboard.setEnabled(!hideGui);
   }
 
   async show(roomId: number) {
@@ -278,8 +294,12 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
   }
 
-  getTeamBgColor(team: number) {
-    return '#' + teamStyles[team].roomIconColor.toString(16).padStart(6, '0');
+  getTeamTextColor(team: number | null) {
+    return '#' + (team == null ? soloStyle : teamStyles[team]).roomTextColor.toString(16).padStart(6, '0');
+  }
+
+  getTeamBgColor(team: number | null) {
+    return '#' + (team == null ? soloStyle : teamStyles[team]).roomIconColor.toString(16).padStart(6, '0');
   }
 
   onTeamIconClick(slotIndex: number) {

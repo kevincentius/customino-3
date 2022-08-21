@@ -5,6 +5,7 @@ import { GameReplay } from "@shared/game/engine/recorder/game-replay";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";
 import { ServerEvent } from "@shared/game/network/model/event/server-event";
 import { StartGameData } from "@shared/game/network/model/start-game/start-game-data";
+import { ChatMessage } from "@shared/model/room/chat-message";
 import { LobbyEvent } from "@shared/model/room/lobby-event";
 import { RoomInfo } from "@shared/model/room/room-info";
 import { SocketService } from "app/service/socket.service";
@@ -15,6 +16,7 @@ import { Subject } from "rxjs";
 })
 export class RoomService {
   roomInfoSubject = new Subject<RoomInfo>();
+  roomChatMessageSubject = new Subject<ChatMessage>();
   startGameSubject = new Subject<StartGameData>();
   gameOverSubject = new Subject<RoomInfo>();
   serverEventSubject = new Subject<ServerEvent>();
@@ -25,6 +27,10 @@ export class RoomService {
     this.socketService.on(LobbyEvent.ROOM_INFO, (roomInfo: RoomInfo) => {
       this.roomInfoSubject.next(roomInfo);
     });
+
+    this.socketService.on(LobbyEvent.POST_CHAT_MESSAGE, (chatMessage: ChatMessage) => {
+      this.roomChatMessageSubject.next(chatMessage);
+    })
 
     this.socketService.on(LobbyEvent.START_GAME, (startGameData: StartGameData) => {
       this.startGameSubject.next(startGameData);
@@ -73,5 +79,9 @@ export class RoomService {
 
   async setSpectatorMode(spectator: boolean) {
     this.socketService.emit(LobbyEvent.SET_SPECTATOR_MODE, spectator);
+  }
+
+  async postChatMessage(message: string) {
+    this.socketService.emit(LobbyEvent.POST_CHAT_MESSAGE, message);
   }
 }

@@ -13,6 +13,7 @@ export enum LobbyEvent {
   CHANGE_ROOM_SETTINGS = '7',
   CHANGE_SLOT_TEAM     = 'f',
   SET_SPECTATOR_MODE   = 'h',
+  POST_CHAT_MESSAGE    = 'i',
 
   GAME_EVENTS          = '8',
   GET_REPLAY           = '9',

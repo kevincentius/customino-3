@@ -89,6 +89,19 @@ export class LobbyGateway {
     }
   }
 
+  @SubscribeMessage(LobbyEvent.POST_CHAT_MESSAGE)
+  postChatMessage(socket: Socket, message: string) {
+    const session = this.sessionService.getSession(socket);
+
+    // must login before chat
+    if (session.username == null) { return; }
+
+    const room = this.roomService.getRoom(session.roomId!);
+    if (room) {
+      room.postChatMessage(session, message);
+    }
+  }
+
   @SubscribeMessage(LobbyEvent.RESET_SCORES)
   resetScores(socket: Socket) {
     const session = this.sessionService.getSession(socket);

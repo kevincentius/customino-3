@@ -15,6 +15,7 @@ import { RoomSettings } from "@shared/game/engine/model/room-settings";
 import { getDefaultRoomRule } from "@shared/game/engine/model/rule/room-rule/room-rule";
 import { SessionService } from "service/session/session-service";
 import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
+import { ChatMessage } from "@shared/model/room/chat-message";
 
 export class Room {
   createdAt = Date.now();
@@ -243,5 +244,16 @@ export class Room {
 
     // simulate game immediately
     this.game!.players[playerIndex].handleEvent(clientEvent);
+  }
+
+  postChatMessage(session: Session, message: string) {
+    const chatMessage: ChatMessage = {
+      username: session.username!,
+      timestamp: Date.now(),
+      message: message,
+    };
+    for (const slot of this.slots) {
+      slot.session.socket.emit(LobbyEvent.POST_CHAT_MESSAGE, chatMessage);
+    }
   }
 }

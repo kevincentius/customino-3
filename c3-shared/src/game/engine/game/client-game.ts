@@ -79,7 +79,6 @@ export class ClientGame extends Game {
   }
 
   startUpdateLoop() {
-    console.log('startUpdateLoop!');
     this.stop();
     this.lastUpdate = Date.now();
     this.mainLoopTimeout = setTimeout(this.updateLoop.bind(this), gameLoopRule.mspf);
