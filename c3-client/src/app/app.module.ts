@@ -30,6 +30,8 @@ import { FieldOutputComponent } from './view/menu/field-output/field-output.comp
 import { ThanksComponent } from './view/menu/thanks/thanks.component';
 import { PieceComponent } from './view/common/piece/piece.component';
 import { PersonalizationComponent } from './view/menu/personalization/personalization.component';
+import { LoginComponent } from './view/menu/login/login.component';
+import { IconButtonComponent } from 'app/view/common/icon-button/icon-button.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -60,6 +62,8 @@ export function apiConfigFactory(): Configuration {
     ThanksComponent,
     PieceComponent,
     PersonalizationComponent,
+    LoginComponent,
+    IconButtonComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),

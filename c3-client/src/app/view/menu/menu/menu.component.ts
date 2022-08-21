@@ -19,25 +19,22 @@ export class MenuComponent implements OnInit {
 
   onPlayClick() {
     this.mainService.openScreen(MainScreen.LOBBY);
-
-    musicService.start();
   }
 
   onReplayClick() {
     this.mainService.openScreen(MainScreen.REPLAY);
-    
-    musicService.start();
   }
 
   onControlsClick() {
     this.mainService.openScreen(MainScreen.CONTROLS);
-    
-    musicService.start();
   }
 
   onThanksClick() {
     this.mainService.openScreen(MainScreen.THANKS);
-    
-    musicService.start();
+  }
+
+  onLogoutClick() {
+    this.mainService.openScreen(MainScreen.LOGIN);
+    musicService.stop();
   }
 }

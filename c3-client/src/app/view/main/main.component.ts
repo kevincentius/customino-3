@@ -1,8 +1,8 @@
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { LobbyService } from "app/game-server/lobby.service";
+import { AccountService } from "app/game-server/account.service";
 import { MainScreen } from "app/view/main/main-screen";
-import { MainService, Rect } from "app/view/main/main.service";
+import { MainService } from "app/view/main/main.service";
 import { ControlsComponent } from "app/view/menu/controls/controls.component";
 import { LobbyComponent } from "app/view/menu/lobby/lobby.component";
 import { MenuComponent } from "app/view/menu/menu/menu.component";
@@ -53,16 +53,14 @@ export class MainComponent {
 
   constructor(
     public mainService: MainService,
-    private lobbyService: LobbyService,
+    private accountService: AccountService,
     private route: ActivatedRoute,
   ) {
     this.openScreen(MainScreen.PRELOADER);
 
     this.route.params.subscribe(params => {
-      this.openScreen(params['component'] ?? MainScreen.MENU);
+      this.openScreen(params['component'] ?? MainScreen.LOGIN);
     });
-
-    this.lobbyService.clientInfoSubject.subscribe(sessionInfo => this.mainService.sessionInfo = sessionInfo);
   }
   
   ngAfterViewInit() {

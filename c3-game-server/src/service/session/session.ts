@@ -12,14 +12,14 @@ export class Session {
     public socket: Socket,
     public sessionId: number,
     public userId: number | null,
-    public username: string,
+    public username: string | null,
   ) {}
   
   getClientInfo(): ClientInfo {
     return {
       sessionId: this.sessionId,
       userId: this.userId,
-      username: this.username,
+      username: this.username!,
     };
   }
 }

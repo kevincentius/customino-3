@@ -1,6 +1,7 @@
 
 export enum MainScreen {
   PRELOADER='',
+  LOGIN='login',
   MENU='menu',
   CONTROLS='controls',
   PERSONALIZATION='personalization',

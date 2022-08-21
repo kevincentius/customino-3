@@ -110,6 +110,13 @@ export const soundCredits: CreditGroup =
       license: 'CC BY 3.0',
       url: 'https://freesound.org/people/SpiceProgram/sounds/399191/',
       note: 'countdown',
+    },
+    {
+      name: 'UI_1 Sweet saw',
+      author: 'newlocknew',
+      license: 'CC BY 4.0',
+      url: 'https://freesound.org/people/newlocknew/sounds/515830/',
+      note: 'login',
     }
   ],
 };

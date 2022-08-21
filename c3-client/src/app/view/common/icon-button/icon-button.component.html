@@ -1,0 +1,4 @@
+<div style="position: relative; display: inline-block; height: 30px;">
+    <div *ngIf="notification!=null" class="notification">{{notification}}</div>
+    <img class="btn" src="assets/img/default/icon-{{iconName}}.svg" [attr.disabled]="disabled? true : null"/>
+</div>
