@@ -55,10 +55,7 @@ export class MainComponent {
   constructor(
     public mainService: MainService,
     private route: ActivatedRoute,
-    private userSettingsService: UserSettingsService, // inject so its constructor is called
   ) {
-    this.userSettingsService.init();
-    
     this.openScreen(MainScreen.PRELOADER);
 
     this.route.params.subscribe(params => {

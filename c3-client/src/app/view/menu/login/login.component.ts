@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { SessionInfo } from '@shared/model/session/session-info';
 import { shuffle } from '@shared/util/random';
 import { AccountService } from 'app/game-server/account.service';
+import { AppService } from 'app/game-server/app.service';
 import { LobbyService } from 'app/game-server/lobby.service';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { soundService } from 'app/pixi/display/sound/sound-service';
+import { getLocalSettings } from 'app/service/user-settings/user-settings.service';
 import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
 
@@ -23,6 +25,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private accountService: AccountService,
     private mainService: MainService,
+    private appService: AppService,
   ) { }
 
   ngOnInit(): void {
@@ -41,6 +44,8 @@ export class LoginComponent implements OnInit {
     if (sessionInfo == null) {
       // TODO: enable gui & show error
     } else {
+      this.appService.updateUserRule(getLocalSettings().userRule);
+
       this.mainService.sessionInfo = sessionInfo;
       this.mainService.openScreen(MainScreen.MENU);
     

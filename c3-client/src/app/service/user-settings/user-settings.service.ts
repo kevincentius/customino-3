@@ -23,7 +23,9 @@ export class UserSettingsService {
   constructor(
     private idbService: IdbService,
     private appService: AppService,
-  ) {}
+  ) {
+    this.init();
+  }
 
   async init() {
     const saved = await this.idbService.getLocalSettings();
@@ -44,13 +46,9 @@ export class UserSettingsService {
       
       musicService.setUserMusicVolume(localSettings.musicVolume);
       soundService.setUserSoundVolume(localSettings.soundVolume);
-
-      console.log('loaded settings', JSON.stringify(localSettings));
     } else {
       localSettings = this.createDefaultSettings();
       this.save();
-      
-      console.log('default settings', JSON.stringify(localSettings));
     }
 
     this.onLoadCallbacks.forEach(c => c());
