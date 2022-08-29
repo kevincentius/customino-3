@@ -10,12 +10,9 @@ export class EnterLeaveTransition {
   dom = true;
   timeout: any;
 
-  constructor(private leaveAnimMs: number) {
-    const c = () => {
-      setTimeout(c);
-    };
-    c();
-  }
+  constructor(
+    private leaveAnimMs: number,
+  ) {}
 
   setState(value: boolean) {
     if (this.state && !value) {

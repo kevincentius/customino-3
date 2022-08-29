@@ -70,6 +70,7 @@ export class SoundService {
       variation = Math.floor(Math.random() * entry.variations);
     }
 
+    entry.howls[variation].stop();
     const id = entry.howls[variation].play();
     if (startPosRel != 0) {
       entry.howls[variation].seek(entry.howls[variation].duration() * startPosRel, id)

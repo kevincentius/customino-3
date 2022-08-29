@@ -1,11 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { DataField } from '@shared/game/engine/model/rule/data-field/data-field';
 import { FieldType } from '@shared/game/engine/model/rule/data-field/field-type';
 
 @Component({
   selector: 'app-field-input',
   templateUrl: './field-input.component.html',
-  styleUrls: ['./field-input.component.scss']
+  styleUrls: ['./field-input.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FieldInputComponent implements OnInit {
   @Input() field!: DataField;

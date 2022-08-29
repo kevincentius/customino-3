@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { RoomSettings } from '@shared/game/engine/model/room-settings';
 import { FieldTags } from '@shared/game/engine/model/rule/data-field/field-tag';
 import { playerRuleFields } from '@shared/game/engine/model/rule/room-rule/player-rule-fields';
@@ -7,7 +7,8 @@ import { DataFieldCategoryData } from 'app/view/menu/rule-settings/rule-settings
 @Component({
   selector: 'app-room-settings',
   templateUrl: './room-settings.component.html',
-  styleUrls: ['./room-settings.component.scss']
+  styleUrls: ['./room-settings.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoomSettingsComponent implements OnInit {
   @Output() save = new EventEmitter<RoomSettings>();

@@ -60,7 +60,7 @@ export class Keyboard {
 
   // Event Handling
   onKeyDown(e: KeyboardEvent) {
-    if (this.state == InputState.DISABLED || this.enabled || e.repeat)
+    if (this.state == InputState.DISABLED || !this.enabled || e.repeat)
       return;
 
     // Ensure key event only affects game
@@ -89,7 +89,7 @@ export class Keyboard {
   }
 
   onKeyUp(e: KeyboardEvent) {
-    if (this.state == InputState.DISABLED || this.enabled || e.repeat)
+    if (this.state == InputState.DISABLED || !this.enabled || e.repeat)
       return;
 
     // Ensure Key event doesn't do anything weird

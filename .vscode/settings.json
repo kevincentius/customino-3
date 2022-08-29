@@ -1,4 +1,13 @@
 {
   "window.title": "${rootName}",
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "editor.fontFamily": "Consolasheart, Consolas, 'Courier New', monospace",
+  "editor.tokenColorCustomizations": {
+    "textMateRules": [{
+      "scope": "punctuation.terminator",
+      "settings": {
+        "foreground": "#cc0000"
+      }
+    }]
+  },
 }

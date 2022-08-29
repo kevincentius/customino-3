@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { DataField } from '@shared/game/engine/model/rule/data-field/data-field';
 import { GameRule } from '@shared/game/engine/model/rule/game-rule';
 import { getField, setField } from '@shared/game/engine/model/rule/data-field/data-field';
@@ -12,7 +12,8 @@ import { LocalRule } from '@shared/game/engine/model/rule/local-rule/local-rule'
 @Component({
   selector: 'app-rule-settings',
   templateUrl: './rule-settings.component.html',
-  styleUrls: ['./rule-settings.component.scss']
+  styleUrls: ['./rule-settings.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RuleSettingsComponent implements OnInit {
   presets: RulePreset[] = rulePresets;

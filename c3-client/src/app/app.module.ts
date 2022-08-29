@@ -34,6 +34,7 @@ import { LoginComponent } from './view/menu/login/login.component';
 import { IconButtonComponent } from 'app/view/common/icon-button/icon-button.component';
 import { ChatContainerComponent } from './view/chat/chat-container/chat-container.component';
 import { ChatMessageComponent } from './view/chat/chat-message/chat-message.component';
+import { RoomPlayerListComponent } from './view/menu/room-player-list/room-player-list.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -68,6 +69,7 @@ export function apiConfigFactory(): Configuration {
     IconButtonComponent,
     ChatContainerComponent,
     ChatMessageComponent,
+    RoomPlayerListComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),
