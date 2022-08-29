@@ -126,6 +126,8 @@ export class Room {
         for (const slot of this.slots) {
           if (slot.playerIndex != null) {
             slot.addScore(gameResult.players[slot.playerIndex].score);
+            slot.updateStats(this.game!.players[slot.playerIndex].statsTracker.stats);
+            console.log(JSON.stringify(this.game!.players[slot.playerIndex].statsTracker.stats));
           }
         }
         

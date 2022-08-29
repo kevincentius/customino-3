@@ -1,9 +1,10 @@
-import {Component, EventEmitter, HostListener, Input, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, HostListener, Input, Output} from '@angular/core';
 
 @Component({
   selector: 'app-file-drop-area',
   templateUrl: './file-drop-area.component.html',
-  styleUrls: ['./file-drop-area.component.scss']
+  styleUrls: ['./file-drop-area.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileDropAreaComponent {
   @Output() fileChange = new EventEmitter<File[]>();

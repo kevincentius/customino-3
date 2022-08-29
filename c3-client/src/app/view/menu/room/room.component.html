@@ -1,125 +1,31 @@
 
-<div class="v-flex main-container" [class.transparent]="enterLeaveTransition.hiddenStyle" *ngIf="enterLeaveTransition.dom && roomInfo">
-  <ng-container *ngIf="!showSettings">
+<!-- Full Size -->
+<div class="v-flex main-container" *ngIf="roomInfo && showRoomGui">
+  <ng-container *ngIf="true">
+
+    <!-- HFlex -->
     <div class="h-flex" style="gap: 40px; overflow: auto;">
 
-      <!-- Chat -->
+      <!-- Left Panel (Chat) -->
       <div class="room-section" style="flex-grow: 1; flex-basis: 0;">
         <app-chat-container #chat [roomId]="roomInfo.id" [(chatMessageInput)]="chatMessageInput"></app-chat-container>
       </div>
 
       <!-- Right Panel (room actions + player list) -->
       <div class="room-section v-flex" style="flex-grow: 1; flex-basis: 0; max-width: 1000px;">
-        <div style="flex-grow: 1;">
+        <div class="gui-button-row">
+          <button class="gui-button gui-button-main" [disabled]="!canStartGame()" (click)="onStartGameClick()">Start game</button>
+          <button *ngIf="lastGameReplay" class="gui-button" (click)="onDownloadLastReplayClick()">Replay</button>
 
-          <!-- Room actions -->
-          <div class="gui-button-row">
-            <ng-container *ngIf="!showSettings">
-              <button class="gui-button gui-button-main" [disabled]="isRunning() || !isHost() || !isPlayersReady()" (click)="onStartGameClick()">Start game</button>
-              <button *ngIf="lastGameReplay" class="gui-button" (click)="onDownloadLastReplayClick()">Replay</button>
-
-              <!-- host buttons -->
-              <button class="gui-button" [disabled]="isRunning()" (click)="onResetScoresClick()">Reset scores</button>
-              <button class="gui-button" [disabled]="isRunning()" (click)="onSettingsClick()">Rule settings</button>
-              
-              <!-- debug buttons -->
-              <ng-container *ngIf="debug">
-                <button *ngIf="lastGameReplay" class="gui-button" (click)="onVerifyLastReplayClick()">Verify replay</button>
-                <button class="gui-button" (click)="onDownloadGameStateClick()">Download debug state</button>
-              </ng-container>
-
-              <div style="flex-grow: 1;"></div>
-
-              <button class="gui-button" (click)="onToggleSpectatorModeClick()">{{isSpectator() ? 'Watch' : 'Play'}}</button>
-            </ng-container>
-          </div>
-          
-          <!-- Player list -->
-          <div class="slots-container">
-            <table width="100%">
-              <thead>
-                <tr>
-                  <th><!--team--></th>
-                  <th class="tc-text">Player</th>
-                  <th class="tc-number">Score</th>
-                  <th class="tc-number">BPM</th>
-                  <th class="tc-text-pad">Combos</th>
-                  <th class="tc-number">Attack</th>
-                  <th class="tc-number">APM</th>
-                  <th class="tc-number">Block</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr *ngFor="let slot of roomInfo.slots; let i=index" [class.spectator]="!slot.settings.playing" [style.color]="getTeamTextColor(slot.settings.team)">
-                  <td>
-                    <ng-container *ngIf="slot.settings.team != null">
-                      <div
-                        class="team-icon"
-                        [style.background]="getTeamBgColor(slot.settings.team)"
-                        (click)="onTeamIconClick(i)"
-                      >team</div>
-                    </ng-container>
-
-                    <ng-container *ngIf="slot.settings.team == null">
-                      <div
-                        class="team-icon"
-                        [style.background]="getTeamBgColor(slot.settings.team)"
-                        (click)="onTeamIconClick(i)"
-                      >&nbsp;</div>
-                    </ng-container>
-                  </td>
-
-                  <td class="tc-text" [class.local-player]="slot.player.sessionId == getSessionId()">
-                    {{slot.player.username}}
-                  </td>
-
-                  <td class="tc-number">
-                    {{slot.score}}
-                  </td>
-                  <!-- The following ngFor is only for one element maximum, just used so I can set variable name here -->
-                  <ng-container *ngFor="let stats of getLastGameStats(slot)">
-                    <td class="tc-number">
-                      {{stats.pieces / stats.activeTime * 60 | number:'1.0-0'}}
-                    </td>
-
-                    <td class="tc-text-pad">
-                      <ng-container *ngFor="let combo of getCombos(stats)">
-                        {{combo}}
-                      </ng-container>
-                    </td>
-
-                    <td class="tc-number">
-                      {{stats.attackGenerated | number:'1.0-0'}}
-                    </td>
-
-                    <td class="tc-number">
-                      {{stats.attackGenerated / stats.activeTime * 60 | number:'1.0-0'}} / {{stats.powerGenerated / stats.activeTime * 60 | number:'1.0-0'}}
-                    </td>
-
-                    <td class="tc-number">
-                      {{stats.blockGenerated | number:'1.0-0'}} / {{stats.attackReceived}}
-                    </td>
-                  </ng-container>
-                </tr>
-              </tbody>
-            </table>
-            <div>
-            </div>
-          </div>
+          <!-- host buttons -->
+          <button class="gui-button" *ngIf="isHost()" [disabled]="isRunning()" (click)="onResetScoresClick()">Reset scores</button>
+          <button class="gui-button" *ngIf="isHost()" [disabled]="isRunning()" (click)="onSettingsClick()">Rule settings</button>
         </div>
-      </div>
-    </div>
-  </ng-container>
 
-  <ng-container *ngIf="showSettings">
-    <div class="v-flex room-section">
-      <app-room-settings
-        [currentSettings]="roomInfo.settings"
-        [editMode]="isHost()"
-        (save)="onSaveSettings($event)"
-        (cancel)="onCancelSettings()"
-      ></app-room-settings>
+        <app-room-player-list
+          [roomInfo]="this.roomInfo"
+        ></app-room-player-list>
+      </div>
     </div>
   </ng-container>
 </div>

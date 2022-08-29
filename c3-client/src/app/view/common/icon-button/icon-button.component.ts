@@ -1,9 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, Output } from '@angular/core';
 
 @Component({
     selector: 'app-icon-button',
     templateUrl: './icon-button.component.html',
-    styleUrls: ['./icon-button.component.scss']
+    styleUrls: ['./icon-button.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IconButtonComponent implements OnInit {
 

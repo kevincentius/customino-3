@@ -1,11 +1,12 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { ChatMessage } from '@shared/model/room/chat-message';
 import { RoomService } from 'app/game-server/room.service';
 
 @Component({
   selector: 'app-chat-container',
   templateUrl: './chat-container.component.html',
-  styleUrls: ['./chat-container.component.scss']
+  styleUrls: ['./chat-container.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChatContainerComponent {
   @Input() roomId?: number;

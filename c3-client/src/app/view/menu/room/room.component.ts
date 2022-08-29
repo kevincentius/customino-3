@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ClientGame } from '@shared/game/engine/game/client-game';
 import { LocalPlayer } from '@shared/game/engine/player/local-player';
 import { GameRecorder } from '@shared/game/engine/recorder/game-recorder';
@@ -20,52 +20,54 @@ import { RoomSlotInfo } from '@shared/model/room/room-slot-info';
 import { EnterLeaveTransition } from 'app/view/util/enter-leave-transition';
 import { InputState } from 'app/control/keyboard';
 import { getLocalSettings } from 'app/service/user-settings/user-settings.service';
-import { soloStyle, teamStyles } from 'app/style/team-styles';
 import { ChatContainerComponent } from 'app/view/chat/chat-container/chat-container.component';
+import { timeoutWrapper } from 'app/util/ng-zone-util';
 
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
-  styleUrls: ['./room.component.scss']
+  styleUrls: ['./room.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RoomComponent implements OnInit, OnDestroy {
-
-  @ViewChild('chat', { static: false }) chat!: ChatContainerComponent;
-
-  private roomId!: number;
-  roomInfo!: RoomInfo;
-  lastGameReplay?: GameReplay;
   debug = false; //!environment.production;
 
+  @ViewChild('chat', { static: false }) chat!: ChatContainerComponent;
+  chatMessageInput = '';
+
   private subscriptions: Subscription[] = [];
+
+  private roomId!: number;
 
   private game?: ClientGame;
   recorder?: GameRecorder;
 
+  // VIEW MODEL
+  roomInfo!: RoomInfo;
+  showRoomGui = false;
   showSettings = false;
 
-  // playerRule: PlayerRule = {...getDefaultRoomRule(), ...getLocalSettings().localRule};
-  
+  lastGameReplay?: GameReplay;
   lastGameStats?: { playerInfo: PlayerInfo; stats: PlayerStats; }[];
 
-  displayComboCount = 5;
-
-  enterLeaveTransition = new EnterLeaveTransition(250);
-
-  waitForTeamChange = false;
-
-  chatMessageInput = '';
+  canStartGame() { return !this.isRunning() && this.isHost() && this.isPlayersReady(); }
+  isPlayersReady() { return this.roomInfo.slots.filter(slot => slot.settings.playing).length > 0; }
+  isRunning() { return !!(this.game?.running); }
+  isHost() { return this.mainService.sessionInfo.sessionId == this.roomInfo.host.sessionId; }
+  // ---------
 
   constructor(
     private roomService: RoomService,
     public mainService: MainService,
+    private cd: ChangeDetectorRef,
+    private ngZone: NgZone,
   ) {
     window!.onkeydown = (ev: KeyboardEvent) => {
       let handled = true;
       if (ev.key == 'F2' && !(this.game && this.game.running)) {
         this.onStartGameClick();
       } else if (ev.key == '`' && this.game) {
-        this.setHideGui(this.enterLeaveTransition.state);
+        this.setShowRoomGui(!this.showRoomGui);
       } else if (ev.key == 'F8') {
         this.mainService.pixi.togglePerformanceDisplay();
       } else {
@@ -79,20 +81,17 @@ export class RoomComponent implements OnInit, OnDestroy {
     };
   }
 
-  getSessionId() {
-    return this.mainService.sessionInfo.sessionId;
-  }
-
   ngOnInit() {
     this.subscriptions.push(... [
       this.roomService.roomInfoSubject.subscribe(roomInfo => {
-        console.log('received roomInfo', roomInfo);
         if (this.roomId == roomInfo.id) {
           this.roomInfo = roomInfo;
         }
+
+        this.cd.detectChanges();
       }),
 
-      this.roomService.roomChatMessageSubject.subscribe(chatMessage => this.chat.pushChatMessage(chatMessage)),
+      // this.roomService.roomChatMessageSubject.subscribe(chatMessage => this.chat.pushChatMessage(chatMessage)),
 
       this.roomService.startGameSubject.subscribe(this.onRecvStartGame.bind(this)),
       this.roomService.serverEventSubject.subscribe(this.onRecvServerEvent.bind(this)),
@@ -104,34 +103,40 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
 
-  setHideGui(hideGui: boolean) {
-    this.enterLeaveTransition.setState(!hideGui);
-    this.mainService.pixi.keyboard.setEnabled(!hideGui);
-  }
-
   async show(roomId: number) {
-    this.showSettings = false;
-    this.waitForTeamChange = false;
     this.roomId = roomId;
-    this.lastGameStats = undefined;
     this.roomInfo = undefined!;
-    this.roomInfo = (await this.roomService.getRoomInfo(roomId))!;
+    this.lastGameStats = undefined;
+    this.showRoomGui = false;
+    this.cd.detectChanges();
+
+    this.roomInfo = (await this.roomService.getRoomInfo(this.roomId))!;
+    this.showRoomGui = true;
+    this.cd.detectChanges();
+
+    this.showSettings = false;
+
     if (this.roomInfo.gameState?.running) {
-      const game = new ClientGame(this.roomInfo.gameState.startGameData, getLocalSettings().localRule, undefined);
+      const game = new ClientGame(timeoutWrapper(this.ngZone), this.roomInfo.gameState.startGameData, getLocalSettings().localRule, undefined);
       game.load(this.roomInfo.gameState);
       this.game = game;
       this.startGame();
     } else {
-      this.setHideGui(false);
+      this.showRoomGui = true;
+      this.cd.detectChanges();
     }
   }
 
-  isPlayersReady() {
-    return this.roomInfo.slots.filter(slot => slot.settings.playing).length > 0;
+  setShowRoomGui(showRoomGui: boolean) {
+    this.showRoomGui = showRoomGui;
+    this.mainService.pixi.keyboard.setEnabled(!this.showRoomGui);
+    this.cd.detectChanges();
   }
 
-  onStartGameClick() {
-    this.roomService.startGame();
+  downloadDebug() {
+    if (this.game) {
+      saveAs(new Blob([JSON.stringify(this.recorder!.asReplay())]), `CM-Debug-Replay-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
+    }
   }
 
   async onBackClick() {
@@ -143,8 +148,18 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.mainService.openScreen(MainScreen.LOBBY);
   }
 
-  isRunning() {
-    return !!(this.game?.running);
+  private startGame() {
+    this.game!.start();
+    this.mainService.pixi.bindGame(this.game!);
+    musicService.setVolumeGame();
+
+    console.log('startGame');
+    this.showRoomGui = false;
+    this.cd.detectChanges();
+  }
+
+  onStartGameClick() {
+    this.roomService.startGame();
   }
 
   onRecvStartGame(startGameData: StartGameData) {
@@ -155,14 +170,14 @@ export class RoomComponent implements OnInit, OnDestroy {
     
     // start new game
     const localPlayerIndex = startGameData.players.findIndex(p => p.clientInfo.sessionId == this.mainService.sessionInfo.sessionId);
-    this.game = new ClientGame(startGameData, getLocalSettings().localRule, localPlayerIndex);
+    this.game = new ClientGame(timeoutWrapper(this.ngZone), startGameData, getLocalSettings().localRule, localPlayerIndex);
     this.startGame();
 
     // if not spectator, setup local player
     if (localPlayerIndex != -1) {
       const localPlayer = this.game.players[localPlayerIndex] as LocalPlayer;
       localPlayer.eventsSubject.subscribe(clientEvent => this.roomService.flushGameEvents(clientEvent));
-      localPlayer.gameOverSubject.subscribe(() => this.onLocalPlayerDeath());
+      localPlayer.gameOverSubject.subscribe(() => this.mainService.pixi.keyboard.state = InputState.DISABLED);
       this.mainService.pixi.keyboard.bindToPlayer(localPlayer);
       this.mainService.pixi.keyboard.state = InputState.PRECLOCK;
       this.game.clockStartSubject.subscribe(() => this.mainService.pixi.keyboard.state = InputState.ENABLED);
@@ -171,13 +186,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     // record game replay
     this.recorder = new GameRecorder(this.game);
     this.game.gameOverSubject.subscribe(r => this.lastGameReplay = this.recorder!.asReplay());
-  }
-
-  private startGame() {
-    this.game!.start();
-    this.mainService.pixi.bindGame(this.game!);
-    musicService.setVolumeGame();
-    this.setHideGui(true);
   }
 
   onRecvServerEvent(serverEvent: ServerEvent) {
@@ -197,12 +205,12 @@ export class RoomComponent implements OnInit, OnDestroy {
     }));
 
     this.roomInfo = roomInfo;
+    this.cd.detectChanges();
 
-    setTimeout(() => this.setHideGui(false), 500);
-  }
-
-  onLocalPlayerDeath() {
-    this.mainService.pixi.keyboard.state = InputState.DISABLED;
+    setTimeout(() => {
+      this.showRoomGui = true;
+      this.cd.detectChanges();
+    }, 500);
   }
 
   async onDownloadLastReplayClick() {
@@ -238,10 +246,12 @@ export class RoomComponent implements OnInit, OnDestroy {
     saveAs(new Blob([JSON.stringify(this.lastGameReplay)]), `CM-Server-Replay-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
   }
 
-  isHost() {
-    return this.mainService.sessionInfo.sessionId == this.roomInfo.host.sessionId;
-  }
 
+  // // enterLeaveTransition = new EnterLeaveTransition(250);
+
+  // waitForTeamChange = false;
+
+  // chatMessageInput = '';
 
   onResetScoresClick() {
     this.roomService.resetScores();
@@ -249,77 +259,27 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   onSettingsClick() {
     this.showSettings = true;
+    this.cd.detectChanges();
   }
 
   onCancelSettings() {
     this.showSettings = false;
+    this.cd.detectChanges();
   }
 
   onSaveSettings(settings: RoomSettings) {
     this.showSettings = false;
     this.roomService.changeRoomSettings(settings);
+    this.cd.detectChanges();
   }
 
-  // gui binding  
-  getLastGameStats(slot: RoomSlotInfo) {
-    return this.game == null ? null
-      : this.game.players
-        .filter(p => p.playerInfo.name == slot.player.username)
-        .map(p => p.statsTracker.stats);
-  }
+  // // spectator mode
+  // isSpectator() {
+  //   return !this.roomInfo.slots.filter(slot => slot.player.sessionId == this.getSessionId())[0].settings.playing;
+  // }
 
-  // gui binding
-  getCombos(stats: PlayerStats) {
-    const sortedCombos = Array.from(stats.combos.entries())
-      .map(e => ({combo: parseInt(e[0].substring(1)), times: e[1]}))
-      .sort((a, b) => b.combo - a.combo);
-    
-    const ret = [];
-    
-    for (let combos of sortedCombos) {
-      for (let i = 0; i < combos.times; i++) {
-        ret.push(combos.combo);
-
-        if (ret.length >= this.displayComboCount) { break }
-      }
-      if (ret.length >= this.displayComboCount) { break }
-    }
-
-    return ret;
-  }
-
-  downloadDebug() {
-    if (this.game) {
-      saveAs(new Blob([JSON.stringify(this.recorder!.asReplay())]), `CM-Debug-Replay-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
-    }
-  }
-
-  getTeamTextColor(team: number | null) {
-    return '#' + (team == null ? soloStyle : teamStyles[team]).roomTextColor.toString(16).padStart(6, '0');
-  }
-
-  getTeamBgColor(team: number | null) {
-    return '#' + (team == null ? soloStyle : teamStyles[team]).roomIconColor.toString(16).padStart(6, '0');
-  }
-
-  onTeamIconClick(slotIndex: number) {
-    if (this.isHost()) {
-      const prevTeam = this.roomInfo.slots[slotIndex].settings.team;
-      const team = prevTeam == null ? 0
-        : prevTeam == teamStyles.length - 1 ? null
-        : prevTeam + 1;
-
-      this.roomService.changeSlotTeam(slotIndex, team);
-    }
-  }
-
-  // spectator mode
-  isSpectator() {
-    return !this.roomInfo.slots.filter(slot => slot.player.sessionId == this.getSessionId())[0].settings.playing;
-  }
-
-  onToggleSpectatorModeClick() {
-    this.roomService.setSpectatorMode(!this.isSpectator())
-  }
-  // --------------
+  // onToggleSpectatorModeClick() {
+  //   this.roomService.setSpectatorMode(!this.isSpectator())
+  // }
+  // // --------------
 }
