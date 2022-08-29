@@ -8,7 +8,8 @@ export class SoundService {
 
   constructor() {
     let list: { name: string, variations?: number }[] = [
-      { name: 'login' },
+      { name: 'button', variations: 3 },
+      { name: 'back', },
       { name: 'harddrop' },
       { name: 'locked' },
       

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { soundService } from "app/pixi/display/sound/sound-service";
 import { MainScreen } from "app/view/main/main-screen";
 import { MainService } from "app/view/main/main.service";
 import { ControlsComponent } from "app/view/menu/controls/controls.component";
@@ -104,6 +105,7 @@ export class MainComponent implements OnInit {
   // icon bar
   onLeaveRoom() {
     this.room.onBackClick();
+    soundService.play('back');
   }
 
   onDebugClick() {

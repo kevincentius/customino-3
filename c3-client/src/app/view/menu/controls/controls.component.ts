@@ -52,6 +52,7 @@ export class ControlsComponent {
     this.editIndex = null;
     this.userSettingsService.save();
     this.mainService.back();
+    soundService.play('back');
   }
   
   onRowClick(index: number) {
@@ -101,5 +102,6 @@ export class ControlsComponent {
 
   onMoreClick() {
     this.mainService.openScreen(MainScreen.PERSONALIZATION);
+    soundService.play('button', 0, 2);
   }
 }
