@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { getLocalSettings, UserSettingsService } from 'app/service/user-settings/user-settings.service';
 import { MainService } from 'app/view/main/main.service';
 import { ControlRowModel } from 'app/view/menu/controls/control-row/control-row.component';
@@ -37,13 +37,14 @@ export class ControlsComponent {
   constructor(
     private userSettingsService: UserSettingsService,
     private mainService: MainService,
+    private cd: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
     this.userSettingsService.onLoad(() => {
-      console.log(getLocalSettings());
       this.localSettings = getLocalSettings();
       this.rows.forEach(row => row.mappings = this.localSettings.control.keyMap.get(row.inputKey)!);
+      this.cd.detectChanges();
     });
   }
 

@@ -3,7 +3,7 @@ import { Player } from "@shared/game/engine/player/player";
 import { PlayerDisplay } from "app/pixi/display/player-display";
 import { soundService } from "app/pixi/display/sound/sound-service";
 
-
+let x = 0;
 
 export class PlayerSound {
   channel: number;
@@ -14,7 +14,7 @@ export class PlayerSound {
   ) {
     const isLocal = this.player instanceof LocalPlayer;
     this.channel = isLocal ? 0 : 1;
-    
+
     if (isLocal) {
       // rotate sounds
       this.player.activePiece.moveSubject.subscribe(e => {

@@ -16,8 +16,6 @@ import { RoomSettings } from '@shared/game/engine/model/room-settings';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { PlayerInfo } from '@shared/game/engine/player/player-info';
 import { PlayerStats } from '@shared/game/engine/player/stats/player-stats';
-import { RoomSlotInfo } from '@shared/model/room/room-slot-info';
-import { EnterLeaveTransition } from 'app/view/util/enter-leave-transition';
 import { InputState } from 'app/control/keyboard';
 import { getLocalSettings } from 'app/service/user-settings/user-settings.service';
 import { ChatContainerComponent } from 'app/view/chat/chat-container/chat-container.component';
@@ -157,7 +155,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.mainService.pixi.bindGame(this.game!);
     musicService.setVolumeGame();
 
-    console.log('startGame');
     this.showRoomGui = false;
     this.cd.detectChanges();
   }
