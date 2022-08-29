@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
@@ -6,7 +6,8 @@ import { MainService } from 'app/view/main/main.service';
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss']
+  styleUrls: ['./menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuComponent implements OnInit {
 

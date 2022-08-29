@@ -16,32 +16,6 @@
   }
 }
 
-.slots-container {
-  font-size: 24px;
-
-  .spectator {
-    opacity: 0.5;
-  }
-
-  .tc-text {
-    text-align: left;
-  }
-
-  .tc-text-pad {
-    text-align: left;
-    padding-left: 25px;
-  }
-
-  .tc-number {
-    text-align: right;
-  }
-
-  // .slot {
-  //   display: flex;
-  //   flex-direction: row;
-  // }
-}
-
 .screen-body-container {
   flex-grow: 1;
   overflow: hidden;
@@ -50,23 +24,4 @@
 
 .slot-player-name.local-player {
   font-weight: bold;
-}
-
-th {
-  position: sticky;
-  top: 0;
-  background: #000;
-  font-weight: normal;
-}
-
-td {
-  // background: #1325;
-}
-
-.team-icon {
-  border: solid 1px #0006;
-  text-align: center;
-  font-size: 70%;
-  width: 50px;
-  cursor: pointer;
 }

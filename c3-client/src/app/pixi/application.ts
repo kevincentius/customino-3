@@ -1,4 +1,4 @@
-import { Container, Loader, LoaderResource, Renderer, RENDERER_TYPE, SCALE_MODES, settings } from "pixi.js";
+import { Container, Loader, LoaderResource, Renderer, RENDERER_TYPE, SCALE_MODES, settings, Ticker } from "pixi.js";
 
 import { Keyboard } from "app/control/keyboard";
 import { GameDisplay } from "app/pixi/display/game-display";
@@ -6,6 +6,7 @@ import { UserSettingsService } from "app/service/user-settings/user-settings.ser
 import { ControlSettings } from "app/service/user-settings/control-settings";
 import { ClientGame } from "@shared/game/engine/game/client-game";
 import { PerformanceTracker } from "app/pixi/benchmark/performance-tracker";
+import { NgZone } from "@angular/core";
 
 export let resources: Partial<Record<string, LoaderResource>>;
 
@@ -30,9 +31,15 @@ export class PixiApplication {
   lastTick = Date.now();
 
   constructor(
+    private ngZone: NgZone,
     private canvas: HTMLCanvasElement,
     private userSettingsService: UserSettingsService,
   ) {
+    Ticker.shared.autoStart = false;
+    Ticker.shared.stop();
+    Ticker.system.autoStart=  false;
+    Ticker.system.stop();
+
     settings.SCALE_MODE = SCALE_MODES.NEAREST;
 
     this.renderer = this.createRenderer();
@@ -58,12 +65,12 @@ export class PixiApplication {
   private createRenderer(): Renderer {
     const renderer = new Renderer({
       antialias: false,
-      autoDensity: false,
       backgroundAlpha: 1,
       clearBeforeRender: false,
       powerPreference: 'high-performance',
       preserveDrawingBuffer: false,
       resolution: 1,
+      autoDensity: true,
       useContextAlpha: true,
 
       width: 800,
@@ -82,7 +89,9 @@ export class PixiApplication {
   }
 
   startMainLoop() {
-    requestAnimationFrame(this.mainLoop.bind(this));
+    this.ngZone.runOutsideAngular(() => {
+      requestAnimationFrame(this.mainLoop.bind(this));
+    });
   }
 
   private mainLoop() {

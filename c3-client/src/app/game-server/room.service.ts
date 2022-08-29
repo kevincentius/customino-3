@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { GameResult } from "@shared/game/engine/game/game-result";
 import { RoomSettings } from "@shared/game/engine/model/room-settings";
 import { GameReplay } from "@shared/game/engine/recorder/game-replay";
 import { ClientEvent } from "@shared/game/network/model/event/client-event";

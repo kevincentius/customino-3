@@ -117,7 +117,7 @@ export class GameLayouter {
       if (main == index) {
         // skip main player
         return;
-      };
+      }
 
       let arr = teamSize.get(team);
       if (arr == null) {

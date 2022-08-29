@@ -1,0 +1,73 @@
+
+<div class="slots-container">
+  <table width="100%">
+    <thead>
+      <tr>
+        <th><!--team--></th>
+        <th class="tc-text">Player</th>
+        <th class="tc-number">Score</th>
+        <th class="tc-number">BPM</th>
+        <th class="tc-text-pad">Combos</th>
+        <th class="tc-number">Attack</th>
+        <th class="tc-number">APM</th>
+        <th class="tc-number">Block</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let slot of roomInfo.slots; let i=index" [class.spectator]="!slot.settings.playing" [style.color]="getTeamTextColor(slot.settings.team)">
+        <td>
+          <ng-container *ngIf="slot.settings.team != null">
+            <div
+              class="team-icon"
+              [style.background]="getTeamBgColor(slot.settings.team)"
+              (click)="onTeamIconClick(i)"
+            >team</div>
+          </ng-container>
+
+          <ng-container *ngIf="slot.settings.team == null">
+            <div
+              class="team-icon"
+              [style.background]="getTeamBgColor(slot.settings.team)"
+              (click)="onTeamIconClick(i)"
+            >&nbsp;</div>
+          </ng-container>
+        </td>
+
+        <td class="tc-text" [class.local-player]="slot.player.sessionId == getSessionId()">
+          {{slot.player.username}}
+        </td>
+
+        <td class="tc-number">
+          {{slot.score}}
+        </td>
+        <!-- The following ngFor is only for one element maximum, just used so I can set variable name here -->
+        <ng-container *ngIf="slot.stats">
+          <td class="tc-number">
+            {{slot.stats.pieces / slot.stats.activeTime * 60 | number:'1.0-0'}}
+          </td>
+
+          <td class="tc-text-pad">
+            <ng-container *ngFor="let combo of slot.stats.combos | slice:0:7">
+              {{combo}}
+            </ng-container>
+          </td>
+
+          <td class="tc-number">
+            {{slot.stats.attackGenerated | number:'1.0-0'}}
+          </td>
+
+          <td class="tc-number">
+            {{slot.stats.attackGenerated / slot.stats.activeTime * 60 | number:'1.0-0'}} / {{slot.stats.powerGenerated / slot.stats.activeTime * 60 | number:'1.0-0'}}
+          </td>
+
+          <td class="tc-number">
+            {{slot.stats.blockGenerated | number:'1.0-0'}} / {{slot.stats.attackReceived}}
+          </td>
+        </ng-container>
+      </tr>
+    </tbody>
+  </table>
+  <div>
+  </div>
+</div>

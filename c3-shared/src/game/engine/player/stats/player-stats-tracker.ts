@@ -6,7 +6,7 @@ export class PlayerStatsTracker {
   public stats: PlayerStats = {
     activeTime: 0,
     pieces: 0,
-    combos: new Map<string, number>(),
+    combos: [],
 
     powerGenerated: 0,
     attackGenerated: 0,
@@ -62,7 +62,6 @@ export class PlayerStatsTracker {
 
   load(stats: string) {
     this.stats = JSON.parse(stats);
-    this.stats.combos = new Map(Object.entries(this.stats.combos));
   }
 
   runFrame() {
@@ -72,6 +71,6 @@ export class PlayerStatsTracker {
   }
 
   private countCombo(combo: number) {
-    this.stats.combos.set('c' + combo, (this.stats.combos.get('c' + combo) ?? 0) + 1);
+    this.stats.combos.push(combo);
   }
 }

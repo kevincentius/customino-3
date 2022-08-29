@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
 import { musicCredits } from 'app/view/menu/thanks/music-credits';
@@ -23,7 +23,8 @@ export interface CreditGroup {
 @Component({
   selector: 'app-thanks',
   templateUrl: './thanks.component.html',
-  styleUrls: ['./thanks.component.scss']
+  styleUrls: ['./thanks.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThanksComponent implements OnInit {
 
