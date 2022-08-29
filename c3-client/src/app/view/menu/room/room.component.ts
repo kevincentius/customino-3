@@ -22,6 +22,7 @@ import { InputState } from 'app/control/keyboard';
 import { getLocalSettings } from 'app/service/user-settings/user-settings.service';
 import { ChatContainerComponent } from 'app/view/chat/chat-container/chat-container.component';
 import { timeoutWrapper } from 'app/util/ng-zone-util';
+import { ChatMessage } from '@shared/model/room/chat-message';
 
 @Component({
   selector: 'app-room',
@@ -34,6 +35,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   @ViewChild('chat', { static: false }) chat!: ChatContainerComponent;
   chatMessageInput = '';
+  chatMessages: ChatMessage[] = [];
 
   private subscriptions: Subscription[] = [];
 
@@ -50,10 +52,12 @@ export class RoomComponent implements OnInit, OnDestroy {
   lastGameReplay?: GameReplay;
   lastGameStats?: { playerInfo: PlayerInfo; stats: PlayerStats; }[];
 
+  getSessionId() { return this.mainService.sessionInfo.sessionId; }
   canStartGame() { return !this.isRunning() && this.isHost() && this.isPlayersReady(); }
   isPlayersReady() { return this.roomInfo.slots.filter(slot => slot.settings.playing).length > 0; }
   isRunning() { return !!(this.game?.running); }
   isHost() { return this.mainService.sessionInfo.sessionId == this.roomInfo.host.sessionId; }
+  isSpectator() { return !this.roomInfo.slots.filter(slot => slot.player.sessionId == this.getSessionId())[0].settings.playing; }
   // ---------
 
   constructor(
@@ -91,7 +95,7 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.cd.detectChanges();
       }),
 
-      // this.roomService.roomChatMessageSubject.subscribe(chatMessage => this.chat.pushChatMessage(chatMessage)),
+      this.roomService.roomChatMessageSubject.subscribe(chatMessage => this.chat.pushChatMessage(chatMessage)),
 
       this.roomService.startGameSubject.subscribe(this.onRecvStartGame.bind(this)),
       this.roomService.serverEventSubject.subscribe(this.onRecvServerEvent.bind(this)),
@@ -246,13 +250,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     saveAs(new Blob([JSON.stringify(this.lastGameReplay)]), `CM-Server-Replay-${format(new Date(), 'yyyy-MM-dd-HH-mm:ss.SSS')}.json`);
   }
 
-
-  // // enterLeaveTransition = new EnterLeaveTransition(250);
-
-  // waitForTeamChange = false;
-
-  // chatMessageInput = '';
-
   onResetScoresClick() {
     this.roomService.resetScores();
   }
@@ -273,13 +270,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  // // spectator mode
-  // isSpectator() {
-  //   return !this.roomInfo.slots.filter(slot => slot.player.sessionId == this.getSessionId())[0].settings.playing;
-  // }
-
-  // onToggleSpectatorModeClick() {
-  //   this.roomService.setSpectatorMode(!this.isSpectator())
-  // }
-  // // --------------
+  // spectator mode
+  onToggleSpectatorModeClick() {
+    this.roomService.setSpectatorMode(!this.isSpectator())
+  }
 }

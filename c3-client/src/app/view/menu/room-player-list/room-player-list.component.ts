@@ -25,38 +25,9 @@ export class RoomPlayerListComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  // gui bindings
+  // VIEW MODEL
   isHost() { return this.mainService.sessionInfo.sessionId == this.roomInfo.host.sessionId; }
   getSessionId() { return this.mainService.sessionInfo.sessionId; }
-
-  // // gui binding  (not needed anymore?)
-  // getLastGameStats(slot: RoomSlotInfo) {
-  //   return this.game == null ? null
-  //     : this.game.players
-  //       .filter(p => p.playerInfo.name == slot.player.username)
-  //       .map(p => p.statsTracker.stats);
-  // }
-
-  // gui binding
-  // getCombos(stats: PlayerStats) {
-  //   const sortedCombos = Array.from(stats.combos.entries())
-  //     .map(e => ({combo: parseInt(e[0].substring(1)), times: e[1]}));
-  //     .sort((a, b) => b.combo - a.combo);
-    
-  //   const ret = [];
-    
-  //   for (let combos of sortedCombos) {
-  //     for (let i = 0; i < combos.times; i++) {
-  //       ret.push(combos.combo);
-
-  //       if (ret.length >= this.displayComboCount) { break }
-  //     }
-  //     if (ret.length >= this.displayComboCount) { break }
-  //   }
-
-  //   console.log('getCombos', ret, this.roomInfo);
-  //   return ret;
-  // }
 
   getTeamTextColor(team: number | null) {
     return '#' + (team == null ? soloStyle : teamStyles[team]).roomTextColor.toString(16).padStart(6, '0');
@@ -65,6 +36,7 @@ export class RoomPlayerListComponent implements OnInit {
   getTeamBgColor(team: number | null) {
     return '#' + (team == null ? soloStyle : teamStyles[team]).roomIconColor.toString(16).padStart(6, '0');
   }
+  // ----------
 
   onTeamIconClick(slotIndex: number) {
     if (this.isHost()) {

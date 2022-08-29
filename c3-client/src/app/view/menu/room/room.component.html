@@ -1,14 +1,18 @@
 
 <!-- Full Size -->
 <div class="v-flex main-container" *ngIf="roomInfo && showRoomGui">
-  <ng-container *ngIf="true">
+  <ng-container *ngIf="!showSettings">
 
     <!-- HFlex -->
     <div class="h-flex" style="gap: 40px; overflow: auto;">
 
       <!-- Left Panel (Chat) -->
       <div class="room-section" style="flex-grow: 1; flex-basis: 0;">
-        <app-chat-container #chat [roomId]="roomInfo.id" [(chatMessageInput)]="chatMessageInput"></app-chat-container>
+        <app-chat-container #chat
+          [roomId]="roomInfo.id"
+          [(chatMessageInput)]="chatMessageInput"
+          [chatMessages]="chatMessages"
+        ></app-chat-container>
       </div>
 
       <!-- Right Panel (room actions + player list) -->
@@ -20,12 +24,34 @@
           <!-- host buttons -->
           <button class="gui-button" *ngIf="isHost()" [disabled]="isRunning()" (click)="onResetScoresClick()">Reset scores</button>
           <button class="gui-button" *ngIf="isHost()" [disabled]="isRunning()" (click)="onSettingsClick()">Rule settings</button>
-        </div>
 
+          <!-- debug buttons -->
+          <ng-container *ngIf="debug">
+            <button *ngIf="lastGameReplay" class="gui-button" (click)="onVerifyLastReplayClick()">Verify replay</button>
+            <button class="gui-button" (click)="onDownloadGameStateClick()">Download debug state</button>
+          </ng-container>
+
+          <div style="flex-grow: 1;"></div>
+
+          <!-- spectator toggle button-->
+          <button class="gui-button" (click)="onToggleSpectatorModeClick()">{{isSpectator() ? 'Watch' : 'Play'}}</button>
+        </div>
         <app-room-player-list
           [roomInfo]="this.roomInfo"
         ></app-room-player-list>
       </div>
+    </div>
+  </ng-container>
+
+  <!-- Rule Settings -->
+  <ng-container *ngIf="showSettings">
+    <div class="v-flex room-section">
+      <app-room-settings
+        [currentSettings]="roomInfo.settings"
+        [editMode]="isHost()"
+        (save)="onSaveSettings($event)"
+        (cancel)="onCancelSettings()"
+      ></app-room-settings>
     </div>
   </ng-container>
 </div>
