@@ -1,9 +1,10 @@
 import { Location } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { RoomInfo } from '@shared/model/room/room-info';
 import { LobbyService } from 'app/game-server/lobby.service';
 import { DebugService } from 'app/main-server/api/v1';
+import { soundService } from 'app/pixi/display/sound/sound-service';
 import { SocketService } from 'app/service/socket.service';
 import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
@@ -11,7 +12,8 @@ import { MainService } from 'app/view/main/main.service';
 @Component({
   selector: 'app-lobby',
   templateUrl: './lobby.component.html',
-  styleUrls: ['./lobby.component.scss']
+  styleUrls: ['./lobby.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LobbyComponent implements OnInit {
   @Output() enterRoom = new EventEmitter<number>();
@@ -26,6 +28,8 @@ export class LobbyComponent implements OnInit {
 
     private location: Location,
     private router: Router,
+
+    private cd: ChangeDetectorRef,
   ) {
   }
 
@@ -33,15 +37,17 @@ export class LobbyComponent implements OnInit {
     const debugResponse = await this.debugService.test();
     await this.socketService.connect(debugResponse.gameServerUrl);
 
-    this.rooms = await this.lobbyService.getRooms();
+    await this.onRefresh();
   }
 
   onBackClick() {
     this.mainService.openScreen(MainScreen.MENU);
+    soundService.play('back');
   }
 
   onJoinRoom(roomId: number) {
     this.enterRoom.emit(roomId);
+    soundService.play('button', 0, 2);
   }
 
   async onCreateRoom() {
@@ -49,14 +55,17 @@ export class LobbyComponent implements OnInit {
     this.enterRoom.emit(room.id);
 
     this.onRefresh(); // refresh is unnecessary when the GUI is implemented later
+    soundService.play('button', 0, 2);
   }
 
   async onRefresh() {
     this.rooms = await this.lobbyService.getRooms();
+    this.cd.detectChanges();
   }
 
   async onRoomClick(room: RoomInfo) {
     await this.lobbyService.joinRoom(room.id);
     this.enterRoom.emit(room.id);
+    soundService.play('button', 0, 2);
   }
 }

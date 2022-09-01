@@ -19,7 +19,11 @@ export class ClientGame extends Game {
   private mainLoopTimeout: any;
 
 
-  constructor(startGameData: StartGameData, private localRule: LocalRule, private localPlayerIndex?: number) {
+  constructor(
+    private setTimeoutWrapper: (callback: () => void, ms?: number | undefined) => any,
+    startGameData: StartGameData,
+    private localRule: LocalRule,
+    private localPlayerIndex?: number) {
     super();
 
     this.init(startGameData);
@@ -48,11 +52,6 @@ export class ClientGame extends Game {
 
     const ct = Date.now();
     this.clockStartMs = ct - gameState.clockTimeMs;
-    // if (ct >= this.clockStartMs) {
-    //   this.startClock();
-    // } else {
-
-    // }
   }
   
   destroy() {
@@ -81,7 +80,7 @@ export class ClientGame extends Game {
   startUpdateLoop() {
     this.stop();
     this.lastUpdate = Date.now();
-    this.mainLoopTimeout = setTimeout(this.updateLoop.bind(this), gameLoopRule.mspf);
+    this.mainLoopTimeout = this.setTimeoutWrapper(this.updateLoop.bind(this), gameLoopRule.mspf);
   }
 
   updateLoop() {

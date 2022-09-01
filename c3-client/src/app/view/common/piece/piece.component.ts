@@ -1,10 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { Piece } from '@shared/game/engine/player/piece';
 
 @Component({
   selector: 'app-piece',
   templateUrl: './piece.component.html',
-  styleUrls: ['./piece.component.scss']
+  styleUrls: ['./piece.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PieceComponent implements OnInit {
 

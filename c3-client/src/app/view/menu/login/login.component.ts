@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { SessionInfo } from '@shared/model/session/session-info';
 import { shuffle } from '@shared/util/random';
 import { AccountService } from 'app/game-server/account.service';
 import { AppService } from 'app/game-server/app.service';
-import { LobbyService } from 'app/game-server/lobby.service';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { soundService } from 'app/pixi/display/sound/sound-service';
 import { getLocalSettings } from 'app/service/user-settings/user-settings.service';
@@ -13,7 +12,8 @@ import { MainService } from 'app/view/main/main.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit {
   
@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
       this.mainService.sessionInfo = sessionInfo;
       this.mainService.openScreen(MainScreen.MENU);
     
-      soundService.play('login');
+      soundService.play('button', 0, 0);
       musicService.start();
     }
   }

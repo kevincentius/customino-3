@@ -1,3 +1,4 @@
+import { NgZone } from "@angular/core";
 import { shuffle } from "@shared/util/random";
 import { Howl } from "howler";
 

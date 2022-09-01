@@ -20,6 +20,6 @@
 
     "outFile": "./dist/shared.ts"
   },
-  "include": ["src/**/*", "test/**/*"],
+  "include": ["src/**/*", "test/**/*", "../c3-client/src/app/util/ng-zone-util.ts"],
   "references": []
 }

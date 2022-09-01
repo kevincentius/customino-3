@@ -8,7 +8,8 @@ export class SoundService {
 
   constructor() {
     let list: { name: string, variations?: number }[] = [
-      { name: 'login' },
+      { name: 'button', variations: 3 },
+      { name: 'back', },
       { name: 'harddrop' },
       { name: 'locked' },
       
@@ -70,6 +71,7 @@ export class SoundService {
       variation = Math.floor(Math.random() * entry.variations);
     }
 
+    entry.howls[variation].stop();
     const id = entry.howls[variation].play();
     if (startPosRel != 0) {
       entry.howls[variation].seek(entry.howls[variation].duration() * startPosRel, id)

@@ -32,6 +32,7 @@ export class PlayerDisplay extends LayoutContainer {
     this.playerInfoDisplay = new PlayerInfoDisplay(this.player.playerInfo);
     this.board = new BoardDisplay(this.player, this.clockStartMs);
     this.pieceQueue = new PieceQueueDisplay(this.player, this.board.getMinoSize());
+
     this.playerSound = new PlayerSound(this.player, this);
 
     this.addNode(this.playerInfoDisplay);

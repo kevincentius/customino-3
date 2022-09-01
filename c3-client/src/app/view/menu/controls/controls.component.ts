@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { getLocalSettings, UserSettingsService } from 'app/service/user-settings/user-settings.service';
 import { MainService } from 'app/view/main/main.service';
 import { ControlRowModel } from 'app/view/menu/controls/control-row/control-row.component';
@@ -14,7 +14,8 @@ import { MainScreen } from 'app/view/main/main-screen';
 @Component({
   selector: 'app-controls',
   templateUrl: './controls.component.html',
-  styleUrls: ['./controls.component.scss']
+  styleUrls: ['./controls.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ControlsComponent {
   settingsFields = [
@@ -36,13 +37,14 @@ export class ControlsComponent {
   constructor(
     private userSettingsService: UserSettingsService,
     private mainService: MainService,
+    private cd: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
     this.userSettingsService.onLoad(() => {
-      console.log(getLocalSettings());
       this.localSettings = getLocalSettings();
       this.rows.forEach(row => row.mappings = this.localSettings.control.keyMap.get(row.inputKey)!);
+      this.cd.detectChanges();
     });
   }
 
@@ -50,6 +52,7 @@ export class ControlsComponent {
     this.editIndex = null;
     this.userSettingsService.save();
     this.mainService.back();
+    soundService.play('back');
   }
   
   onRowClick(index: number) {
@@ -99,5 +102,6 @@ export class ControlsComponent {
 
   onMoreClick() {
     this.mainService.openScreen(MainScreen.PERSONALIZATION);
+    soundService.play('button', 0, 2);
   }
 }

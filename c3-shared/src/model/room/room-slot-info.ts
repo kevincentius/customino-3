@@ -1,3 +1,4 @@
+import { PlayerStats } from "@shared/game/engine/player/stats/player-stats";
 import { RoomSlotSettings } from "@shared/model/room/room-slot-settings";
 import { ClientInfo } from "@shared/model/session/client-info";
 
@@ -9,5 +10,6 @@ import { ClientInfo } from "@shared/model/session/client-info";
 export interface RoomSlotInfo {
   player: ClientInfo;
   score: number;
+  stats?: PlayerStats;
   settings: RoomSlotSettings;
 }

@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FieldTags } from '@shared/game/engine/model/rule/data-field/field-tag';
 import { localRuleFields } from '@shared/game/engine/model/rule/local-rule/local-rule-fields';
 import { userRuleFields } from '@shared/game/engine/model/rule/user-rule/user-rule-fields';
+import { soundService } from 'app/pixi/display/sound/sound-service';
 import { LocalSettings } from 'app/service/user-settings/local-settings';
 import { getLocalSettings, UserSettingsService } from 'app/service/user-settings/user-settings.service';
 import { MainService } from 'app/view/main/main.service';
@@ -10,7 +11,8 @@ import { DataFieldCategoryData } from 'app/view/menu/rule-settings/rule-settings
 @Component({
   selector: 'app-personalization',
   templateUrl: './personalization.component.html',
-  styleUrls: ['./personalization.component.scss']
+  styleUrls: ['./personalization.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PersonalizationComponent implements OnInit {
 
@@ -31,17 +33,19 @@ export class PersonalizationComponent implements OnInit {
 
   onBackClick() {
     this.mainService.back();
+    soundService.play('back');
   }
   
   constructor(
     private userSettingsService: UserSettingsService,
     private mainService: MainService,
+    private cd: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
     this.userSettingsService.onLoad(() => {
-      console.log(getLocalSettings());
       this.localSettings = getLocalSettings();
+      this.cd.detectChanges();
     });
   }
 

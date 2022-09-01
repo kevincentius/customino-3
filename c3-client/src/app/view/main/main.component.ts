@@ -1,7 +1,6 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { AccountService } from "app/game-server/account.service";
-import { UserSettingsService } from "app/service/user-settings/user-settings.service";
+import { soundService } from "app/pixi/display/sound/sound-service";
 import { MainScreen } from "app/view/main/main-screen";
 import { MainService } from "app/view/main/main.service";
 import { ControlsComponent } from "app/view/menu/controls/controls.component";
@@ -16,9 +15,10 @@ import { ReplayComponent } from "app/view/replay/replay.component";
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MainService],
 })
-export class MainComponent {
+export class MainComponent implements OnInit {
   MainScreen = MainScreen;
 
   @ViewChild('menu', { static: true })
@@ -55,7 +55,10 @@ export class MainComponent {
   constructor(
     public mainService: MainService,
     private route: ActivatedRoute,
-  ) {
+    private changeDetectorRef: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit() {
     this.openScreen(MainScreen.PRELOADER);
 
     this.route.params.subscribe(params => {
@@ -83,13 +86,17 @@ export class MainComponent {
     if (screen == MainScreen.LOBBY) {
       this.lobby.onRefresh();
     }
+
+    this.changeDetectorRef.detectChanges();
   }
 
   back() {
     if (this.screen == MainScreen.PERSONALIZATION) {
       this.screen = MainScreen.CONTROLS;
+      this.changeDetectorRef.detectChanges();
     } else {
       this.screen = this.prevScreen;
+      this.changeDetectorRef.detectChanges();
     }
   }
 
@@ -98,6 +105,7 @@ export class MainComponent {
   // icon bar
   onLeaveRoom() {
     this.room.onBackClick();
+    soundService.play('back');
   }
 
   onDebugClick() {
