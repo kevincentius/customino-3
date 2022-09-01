@@ -20,12 +20,12 @@ export class ClientGame extends Game {
 
 
   constructor(
-    private setTimeoutWrapper: (callback: () => void, ms?: number | undefined) => any,
+    setTimeoutWrapper: (callback: () => void, ms?: number | undefined) => any,
     startGameData: StartGameData,
     private localRule: LocalRule,
-    private localPlayerIndex?: number) {
-    super();
-
+    private localPlayerIndex?: number,
+  ) {
+    super(setTimeoutWrapper);
     this.init(startGameData);
     
     this.clockStartSubject.subscribe(() => this.startUpdateLoop());
@@ -40,7 +40,7 @@ export class ClientGame extends Game {
     return startGameData.players.map(
       (startPlayerData, index) => 
         index == this.localPlayerIndex
-          ? new LocalPlayer(this, startPlayerData, this.localRule)
+          ? new LocalPlayer(this.setTimeoutWrapper, this, startPlayerData, this.localRule)
           : new RemotePlayer(this, startPlayerData, this.localRule));
   }
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, NgZone } from '@angular/core';
 import { getLocalSettings, UserSettingsService } from 'app/service/user-settings/user-settings.service';
 import { MainService } from 'app/view/main/main.service';
 import { ControlRowModel } from 'app/view/menu/controls/control-row/control-row.component';
@@ -38,6 +38,7 @@ export class ControlsComponent {
     private userSettingsService: UserSettingsService,
     private mainService: MainService,
     private cd: ChangeDetectorRef,
+    private ngZone: NgZone,
   ) { }
 
   ngOnInit() {
@@ -93,7 +94,7 @@ export class ControlsComponent {
     setField(this.localSettings, field, value);
 
     if (field == musicVolumeField) {
-      musicService.setUserMusicVolume(value / 100);
+      musicService.setUserMusicVolume(value / 100, this.ngZone);
     } else if (field == soundVolumeField) {
       soundService.setUserSoundVolume(value);
     }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { localRuleFields } from '@shared/game/engine/model/rule/local-rule/local-rule-fields';
 import { fillDefaultRules } from '@shared/game/engine/model/rule/player-rule';
 import { userRuleFields } from '@shared/game/engine/model/rule/user-rule/user-rule-fields';
@@ -23,6 +23,7 @@ export class UserSettingsService {
   constructor(
     private idbService: IdbService,
     private appService: AppService,
+    private ngZone: NgZone,
   ) {
     this.init();
   }
@@ -44,7 +45,7 @@ export class UserSettingsService {
       if (localSettings.localRule == null) { localSettings.localRule = {} as any; }
       fillDefaultRules(localSettings.localRule, localRuleFields);
       
-      musicService.setUserMusicVolume(localSettings.musicVolume);
+      musicService.setUserMusicVolume(localSettings.musicVolume, this.ngZone);
       soundService.setUserSoundVolume(localSettings.soundVolume);
     } else {
       localSettings = this.createDefaultSettings();

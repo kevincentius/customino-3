@@ -153,7 +153,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   private startGame() {
     this.game!.start();
     this.mainService.pixi.bindGame(this.game!);
-    musicService.setVolumeGame();
+    musicService.setVolumeGame(this.ngZone);
 
     this.showRoomGui = false;
     this.cd.detectChanges();
@@ -196,7 +196,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   async onRecvGameOver(roomInfo: RoomInfo) {
-    musicService.setVolumeMenu();
+    musicService.setVolumeMenu(this.ngZone);
     this.mainService.pixi.keyboard.state = InputState.DISABLED;
 
     // update stats

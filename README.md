@@ -12,7 +12,7 @@ Please choose LTS versions and make sure the softwares are included in your PATH
   - Create a database called `dev-c3`. You can use an SQL client or CLI as follows:
     - `psql -U postgres`
     - (enter password)
-    - `create database dev-c3;`
+    - `create database "dev-c3";`
 
 - **Java** (required for OpenAPI, not runtime dependency) - https://www.java.com/en/download
 
@@ -26,6 +26,7 @@ Please choose LTS versions and make sure the softwares are included in your PATH
 
 - Clone the repository
 - Follow the "Project Setup" section in the README in each of the subprojects in the following order:
+  - c3-shared
   - c3-main-server
   - c3-game-server
   - c3-client

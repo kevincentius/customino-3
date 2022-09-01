@@ -1,5 +1,6 @@
 import { NgZone } from "@angular/core";
 import { shuffle } from "@shared/util/random";
+import { timeoutWrapper } from "app/util/ng-zone-util";
 import { Howl } from "howler";
 
 export class MusicService {
@@ -79,22 +80,22 @@ export class MusicService {
     }
   }
 
-  setVolumeMenu() { this.setTargetVolume( this.volumeMenu); }
-  setVolumeGame() { this.setTargetVolume( this.volumeGame); }
+  setVolumeMenu(ngZone?: NgZone) { this.setTargetVolume( this.volumeMenu, ngZone); }
+  setVolumeGame(ngZone: NgZone) { this.setTargetVolume( this.volumeGame, ngZone); }
 
-  setUserMusicVolume(volume: number) {
+  setUserMusicVolume(volume: number, ngZone: NgZone) {
     this.userSettingsVolume = volume;
     if (!this.timeout) {
-      this.timeout = setTimeout(() => this.loop());
+      this.timeout = timeoutWrapper(ngZone)(() => this.loop());
     }
   }
 
-  private setTargetVolume(volume: number) {
+  private setTargetVolume(volume: number, ngZone?: NgZone) {
     this.prevVolume = this.currentVolume;
     this.volumeAdjustMs = Date.now();
     this.targetVolume = volume;
     if (!this.timeout) {
-      this.timeout = setTimeout(() => this.loop());
+      this.timeout = (ngZone ? timeoutWrapper(ngZone) : setTimeout)(() => this.loop());
     }
   }
 

@@ -23,6 +23,10 @@ export abstract class Game {
   abstract createPlayers(startGameData: StartGameData): Player[];
   abstract destroy(): void;
 
+  constructor(
+    protected setTimeoutWrapper: (callback: () => void, ms?: number | undefined) => any = setTimeout,
+  ) {}
+
   init(startGameData: StartGameData) {
     this.startGameData = startGameData;
     this.players = this.createPlayers(startGameData);

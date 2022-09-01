@@ -11,8 +11,6 @@ import { NgZone } from "@angular/core";
 export let resources: Partial<Record<string, LoaderResource>>;
 
 export class PixiApplication {
-  // app!: Application;
-
   loaded = false;
 
   game?: ClientGame;

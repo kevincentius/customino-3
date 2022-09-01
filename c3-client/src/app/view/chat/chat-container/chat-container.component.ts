@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, NgZone, Output, ViewChild } from '@angular/core';
 import { ChatMessage } from '@shared/model/room/chat-message';
 import { RoomService } from 'app/game-server/room.service';
+import { timeoutWrapper } from 'app/util/ng-zone-util';
 
 @Component({
   selector: 'app-chat-container',
@@ -23,6 +24,7 @@ export class ChatContainerComponent {
   constructor(
     private roomService: RoomService,
     private cd: ChangeDetectorRef,
+    private ngZone: NgZone,
   ) {}
 
   onSubmitChat() {
@@ -43,7 +45,7 @@ export class ChatContainerComponent {
     this.cd.detectChanges();
     
     if (shouldAutoScroll) {
-      setTimeout(() => {
+      timeoutWrapper(this.ngZone)(() => {
         el.scrollTop = el.scrollHeight;
       });
     }
