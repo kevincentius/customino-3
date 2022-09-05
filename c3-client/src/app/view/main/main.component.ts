@@ -46,7 +46,7 @@ export class MainComponent implements OnInit {
   private pixiOverlay!: ElementRef<HTMLDivElement>;
 
   // view model
-  screen = MainScreen.PRELOADER;
+  screen = MainScreen.PRELOGIN;
   initialized = false;
 
   // icon bar
@@ -59,10 +59,10 @@ export class MainComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.openScreen(MainScreen.PRELOADER);
+    this.openScreen(MainScreen.PRELOGIN);
 
     this.route.params.subscribe(params => {
-      this.openScreen(params['component'] ?? MainScreen.LOGIN);
+      this.openScreen(params['component'] ?? MainScreen.PRELOGIN);
     });
   }
   

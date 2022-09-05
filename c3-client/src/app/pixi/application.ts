@@ -1,4 +1,4 @@
-import { Container, Loader, LoaderResource, Renderer, RENDERER_TYPE, SCALE_MODES, settings, Ticker } from "pixi.js";
+import { Container, Loader, LoaderResource, Renderer, RENDERER_TYPE, SCALE_MODES, settings, Ticker, utils } from "pixi.js";
 
 import { Keyboard } from "app/control/keyboard";
 import { GameDisplay } from "app/pixi/display/game-display";
@@ -33,6 +33,7 @@ export class PixiApplication {
     private canvas: HTMLCanvasElement,
     private userSettingsService: UserSettingsService,
   ) {
+    utils.skipHello();
     Ticker.shared.autoStart = false;
     Ticker.shared.stop();
     Ticker.system.autoStart=  false;

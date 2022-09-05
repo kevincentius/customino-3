@@ -16,7 +16,7 @@ export const playerRuleFields: DataField[] = [
     validators: [ intRangeValidator(4, 100) ],
 
     name: 'Field width',
-    description: 'The number of columns in the field. Wider fields will need more pieces to complete each line.',
+    description: 'The number of columns in the field.',
     tags: [
       FieldTags.BASIC,
       FieldTags.GENERAL,
@@ -29,7 +29,7 @@ export const playerRuleFields: DataField[] = [
     validators: [ intRangeValidator(4, 100) ],
 
     name: 'Field height (visible)',
-    description: 'The number of visible rows in the field. Taller fields allow players to survive longer.',
+    description: 'The number of visible rows in the field.',
     tags: [
       FieldTags.BASIC,
       FieldTags.GENERAL,
@@ -103,7 +103,7 @@ export const playerRuleFields: DataField[] = [
     startIndex: 0,
     
     name: 'Garbage spawn time',
-    description: 'The minimum amount of time an attack must stay inside the garbage indicator (displayed on the left of the field) before they can enter the field. Longer spawn time generally helps the defender to react to or block the incoming garbage lines.',
+    description: 'The minimum amount of time an attack must stay inside the garbage indicator (displayed on the left of the field) before they can enter the field. This gives the defender a chance to block the incoming lines.',
     tags: [
       FieldTags.ADVANCED,
       FieldTags.DEFENSE,
@@ -119,7 +119,7 @@ export const playerRuleFields: DataField[] = [
     startIndex: 0,
     
     name: 'Continuous garbage spawn rate',
-    description: 'Garbage lines per second that will enter the field, as long as there are garbage queued. This lets garbage lines enter the field even without the player placing down any piece.',
+    description: 'Garbage lines per second that will enter the field, as long as there are garbage queued.',
     tags: [
       FieldTags.ADVANCED,
       FieldTags.DEFENSE,
@@ -212,7 +212,7 @@ export const playerRuleFields: DataField[] = [
     validators: [ floatRangeValidator(0, 10) ],
 
     name: 'Speed combo initial time',
-    description: 'The amount of time given to perform a combo. On top of this, the player gains bonus time when clearing lines during a combo.',
+    description: 'The amount of time given to perform a combo. The player may gain bonus time during the combo according to other rules.',
     tags: [
       FieldTags.BASIC,
       FieldTags.GENERAL,
@@ -228,7 +228,7 @@ export const playerRuleFields: DataField[] = [
     startIndex: 0,
     
     name: 'Speed combo time bonus base',
-    description: 'Determines the amount of time gained when clearing N lines during a combo. Can be negative which means a time penalty instead. This value will first be multiplied by the "Speed combo time bonus multiplier" before being added to the combo timer.',
+    description: 'Determines the amount of time bonus gained when clearing N lines during a combo. Can be negative which means a time penalty instead. This value will first be multiplied by the "Speed combo time bonus multiplier" before being added to the combo timer.',
     tags: [
       FieldTags.ADVANCED,
       FieldTags.ATTACK,
@@ -244,7 +244,7 @@ export const playerRuleFields: DataField[] = [
     startIndex: 0,
     
     name: 'Speed combo time bonus base (spin)',
-    description: 'Determines the amount of time gained when clearing N lines with a spin bonus, during a combo. This value will first be multiplied by the "Speed combo time bonus multiplier" before being added to the combo timer.',
+    description: 'Determines the amount of time bonus gained when clearing N lines with a spin bonus, during a combo. This value will first be multiplied by the "Speed combo time bonus multiplier" before being added to the combo timer.',
     tags: [
       FieldTags.ADVANCED,
       FieldTags.ATTACK,

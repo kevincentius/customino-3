@@ -6,8 +6,10 @@
   <app-lobby #lobby [hidden]="screen!==MainScreen.LOBBY"
     (enterRoom)="onEnterRoom($event)"
   ></app-lobby>
+
+  <app-prelogin #prelogin [hidden]="screen!==MainScreen.PRELOGIN"></app-prelogin>
   
-  <app-login #menu [hidden]="screen!==MainScreen.LOGIN"></app-login>
+  <app-login #login [hidden]="screen!==MainScreen.LOGIN"></app-login>
 
   <app-menu #menu [hidden]="screen!==MainScreen.MENU"></app-menu>
 
@@ -21,9 +23,6 @@
 <div class="icon-bar">
   <ng-container *ngIf="screen == MainScreen.ROOM">
     <mat-icon class="icon-button" (click)="onLeaveRoom()">logout</mat-icon>
-
-    <!-- <mat-icon class="icon-button" *ngIf="!room.enterLeaveTransition.state" (click)="room.setHideGui(false)">visibility_off</mat-icon>
-    <mat-icon class="icon-button" *ngIf="room.enterLeaveTransition.state" (click)="room.setHideGui(true)">visibility</mat-icon> -->
 
     <mat-icon class="icon-button" (click)="openScreen(MainScreen.CONTROLS)">settings</mat-icon>
 

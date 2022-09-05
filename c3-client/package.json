@@ -66,6 +66,7 @@
   },
   "build": {
     "appId": "customino",
+    "artifactName": "customino",
     "files": [
       "angular-build/**/*",
       "electron-app/main.js"

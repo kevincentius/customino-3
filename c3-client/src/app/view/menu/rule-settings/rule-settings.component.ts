@@ -41,6 +41,7 @@ export class RuleSettingsComponent implements OnInit {
   displayedRule!: any;
   groupByCategory = true;
   selectedPreset?: RulePreset = rulePresets[0];
+  fieldDescription?: string;
   
   ngOnInit(): void {
     if (this.gameRule) {
@@ -98,8 +99,8 @@ export class RuleSettingsComponent implements OnInit {
   private loadRule(data: any) {
     const unknownProperties: string[] = [];
     for (const key of Object.keys(data.roomRule)) {
-      if (this.gameRule && key in this.gameRule!.roomRule) {
-        (this.gameRule!.roomRule as any)[key] = data.roomRule[key];
+      if (this.gameRule && key in this.gameRule.roomRule) {
+        (this.gameRule.roomRule as any)[key] = data.roomRule[key];
       } else if (this.localRule && key in this.localRule) {
         (this.localRule as any)[key] = data[key];
       } else {
