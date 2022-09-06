@@ -94,6 +94,20 @@ export const playerRuleFields: DataField[] = [
     ],
   },
   {
+    property: 'lagTolerance',
+    fieldType: FieldType.NUMBER_SCROLL,
+    default: 5000,
+    stepSize: 250,
+    validators: [ intRangeValidator(250, 30000)],
+
+    name: 'Lag tolerance (milliseconds)',
+    description: 'Latency limit. When the server expects incoming data from a client, the server will wait for this amount of time before dropping the client.',
+    tags: [
+      FieldTags.BASIC,
+      FieldTags.GENERAL,
+    ]
+  },
+  {
     property: 'garbageSpawnDelayTable',
     fieldType: FieldType.NUMBER_LIST,
     default: [0, 1],

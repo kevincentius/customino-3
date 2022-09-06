@@ -1,4 +1,6 @@
 
+@import 'font';
+
 .room-container {
  display: flex;
  flex-direction: column;
@@ -10,7 +12,7 @@
   display: flex;
   background: #fff6;
   padding: 20px 50px;
-  font-size: 24px;
+  font-size: $font-size-default;
 
   .room-name {
     width: 400px;

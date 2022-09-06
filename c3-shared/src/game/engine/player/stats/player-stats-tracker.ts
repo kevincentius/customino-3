@@ -13,6 +13,8 @@ export class PlayerStatsTracker {
     blockGenerated: 0,
     attackReceived: 0,
     attackSpawned: 0,
+
+    afk: false,
   };
 
   constructor(

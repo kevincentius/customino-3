@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, NgZone, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, NgZone, Output, ViewChild } from '@angular/core';
 import { ChatMessage } from '@shared/model/room/chat-message';
 import { RoomService } from 'app/game-server/room.service';
 import { timeoutWrapper } from 'app/util/ng-zone-util';
@@ -9,7 +9,7 @@ import { timeoutWrapper } from 'app/util/ng-zone-util';
   styleUrls: ['./chat-container.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChatContainerComponent {
+export class ChatContainerComponent implements AfterViewInit {
   @Input() roomId?: number;
 
   @Input() chatMessages!: ChatMessage[];
@@ -27,6 +27,10 @@ export class ChatContainerComponent {
     private ngZone: NgZone,
   ) {}
 
+  ngAfterViewInit() {
+    this.refresh();
+  }
+
   onSubmitChat() {
     if (this.chatMessageInput.trim().length > 0) {
       this.roomService.postChatMessage(this.chatMessageInput);
@@ -35,8 +39,7 @@ export class ChatContainerComponent {
     }
   }
 
-  pushChatMessage(chatMessage: ChatMessage) {
-    this.chatMessages.push(chatMessage);
+  refresh() {
     while (this.chatMessages.length > 100) {
       this.chatMessages.shift();
     }

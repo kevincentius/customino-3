@@ -8,4 +8,5 @@ export interface PlayerStats {
   blockGenerated: number;
   attackReceived: number;
   attackSpawned: number;
+  afk: boolean;
 }

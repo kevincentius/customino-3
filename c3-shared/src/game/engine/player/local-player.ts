@@ -9,6 +9,7 @@ import { Subject } from "rxjs";
 import { Game } from "../game/game";
 import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
 import { LocalRule } from "../model/rule/local-rule/local-rule";
+import { clientEventFlushInterval } from "../game/game-loop-rule";
 
 export class LocalPlayer extends Player {
   // event emitters
@@ -17,7 +18,6 @@ export class LocalPlayer extends Player {
   // events will be buffered and delivered in batches to the server
   private eventBuffer: GameEvent[] = [];
   private lastFlush: number = Date.now();
-  private flushInterval = 100;
 
   constructor(
     private setTimeoutWrapper: (callback: () => void, ms?: number | undefined) => any,
@@ -39,9 +39,8 @@ export class LocalPlayer extends Player {
 
   update() {
     if (this.alive) {
-      if (Date.now() - this.lastFlush >= this.flushInterval) {
+      if (Date.now() - this.lastFlush >= clientEventFlushInterval + 300) {
         this.flush();
-        this.flushInterval = Math.random() * 250 + 50; // DEBUG
       }
 
       super.runFrame();

@@ -1,9 +1,10 @@
 
 @import 'palette';
+@import 'font';
 
 .control-row {
   transition: 100ms;
-  font-size: 24px;
+  font-size: $font-size-default;
   display: flex;
   cursor: pointer;
   padding: 0px 40px;
@@ -37,7 +38,7 @@
   }
 
   .value-input {
-    font-size: 24px;
+    font-size: $font-size-default;
     border: none;
     background: #fff3;
     color: white;

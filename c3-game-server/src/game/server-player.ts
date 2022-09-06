@@ -104,4 +104,24 @@ export class ServerPlayer extends Player {
     this.attackOutgoingBuffer = [];
     this.serverEventSubject.next(serverEventMap);
   }
+
+  // disconnects the player (this should be decided by the server)
+  dropPlayer() {
+    const serverEventMap = new Map<number, ServerPlayerEvent>();
+
+    const serverPlayerEvent: ServerPlayerEvent = {
+      playerIndex: this.playerIndex,
+      serverEvent: {
+        disconnect: true,
+      }
+    };
+
+    for (let i = -1; i < this.game.players.length; i++) {
+      serverEventMap.set(i, serverPlayerEvent);
+    }
+
+    this.serverEventSubject.next(serverEventMap);
+
+    this.die();
+  }
 }

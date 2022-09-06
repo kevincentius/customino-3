@@ -1,4 +1,6 @@
 
+@import 'font';
+
 .login-background {
   // background: #102;
 }
@@ -39,6 +41,6 @@
 }
 
 .version {
-  font-size: 12px;
+  font-size: $font-size-small;
   color: #fff4;
 }

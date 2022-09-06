@@ -93,7 +93,10 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.cd.detectChanges();
       }),
 
-      this.roomService.roomChatMessageSubject.subscribe(chatMessage => this.chat.pushChatMessage(chatMessage)),
+      this.roomService.roomChatMessageSubject.subscribe(chatMessage => {
+        this.chatMessages.push(chatMessage);
+        this.chat?.refresh();
+      }),
 
       this.roomService.startGameSubject.subscribe(this.onRecvStartGame.bind(this)),
       this.roomService.serverEventSubject.subscribe(this.onRecvServerEvent.bind(this)),

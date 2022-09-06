@@ -120,6 +120,9 @@ export class Room {
       this.slots.forEach(slot => slot.session.socket.emit(LobbyEvent.START_GAME, startGameData));
 
       // start server game
+      if (this.game) {
+        this.game.destroy();
+      }
       this.game = new ServerGame(startGameData, players);
       
       this.game.gameOverSubject.subscribe(gameResult => {
@@ -127,7 +130,6 @@ export class Room {
           if (slot.playerIndex != null) {
             slot.addScore(gameResult.players[slot.playerIndex].score);
             slot.updateStats(this.game!.players[slot.playerIndex].statsTracker.stats);
-            console.log(JSON.stringify(this.game!.players[slot.playerIndex].statsTracker.stats));
           }
         }
         
@@ -146,8 +148,13 @@ export class Room {
                 playerEvents: [ serverPlayerEvent ],
               };
               slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
+              
+              if (serverPlayerEvent.serverEvent?.disconnect == true && slot.playerIndex == serverPlayerEvent.playerIndex) {
+                console.log('disconnect drop player');
+                this.postChatMessage(null, `${slot.session.username} was dropped from the round due to lag.`);
+              }
             }
-          })
+          });
         });
       }
       
@@ -225,6 +232,7 @@ export class Room {
 
   destroy() {
     // destroy game instance
+    this.game?.destroy();
   }
 
   private broadcastRoomInfo() {
@@ -248,9 +256,9 @@ export class Room {
     this.game!.players[playerIndex].handleEvent(clientEvent);
   }
 
-  postChatMessage(session: Session, message: string) {
+  postChatMessage(session: Session | null, message: string) {
     const chatMessage: ChatMessage = {
-      username: session.username!,
+      username: session == null ? null : session.username!,
       timestamp: Date.now(),
       message: message,
     };

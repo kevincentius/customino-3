@@ -68,7 +68,7 @@ export abstract class Game {
             return {
               rank: 0,
               score: deadPlayers,
-            }
+            };
           } else {
             const worsePlayers = this.players.filter(
               p => p != player

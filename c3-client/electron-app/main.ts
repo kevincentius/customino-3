@@ -31,8 +31,8 @@ function createWindow(): BrowserWindow {
   win.setMenu(null);
 
   if (serve) {
-    const debug = require('electron-debug');
-    debug();
+    // const debug = require('electron-debug');
+    // debug();
 
     require('electron-reloader')(module);
     win.loadURL('http://localhost:4200');

@@ -1,4 +1,10 @@
 
-<span class="username">{{chatMessage.username}}: </span>
+<ng-container *ngIf="chatMessage.username != null">
+  <span class="username">{{chatMessage.username}}: </span>
+  
+  <span>{{chatMessage.message}}</span>
+</ng-container>
 
-<span>{{chatMessage.message}}</span>
+<ng-container *ngIf="chatMessage.username == null">
+  <span class="system-message">{{chatMessage.message}}</span>
+</ng-container>

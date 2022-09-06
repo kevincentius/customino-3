@@ -115,6 +115,10 @@ export class ClientGame extends Game {
           }
         }
       }
+
+      if (playerEvent.serverEvent?.disconnect == true) {
+        this.players[playerEvent.playerIndex].die();
+      }
     }
   }
 }
