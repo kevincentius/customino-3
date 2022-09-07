@@ -29,7 +29,7 @@ export class LobbyGateway {
   createRoom(socket: Socket) {
     const session = this.sessionService.getSession(socket);
     return this.roomService
-      .createRoom(session)
+      .createUserRoom(session)
       .getRoomInfo();
   }
 

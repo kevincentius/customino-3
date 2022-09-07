@@ -16,8 +16,12 @@ import { getDefaultRoomRule } from "@shared/game/engine/model/rule/room-rule/roo
 import { SessionService } from "service/session/session-service";
 import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
 import { ChatMessage } from "@shared/model/room/chat-message";
+import { RoomAutoStart } from "./room-auto-start";
+import { Subject } from "rxjs";
 
 export class Room {
+  slotsChangeSubject = new Subject<void>();
+
   createdAt = Date.now();
   lastActivity = Date.now();
   slots: RoomSlot[];
@@ -26,22 +30,23 @@ export class Room {
       roomRule: getDefaultRoomRule(),
     },
   };
-  host!: Session;
+  host!: Session | null;
 
   provideReplay = true;
   lastGameReplay?: GameReplay;
 
   // only for the current game session:
+  autoStart: RoomAutoStart = new RoomAutoStart(this);
   game?: ServerGame;
   r = new RandomGen();
 
   constructor(
     public id: number,
     public name: string,
-    public creator: Session,
+    public creator: Session | null,
     private sessionService: SessionService,
   ) {
-    this.slots =[new RoomSlot(creator)];
+    this.slots = creator == null ? [] : [new RoomSlot(creator)];
     this.host = creator;
   }
 
@@ -79,6 +84,7 @@ export class Room {
     }
 
     if (this.slots.length != prevSlotCount) {
+      this.slotsChangeSubject.next();
       this.broadcastRoomInfo();
     }
   }
@@ -86,13 +92,13 @@ export class Room {
   join(session: Session) {
     if (!this.isInRoom(session)) {
       this.slots.push(new RoomSlot(session));
-
+      this.slotsChangeSubject.next();
       this.broadcastRoomInfo();
     }
   }
 
-  startGame(session: Session) {
-    if (!this.isRunning() && this.host == session && this.isInRoom(session) && this.slots.filter(slot => slot.settings.playing).length > 0) {
+  startGame(session: Session | null) {
+    if (this.host == session && (session == null || this.isInRoom(session)) && this.canStartGame()) {
       const playerSlots = this.slots.filter(slot => slot.settings.playing);
       this.slots.forEach(slot => slot.playerIndex = null);
       playerSlots.forEach((playerSlot, index) => playerSlot.playerIndex = index);
@@ -132,6 +138,8 @@ export class Room {
             slot.updateStats(this.game!.players[slot.playerIndex].statsTracker.stats);
           }
         }
+
+        this.slotsChangeSubject.next();
         
         for (const slot of this.slots) {
           slot.session.socket.emit(LobbyEvent.GAME_OVER, this.getRoomInfo());
@@ -170,7 +178,7 @@ export class Room {
     }
   }
 
-  changeRoomSettings(session: Session, roomSettings: RoomSettings) {
+  changeRoomSettings(session: Session | null, roomSettings: RoomSettings) {
     if (this.host == session) {
       this.settings = roomSettings;
       this.broadcastRoomInfo();
@@ -182,6 +190,7 @@ export class Room {
       const slot = this.slots[slotIndex];
       if (slot.settings.team != team) {
         this.slots[slotIndex].settings.team = team;
+        this.slotsChangeSubject.next();
         this.broadcastRoomInfo();
       }
     }
@@ -191,6 +200,7 @@ export class Room {
     const slot = this.slots.filter(slot => slot.session == session)[0];
     if (slot) {
       slot.settings.playing = !spectator;
+      this.slotsChangeSubject.next();
       this.broadcastRoomInfo();
     }
   }
@@ -218,11 +228,12 @@ export class Room {
     return {
       id: this.id,
       name: this.name,
-      host: this.host.getClientInfo(),
+      host: this.host == null ? null : this.host.getClientInfo(),
 
       settings: this.settings,
       slots: this.slots.map(roomSlot => roomSlot.getRoomSlotInfo()),
       gameState: gameState ? this.game?.serialize() ?? null : null,
+      autoStartMs: this.autoStart.getMsUntilAutoStart(),
     };
   }
 
@@ -231,7 +242,7 @@ export class Room {
   }
 
   destroy() {
-    // destroy game instance
+    this.autoStart?.destroy();
     this.game?.destroy();
   }
 
@@ -265,5 +276,13 @@ export class Room {
     for (const slot of this.slots) {
       slot.session.socket.emit(LobbyEvent.POST_CHAT_MESSAGE, chatMessage);
     }
+  }
+
+  shouldBeDestroyed() {
+    return this.isEmpty() && this.creator != null;
+  }
+
+  canStartGame() {
+    return !this.isRunning() && this.slots.filter(slot => slot.settings.playing).length > 0;
   }
 }

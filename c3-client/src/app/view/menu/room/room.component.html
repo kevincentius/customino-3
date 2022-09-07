@@ -36,6 +36,11 @@
           <!-- spectator toggle button-->
           <button class="gui-button" (click)="onToggleSpectatorModeClick()">{{isSpectator() ? 'Watch' : 'Play'}}</button>
         </div>
+
+        <div>
+          <app-room-auto-start-countdown #autoStartCountdown [countdownEndMs]="countdownEndMs"></app-room-auto-start-countdown>
+        </div>
+
         <app-room-player-list
           [roomInfo]="this.roomInfo"
         ></app-room-player-list>

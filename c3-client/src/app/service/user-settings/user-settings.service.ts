@@ -91,7 +91,7 @@ export class UserSettingsService {
       keyMap,
       arr: 15,
       das: 100,
-      sdr: 1,
+      sdr: 10,
     }
   }
 

@@ -21,6 +21,7 @@ import { getLocalSettings } from 'app/service/user-settings/user-settings.servic
 import { ChatContainerComponent } from 'app/view/chat/chat-container/chat-container.component';
 import { timeoutWrapper } from 'app/util/ng-zone-util';
 import { ChatMessage } from '@shared/model/room/chat-message';
+import { RoomAutoStartCountdownComponent } from '../room-auto-start-countdown/room-auto-start-countdown.component';
 
 @Component({
   selector: 'app-room',
@@ -28,12 +29,15 @@ import { ChatMessage } from '@shared/model/room/chat-message';
   styleUrls: ['./room.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RoomComponent implements OnInit, OnDestroy {
+export class RoomComponent implements OnDestroy {
   debug = false; //!environment.production;
 
   @ViewChild('chat', { static: false }) chat!: ChatContainerComponent;
   chatMessageInput = '';
   chatMessages: ChatMessage[] = [];
+
+  @ViewChild('autoStartCountdown', { static: false }) autoStartCountdown!: RoomAutoStartCountdownComponent;
+  countdownEndMs?: number;
 
   private subscriptions: Subscription[] = [];
 
@@ -54,7 +58,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   canStartGame() { return !this.isRunning() && this.isHost() && this.isPlayersReady(); }
   isPlayersReady() { return this.roomInfo.slots.filter(slot => slot.settings.playing).length > 0; }
   isRunning() { return !!(this.game?.running); }
-  isHost() { return this.mainService.sessionInfo.sessionId == this.roomInfo.host.sessionId; }
+  isHost() { return this.roomInfo.host != null && this.roomInfo.host.sessionId == this.mainService.sessionInfo.sessionId; }
   isSpectator() { return !this.roomInfo.slots.filter(slot => slot.player.sessionId == this.getSessionId())[0].settings.playing; }
   // ---------
 
@@ -83,14 +87,12 @@ export class RoomComponent implements OnInit, OnDestroy {
     };
   }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this.subscriptions.push(... [
       this.roomService.roomInfoSubject.subscribe(roomInfo => {
         if (this.roomId == roomInfo.id) {
-          this.roomInfo = roomInfo;
+          this.updateRoomInfo(roomInfo);
         }
-
-        this.cd.detectChanges();
       }),
 
       this.roomService.roomChatMessageSubject.subscribe(chatMessage => {
@@ -104,6 +106,14 @@ export class RoomComponent implements OnInit, OnDestroy {
     ]);
   }
 
+  private updateRoomInfo(roomInfo: RoomInfo) {
+    console.log(roomInfo);
+    this.roomInfo = roomInfo;
+    this.countdownEndMs = this.roomInfo.autoStartMs == undefined ? undefined : Date.now() + this.roomInfo.autoStartMs;
+    this.autoStartCountdown?.updateCountdown(this.countdownEndMs);
+    this.cd.detectChanges();
+  }
+
   ngOnDestroy() {
     this.subscriptions.forEach(s => s.unsubscribe());
   }
@@ -115,20 +125,17 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.showRoomGui = false;
     this.cd.detectChanges();
 
-    this.roomInfo = (await this.roomService.getRoomInfo(this.roomId))!;
+    const roomInfo = (await this.roomService.getRoomInfo(this.roomId))!;
+    
     this.showRoomGui = true;
-    this.cd.detectChanges();
-
     this.showSettings = false;
+    this.updateRoomInfo(roomInfo);
 
     if (this.roomInfo.gameState?.running) {
       const game = new ClientGame(timeoutWrapper(this.ngZone), this.roomInfo.gameState.startGameData, getLocalSettings().localRule, undefined);
       game.load(this.roomInfo.gameState);
       this.game = game;
       this.startGame();
-    } else {
-      this.showRoomGui = true;
-      this.cd.detectChanges();
     }
   }
 
@@ -208,8 +215,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       stats: player.statsTracker.stats,
     }));
 
-    this.roomInfo = roomInfo;
-    this.cd.detectChanges();
+    this.updateRoomInfo(roomInfo);
 
     setTimeout(() => {
       this.showRoomGui = true;
