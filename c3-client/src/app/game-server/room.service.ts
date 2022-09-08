@@ -18,6 +18,7 @@ export class RoomService {
   roomChatMessageSubject = new Subject<ChatMessage>();
   startGameSubject = new Subject<StartGameData>();
   gameOverSubject = new Subject<RoomInfo>();
+  gameAbortedSubject = new Subject<void>();
   serverEventSubject = new Subject<ServerEvent>();
 
   constructor(
@@ -41,6 +42,10 @@ export class RoomService {
 
     this.socketService.on(LobbyEvent.GAME_OVER, (roomInfo: RoomInfo) => {
       this.gameOverSubject.next(roomInfo);
+    });
+
+    this.socketService.on(LobbyEvent.ABORT_GAME, () => {
+      this.gameAbortedSubject.next();
     });
   }
 

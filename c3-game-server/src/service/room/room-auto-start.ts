@@ -8,20 +8,28 @@ export class RoomAutoStart {
   constructor(
     private room: Room,
   ) {
-    this.room.slotsChangeSubject.subscribe(() => {
-      if (this.room.canStartGame() && this.timeout == undefined) {
-        const timeoutMs = 10000;
-        this.autoStartTargetMs = Date.now() + timeoutMs;
-        this.timeout = setTimeout(() => {
-          this.timeout = undefined;
-          this.room.startGame(null);
-        }, timeoutMs);
-      } else if (!this.room.canStartGame() && this.timeout != undefined) {
-        clearTimeout(this.timeout);
+    this.room.gameOverSubject.subscribe(() => this.updateAutoStart());
+    this.room.slotsChangeSubject.subscribe(() => this.updateAutoStart());
+  }
+
+  private updateAutoStart() {
+    if (this.room.isRunning() && this.room.game!.isOnePlayerOnly() && this.room.slots.filter(slot => slot.settings.playing).length > 1) {
+      this.room.postChatMessage(null, 'The game was restarted because another player joined.');
+      this.room.abortGame();
+    }
+
+    if (this.room.canStartGame() && this.timeout == undefined) {
+      const timeoutMs = 10000;
+      this.autoStartTargetMs = Date.now() + timeoutMs;
+      this.timeout = setTimeout(() => {
         this.timeout = undefined;
-        this.autoStartTargetMs = undefined;
-      }
-    });
+        this.room.startGame(null);
+      }, timeoutMs);
+    } else if (!this.room.canStartGame() && this.timeout != undefined) {
+      clearTimeout(this.timeout);
+      this.timeout = undefined;
+      this.autoStartTargetMs = undefined;
+    }
   }
 
   start() {
@@ -33,7 +41,7 @@ export class RoomAutoStart {
   }
 
   destroy() {
-
+    clearTimeout(this.timeout);
   }
 
   getMsUntilAutoStart() {

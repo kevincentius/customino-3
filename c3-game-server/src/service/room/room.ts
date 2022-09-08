@@ -20,7 +20,8 @@ import { RoomAutoStart } from "./room-auto-start";
 import { Subject } from "rxjs";
 
 export class Room {
-  slotsChangeSubject = new Subject<void>();
+  slotsChangeSubject = new Subject<void>(); // roomInfo must be broadcast right after this subject is emitted due to change by RoomAutoStart
+  gameOverSubject = new Subject<void>();
 
   createdAt = Date.now();
   lastActivity = Date.now();
@@ -59,27 +60,7 @@ export class Room {
       
       // if a player leaves, treat him as dead in the game
       if (playerIndex != -1) {
-        this.game!.players[playerIndex].die();
-
-        const frame = this.game!.players[playerIndex].frame;
-        const serverEvent: ServerEvent = {
-          roomId: this.id,
-          playerEvents: [{
-            playerIndex: playerIndex,
-            clientEvent: {
-              gameEvents: [{
-                frame: frame,
-                timestamp: -1,
-                type: GameEventType.SYSTEM,
-                gameOver: true,
-              } as SystemEvent],
-              frame: frame + 1,
-            },
-          }]
-        };
-        this.slots.forEach(slot => {
-          slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
-        });
+        this.killPlayer(playerIndex);
       }
     }
 
@@ -87,6 +68,35 @@ export class Room {
       this.slotsChangeSubject.next();
       this.broadcastRoomInfo();
     }
+  }
+
+  killPlayer(playerIndex: number) {
+    this.game!.players[playerIndex].die();
+
+    const frame = this.game!.players[playerIndex].frame;
+    const serverEvent: ServerEvent = {
+      roomId: this.id,
+      playerEvents: [{
+        playerIndex: playerIndex,
+        clientEvent: {
+          gameEvents: [{
+            frame: frame,
+            timestamp: -1,
+            type: GameEventType.SYSTEM,
+            gameOver: true,
+          } as SystemEvent],
+          frame: frame + 1,
+        },
+      }]
+    };
+    this.slots.forEach(slot => {
+      slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
+    });
+  }
+
+  abortGame() {
+    this.game!.abort();
+    this.slots.forEach(slot => slot.session.socket.emit(LobbyEvent.ABORT_GAME));
   }
 
   join(session: Session) {
@@ -139,7 +149,7 @@ export class Room {
           }
         }
 
-        this.slotsChangeSubject.next();
+        this.gameOverSubject.next();
         
         for (const slot of this.slots) {
           slot.session.socket.emit(LobbyEvent.GAME_OVER, this.getRoomInfo());

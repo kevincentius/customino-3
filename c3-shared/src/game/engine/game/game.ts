@@ -54,41 +54,49 @@ export abstract class Game {
     if (alivePlayers.length <= 1 || (aliveTeams.size <= 1 && !aliveTeams.has(null))) {
       this.running = false;
 
-      const rankings = new Array(this.players.length)
-          .fill(null)
-          .map((_, index) => index)
-          .sort((a, b) => this.players[b].statsTracker.stats.activeTime - this.players[a].statsTracker.stats.activeTime)
+      this.players.filter(p => p.alive).forEach(p => p.win());
+      this.gameOverSubject.next({ players: this.createPlayerResults() });
+    }
+  }
 
-      const deadPlayers = this.players.filter(p => !p.alive).length;
-      const playerResults: PlayerResult[] = new Array(this.players.length)
-        .fill(null)
-        .map((_, index) => {
-          const player = this.players[index];
-          if (player.alive) {
-            return {
-              rank: 0,
-              score: deadPlayers,
-            };
-          } else {
-            const worsePlayers = this.players.filter(
-              p => p != player
+  abort() {
+    this.running = false;
+
+    this.gameOverSubject.next({ players: this.createPlayerResults(true) });
+  }
+
+  private createPlayerResults(abort=false) {
+    const deadPlayers = this.players.filter(p => !p.alive).length;
+    const playerResults: PlayerResult[] = new Array(this.players.length)
+      .fill(null)
+      .map((_, index) => {
+        const player = this.players[index];
+        if (player.alive) {
+          return {
+            rank: 0,
+            score: abort ? 0 : deadPlayers,
+          };
+        } else {
+          const worsePlayers = this.players.filter(
+            p => p != player
               && !p.alive
               && p.statsTracker.stats.activeTime < player.statsTracker.stats.activeTime
-            ).length;
-            return {
-              rank: this.players.length - 1 - worsePlayers,
-              score: worsePlayers,
-            };
-          }
-        });
-
-      this.players.filter(p => p.alive).forEach(p => p.win());
-      this.gameOverSubject.next({ players: playerResults });
-    }
+          ).length;
+          return {
+            rank: abort ? 0 : this.players.length - 1 - worsePlayers,
+            score: abort ? 0 : worsePlayers,
+          };
+        }
+      });
+    return playerResults;
   }
 
   /** The minimum frame number according to maxDelay. If the game is behind this frame number, it should try to catch up by doing updates faster. */
   getTargetMinFrame() {
     return Math.floor((Date.now() - this.clockStartMs - gameLoopRule.maxDelay) / gameLoopRule.mspf);
+  }
+
+  isOnePlayerOnly() {
+    return this.players.length == 1;
   }
 }

@@ -1,4 +1,11 @@
 
-<ng-container *ngIf="countdownValue == undefined">Waiting for host to start the game.</ng-container>
+<ng-container *ngIf="running">
+  Game is in progress.
+</ng-container>
 
-<ng-container *ngIf="countdownValue != undefined">Game starting in {{countdownValue}}...</ng-container>
+<ng-container *ngIf="!running">
+  <ng-container *ngIf="countdownValue == undefined">Waiting for host to start the game.</ng-container>
+  
+  <ng-container *ngIf="countdownValue != undefined">Next round starts in {{countdownValue}}...</ng-container>
+</ng-container>
+

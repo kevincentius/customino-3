@@ -9,6 +9,7 @@ import { timeoutWrapper } from 'app/util/ng-zone-util';
 })
 export class RoomAutoStartCountdownComponent implements OnInit {
   @Input() countdownEndMs?: number;
+  @Input() running!: boolean;
   countdownTimeout: any;
   countdownValue?: number;
 
@@ -44,7 +45,7 @@ export class RoomAutoStartCountdownComponent implements OnInit {
 
   private countdownLoop() {
     if (this.countdownValue != undefined) {
-      this.countdownValue--;
+      this.countdownValue = Math.max(0, this.countdownValue - 1);
       this.cd.detectChanges();
   
       if (this.countdownValue > 0) {

@@ -25,4 +25,5 @@ export enum LobbyEvent {
   ROOM_INFO            = 'b',
   SERVER_EVENT         = 'c',
   GAME_OVER            = 'd',
+  ABORT_GAME           = 'k',
 }

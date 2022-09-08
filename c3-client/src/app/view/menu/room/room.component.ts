@@ -103,6 +103,10 @@ export class RoomComponent implements OnDestroy {
       this.roomService.startGameSubject.subscribe(this.onRecvStartGame.bind(this)),
       this.roomService.serverEventSubject.subscribe(this.onRecvServerEvent.bind(this)),
       this.roomService.gameOverSubject.subscribe(this.onRecvGameOver.bind(this)),
+      this.roomService.gameAbortedSubject.subscribe(() => {
+        this.game?.abort();
+        this.cd.detectChanges();
+      }),
     ]);
   }
 

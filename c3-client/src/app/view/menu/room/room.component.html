@@ -18,12 +18,12 @@
       <!-- Right Panel (room actions + player list) -->
       <div class="room-section v-flex" style="flex-grow: 1; flex-basis: 0; max-width: 1000px;">
         <div class="gui-button-row">
-          <button class="gui-button gui-button-main" [disabled]="!canStartGame()" (click)="onStartGameClick()">Start game</button>
+          <button *ngIf="isHost()" class="gui-button gui-button-main" [disabled]="!canStartGame()" (click)="onStartGameClick()">Start game</button>
           <button *ngIf="lastGameReplay" class="gui-button" (click)="onDownloadLastReplayClick()">Replay</button>
 
           <!-- host buttons -->
-          <button class="gui-button" *ngIf="isHost()" [disabled]="isRunning()" (click)="onResetScoresClick()">Reset scores</button>
-          <button class="gui-button" *ngIf="isHost()" [disabled]="isRunning()" (click)="onSettingsClick()">Rule settings</button>
+          <button *ngIf="isHost()" class="gui-button" [disabled]="isRunning()" (click)="onResetScoresClick()">Reset scores</button>
+          <button *ngIf="isHost()" class="gui-button" [disabled]="isRunning()" (click)="onSettingsClick()">Rule settings</button>
 
           <!-- debug buttons -->
           <ng-container *ngIf="debug">
@@ -38,7 +38,11 @@
         </div>
 
         <div>
-          <app-room-auto-start-countdown #autoStartCountdown [countdownEndMs]="countdownEndMs"></app-room-auto-start-countdown>
+          <app-room-auto-start-countdown
+            #autoStartCountdown
+            [countdownEndMs]="countdownEndMs"
+            [running]="isRunning()"
+          ></app-room-auto-start-countdown>
         </div>
 
         <app-room-player-list
