@@ -20,8 +20,13 @@ export abstract class Game {
   clockStartSubject = new Subject<void>();
   gameOverSubject = new Subject<GameResult>();
 
+  // timeouts
+  clockStartTimeout: any;
+
   abstract createPlayers(startGameData: StartGameData): Player[];
-  abstract destroy(): void;
+  destroy(): void {
+    clearTimeout(this.clockStartTimeout);
+  };
 
   constructor(
     protected setTimeoutWrapper: (callback: () => void, ms?: number | undefined) => any = setTimeout,
@@ -41,7 +46,7 @@ export abstract class Game {
       this.clockStartMs = Date.now() + countdownMs;
     }
     this.gameStartSubject.next();
-    setTimeout(() => this.startClock(), this.clockStartMs - Date.now());
+    this.clockStartTimeout = this.setTimeoutWrapper(() => this.startClock(), this.clockStartMs - Date.now());
   }
 
   protected startClock() {

@@ -4,7 +4,7 @@
 </ng-container>
 
 <ng-container *ngIf="!running">
-  <ng-container *ngIf="countdownValue == undefined">Waiting for host to start the game.</ng-container>
+  <ng-container *ngIf="countdownValue == undefined">Waiting for {{isHost ? 'you' : 'the host'}} to start the game.</ng-container>
   
   <ng-container *ngIf="countdownValue != undefined">Next round starts in {{countdownValue}}...</ng-container>
 </ng-container>

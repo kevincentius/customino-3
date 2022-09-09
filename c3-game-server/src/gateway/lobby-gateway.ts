@@ -89,6 +89,16 @@ export class LobbyGateway {
     }
   }
 
+  @SubscribeMessage(LobbyEvent.SET_AUTOSTART)
+  setAutostart(socket: Socket, delay: number | undefined) {
+    const session = this.sessionService.getSession(socket);
+    const room = this.roomService.getRoom(session.roomId!);
+
+    if (room) {
+      room.setAutostart(session, delay);
+    }
+  }
+
   @SubscribeMessage(LobbyEvent.POST_CHAT_MESSAGE)
   postChatMessage(socket: Socket, message: string) {
     const session = this.sessionService.getSession(socket);

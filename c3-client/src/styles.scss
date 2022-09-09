@@ -74,6 +74,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   border: solid #0000 2px;
   border-radius: 2px;
 
+  &.gui-button-toggle {
+    font-size: $font-size-small;
+    background: #fff1;
+  }
+
   &.gui-button-small {
     font-size: $font-size-small;
   }

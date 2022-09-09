@@ -36,8 +36,8 @@ export class Room {
   provideReplay = true;
   lastGameReplay?: GameReplay;
 
-  // only for the current game session:
   autoStart: RoomAutoStart = new RoomAutoStart(this);
+  // only for the current game session:
   game?: ServerGame;
   r = new RandomGen();
 
@@ -49,6 +49,10 @@ export class Room {
   ) {
     this.slots = creator == null ? [] : [new RoomSlot(creator)];
     this.host = creator;
+
+    if (creator == null) {
+      this.autoStart.configure(15000);
+    }
   }
 
   leave(session: Session) {
@@ -108,7 +112,7 @@ export class Room {
   }
 
   startGame(session: Session | null) {
-    if (this.host == session && (session == null || this.isInRoom(session)) && this.canStartGame()) {
+    if ((session == null || (this.host == session && this.isInRoom(session))) && this.canStartGame()) {
       const playerSlots = this.slots.filter(slot => slot.settings.playing);
       this.slots.forEach(slot => slot.playerIndex = null);
       playerSlots.forEach((playerSlot, index) => playerSlot.playerIndex = index);
@@ -211,6 +215,13 @@ export class Room {
     if (slot) {
       slot.settings.playing = !spectator;
       this.slotsChangeSubject.next();
+      this.broadcastRoomInfo();
+    }
+  }
+
+  setAutostart(session: Session, delay: number | undefined) {
+    if (this.host == session) {
+      this.autoStart.configure(delay);
       this.broadcastRoomInfo();
     }
   }

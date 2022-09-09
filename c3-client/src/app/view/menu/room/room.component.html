@@ -20,21 +20,26 @@
         <div class="gui-button-row">
           <button *ngIf="isHost()" class="gui-button gui-button-main" [disabled]="!canStartGame()" (click)="onStartGameClick()">Start game</button>
           <button *ngIf="lastGameReplay" class="gui-button" (click)="onDownloadLastReplayClick()">Replay</button>
-
+          
           <!-- host buttons -->
           <button *ngIf="isHost()" class="gui-button" [disabled]="isRunning()" (click)="onResetScoresClick()">Reset scores</button>
           <button *ngIf="isHost()" class="gui-button" [disabled]="isRunning()" (click)="onSettingsClick()">Rule settings</button>
-
+          
           <!-- debug buttons -->
           <ng-container *ngIf="debug">
             <button *ngIf="lastGameReplay" class="gui-button" (click)="onVerifyLastReplayClick()">Verify replay</button>
             <button class="gui-button" (click)="onDownloadGameStateClick()">Download debug state</button>
           </ng-container>
-
+          
           <div style="flex-grow: 1;"></div>
 
           <!-- spectator toggle button-->
-          <button class="gui-button" (click)="onToggleSpectatorModeClick()">{{isSpectator() ? 'Watch' : 'Play'}}</button>
+          <button class="gui-button gui-toggle-button" (click)="onToggleSpectatorModeClick()">{{isSpectator() ? 'You are spectating' : 'You are playing'}}</button>
+        </div>
+        
+        <div class="gui-button-row">
+          <!-- auto start toggle button -->
+          <button *ngIf="isHost()" class="gui-button gui-toggle-button" (click)="onToggleAutoStartClick()">{{autoStartOption.label}}</button>
         </div>
 
         <div>
@@ -42,6 +47,7 @@
             #autoStartCountdown
             [countdownEndMs]="countdownEndMs"
             [running]="isRunning()"
+            [isHost]="isHost()"
           ></app-room-auto-start-countdown>
         </div>
 

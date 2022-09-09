@@ -10,6 +10,7 @@ import { timeoutWrapper } from 'app/util/ng-zone-util';
 export class RoomAutoStartCountdownComponent implements OnInit {
   @Input() countdownEndMs?: number;
   @Input() running!: boolean;
+  @Input() isHost!: boolean;
   countdownTimeout: any;
   countdownValue?: number;
 

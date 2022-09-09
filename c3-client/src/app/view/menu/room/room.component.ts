@@ -23,6 +23,16 @@ import { timeoutWrapper } from 'app/util/ng-zone-util';
 import { ChatMessage } from '@shared/model/room/chat-message';
 import { RoomAutoStartCountdownComponent } from '../room-auto-start-countdown/room-auto-start-countdown.component';
 
+interface AutoStartOption {
+  label: string;
+  delay: number | undefined;
+}
+const autoStartOptions = [
+  { label: 'auto start: off', delay: undefined },
+  { label: 'auto start: on', delay: 15000, },
+  { label: 'auto start: fast', delay: 3000, },
+]
+
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
@@ -38,6 +48,7 @@ export class RoomComponent implements OnDestroy {
 
   @ViewChild('autoStartCountdown', { static: false }) autoStartCountdown!: RoomAutoStartCountdownComponent;
   countdownEndMs?: number;
+  autoStartOption: AutoStartOption = autoStartOptions[0];
 
   private subscriptions: Subscription[] = [];
 
@@ -283,5 +294,10 @@ export class RoomComponent implements OnDestroy {
   // spectator mode
   onToggleSpectatorModeClick() {
     this.roomService.setSpectatorMode(!this.isSpectator())
+  }
+
+  onToggleAutoStartClick() {
+    this.autoStartOption = autoStartOptions[(autoStartOptions.indexOf(this.autoStartOption) + 1) % autoStartOptions.length];
+    this.roomService.setAutoStart(this.autoStartOption.delay);
   }
 }

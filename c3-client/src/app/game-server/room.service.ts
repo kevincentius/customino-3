@@ -85,6 +85,10 @@ export class RoomService {
     this.socketService.emit(LobbyEvent.SET_SPECTATOR_MODE, spectator);
   }
 
+  async setAutoStart(delay: number | undefined) {
+    this.socketService.emit(LobbyEvent.SET_AUTOSTART, delay);
+  }
+
   async postChatMessage(message: string) {
     this.socketService.emit(LobbyEvent.POST_CHAT_MESSAGE, message);
   }

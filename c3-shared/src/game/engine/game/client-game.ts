@@ -54,7 +54,10 @@ export class ClientGame extends Game {
     this.clockStartMs = ct - gameState.clockTimeMs;
   }
   
-  destroy() {
+  override destroy() {
+    console.log('client game destroy');
+    super.destroy();
+
     this.stop();
     this.destroySubject.next();
   }
@@ -78,6 +81,7 @@ export class ClientGame extends Game {
   }
 
   startUpdateLoop() {
+    console.log('client game start update loop');
     this.stop();
     this.lastUpdate = Date.now();
     this.mainLoopTimeout = this.setTimeoutWrapper(this.updateLoop.bind(this), gameLoopRule.mspf);

@@ -33,8 +33,9 @@ export class ServerGame extends Game {
     return startGameData.players.map((p, index) => new ServerPlayer(this, p, index));
   }
 
-  destroy() {
-    // nothing to clean up yet
+  override destroy() {
+    super.destroy();
+
     clearTimeout(this.checkLaggingPlayerTimeout);
   }
 
