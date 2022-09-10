@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { InputKey } from '@shared/game/network/model/input-key';
+import { SystemKey } from '@shared/game/network/model/system-key';
 import { inputKeyDataArray } from 'app/view/menu/controls/input-key-data';
 
 export interface ControlRowModel {
-  inputKey: InputKey;
+  inputKey: InputKey | SystemKey;
   mappings: string[];
+  name: string;
 }
 
 @Component({
@@ -22,7 +24,7 @@ export class ControlRowComponent {
   @Output() inputBlur = new EventEmitter<number>();
   
   getControlName() {
-    return this.name ?? inputKeyDataArray.find(d => d.inputKey == this.data!.inputKey)!.name;
+    return this.name ?? this.data?.name ?? '?';
   }
 
   onInputBlur() {

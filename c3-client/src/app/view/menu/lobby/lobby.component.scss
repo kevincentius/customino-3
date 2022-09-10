@@ -10,7 +10,8 @@
 .room {
   cursor: pointer;
   display: flex;
-  background: #fff6;
+  background: #fff2;
+  backdrop-filter: blur(8px);
   padding: 20px 50px;
   font-size: $font-size-default;
 

@@ -55,7 +55,7 @@ export class MainComponent implements OnInit {
   constructor(
     public mainService: MainService,
     private route: ActivatedRoute,
-    private changeDetectorRef: ChangeDetectorRef,
+    private cd: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -87,16 +87,16 @@ export class MainComponent implements OnInit {
       this.lobby.onRefresh();
     }
 
-    this.changeDetectorRef.detectChanges();
+    this.cd.detectChanges();
   }
 
   back() {
     if (this.screen == MainScreen.PERSONALIZATION) {
       this.screen = MainScreen.CONTROLS;
-      this.changeDetectorRef.detectChanges();
+      this.cd.detectChanges();
     } else {
       this.screen = this.prevScreen;
-      this.changeDetectorRef.detectChanges();
+      this.cd.detectChanges();
     }
   }
 

@@ -21,12 +21,12 @@
 </div>
 
 <div class="icon-bar">
-  <ng-container *ngIf="screen == MainScreen.ROOM">
-    <mat-icon class="icon-button" (click)="onLeaveRoom()">logout</mat-icon>
+  <ng-container *ngIf="screen == MainScreen.ROOM || screen == MainScreen.LOBBY">
+    <mat-icon *ngIf="screen == MainScreen.ROOM" class="icon-button" (click)="onLeaveRoom()">logout</mat-icon>
 
     <mat-icon class="icon-button" (click)="openScreen(MainScreen.CONTROLS)">settings</mat-icon>
 
-    <mat-icon class="icon-button" (click)="onDebugClick()">bug_report</mat-icon>
+    <mat-icon *ngIf="screen == MainScreen.ROOM" class="icon-button" (click)="onDebugClick()">bug_report</mat-icon>
   </ng-container>
   
 </div>

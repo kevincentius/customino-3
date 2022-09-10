@@ -17,11 +17,12 @@ import { musicService } from 'app/pixi/display/sound/music-service';
 import { PlayerInfo } from '@shared/game/engine/player/player-info';
 import { PlayerStats } from '@shared/game/engine/player/stats/player-stats';
 import { InputState } from 'app/control/keyboard';
-import { getLocalSettings } from 'app/service/user-settings/user-settings.service';
+import { getLocalSettings, isSystemKey } from 'app/service/user-settings/user-settings.service';
 import { ChatContainerComponent } from 'app/view/chat/chat-container/chat-container.component';
 import { timeoutWrapper } from 'app/util/ng-zone-util';
 import { ChatMessage } from '@shared/model/room/chat-message';
 import { RoomAutoStartCountdownComponent } from '../room-auto-start-countdown/room-auto-start-countdown.component';
+import { SystemKey } from '@shared/game/network/model/system-key';
 
 interface AutoStartOption {
   label: string;
@@ -81,12 +82,19 @@ export class RoomComponent implements OnDestroy {
   ) {
     window!.onkeydown = (ev: KeyboardEvent) => {
       let handled = true;
-      if (ev.key == 'F2' && !(this.game && this.game.running)) {
+      console.log(isSystemKey(ev, SystemKey.SPECTATOR_OFF), this.isSpectator());
+      if (isSystemKey(ev, SystemKey.START_GAME) && !(this.game && this.game.running)) {
         this.onStartGameClick();
-      } else if (ev.key == '`' && this.game) {
+      } else if (isSystemKey(ev, SystemKey.TOGGLE_GUI) && this.game) {
         this.setShowRoomGui(!this.showRoomGui);
-      } else if (ev.key == 'F8') {
+      } else if (isSystemKey(ev, SystemKey.DEBUG)) {
         this.mainService.pixi.togglePerformanceDisplay();
+      } else if (isSystemKey(ev, SystemKey.SPECTATOR_ON) && !this.isSpectator()) {
+        this.onToggleSpectatorModeClick();
+      } else if (isSystemKey(ev, SystemKey.SPECTATOR_OFF) && this.isSpectator()) {
+        this.onToggleSpectatorModeClick();
+      } else if (isSystemKey(ev, SystemKey.EXIT)) {
+        this.onBackClick();
       } else {
         handled = false;
       }

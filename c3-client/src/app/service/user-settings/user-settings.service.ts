@@ -3,6 +3,7 @@ import { localRuleFields } from '@shared/game/engine/model/rule/local-rule/local
 import { fillDefaultRules } from '@shared/game/engine/model/rule/player-rule';
 import { userRuleFields } from '@shared/game/engine/model/rule/user-rule/user-rule-fields';
 import { InputKey } from '@shared/game/network/model/input-key';
+import { SystemKey } from '@shared/game/network/model/system-key';
 import { AppService } from 'app/game-server/app.service';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { soundService } from 'app/pixi/display/sound/sound-service';
@@ -10,6 +11,7 @@ import { IdbService } from 'app/service/idb.service';
 import { ControlSettings } from 'app/service/user-settings/control-settings';
 import { LocalSettings } from 'app/service/user-settings/local-settings';
 import { inputKeyDataArray } from 'app/view/menu/controls/input-key-data';
+import { systemKeyDataArray } from 'app/view/menu/controls/system-key-data';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -32,6 +34,20 @@ export class UserSettingsService {
     const saved = await this.idbService.getLocalSettings();
     if (saved) {
       localSettings = saved;
+
+      if (localSettings.control.keyMap == null) { localSettings.control.keyMap = this.createDefaultInputKeyMap(); }
+      inputKeyDataArray.forEach(data => {
+        if (!localSettings.control.keyMap.has(data.inputKey)) {
+          localSettings.control.keyMap.set(data.inputKey, [data.default]);
+        }
+      });
+
+      if (localSettings.control.systemKeyMap == null) { localSettings.control.systemKeyMap = this.createDefaultSystemKeyMap(); }
+      systemKeyDataArray.forEach(data => {
+        if (!localSettings.control.systemKeyMap.has(data.systemKey)) {
+          localSettings.control.systemKeyMap.set(data.systemKey, [data.default]);
+        }
+      });
 
       if (localSettings.control.arr == null) { localSettings.control.arr = 15; }
       if (localSettings.control.das == null) { localSettings.control.das = 100; }
@@ -80,19 +96,29 @@ export class UserSettingsService {
   }
 
   private createDefaultControlSettings(): ControlSettings {
-    const keyMap = new Map<InputKey, string[]>();
-    for (const inputKeyData of inputKeyDataArray) {
-      if (inputKeyData.inputKey != null) {
-        keyMap.set(inputKeyData.inputKey, [inputKeyData.default]);
-      }
-    }
-
     return {
-      keyMap,
+      keyMap: this.createDefaultInputKeyMap(),
+      systemKeyMap: this.createDefaultSystemKeyMap(),
       arr: 15,
       das: 100,
       sdr: 10,
     }
+  }
+
+  private createDefaultInputKeyMap() {
+    const keyMap = new Map<InputKey, string[]>();
+    for (const inputKeyData of inputKeyDataArray) {
+      keyMap.set(inputKeyData.inputKey, [inputKeyData.default]);
+    }
+    return keyMap;
+  }
+
+  private createDefaultSystemKeyMap() {
+    const systemKeyMap = new Map<SystemKey, string[]>();
+    for (const systemKeyData of systemKeyDataArray) {
+      systemKeyMap.set(systemKeyData.systemKey, [systemKeyData.default]);
+    }
+    return systemKeyMap;
   }
 
   onLoad(callback: () => void) {
@@ -108,4 +134,8 @@ let localSettings!: LocalSettings;
 
 export function getLocalSettings() {
   return localSettings;
+}
+
+export function isSystemKey(ev: KeyboardEvent, systemKey: SystemKey) {
+  return localSettings.control.systemKeyMap.get(systemKey)![0] == ev.code;
 }

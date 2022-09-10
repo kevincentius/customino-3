@@ -26,11 +26,13 @@
 
   .mapping-item {
     width: 200px;
-    background: #fff3;
+    background: #fff2;
     border-radius: 3px;
     padding: 6px 0;
     padding-left: 15px;
     display: flex;
+
+    backdrop-filter: blur(8px);
 
     &.edit-mode {
       background: #6c6;
@@ -40,10 +42,12 @@
   .value-input {
     font-size: $font-size-default;
     border: none;
-    background: #fff3;
+    background: #fff2;
     color: white;
     padding-left: 16px;
     width: 100px;
+
+    backdrop-filter: blur(8px);
   }
 }
 
