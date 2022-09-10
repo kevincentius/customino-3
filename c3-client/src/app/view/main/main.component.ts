@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { soundService } from "app/pixi/display/sound/sound-service";
 import { MainScreen } from "app/view/main/main-screen";
 import { MainService } from "app/view/main/main.service";
 import { ControlsComponent } from "app/view/menu/controls/controls.component";
@@ -45,7 +46,7 @@ export class MainComponent implements OnInit {
   private pixiOverlay!: ElementRef<HTMLDivElement>;
 
   // view model
-  screen = MainScreen.PRELOADER;
+  screen = MainScreen.PRELOGIN;
   initialized = false;
 
   // icon bar
@@ -54,14 +55,14 @@ export class MainComponent implements OnInit {
   constructor(
     public mainService: MainService,
     private route: ActivatedRoute,
-    private changeDetectorRef: ChangeDetectorRef,
+    private cd: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
-    this.openScreen(MainScreen.PRELOADER);
+    this.openScreen(MainScreen.PRELOGIN);
 
     this.route.params.subscribe(params => {
-      this.openScreen(params['component'] ?? MainScreen.LOGIN);
+      this.openScreen(params['component'] ?? MainScreen.PRELOGIN);
     });
   }
   
@@ -86,16 +87,16 @@ export class MainComponent implements OnInit {
       this.lobby.onRefresh();
     }
 
-    this.changeDetectorRef.detectChanges();
+    this.cd.detectChanges();
   }
 
   back() {
     if (this.screen == MainScreen.PERSONALIZATION) {
       this.screen = MainScreen.CONTROLS;
-      this.changeDetectorRef.detectChanges();
+      this.cd.detectChanges();
     } else {
       this.screen = this.prevScreen;
-      this.changeDetectorRef.detectChanges();
+      this.cd.detectChanges();
     }
   }
 
@@ -104,6 +105,7 @@ export class MainComponent implements OnInit {
   // icon bar
   onLeaveRoom() {
     this.room.onBackClick();
+    soundService.play('back');
   }
 
   onDebugClick() {

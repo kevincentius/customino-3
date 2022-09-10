@@ -16,8 +16,13 @@ import { getDefaultRoomRule } from "@shared/game/engine/model/rule/room-rule/roo
 import { SessionService } from "service/session/session-service";
 import { StartPlayerData } from "@shared/game/network/model/start-game/start-player-data";
 import { ChatMessage } from "@shared/model/room/chat-message";
+import { RoomAutoStart } from "./room-auto-start";
+import { Subject } from "rxjs";
 
 export class Room {
+  slotsChangeSubject = new Subject<void>(); // roomInfo must be broadcast right after this subject is emitted due to change by RoomAutoStart
+  gameOverSubject = new Subject<void>();
+
   createdAt = Date.now();
   lastActivity = Date.now();
   slots: RoomSlot[];
@@ -26,11 +31,12 @@ export class Room {
       roomRule: getDefaultRoomRule(),
     },
   };
-  host!: Session;
+  host!: Session | null;
 
   provideReplay = true;
   lastGameReplay?: GameReplay;
 
+  autoStart: RoomAutoStart = new RoomAutoStart(this);
   // only for the current game session:
   game?: ServerGame;
   r = new RandomGen();
@@ -38,11 +44,15 @@ export class Room {
   constructor(
     public id: number,
     public name: string,
-    public creator: Session,
+    public creator: Session | null,
     private sessionService: SessionService,
   ) {
-    this.slots =[new RoomSlot(creator)];
+    this.slots = creator == null ? [] : [new RoomSlot(creator)];
     this.host = creator;
+
+    if (creator == null) {
+      this.autoStart.configure(15000);
+    }
   }
 
   leave(session: Session) {
@@ -54,45 +64,55 @@ export class Room {
       
       // if a player leaves, treat him as dead in the game
       if (playerIndex != -1) {
-        this.game!.players[playerIndex].die();
-
-        const frame = this.game!.players[playerIndex].frame;
-        const serverEvent: ServerEvent = {
-          roomId: this.id,
-          playerEvents: [{
-            playerIndex: playerIndex,
-            clientEvent: {
-              gameEvents: [{
-                frame: frame,
-                timestamp: -1,
-                type: GameEventType.SYSTEM,
-                gameOver: true,
-              } as SystemEvent],
-              frame: frame + 1,
-            },
-          }]
-        };
-        this.slots.forEach(slot => {
-          slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
-        });
+        this.killPlayer(playerIndex);
       }
     }
 
     if (this.slots.length != prevSlotCount) {
+      this.slotsChangeSubject.next();
       this.broadcastRoomInfo();
     }
+  }
+
+  killPlayer(playerIndex: number) {
+    this.game!.players[playerIndex].die();
+
+    const frame = this.game!.players[playerIndex].frame;
+    const serverEvent: ServerEvent = {
+      roomId: this.id,
+      playerEvents: [{
+        playerIndex: playerIndex,
+        clientEvent: {
+          gameEvents: [{
+            frame: frame,
+            timestamp: -1,
+            type: GameEventType.SYSTEM,
+            gameOver: true,
+          } as SystemEvent],
+          frame: frame + 1,
+        },
+      }]
+    };
+    this.slots.forEach(slot => {
+      slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
+    });
+  }
+
+  abortGame() {
+    this.game!.abort();
+    this.slots.forEach(slot => slot.session.socket.emit(LobbyEvent.ABORT_GAME));
   }
 
   join(session: Session) {
     if (!this.isInRoom(session)) {
       this.slots.push(new RoomSlot(session));
-
+      this.slotsChangeSubject.next();
       this.broadcastRoomInfo();
     }
   }
 
-  startGame(session: Session) {
-    if (!this.isRunning() && this.host == session && this.isInRoom(session) && this.slots.filter(slot => slot.settings.playing).length > 0) {
+  startGame(session: Session | null) {
+    if ((session == null || (this.host == session && this.isInRoom(session))) && this.canStartGame()) {
       const playerSlots = this.slots.filter(slot => slot.settings.playing);
       this.slots.forEach(slot => slot.playerIndex = null);
       playerSlots.forEach((playerSlot, index) => playerSlot.playerIndex = index);
@@ -120,6 +140,9 @@ export class Room {
       this.slots.forEach(slot => slot.session.socket.emit(LobbyEvent.START_GAME, startGameData));
 
       // start server game
+      if (this.game) {
+        this.game.destroy();
+      }
       this.game = new ServerGame(startGameData, players);
       
       this.game.gameOverSubject.subscribe(gameResult => {
@@ -127,9 +150,10 @@ export class Room {
           if (slot.playerIndex != null) {
             slot.addScore(gameResult.players[slot.playerIndex].score);
             slot.updateStats(this.game!.players[slot.playerIndex].statsTracker.stats);
-            console.log(JSON.stringify(this.game!.players[slot.playerIndex].statsTracker.stats));
           }
         }
+
+        this.gameOverSubject.next();
         
         for (const slot of this.slots) {
           slot.session.socket.emit(LobbyEvent.GAME_OVER, this.getRoomInfo());
@@ -146,8 +170,13 @@ export class Room {
                 playerEvents: [ serverPlayerEvent ],
               };
               slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
+              
+              if (serverPlayerEvent.serverEvent?.disconnect == true && slot.playerIndex == serverPlayerEvent.playerIndex) {
+                console.log('disconnect drop player');
+                this.postChatMessage(null, `${slot.session.username} was dropped from the round due to lag.`);
+              }
             }
-          })
+          });
         });
       }
       
@@ -163,7 +192,7 @@ export class Room {
     }
   }
 
-  changeRoomSettings(session: Session, roomSettings: RoomSettings) {
+  changeRoomSettings(session: Session | null, roomSettings: RoomSettings) {
     if (this.host == session) {
       this.settings = roomSettings;
       this.broadcastRoomInfo();
@@ -175,6 +204,7 @@ export class Room {
       const slot = this.slots[slotIndex];
       if (slot.settings.team != team) {
         this.slots[slotIndex].settings.team = team;
+        this.slotsChangeSubject.next();
         this.broadcastRoomInfo();
       }
     }
@@ -184,6 +214,14 @@ export class Room {
     const slot = this.slots.filter(slot => slot.session == session)[0];
     if (slot) {
       slot.settings.playing = !spectator;
+      this.slotsChangeSubject.next();
+      this.broadcastRoomInfo();
+    }
+  }
+
+  setAutostart(session: Session, delay: number | undefined) {
+    if (this.host == session) {
+      this.autoStart.configure(delay);
       this.broadcastRoomInfo();
     }
   }
@@ -211,11 +249,12 @@ export class Room {
     return {
       id: this.id,
       name: this.name,
-      host: this.host.getClientInfo(),
+      host: this.host == null ? null : this.host.getClientInfo(),
 
       settings: this.settings,
       slots: this.slots.map(roomSlot => roomSlot.getRoomSlotInfo()),
       gameState: gameState ? this.game?.serialize() ?? null : null,
+      autoStartMs: this.autoStart.getMsUntilAutoStart(),
     };
   }
 
@@ -224,7 +263,8 @@ export class Room {
   }
 
   destroy() {
-    // destroy game instance
+    this.autoStart?.destroy();
+    this.game?.destroy();
   }
 
   private broadcastRoomInfo() {
@@ -248,14 +288,22 @@ export class Room {
     this.game!.players[playerIndex].handleEvent(clientEvent);
   }
 
-  postChatMessage(session: Session, message: string) {
+  postChatMessage(session: Session | null, message: string) {
     const chatMessage: ChatMessage = {
-      username: session.username!,
+      username: session == null ? null : session.username!,
       timestamp: Date.now(),
       message: message,
     };
     for (const slot of this.slots) {
       slot.session.socket.emit(LobbyEvent.POST_CHAT_MESSAGE, chatMessage);
     }
+  }
+
+  shouldBeDestroyed() {
+    return this.isEmpty() && this.creator != null;
+  }
+
+  canStartGame() {
+    return !this.isRunning() && this.slots.filter(slot => slot.settings.playing).length > 0;
   }
 }

@@ -1,8 +1,15 @@
 
+@import 'styles/font';
+
 :host {
-  font-size: 24px;
+  font-size: $font-size-default;
 }
 
 .username {
   font-weight: bold;
+}
+
+.system-message {
+  font-style: italic;
+  font-size: $font-size-small;
 }

@@ -1,7 +1,8 @@
 
 export enum LobbyEvent {
   // events fired by the client
-  UPDATE_USER_RULE    = 'e',
+  GET_SERVER_INFO      = 'j', 
+  UPDATE_USER_RULE     = 'e',
 
   GET_ROOMS            = '1',
   CREATE_ROOM          = '2',
@@ -13,6 +14,7 @@ export enum LobbyEvent {
   CHANGE_ROOM_SETTINGS = '7',
   CHANGE_SLOT_TEAM     = 'f',
   SET_SPECTATOR_MODE   = 'h',
+  SET_AUTOSTART        = 'l',
   POST_CHAT_MESSAGE    = 'i',
 
   GAME_EVENTS          = '8',
@@ -24,4 +26,5 @@ export enum LobbyEvent {
   ROOM_INFO            = 'b',
   SERVER_EVENT         = 'c',
   GAME_OVER            = 'd',
+  ABORT_GAME           = 'k',
 }

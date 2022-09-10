@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { RoomSettings } from "@shared/game/engine/model/room-settings";
 import { RoomInfo } from "@shared/model/room/room-info";
 import { Room } from "service/room/room";
 import { Session } from "service/session/session";
@@ -33,7 +34,7 @@ export class RoomService {
    * 
    * If the client was already in another room, the client is considered as leaving that room.
    */
-  createRoom(session: Session): Room {
+  createUserRoom(session: Session): Room {
     const roomId = this.nextRoomId++;
     
     this.leave(session);
@@ -45,7 +46,18 @@ export class RoomService {
 
     return room;
   }
-  
+
+  createServerRoom(name: string, roomSettings: RoomSettings): Room {
+    const roomId = this.nextRoomId++;
+
+    const room = new Room(roomId, name, null, this.sessionService);
+    room.changeRoomSettings(null, roomSettings);
+
+    this.roomMap.set(room.id, room);
+
+    return room;
+  }
+
   getRoom(roomId: number): Room {
     return this.roomMap.get(roomId)!;
   }
@@ -58,7 +70,7 @@ export class RoomService {
       const room = this.getRoom(session.roomId);
       room.leave(session);
       session.roomId = undefined;
-      if (room.isEmpty()) {
+      if (room.shouldBeDestroyed()) {
         room.destroy();
         this.roomMap.delete(room.id);
       }

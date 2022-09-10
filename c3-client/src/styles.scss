@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'styles/palette';
+@import 'styles/font';
 
 * {
   user-select: none;
@@ -35,7 +36,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   margin-bottom: 30px;
 
   .screen-title-underline {
-    font-size: 48px;
+    font-size: $font-size-title;
     border-bottom: solid 1px #fff8;
     padding: 10px 0 0 40px;
 
@@ -65,16 +66,21 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   cursor: pointer;
   display: flex;
   align-items: center;
-  font-size: 24px;
-  padding: 10px 20px;
+  font-size: $font-size-default;
+  padding: 6px 10px;
   background: none;
   border: none;
   color: #fffd;
   border: solid #0000 2px;
   border-radius: 2px;
 
+  &.gui-button-toggle {
+    font-size: $font-size-small;
+    background: #fff1;
+  }
+
   &.gui-button-small {
-    font-size: 16px;
+    font-size: $font-size-small;
   }
 
   &:hover {
@@ -136,7 +142,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   overflow: hidden;
 
   .section-title {
-    font-size: 24px;
+    font-size: $font-size-default;
     padding: 10px 0;
   }
 

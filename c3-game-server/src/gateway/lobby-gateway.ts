@@ -29,7 +29,7 @@ export class LobbyGateway {
   createRoom(socket: Socket) {
     const session = this.sessionService.getSession(socket);
     return this.roomService
-      .createRoom(session)
+      .createUserRoom(session)
       .getRoomInfo();
   }
 
@@ -86,6 +86,16 @@ export class LobbyGateway {
 
     if (room) {
       room.setSpectatorMode(session, spectator);
+    }
+  }
+
+  @SubscribeMessage(LobbyEvent.SET_AUTOSTART)
+  setAutostart(socket: Socket, delay: number | undefined) {
+    const session = this.sessionService.getSession(socket);
+    const room = this.roomService.getRoom(session.roomId!);
+
+    if (room) {
+      room.setAutostart(session, delay);
     }
   }
 

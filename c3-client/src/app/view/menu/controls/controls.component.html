@@ -12,10 +12,10 @@
     </div>
   </div>
 
-  <div class="v-flex screen-body-container">
+  <div class="v-flex screen-body-container" style="overflow: auto;">
     <div style="padding-left: 140px; color: yellow; height: 40px;">{{hint}}</div>
 
-    <div *ngIf="localSettings" style="display: flex; flex-direction: column; padding: 0 100px; flex-grow: 1;">
+    <div *ngIf="localSettings" style="display: flex; flex-direction: column; padding: 0 100px; flex-grow: 1; overflow: auto;">
       <app-control-row *ngFor="let settingsField of settingsFields" [name]="settingsField.name"
         (mouseover)="hint = settingsField.description"
       >
@@ -26,34 +26,53 @@
         ></app-field-input>
       </app-control-row>
       
-      <div (mouseover)="hint = 'Key bindings'">
-        <app-control-row *ngFor="let row of rows; let i=index"
+      <div (mouseover)="hint = 'Game input bindings'">
+        <app-control-row *ngFor="let row of inputKeyRows; let i=index"
           [data]="row"
-          [editMode]="i==this.editIndex"
-          (click)="onRowClick(i)"
+          [editMode]="i==this.editInputKeyIndex"
+          (click)="onInputKeyRowClick(i)"
         ></app-control-row>
-    
-        <ng-container *ngIf="localSettings.control">
-          <app-control-row
-            [name]="'DAS (auto-repeat delay)'"
-            [value]="localSettings.control.das"
-            (inputBlur)="onDasUpdated($event)"
-          ></app-control-row>
-          
-          <app-control-row
-            [name]="'ARR (auto-repeat rate)'"
-            [value]="localSettings.control.arr"
-            (inputBlur)="onArrUpdated($event)"
-          ></app-control-row>
-          
-          <app-control-row
-            [name]="'Soft drop speed'"
-            [value]="localSettings.control.sdr"
-            (inputBlur)="onSdrUpdated($event)"
-          ></app-control-row>
-        </ng-container>
       </div>
 
+      <div style="height: 20px;"></div>
+    
+      <div>
+        <ng-container *ngIf="localSettings.control">
+          <div (mouseover)="hint = 'DAS determines how long you have to hold left / right until the piece starts sliding automatically.'">
+            <app-control-row
+              [name]="'DAS (control sensitivity)'"
+              [value]="localSettings.control.das"
+              (inputBlur)="onDasUpdated($event)"
+            ></app-control-row>
+          </div>
+          
+          <div (mouseover)="hint = 'ARR determines how fast the piece slides automatically to the left / right when holding the key down. Smaller means faster.'">
+            <app-control-row
+              [name]="'ARR (horizontal slide interval)'"
+              [value]="localSettings.control.arr"
+              (inputBlur)="onArrUpdated($event)"
+            ></app-control-row>
+          </div>
+          
+          <div (mouseover)="hint = 'Determines how fast the piece falls when holding the soft drop button. Smaller means faster.'">
+            <app-control-row
+              [name]="'Soft drop interval'"
+              [value]="localSettings.control.sdr"
+              (inputBlur)="onSdrUpdated($event)"
+            ></app-control-row>
+          </div>
+        </ng-container>
+      </div>
+      
+      <div style="height: 20px;"></div>
+
+      <div (mouseover)="hint = 'System key bindings'">
+        <app-control-row *ngFor="let row of systemKeyRows; let i=index"
+          [data]="row"
+          [editMode]="i==this.editSystemKeyIndex"
+          (click)="onSystemKeyRowClick(i)"
+        ></app-control-row>
+      </div>
 
       <div style="height: 30px;"></div>
       

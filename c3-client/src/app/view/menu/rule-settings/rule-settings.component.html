@@ -38,6 +38,8 @@
   </div>
 </div>
 
+<div class="field-description">{{fieldDescription}}</div>
+
 <div class="section-body">
   <div *ngIf="viewMode.hideRuleFields">
     <div style="height: 20px"></div>
@@ -81,7 +83,7 @@
     <ng-template #categoryContent let-fields='fields'>
       <ng-container *ngFor="let field of fields">
         <ng-container *ngIf="passesFilter(field)">
-          <div class="field-container">
+          <div class="field-container" (mouseover)="fieldDescription = field.description">
             <div class="field-caption">
               {{field.name}}
             </div>
