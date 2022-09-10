@@ -9,6 +9,19 @@ export class SocketService {
 
   private registeredCallbacks: { event: string, callback: (...args: any[]) => void }[] = [];
 
+  private connected = false;
+  private connectCallbacks: (() => any)[] = [];
+
+  waitUntilConnected(): Promise<void> {
+    return new Promise(resolve => {
+      if (this.connected) {
+        resolve();
+      } else {
+        this.connectCallbacks.push(() => resolve());
+      }
+    });
+  }
+
   async connect(gameServerUrl: string): Promise<void> {
     if (this.socket) {
       throw new Error('Already connected!');
@@ -16,7 +29,9 @@ export class SocketService {
 
     return new Promise(resolve => {
       this.socket = io(gameServerUrl, { withCredentials: true });
-      this.socket.on('connect', () => resolve());
+      this.socket.on('connect', () => {
+        resolve();
+      });
 
       for (let registeredCallback of this.registeredCallbacks) {
         this.socket.on(registeredCallback.event, registeredCallback.callback);

@@ -1,4 +1,5 @@
 import { Game } from "@shared/game/engine/game/game";
+import { clientEventFlushInterval } from "@shared/game/engine/game/game-loop-rule";
 import { Player } from "@shared/game/engine/player/player";
 import { GameState } from "@shared/game/engine/serialization/game-state";
 import { RandomGen } from "@shared/game/engine/util/random-gen";
@@ -12,18 +13,30 @@ export class ServerGame extends Game {
   players!: ServerPlayer[];
   r: RandomGen = new RandomGen();
 
+  checkLaggingPlayerTimeout: any;
+  checkLaggingPlayerInterval = 250;
+
   constructor(startGameData: StartGameData, public clientInfos: ClientInfo[]) {
     super();
     
     this.init(startGameData);
+
+    this.clockStartSubject.subscribe(
+      () => this.checkLaggingPlayerTimeout = setTimeout(
+        () => this.checkLaggingPlayerLoop(),
+        this.players[0].playerRule.lagTolerance
+      )
+    );
   }
   
   createPlayers(startGameData: StartGameData): Player[] {
     return startGameData.players.map((p, index) => new ServerPlayer(this, p, index));
   }
 
-  destroy() {
-    // nothing to clean up yet
+  override destroy() {
+    super.destroy();
+
+    clearTimeout(this.checkLaggingPlayerTimeout);
   }
 
   serialize(): GameState {
@@ -72,5 +85,23 @@ export class ServerGame extends Game {
     } else {
       return null;
     }
+  }
+
+  private checkLaggingPlayerLoop() {
+    this.checkLaggingPlayerTimeout = undefined;
+
+    if (this.running) {
+      this.checkLaggingPlayerTimeout = setTimeout(() => this.checkLaggingPlayerLoop(), this.checkLaggingPlayerInterval);
+      this.checkLaggingPlayers();
+    }
+  }
+
+  private checkLaggingPlayers() {
+    this.players.forEach(player => {
+      if (player.getSecondsSinceFrame() * 1000 >= player.playerRule.lagTolerance + clientEventFlushInterval) {
+        player.statsTracker.stats.afk = true;
+        player.dropPlayer();
+      }
+    });
   }
 }

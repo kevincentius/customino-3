@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { musicService } from 'app/pixi/display/sound/music-service';
+import { soundService, SoundService } from 'app/pixi/display/sound/sound-service';
 import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
 
@@ -20,22 +21,27 @@ export class MenuComponent implements OnInit {
 
   onPlayClick() {
     this.mainService.openScreen(MainScreen.LOBBY);
+    soundService.play('button', 0, 1);
   }
 
   onReplayClick() {
     this.mainService.openScreen(MainScreen.REPLAY);
+    soundService.play('button', 0, 1);
   }
 
   onControlsClick() {
     this.mainService.openScreen(MainScreen.CONTROLS);
+    soundService.play('button', 0, 1);
   }
 
   onThanksClick() {
     this.mainService.openScreen(MainScreen.THANKS);
+    soundService.play('button', 0, 1);
   }
 
   onLogoutClick() {
     this.mainService.openScreen(MainScreen.LOGIN);
     musicService.stop();
+    soundService.play('back');
   }
 }

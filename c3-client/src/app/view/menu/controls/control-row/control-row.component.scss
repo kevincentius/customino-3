@@ -1,9 +1,10 @@
 
 @import 'palette';
+@import 'font';
 
 .control-row {
   transition: 100ms;
-  font-size: 24px;
+  font-size: $font-size-default;
   display: flex;
   cursor: pointer;
   padding: 0px 40px;
@@ -25,11 +26,13 @@
 
   .mapping-item {
     width: 200px;
-    background: #fff3;
+    background: #fff2;
     border-radius: 3px;
     padding: 6px 0;
     padding-left: 15px;
     display: flex;
+
+    backdrop-filter: blur(8px);
 
     &.edit-mode {
       background: #6c6;
@@ -37,12 +40,14 @@
   }
 
   .value-input {
-    font-size: 24px;
+    font-size: $font-size-default;
     border: none;
-    background: #fff3;
+    background: #fff2;
     color: white;
     padding-left: 16px;
     width: 100px;
+
+    backdrop-filter: blur(8px);
   }
 }
 

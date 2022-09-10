@@ -5,6 +5,7 @@ import { RoomService } from 'service/room/room-service';
 import { SessionService } from 'service/session/session-service';
 import { AppGateway } from './gateway/app.gateway';
 import { AccountGateway } from 'gateway/account-gateway';
+import { ServerRoomService } from 'service/room/server-room-service';
 
 @Module({
   imports: [ConfigModule.forRoot()],
@@ -16,6 +17,7 @@ import { AccountGateway } from 'gateway/account-gateway';
     
     SessionService,
     RoomService,
+    ServerRoomService,
   ],
 })
 export class AppModule {}

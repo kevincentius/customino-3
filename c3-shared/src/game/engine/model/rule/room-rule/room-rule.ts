@@ -17,6 +17,7 @@ export interface RoomRule {
   gravity: GravityRule;
 
   countdownMs: number;
+  lagTolerance: number;
 
   // garbage entry
   garbageSpawnDelayTable: number[];

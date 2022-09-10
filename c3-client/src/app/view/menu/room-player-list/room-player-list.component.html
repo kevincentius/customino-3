@@ -22,7 +22,7 @@
               class="team-icon"
               [style.background]="getTeamBgColor(slot.settings.team)"
               (click)="onTeamIconClick(i)"
-            >team</div>
+            >{{slot.settings.playing ? 'team' : 'spec'}}</div>
           </ng-container>
 
           <ng-container *ngIf="slot.settings.team == null">
@@ -30,7 +30,7 @@
               class="team-icon"
               [style.background]="getTeamBgColor(slot.settings.team)"
               (click)="onTeamIconClick(i)"
-            >&nbsp;</div>
+            >{{slot.settings.playing ? 'play' : 'spec'}}</div>
           </ng-container>
         </td>
 

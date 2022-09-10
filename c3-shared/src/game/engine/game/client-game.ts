@@ -20,12 +20,12 @@ export class ClientGame extends Game {
 
 
   constructor(
-    private setTimeoutWrapper: (callback: () => void, ms?: number | undefined) => any,
+    setTimeoutWrapper: (callback: () => void, ms?: number | undefined) => any,
     startGameData: StartGameData,
     private localRule: LocalRule,
-    private localPlayerIndex?: number) {
-    super();
-
+    private localPlayerIndex?: number,
+  ) {
+    super(setTimeoutWrapper);
     this.init(startGameData);
     
     this.clockStartSubject.subscribe(() => this.startUpdateLoop());
@@ -40,7 +40,7 @@ export class ClientGame extends Game {
     return startGameData.players.map(
       (startPlayerData, index) => 
         index == this.localPlayerIndex
-          ? new LocalPlayer(this, startPlayerData, this.localRule)
+          ? new LocalPlayer(this.setTimeoutWrapper, this, startPlayerData, this.localRule)
           : new RemotePlayer(this, startPlayerData, this.localRule));
   }
 
@@ -54,7 +54,10 @@ export class ClientGame extends Game {
     this.clockStartMs = ct - gameState.clockTimeMs;
   }
   
-  destroy() {
+  override destroy() {
+    console.log('client game destroy');
+    super.destroy();
+
     this.stop();
     this.destroySubject.next();
   }
@@ -78,6 +81,7 @@ export class ClientGame extends Game {
   }
 
   startUpdateLoop() {
+    console.log('client game start update loop');
     this.stop();
     this.lastUpdate = Date.now();
     this.mainLoopTimeout = this.setTimeoutWrapper(this.updateLoop.bind(this), gameLoopRule.mspf);
@@ -114,6 +118,10 @@ export class ClientGame extends Game {
             (this.players[attackDistribution.playerIndex] as LocalPlayer).recvAttack(attackDistribution);
           }
         }
+      }
+
+      if (playerEvent.serverEvent?.disconnect == true) {
+        this.players[playerEvent.playerIndex].die();
       }
     }
   }

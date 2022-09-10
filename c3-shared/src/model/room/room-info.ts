@@ -7,9 +7,10 @@ import { ClientInfo } from "@shared/model/session/client-info";
 export interface RoomInfo {
   id: number;
   name: string;
-  host: ClientInfo;
+  host: ClientInfo | null;
   settings: RoomSettings;
   
   slots: RoomSlotInfo[];
   gameState: GameState | null;
+  autoStartMs?: number; // how many milliseconds until the game automatically starts
 }

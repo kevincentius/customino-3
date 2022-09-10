@@ -1,0 +1,13 @@
+
+<ng-container *ngIf="updateRequired === undefined">
+  <div class="info-main">Connecting to server...</div>
+  <div class="info-additional">This may take a few minutes if the server was in sleep mode.</div>
+</ng-container>
+
+<ng-container *ngIf="updateRequired === true">
+  <div class="info-main">Update required</div>
+  <div class="info-instruction">For desktop version: please <a class="info-link" href="{{clientDownloadUrl}}">click here to download the latest version</a>.</div>
+  <div class="info-instruction">For browser version: please refresh with Ctrl+F5 once.</div>
+  <div style="height: 20px;"></div>
+  <div class="info-additional">Currently using client version {{clientVersion}}, which is incompatible with the server version {{serverVersion}}.</div>
+</ng-container>

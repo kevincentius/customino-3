@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { FieldTags } from '@shared/game/engine/model/rule/data-field/field-tag';
 import { localRuleFields } from '@shared/game/engine/model/rule/local-rule/local-rule-fields';
 import { userRuleFields } from '@shared/game/engine/model/rule/user-rule/user-rule-fields';
+import { soundService } from 'app/pixi/display/sound/sound-service';
 import { LocalSettings } from 'app/service/user-settings/local-settings';
 import { getLocalSettings, UserSettingsService } from 'app/service/user-settings/user-settings.service';
 import { MainService } from 'app/view/main/main.service';
@@ -32,6 +33,7 @@ export class PersonalizationComponent implements OnInit {
 
   onBackClick() {
     this.mainService.back();
+    soundService.play('back');
   }
   
   constructor(

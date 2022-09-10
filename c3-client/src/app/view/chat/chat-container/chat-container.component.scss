@@ -1,10 +1,12 @@
 
+@import 'styles/font';
+
 .chat-message-container {
-  padding: 12px 0;
+  padding: 6px 0;
 }
 
 .chat-input-field {
   width: 100%;
-  font-size: 24px;
+  font-size: $font-size-default;
   
 }

@@ -26,7 +26,7 @@ export class RoomPlayerListComponent implements OnInit {
   }
 
   // VIEW MODEL
-  isHost() { return this.mainService.sessionInfo.sessionId == this.roomInfo.host.sessionId; }
+  isHost() { return this.roomInfo.host != null && this.roomInfo.host.sessionId == this.mainService.sessionInfo.sessionId; }
   getSessionId() { return this.mainService.sessionInfo.sessionId; }
 
   getTeamTextColor(team: number | null) {

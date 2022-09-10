@@ -4,9 +4,9 @@
   <div class="control-key">
     <div #ref>
       <ng-content></ng-content>
-    </div> 
+    </div>
       
-    <span *ngIf=" ! ref.children.length">
+    <span *ngIf="!ref.children.length">
       <div class="mapping-list">
         <ng-container *ngIf="data">
           <div class="mapping-item" [class.edit-mode]="editMode" *ngFor="let mapping of data.mappings; let i=index;">

@@ -1,5 +1,6 @@
 
 @import 'palette';
+@import 'font';
 
 .menu {
   display: flex;
@@ -17,7 +18,7 @@
       text-align: center;
       padding-bottom: 20px;
       border-bottom: solid 2px #fff8;
-      font-size: 48px;
+      font-size: $font-size-title;
     }
   }
 

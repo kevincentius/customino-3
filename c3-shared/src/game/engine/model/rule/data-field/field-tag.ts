@@ -20,6 +20,9 @@
   SONIC_DROP_EFFECTS='sonic_drop_effects',
   LINE_CLEAR_EFFECTS='line_clear_effects',
 
+  // challenges
+  CHL_SURVIVAL='chl_survival',
+
   // functional tags
   OVERRIDABLE='overridable',
 }

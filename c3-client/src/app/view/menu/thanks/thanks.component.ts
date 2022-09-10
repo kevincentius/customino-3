@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { soundService } from 'app/pixi/display/sound/sound-service';
 import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
 import { musicCredits } from 'app/view/menu/thanks/music-credits';
@@ -51,5 +52,6 @@ export class ThanksComponent implements OnInit {
 
   onBackClick() {
     this.mainService.openScreen(MainScreen.MENU);
+    soundService.play('back');
   }
 }
