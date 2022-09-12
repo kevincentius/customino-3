@@ -26,9 +26,12 @@
 
     <mat-icon class="icon-button" (click)="openScreen(MainScreen.CONTROLS)">settings</mat-icon>
 
+    <mat-icon class="icon-button" (click)="onDownloadClick()">download</mat-icon>
+
     <mat-icon *ngIf="screen == MainScreen.ROOM" class="icon-button" (click)="onDebugClick()">bug_report</mat-icon>
   </ng-container>
   
+  <mat-icon *ngIf="screen == MainScreen.REPLAY" class="icon-button" (click)="openScreen(MainScreen.MENU)">logout</mat-icon>
 </div>
 
 <div
