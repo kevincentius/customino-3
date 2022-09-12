@@ -90,7 +90,7 @@ export class Board {
 
   private isRowCleared(row: number) {
     for (let cell of this.tiles[row]) {
-      if (cell == null) {
+      if (cell == null || cell.type == TileType.CHEESE_HOLE) {
         return false;
       }
     }

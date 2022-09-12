@@ -59,6 +59,11 @@ export class MainComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    history.pushState(null, '', location.href);
+    window.onpopstate = function () {
+      history.go(1);
+    };
+
     this.openScreen(MainScreen.PRELOGIN);
 
     this.route.params.subscribe(params => {
@@ -106,6 +111,10 @@ export class MainComponent implements OnInit {
   onLeaveRoom() {
     this.room.onBackClick();
     soundService.play('back');
+  }
+
+  onDownloadClick() {
+    window.open('https://drive.google.com/drive/u/0/folders/1QxwCxVj39-53hTvEiYJIEHKDdktgoPAf', '_blank')!.focus();
   }
 
   onDebugClick() {
