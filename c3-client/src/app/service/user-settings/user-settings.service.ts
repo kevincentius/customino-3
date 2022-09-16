@@ -4,7 +4,7 @@ import { fillDefaultRules } from '@shared/game/engine/model/rule/player-rule';
 import { userRuleFields } from '@shared/game/engine/model/rule/user-rule/user-rule-fields';
 import { InputKey } from '@shared/game/network/model/input-key';
 import { SystemKey } from '@shared/game/network/model/system-key';
-import { AppService } from 'app/game-server/app.service';
+import { GameAppService } from 'app/game-server/app.service';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { soundService } from 'app/pixi/display/sound/sound-service';
 import { IdbService } from 'app/service/idb.service';
@@ -24,7 +24,7 @@ export class UserSettingsService {
 
   constructor(
     private idbService: IdbService,
-    private appService: AppService,
+    private appService: GameAppService,
     private ngZone: NgZone,
   ) {
     this.init();

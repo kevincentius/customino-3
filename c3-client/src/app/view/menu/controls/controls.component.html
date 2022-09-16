@@ -13,9 +13,9 @@
   </div>
 
   <div class="v-flex screen-body-container" style="overflow: auto;">
-    <div style="padding-left: 140px; color: yellow; height: 40px;">{{hint}}</div>
+    <div style="padding-left: 140px; color: yellow; height: 50px;">{{hint}}</div>
 
-    <div *ngIf="localSettings" style="display: flex; flex-direction: column; padding: 0 100px; flex-grow: 1; overflow: auto;">
+    <div *ngIf="localSettings" style="display: flex; flex-direction: column; padding: 0 100px; flex-grow: 1; flex-basis: 0; overflow: auto;">
       <app-control-row *ngFor="let settingsField of settingsFields" [name]="settingsField.name"
         (mouseover)="hint = settingsField.description"
       >
@@ -26,11 +26,12 @@
         ></app-field-input>
       </app-control-row>
       
-      <div (mouseover)="hint = 'Game input bindings'">
+      <div>
         <app-control-row *ngFor="let row of inputKeyRows; let i=index"
           [data]="row"
           [editMode]="i==this.editInputKeyIndex"
           (click)="onInputKeyRowClick(i)"
+          (mouseover)="hint = row.description"
         ></app-control-row>
       </div>
 
@@ -66,11 +67,12 @@
       
       <div style="height: 20px;"></div>
 
-      <div (mouseover)="hint = 'System key bindings'">
+      <div>
         <app-control-row *ngFor="let row of systemKeyRows; let i=index"
           [data]="row"
           [editMode]="i==this.editSystemKeyIndex"
           (click)="onSystemKeyRowClick(i)"
+          (mouseover)="hint = row.description"
         ></app-control-row>
       </div>
 

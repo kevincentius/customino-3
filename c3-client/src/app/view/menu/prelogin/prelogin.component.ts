@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { GameAppService } from 'app/game-server/app.service';
 import { AppService } from 'app/main-server/api/v1/api/app.service';
 import { clientVersion } from 'app/service/version';
 import { MainScreen } from 'app/view/main/main-screen';
@@ -17,12 +18,14 @@ export class PreloginComponent implements OnInit {
 
   constructor(
     private appService: AppService,
+    private gameAppService: GameAppService,
     private mainService: MainService,
   ) { }
 
   async ngOnInit() {
     const serverInfo = await this.appService.getInfo();
     if (clientVersion.startsWith(serverInfo.version)) {
+      await this.gameAppService.getServerInfo();
       this.mainService.openScreen(MainScreen.LOGIN);
     } else {
       this.updateRequired = true;

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { SessionInfo } from '@shared/model/session/session-info';
 import { shuffle } from '@shared/util/random';
 import { AccountService } from 'app/game-server/account.service';
-import { AppService } from 'app/game-server/app.service';
+import { GameAppService } from 'app/game-server/app.service';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { soundService } from 'app/pixi/display/sound/sound-service';
 import { getLocalSettings } from 'app/service/user-settings/user-settings.service';
@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private accountService: AccountService,
     private mainService: MainService,
-    private appService: AppService,
+    private appService: GameAppService,
   ) { }
 
   ngOnInit(): void {

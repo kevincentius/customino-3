@@ -82,7 +82,6 @@ export class RoomComponent implements OnDestroy {
   ) {
     window!.onkeydown = (ev: KeyboardEvent) => {
       let handled = true;
-      console.log(isSystemKey(ev, SystemKey.SPECTATOR_OFF), this.isSpectator());
       if (isSystemKey(ev, SystemKey.START_GAME) && !(this.game && this.game.running)) {
         this.onStartGameClick();
       } else if (isSystemKey(ev, SystemKey.TOGGLE_GUI) && this.game) {
