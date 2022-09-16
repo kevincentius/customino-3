@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { SystemKey } from "@shared/game/network/model/system-key";
 import { soundService } from "app/pixi/display/sound/sound-service";
+import { isSystemKey } from "app/service/user-settings/user-settings.service";
 import { MainScreen } from "app/view/main/main-screen";
 import { MainService } from "app/view/main/main.service";
 import { ControlsComponent } from "app/view/menu/controls/controls.component";
@@ -10,6 +12,7 @@ import { PersonalizationComponent } from "app/view/menu/personalization/personal
 import { RoomComponent } from "app/view/menu/room/room.component";
 import { PixiComponent } from "app/view/pixi/pixi.component";
 import { ReplayComponent } from "app/view/replay/replay.component";
+import { ThanksComponent } from "../menu/thanks/thanks.component";
 
 @Component({
   selector: 'app-main',
@@ -32,6 +35,9 @@ export class MainComponent implements OnInit {
   
   @ViewChild('replay', { static: true })
   private replay!: ReplayComponent;
+
+  @ViewChild('thanks', { static: true })
+  private thanks!: ThanksComponent;
 
   @ViewChild('controls', { static: true })
   private controls!: ControlsComponent;
@@ -71,6 +77,34 @@ export class MainComponent implements OnInit {
     });
   }
   
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(ev: KeyboardEvent) {
+    let handled = true;
+    
+    if (isSystemKey(ev, SystemKey.EXIT)) {
+      if (this.screen == MainScreen.ROOM) {
+        this.room.onBackClick();
+      } else if (this.screen == MainScreen.LOBBY) {
+        this.lobby.onBackClick();
+      } else if (this.screen == MainScreen.PERSONALIZATION) {
+        this.personalization.onBackClick();
+      } else if (this.screen == MainScreen.CONTROLS) {
+        this.controls.onBackClick();
+      } else if (this.screen == MainScreen.REPLAY) {
+        this.replay.onBackClick();
+      } else if (this.screen == MainScreen.THANKS) {
+        this.thanks.onBackClick();
+      }
+    } else {
+      handled = false;
+    }
+
+    if (handled) {
+      ev.stopPropagation();
+      ev.preventDefault();
+    }
+  }
+
   ngAfterViewInit() {
     this.mainService.init(this);
 

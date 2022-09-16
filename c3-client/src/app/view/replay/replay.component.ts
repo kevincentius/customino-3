@@ -5,6 +5,8 @@ import { FileDropAreaComponent } from "app/view/common/file-drop-area/file-drop-
 import { GameReplayer } from "@shared/game/engine/replayer/game-replayer";
 import { getLocalSettings } from "app/service/user-settings/user-settings.service";
 import { timeoutWrapper } from "app/util/ng-zone-util";
+import { MainScreen } from "../main/main-screen";
+import { soundService } from "app/pixi/display/sound/sound-service";
 
 @Component({
   selector: 'app-replay',
@@ -30,6 +32,11 @@ export class ReplayComponent {
     private mainService: MainService,
     private ngZone: NgZone,
   ) { }
+
+  onBackClick() {
+    soundService.play('back');
+    this.mainService.openScreen(MainScreen.MENU);
+  }
 
   onFileChange(files: any) {
     if (files.length == 0) {
