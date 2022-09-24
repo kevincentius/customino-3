@@ -7,6 +7,7 @@ export class PlayerStatsTracker {
     activeTime: 0,
     pieces: 0,
     combos: [],
+    maxCombo: 0,
 
     powerGenerated: 0,
     attackGenerated: 0,

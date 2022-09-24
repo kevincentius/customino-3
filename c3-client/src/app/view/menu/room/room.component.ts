@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ClientGame } from '@shared/game/engine/game/client-game';
 import { LocalPlayer } from '@shared/game/engine/player/local-player';
 import { GameRecorder } from '@shared/game/engine/recorder/game-recorder';
@@ -79,31 +79,31 @@ export class RoomComponent implements OnDestroy {
     public mainService: MainService,
     private cd: ChangeDetectorRef,
     private ngZone: NgZone,
-  ) {
-    window!.onkeydown = (ev: KeyboardEvent) => {
-      let handled = true;
-      console.log(isSystemKey(ev, SystemKey.SPECTATOR_OFF), this.isSpectator());
-      if (isSystemKey(ev, SystemKey.START_GAME) && !(this.game && this.game.running)) {
-        this.onStartGameClick();
-      } else if (isSystemKey(ev, SystemKey.TOGGLE_GUI) && this.game) {
-        this.setShowRoomGui(!this.showRoomGui);
-      } else if (isSystemKey(ev, SystemKey.DEBUG)) {
-        this.mainService.pixi.togglePerformanceDisplay();
-      } else if (isSystemKey(ev, SystemKey.SPECTATOR_ON) && !this.isSpectator()) {
-        this.onToggleSpectatorModeClick();
-      } else if (isSystemKey(ev, SystemKey.SPECTATOR_OFF) && this.isSpectator()) {
-        this.onToggleSpectatorModeClick();
-      } else if (isSystemKey(ev, SystemKey.EXIT)) {
-        this.onBackClick();
-      } else {
-        handled = false;
-      }
+  ) {}
 
-      if (handled) {
-        ev.stopPropagation();
-        ev.preventDefault();
+  @HostListener('window:keydown', ['$event'])
+  onKeyDown(ev: KeyboardEvent) {
+    let handled = true;
+    if (isSystemKey(ev, SystemKey.START_GAME) && !(this.game && this.game.running)) {
+      this.onStartGameClick();
+    } else if (isSystemKey(ev, SystemKey.TOGGLE_GUI)) {
+      if (this.game) {
+        this.setShowRoomGui(!this.showRoomGui);
       }
-    };
+    } else if (isSystemKey(ev, SystemKey.DEBUG)) {
+      this.mainService.pixi.togglePerformanceDisplay();
+    } else if (isSystemKey(ev, SystemKey.SPECTATOR_ON) && !this.isSpectator()) {
+      this.onToggleSpectatorModeClick();
+    } else if (isSystemKey(ev, SystemKey.SPECTATOR_OFF) && this.isSpectator()) {
+      this.onToggleSpectatorModeClick();
+    } else {
+      handled = false;
+    }
+
+    if (handled) {
+      ev.stopPropagation();
+      ev.preventDefault();
+    }
   }
 
   ngAfterViewInit() {

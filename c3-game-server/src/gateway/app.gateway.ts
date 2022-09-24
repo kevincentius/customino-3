@@ -24,6 +24,11 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     this.logger.log('Received debug message from a client:', message);
   }
 
+  @SubscribeMessage(LobbyEvent.GET_SERVER_INFO)
+  getServerInfo(socket: Socket) {
+    return {};
+  }
+
   @SubscribeMessage(LobbyEvent.UPDATE_USER_RULE)
   updateUserRule(socket: Socket, userRule: UserRule) {
     const session = this.sessionService.getSession(socket);

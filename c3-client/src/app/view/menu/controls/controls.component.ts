@@ -28,10 +28,10 @@ export class ControlsComponent {
 
   // view model
   inputKeyRows: ControlRowModel[] = inputKeyDataArray
-    .map(d => ({ inputKey: d.inputKey, mappings: [], name: d.name }));
+    .map(d => ({ inputKey: d.inputKey, mappings: [], name: d.name, description: d.description, }));
 
   systemKeyRows: ControlRowModel[] = systemKeyDataArray
-    .map(d => ({ inputKey: d.systemKey, mappings: [], name: d.name }));
+    .map(d => ({ inputKey: d.systemKey, mappings: [], name: d.name, description: d.description, }));
 
   editInputKeyIndex: number | null = null;
   editSystemKeyIndex: number | null = null;
