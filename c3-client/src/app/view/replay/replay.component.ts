@@ -34,8 +34,9 @@ export class ReplayComponent {
   ) { }
 
   onBackClick() {
-    soundService.play('back');
     this.mainService.openScreen(MainScreen.MENU);
+    soundService.play('back');
+    console.log('play back sound man');
   }
 
   onFileChange(files: any) {

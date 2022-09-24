@@ -26,9 +26,7 @@ export class UserSettingsService {
     private idbService: IdbService,
     private appService: GameAppService,
     private ngZone: NgZone,
-  ) {
-    this.init();
-  }
+  ) {}
 
   async init() {
     const saved = await this.idbService.getLocalSettings();
