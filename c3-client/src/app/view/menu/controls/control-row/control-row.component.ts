@@ -7,6 +7,7 @@ export interface ControlRowModel {
   inputKey: InputKey | SystemKey;
   mappings: string[];
   name: string;
+  description: string;
 }
 
 @Component({

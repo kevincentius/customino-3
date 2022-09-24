@@ -3,6 +3,7 @@ export interface PlayerStats {
   activeTime: number;
   pieces: number;
   combos: number[];
+  maxCombo: number;
   powerGenerated: number;
   attackGenerated: number;
   blockGenerated: number;

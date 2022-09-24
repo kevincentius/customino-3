@@ -9,6 +9,7 @@ import { MainService } from 'app/view/main/main.service';
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  
 })
 export class MenuComponent implements OnInit {
 
