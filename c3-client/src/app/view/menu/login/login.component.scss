@@ -5,14 +5,6 @@
   // background: #102;
 }
 
-.full-center {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
 .main-input {
   text-align: center;
   font-size: 48px;
@@ -24,6 +16,11 @@
 
 .spacer {
   height: 24px;
+}
+
+.version {
+  font-size: $font-size-small;
+  color: #fff8;
 }
 
 .banner-btn {
@@ -38,9 +35,4 @@
     -o-filter: brightness(160%);
     -ms-filter: brightness(160%);
   }
-}
-
-.version {
-  font-size: $font-size-small;
-  color: #fff8;
 }

@@ -1,7 +1,8 @@
 
 export enum LobbyEvent {
   // events fired by the client
-  GET_SERVER_INFO      = 'j', 
+  GET_SERVER_INFO      = 'j',
+  GET_SESSION_INFO     = 'm',
   UPDATE_USER_RULE     = 'e',
 
   GET_ROOMS            = '1',

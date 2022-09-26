@@ -1,7 +1,7 @@
 
 <ng-container *ngIf="updateRequired === undefined">
-  <div class="info-main">Connecting to server...</div>
-  <div class="info-additional">This may take a few minutes if the server was in sleep mode.</div>
+  <div class="info-main">Connecting to the main server...</div>
+  <div class="info-additional">This may take a few minutes if the server was empty (sleep).</div>
 </ng-container>
 
 <ng-container *ngIf="updateRequired === true">
@@ -11,3 +11,13 @@
   <div style="height: 20px;"></div>
   <div class="info-additional">Currently using client version {{clientVersion}}, which is incompatible with the server version {{serverVersion}}.</div>
 </ng-container>
+
+<!-- <ng-container *ngIf="mainServerConnected">
+  <div class="full-size login-background" style="background: #0008;">
+    <div class="full-center">
+      <div>
+        <img (click)="onBannerClick()" class="banner-btn" src="assets/img/default/banner.ico"/>
+      </div>
+    </div>
+  </div>
+</ng-container> -->

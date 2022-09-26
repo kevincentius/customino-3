@@ -5,12 +5,12 @@ import { RoomSettings } from '@shared/game/engine/model/room-settings';
 import { GameReplay } from '@shared/game/engine/recorder/game-replay';
 import { ClientEvent } from '@shared/game/network/model/event/client-event';
 import { LobbyEvent } from '@shared/model/room/lobby-event';
-import { websocketGatewayOptions } from 'config/config';
+import { config } from 'config/config';
 import { RoomService } from 'service/room/room-service';
 import { SessionService } from 'service/session/session-service';
 import { Socket } from 'socket.io';
 
-@WebSocketGateway(websocketGatewayOptions)
+@WebSocketGateway(config.webSocketGatewayOptions)
 export class LobbyGateway {
 
   constructor(

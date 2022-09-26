@@ -17,19 +17,18 @@ export class PreloginComponent implements OnInit {
   serverVersion!: string;
   clientDownloadUrl!: string;
 
+  mainServerConnected = false;
+
   constructor(
     private appService: AppService,
-    private userSettingsService: UserSettingsService,
-    private gameAppService: GameAppService,
     private mainService: MainService,
   ) { }
 
   async ngOnInit() {
     const serverInfo = await this.appService.getInfo();
+    this.mainServerConnected = true;
+
     if (clientVersion.startsWith(serverInfo.version)) {
-      await this.gameAppService.getServerInfo();
-      
-      this.userSettingsService.init();
       this.mainService.openScreen(MainScreen.LOGIN);
     } else {
       this.updateRequired = true;

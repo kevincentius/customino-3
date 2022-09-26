@@ -21,6 +21,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   height: 100%;
 }
 
+.full-center {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .v-flex {
   height: 100%;
   display: flex;
@@ -58,6 +66,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .gui-button-row {
   display: flex;
   margin-bottom: 30px;
+  gap: 10px;
 }
 
 .gui-button {
@@ -68,10 +77,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   align-items: center;
   font-size: $font-size-default;
   padding: 6px 10px;
-  background: none;
+  background: #fff2;
   border: none;
   color: #fffd;
   border: solid #0000 2px;
+  backdrop-filter: blur(8px);
   border-radius: 2px;
 
   &.gui-button-toggle {
@@ -81,6 +91,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
   &.gui-button-small {
     font-size: $font-size-small;
+  }
+
+  &.gui-button-big {
+    font-size: $font-size-big;
+    padding: 12px 40px;
   }
 
   &:hover {

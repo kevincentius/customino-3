@@ -22,13 +22,18 @@ export class SocketService {
     });
   }
 
-  async connect(gameServerUrl: string): Promise<void> {
+  async connect(gameServerUrl: string, jwtToken: string): Promise<void> {
     if (this.socket) {
       throw new Error('Already connected!');
     }
 
     return new Promise(resolve => {
-      this.socket = io(gameServerUrl, { withCredentials: true });
+      this.socket = io(gameServerUrl, {
+        withCredentials: true,
+        query: {
+          jwtToken: jwtToken
+        },
+      });
       this.socket.on('connect', () => {
         resolve();
       });
@@ -37,6 +42,15 @@ export class SocketService {
         this.socket.on(registeredCallback.event, registeredCallback.callback);
       }
     })
+  }
+
+  async disconnect() {
+    if (!this.socket) {
+      throw new Error('Not connected!');
+    }
+
+    this.socket.disconnect();
+    this.socket = null!;
   }
 
   emit(event: string, ...args: any[]): void {

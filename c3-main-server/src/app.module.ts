@@ -4,15 +4,20 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from 'controller/app/app.controller';
 import { DebugService } from 'service/debug-service';
 import { DebugController } from './controller/debug/debug.controller';
+import { AccountModule } from './account/account.module';
+import { AuthModule } from './auth/auth.module';
+import { AuthController } from 'auth/auth.controller';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     HttpModule,
+    AccountModule,
+    AuthModule,
   ],
   controllers: [
-    AppController,
     DebugController,
+    AppController,
   ],
   providers: [
     DebugService,

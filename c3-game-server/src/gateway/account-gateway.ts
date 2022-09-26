@@ -3,11 +3,11 @@ import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { LobbyEvent } from '@shared/model/room/lobby-event';
 import { SessionInfo } from '@shared/model/session/session-info';
-import { websocketGatewayOptions } from 'config/config';
+import { config } from 'config/config';
 import { SessionService } from 'service/session/session-service';
 import { Socket } from 'socket.io';
 
-@WebSocketGateway(websocketGatewayOptions)
+@WebSocketGateway(config.webSocketGatewayOptions)
 export class AccountGateway {
 
   constructor(

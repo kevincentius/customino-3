@@ -34,10 +34,6 @@ export class LobbyComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const debugResponse = await this.debugService.test();
-    await this.socketService.connect(debugResponse.gameServerUrl);
-
-    await this.onRefresh();
   }
 
   onBackClick() {

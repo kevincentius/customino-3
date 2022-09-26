@@ -1,4 +1,5 @@
 import { config } from "config/config";
+import { AccountEntity } from "entity/account.entity";
 import { SampleEntity } from "entity/sample-entity";
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
@@ -12,7 +13,8 @@ export const AppDataSource = new DataSource({
   dropSchema: false,
   namingStrategy: new SnakeNamingStrategy(),
   entities: [
-    SampleEntity
+    SampleEntity,
+    AccountEntity,
   ],
   ssl: process.env.DEPLOYMENT == 'LIVE' ? { rejectUnauthorized: false } : false,
 })

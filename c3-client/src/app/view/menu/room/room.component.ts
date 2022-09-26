@@ -175,12 +175,16 @@ export class RoomComponent implements OnDestroy {
   }
 
   async onBackClick() {
-    await this.roomService.leave();
-    if (this.game) {
-      this.game.destroy();
-      this.game = undefined;
+    if (!this.showRoomGui) {
+      this.setShowRoomGui(true);
+    } else {
+      await this.roomService.leave();
+      if (this.game) {
+        this.game.destroy();
+        this.game = undefined;
+      }
+      this.mainService.openScreen(MainScreen.LOBBY);
     }
-    this.mainService.openScreen(MainScreen.LOBBY);
   }
 
   private startGame() {

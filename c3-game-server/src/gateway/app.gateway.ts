@@ -1,14 +1,14 @@
-
 import { Logger } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { UserRule } from '@shared/game/engine/model/rule/user-rule/user-rule';
 import { LobbyEvent } from '@shared/model/room/lobby-event';
-import { websocketGatewayOptions } from 'config/config';
+import { SessionInfo } from '@shared/model/session/session-info';
+import { config } from 'config/config';
 import { RoomService } from 'service/room/room-service';
 import { SessionService } from 'service/session/session-service';
 import { Socket } from 'socket.io';
 
-@WebSocketGateway(websocketGatewayOptions)
+@WebSocketGateway(config.webSocketGatewayOptions)
 export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 
   // @WebSocketServer() server!: Server;
@@ -27,6 +27,14 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   @SubscribeMessage(LobbyEvent.GET_SERVER_INFO)
   getServerInfo(socket: Socket) {
     return {};
+  }
+
+  @SubscribeMessage(LobbyEvent.GET_SESSION_INFO)
+  getSessionInfo(socket: Socket): SessionInfo {
+    const session = this.sessionService.getSession(socket);
+    return {
+      sessionId: session.sessionId,
+    };
   }
 
   @SubscribeMessage(LobbyEvent.UPDATE_USER_RULE)
@@ -55,13 +63,13 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
     }
   }
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: any) {
     try {
       this.logger.log(`Client connected: ${client.id}.`);
   
+      await this.sessionService.createSession(client);
+
       client.emit('debugMessage', 'Hello from the server.');
-  
-      this.sessionService.createSession(client);
     } catch (error) {
       this.logger.error(error);
     }

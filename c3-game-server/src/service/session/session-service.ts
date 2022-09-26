@@ -1,5 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { shuffle } from "@shared/util/random";
+import { AuthService } from "auth/auth.service";
 import EventEmitter from "events";
 import { Session } from "service/session/session";
 import { Socket } from "socket.io";
@@ -25,6 +26,10 @@ export class SessionService {
 
   private activeGuestNames = new Set<string>();
 
+  constructor(
+    private authService: AuthService,
+  ) {}
+
   registerGuest(socket: Socket, username: string) {
     const session = this.getSession(socket);
     if (session.userId != null) { throw new Error('You must log out before logging in as a guest!'); }
@@ -46,13 +51,23 @@ export class SessionService {
   /**
    * Creates a new session data for the connected client.
    */
-  createSession(socket: Socket): Session {
-    // TODO: get userId & username via jwt?
-    const username = `${this.randomNames[this.nextDummyUserId % this.randomNames.length]} #${this.nextDummyUserId++}`;
-    const session = new Session(socket, this.nextSessionId++, null, username);
+  async createSession(socket: Socket): Promise<Session> {
+    console.log('jwtToken:', socket.handshake.query.jwtToken);
 
+    let session: Session;
+    const jwtToken = socket.handshake.query.jwtToken as string;
+    if (jwtToken) {
+      const jwtTokenData: any = await this.authService.parseJwtToken(socket.handshake.query.jwtToken as string)
+      console.log(jwtTokenData);
+      session = new Session(socket, this.nextSessionId++, jwtTokenData.sub, jwtTokenData.username);
+    } else {
+      session = new Session(socket, this.nextSessionId++, null, socket.handshake.query.guestName + ' #' + this.nextDummyUserId++);
+    }
+    
     this.socketToSessionMap.set(socket, session);
     this.idToSessionMap.set(session.sessionId, session);
+
+    console.log(session.getClientInfo());
 
     return session;
   }
