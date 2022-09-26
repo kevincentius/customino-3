@@ -18,6 +18,14 @@
   height: 24px;
 }
 
+.prompt {
+  font-size: $font-size-big;
+
+  .prompt-highlight {
+    color: yellow;
+  }
+}
+
 .version {
   font-size: $font-size-small;
   color: #fff8;

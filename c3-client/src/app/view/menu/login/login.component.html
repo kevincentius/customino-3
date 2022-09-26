@@ -27,7 +27,11 @@
   
       <div>
         <img (click)="onSubmitUsername()" class="banner-btn" src="assets/img/default/banner.ico"/>
-      </div>
+      </div>  
+  
+      <div class="spacer"></div>
+
+      <div class="version">alpha v{{clientVersion}} (user data may be lost)</div>  
     </ng-container>
 
     <ng-container *ngIf="phase == LoginPhase.SUBMIT_PASSWORD">
@@ -38,25 +42,26 @@
       <div class="spacer"></div>
   
       <div style="display: flex; align-items: center; justify-content: center;">
-        <input #inpPasswordRef [(ngModel)]="inpPassword" placeholder="password" maxlength="255" class="main-input" (keyup.enter)="onSubmitPassword()">
+        <input #inpPasswordRef type="password" [(ngModel)]="inpPassword" placeholder="password" maxlength="255" class="main-input" (keyup.enter)="onSubmitPassword()">
         {{ inpPasswordRef.focus() }}
       </div>
     </ng-container>
 
     <ng-container *ngIf="phase == LoginPhase.CONFIRM_REGISTER">
+      <div *ngIf="!isGuestName()" class="prompt">Account <span class="prompt-highlight">{{inpUsername}}</span> not found.</div>
+      <div *ngIf="isGuestName()" class="prompt">Username <span class="prompt-highlight">{{inpUsername}}</span> is reserved for anonymous players.</div>
+
+      <div class="spacer"></div>
+
       <div class="gui-button-row">
         <button class="gui-button gui-button-main gui-button-big" [disabled]="isGuestName()">
-          Register
+          Create account
         </button>
-  
-        <button class="gui-button gui-button-big">
-          Stay anonymous
+
+        <button class="gui-button gui-button-big" (click)="onLoginAsGuest()">
+          Play anonymously
         </button>
       </div>
     </ng-container>
-  
-    <div class="spacer"></div>
-  
-    <div class="version">alpha v{{clientVersion}} (user data may be lost)</div>
   </div>
 </div>

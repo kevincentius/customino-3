@@ -29,4 +29,11 @@ export class AuthService {
       jwtToken: this.jwtService.sign(payload),
     };
   }
+
+  async createGuestJwtToken(username: string): Promise<AuthResult> {
+    const payload = { username: username };
+    return {
+      jwtToken: this.jwtService.sign(payload),
+    };
+  }
 }

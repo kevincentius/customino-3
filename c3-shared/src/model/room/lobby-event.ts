@@ -23,7 +23,6 @@ export enum LobbyEvent {
   RESET_SCORES         = 'g',
 
   // events fired by the server
-  LOGIN                = 'a',
   ROOM_INFO            = 'b',
   SERVER_EVENT         = 'c',
   GAME_OVER            = 'd',

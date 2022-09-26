@@ -10,9 +10,4 @@ export class AccountService {
   constructor(
     private socketService: SocketService
   ) {}
-
-  async loginAsGuest(username: string): Promise<SessionInfo | null> {
-    console.log('emitting login', null, username);
-    return this.socketService.emitQuery(LobbyEvent.LOGIN, null, username);
-  }
 }

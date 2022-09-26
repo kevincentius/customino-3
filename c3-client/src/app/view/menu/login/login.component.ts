@@ -85,25 +85,18 @@ export class LoginComponent implements OnInit {
     }
     this.loading = false;
     this.cd.detectChanges();
+  }
 
-    // const sessionInfo: SessionInfo | null = await this.accountService.loginAsGuest(this.inpUsername);
+  async onLoginAsGuest() {
+    this.loading = true;
+    this.cd.detectChanges();
 
-    // if (sessionInfo == null) {
-    //   // TODO: enable gui & show error
-    // } else {
-    //   // connect websocket
-    //   const debugResponse = await this.debugService.test();
-    //   await this.socketService.connect(debugResponse.gameServerUrl);
-    //   // -----------------
+    // connect to game server
+    const debugResponse = await this.debugService.test();
+    await this.socketService.connect(debugResponse.gameServerUrl, undefined, this.inpUsername);
+    this.mainService.sessionInfo = await this.appService.getSessionInfo();
 
-    //   this.appService.updateUserRule(getLocalSettings().userRule);
-
-    //   this.mainService.sessionInfo = sessionInfo;
-    //   this.mainService.openScreen(MainScreen.MENU);
-    
-    //   soundService.play('button', 0, 0);
-    //   musicService.start();
-    // }
+    await this.finishLogin();    
   }
 
   async onSubmitPassword() {
@@ -111,7 +104,7 @@ export class LoginComponent implements OnInit {
     this.cd.detectChanges();
 
     try {
-      // attempt login - will throw an error if password is false
+      // login to main server - will throw an error if password is false
       const loginResult: any = await this.authService.login({
         username: this.inpUsername,
         password: this.inpPassword,
@@ -123,19 +116,23 @@ export class LoginComponent implements OnInit {
       await this.socketService.connect(debugResponse.gameServerUrl, loginResult.jwtToken);
       this.mainService.sessionInfo = await this.appService.getSessionInfo();
 
-      // user settings
-      await this.userSettingsService.init();
-      this.appService.updateUserRule(getLocalSettings().userRule);
-      
-      // enter menu
-      this.mainService.openScreen(MainScreen.MENU);
-      this.cd.detectChanges();
-      soundService.play('button', 0, 0);
-      musicService.start();
+      await this.finishLogin();
     } catch (e: any) {
       this.inpPassword = '';
     }
     this.cd.detectChanges();
+  }
 
+  private async finishLogin() {
+    // user settings
+    await this.userSettingsService.init();
+    this.appService.updateUserRule(getLocalSettings().userRule);
+    
+    // enter game menu
+    this.loading = false;
+    this.mainService.openScreen(MainScreen.MENU);
+    this.cd.detectChanges();
+    soundService.play('button', 0, 0);
+    musicService.start();
   }
 }

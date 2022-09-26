@@ -15,7 +15,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  @ApiOperation({ summary: 'Attempt to login.' })
+  @ApiOperation({ summary: 'Attempt to login with an existing account.' })
   @ApiCreatedResponse({ type: AuthResult })
   async login(@Body() body: LoginDto) {
     return await this.authService.createJwtToken(

@@ -22,7 +22,7 @@ export class SocketService {
     });
   }
 
-  async connect(gameServerUrl: string, jwtToken: string): Promise<void> {
+  async connect(gameServerUrl: string, jwtToken: string | undefined, guestName?: string): Promise<void> {
     if (this.socket) {
       throw new Error('Already connected!');
     }
@@ -31,7 +31,8 @@ export class SocketService {
       this.socket = io(gameServerUrl, {
         withCredentials: true,
         query: {
-          jwtToken: jwtToken
+          jwtToken: jwtToken,
+          guestName: guestName,
         },
       });
       this.socket.on('connect', () => {
