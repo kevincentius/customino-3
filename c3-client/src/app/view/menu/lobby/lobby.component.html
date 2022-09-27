@@ -25,10 +25,10 @@
       <div style="height: 30px;"></div>
   
       <div class="room-container">
-        <div *ngFor="let room of rooms" class="room" (click)="onRoomClick(room)">
+        <button *ngFor="let room of rooms" class="room" (click)="onRoomClick(room)">
           <div class="room-player-count"><mat-icon>person</mat-icon>{{room.slots.length}}</div>
           <div class="room-name">{{room.name}}</div>
-        </div>
+        </button>
       </div>
     </ng-container>
   </div>

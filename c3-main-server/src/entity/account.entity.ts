@@ -12,7 +12,10 @@ export class AccountEntity {
   password!: string;
   
   @Column()
-  email!: string;
+  email?: string;
+
+  @Column()
+  emailConfirmedAt?: number;
   
   @Column()
   createdAt!: number;

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { SessionInfo } from '@shared/model/session/session-info';
 import { shuffle } from '@shared/util/random';
 import { AccountService, Configuration } from 'app/main-server/api/v1';
@@ -36,12 +36,27 @@ export class LoginComponent implements OnInit {
 
   inpUsername = '';
   inpPassword = '';
+  inpEmail = '';
+
+  @ViewChild('inpUsernameRef')
+  inpUsernameRef!: ElementRef<HTMLInputElement>;
+
+  @ViewChild('inpPasswordRef')
+  inpPasswordRef!: ElementRef<HTMLInputElement>;
+  
+  @ViewChild('inpEmailRef')
+  inpEmailRef!: ElementRef<HTMLInputElement>;
+
+  @ViewChild('btnLoginAsGuestRef')
+  btnLoginAsGuestRef!: ElementRef<HTMLButtonElement>;
 
   loading = false;
 
   phase = LoginPhase.SUBMIT_USERNAME;
 
   username?: string;
+
+  autoFocusUsername = true;
 
   constructor(
     private mainService: MainService,
@@ -61,6 +76,18 @@ export class LoginComponent implements OnInit {
     this.setRandomName();
   }
 
+  onShow() {
+    this.inpPassword = "";
+    this.inpEmail = "";
+    this.phase = LoginPhase.SUBMIT_USERNAME;
+    this.cd.detectChanges();
+    
+    setTimeout(() => {
+      this.inpUsernameRef.nativeElement.focus();
+      this.inpUsernameRef.nativeElement.select();
+    });
+  }
+
   setRandomName() {
     this.inpUsername = this.randomNames[this.nextRandomNameId];
     this.nextRandomNameId = (this.nextRandomNameId + 1) % this.randomNames.length;
@@ -75,16 +102,42 @@ export class LoginComponent implements OnInit {
     this.cd.detectChanges();
 
     const accountInfo: any = await this.accountService.findByUsername(this.inpUsername.trim());
-    console.log(accountInfo);
-
+    
     if (accountInfo) {
       this.username = accountInfo.username;
       this.phase = LoginPhase.SUBMIT_PASSWORD;
+      setTimeout(() => this.inpPasswordRef.nativeElement.focus());
     } else {
       this.phase = LoginPhase.CONFIRM_REGISTER;
+      setTimeout(() => this.btnLoginAsGuestRef.nativeElement.focus());
     }
     this.loading = false;
     this.cd.detectChanges();
+  }
+
+  async onCreateAccount() {
+    this.phase = LoginPhase.SUBMIT_ACCOUNT;
+    this.cd.detectChanges();
+    
+    setTimeout(() => {
+      this.inpEmailRef.nativeElement.focus();
+    });
+  }
+
+  async onSubmitAccount() {
+    if (this.inpPassword.trim() == '') {
+      this.inpPasswordRef.nativeElement.focus();
+    } else {
+      const registerResult: any = await this.authService.register({
+        username: this.inpUsername,
+        passwordClearText: this.inpPassword,
+        email: this.inpEmail ?? undefined,
+      });
+  
+      if (registerResult.success) {
+        await this.onSubmitPassword();
+      }
+    }
   }
 
   async onLoginAsGuest() {

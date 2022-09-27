@@ -9,7 +9,8 @@ CREATE TABLE ACCOUNT (
   id SERIAL PRIMARY KEY,
   username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
-  email TEXT UNIQUE NOT NULL,
-  created_at TIMESTAMP NOT NULL,
-  last_login TIMESTAMP NOT NULL
+  email TEXT UNIQUE,
+  email_confirmed_at BIGINT,
+  created_at BIGINT NOT NULL,
+  last_login BIGINT NOT NULL
 );

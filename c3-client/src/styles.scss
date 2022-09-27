@@ -16,6 +16,14 @@ body {
 html, body { height: 100%; overflow: hidden; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+button {
+  box-sizing: unset;
+  color: inherit;
+  border: none;
+  background: none;
+  text-align: left;
+}
+
 .full-size {
   display: block;
   height: 100%;

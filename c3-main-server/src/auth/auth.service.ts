@@ -7,6 +7,13 @@ export class AuthResult {
   jwtToken: any;
 }
 
+export class RegisterResult {}
+export interface RegisterResult {
+  success: boolean;
+  error?: string;
+  accountId?: number;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -16,7 +23,7 @@ export class AuthService {
 
   async validateUser(username: string, passwordClearText: string): Promise<any> {
     const account = await this.accountService.findByUsername(username);
-    if (account && account.password == passwordClearText) { // TODO: HASH await this.accountService.hashPassword(passwordClearText)) {
+    if (account && await this.accountService.verifyPassword(passwordClearText, account.password)) {
       const { password, ...result } = account;
       return result;
     }

@@ -7,6 +7,7 @@ import { MainScreen } from "app/view/main/main-screen";
 import { MainService } from "app/view/main/main.service";
 import { ControlsComponent } from "app/view/menu/controls/controls.component";
 import { LobbyComponent } from "app/view/menu/lobby/lobby.component";
+import { LoginComponent } from "app/view/menu/login/login.component";
 import { MenuComponent } from "app/view/menu/menu/menu.component";
 import { PersonalizationComponent } from "app/view/menu/personalization/personalization.component";
 import { RoomComponent } from "app/view/menu/room/room.component";
@@ -23,6 +24,9 @@ import { ThanksComponent } from "../menu/thanks/thanks.component";
 })
 export class MainComponent implements OnInit {
   MainScreen = MainScreen;
+
+  @ViewChild('login', { static: true })
+  private login!: LoginComponent;
 
   @ViewChild('menu', { static: true })
   private menu!: MenuComponent;
@@ -124,6 +128,10 @@ export class MainComponent implements OnInit {
 
     if (screen == MainScreen.LOBBY) {
       this.lobby.onRefresh();
+    }
+
+    if (screen == MainScreen.LOGIN) {
+      this.login.onShow();
     }
 
     this.cd.detectChanges();

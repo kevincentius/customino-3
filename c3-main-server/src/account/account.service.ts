@@ -9,30 +9,32 @@ import { RegisterAccountDto } from 'account/dto/register-account-dto';
 export class AccountService {
   private accountRepository = AppDataSource.getRepository(AccountEntity);
 
-  async register(registerAccountDto: RegisterAccountDto) {
+  async createAccount(registerAccountDto: RegisterAccountDto) {
     const password = await this.hashPassword(registerAccountDto.passwordClearText);
 
     const ct = Date.now();
-    this.accountRepository.create({
+    const account = await this.accountRepository.insert({
       username: registerAccountDto.username,
       password: password,
       email: registerAccountDto.email,
       createdAt: ct,
       lastLogin: ct,
     });
+
+    console.log('created', account);
   }
 
   async hashPassword(passwordClearText: string) {
     return bcrypt.hash(passwordClearText, 12);
   }
 
-  async findByUsername(username: string) {
-    return this.accountRepository.findOneBy({
-      username: username,
-    });
+  async verifyPassword(passwordClearText: string, password: string) {
+    return bcrypt.compare(passwordClearText, password);
   }
 
-  async login(loginDto: LoginDto) {
-
+  async findByUsername(username: string) {
+    return this.accountRepository.createQueryBuilder()
+    .where("LOWER(username) = LOWER(:username)", { username })
+    .getOne();
   }
 }
