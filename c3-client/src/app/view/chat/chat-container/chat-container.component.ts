@@ -19,6 +19,7 @@ export class ChatContainerComponent implements AfterViewInit {
   
 
   @ViewChild('chatScroll') chatScroll!: ElementRef<HTMLDivElement>;
+  @ViewChild('inp') inp!: ElementRef<HTMLInputElement>;
 
 
   constructor(
@@ -52,5 +53,9 @@ export class ChatContainerComponent implements AfterViewInit {
         el.scrollTop = el.scrollHeight;
       });
     }
+  }
+
+  focus() {
+    this.inp.nativeElement.focus();
   }
 }

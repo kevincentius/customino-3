@@ -150,7 +150,7 @@ export class RoomComponent implements OnDestroy {
 
     const roomInfo = (await this.roomService.getRoomInfo(this.roomId))!;
     
-    this.showRoomGui = true;
+    this.setShowRoomGui(true);
     this.showSettings = false;
     this.updateRoomInfo(roomInfo);
 
@@ -166,6 +166,10 @@ export class RoomComponent implements OnDestroy {
     this.showRoomGui = showRoomGui;
     this.mainService.pixi.keyboard.setEnabled(!this.showRoomGui);
     this.cd.detectChanges();
+
+    if (this.showRoomGui) {
+      setTimeout(() => this.chat.focus());
+    }
   }
 
   downloadDebug() {
@@ -247,6 +251,8 @@ export class RoomComponent implements OnDestroy {
     setTimeout(() => {
       this.showRoomGui = true;
       this.cd.detectChanges();
+
+      setTimeout(() => this.chat.focus());
     }, 500);
   }
 
