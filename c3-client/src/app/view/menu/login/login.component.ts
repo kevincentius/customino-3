@@ -58,6 +58,8 @@ export class LoginComponent implements OnInit {
 
   autoFocusUsername = true;
 
+  errorMessage?: string;
+
   constructor(
     private mainService: MainService,
     private appService: GameAppService,
@@ -79,6 +81,7 @@ export class LoginComponent implements OnInit {
   onShow() {
     this.inpPassword = "";
     this.inpEmail = "";
+    this.errorMessage = "";
     this.phase = LoginPhase.SUBMIT_USERNAME;
     this.cd.detectChanges();
     
@@ -98,6 +101,14 @@ export class LoginComponent implements OnInit {
   }
 
   async onSubmitUsername() {
+    if (!this.inpUsername.match(/^[a-zA-Z][a-zA-Z0-9]{2,14}$/)) {
+      this.errorMessage = 'Username must be alphanumeric and start with a letter.';
+      this.cd.detectChanges();
+      return;
+    } else {
+      this.errorMessage = undefined;
+    }
+
     this.loading = true;
     this.cd.detectChanges();
 
@@ -136,6 +147,9 @@ export class LoginComponent implements OnInit {
   
       if (registerResult.success) {
         await this.onSubmitPassword();
+      } else {
+        this.errorMessage = registerResult.error;
+        this.cd.detectChanges();
       }
     }
   }
@@ -172,6 +186,7 @@ export class LoginComponent implements OnInit {
       await this.finishLogin();
     } catch (e: any) {
       this.inpPassword = '';
+      this.errorMessage = 'Password seems to be invalid';
     }
     this.cd.detectChanges();
   }

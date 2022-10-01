@@ -1,20 +1,18 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
-import { AppDataSource } from 'config/data-source';
 import { AccountEntity } from 'entity/account.entity';
 import { RegisterAccountDto } from 'account/dto/register-account-dto';
+import { EntityManager } from 'typeorm';
 
 const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 
 @Injectable()
 export class AccountService {
-  private accountRepository = AppDataSource.getRepository(AccountEntity);
-
-  async createAccount(registerAccountDto: RegisterAccountDto) {
+  async createAccount(em: EntityManager, registerAccountDto: RegisterAccountDto) {
     const password = await this.hashPassword(registerAccountDto.passwordClearText);
 
     const ct = Date.now();
-    const account = await this.accountRepository.insert({
+    await em.insert(AccountEntity, {
       username: registerAccountDto.username,
       password: password,
       email: registerAccountDto.email,
@@ -22,8 +20,6 @@ export class AccountService {
       createdAt: ct,
       lastLogin: ct,
     });
-
-    return account;
   }
 
   async hashPassword(passwordClearText: string) {
@@ -34,20 +30,26 @@ export class AccountService {
     return bcrypt.compare(passwordClearText, password);
   }
 
-  async findByUsername(username: string) {
-    return this.accountRepository.createQueryBuilder()
-    .where("LOWER(username) = LOWER(:username)", { username })
-    .getOne();
+  async findByUsername(em: EntityManager, username: string) {
+    return em.createQueryBuilder(AccountEntity, 'account')
+      .where("LOWER(account.username) = LOWER(:username)", { username })
+      .getOne();
   }
 
-  async confirmEmailByCode(emailConfirmationCode: string) {
-    const account = await this.accountRepository.findOneBy({
+  async findByEmail(em: EntityManager, email: string) {
+    return em.createQueryBuilder(AccountEntity, 'account')
+      .where("LOWER(account.email) = LOWER(:email)", { email })
+      .getOne();
+  }
+
+  async confirmEmailByCode(em: EntityManager, emailConfirmationCode: string) {
+    const account = await em.findOneBy(AccountEntity, {
       emailConfirmCode: emailConfirmationCode,
     });
 
     if (account) {
       account.emailConfirmedAt = account.emailConfirmedAt ?? Date.now();
-      await this.accountRepository.update({ id: account.id, }, account);
+      await em.update(AccountEntity, { id: account.id, }, account);
       return true;
     } else {
       return false;

@@ -21,7 +21,11 @@
       <div style="display: flex; align-items: center; justify-content: center;">
         <input #inpUsernameRef [(ngModel)]="inpUsername" placeholder="username" maxlength="15" class="main-input" (keydown.enter)="onSubmitUsername()">
       </div>
+
+      <div class="spacer"></div>
   
+      <div class="error-message">&nbsp;{{errorMessage}}&nbsp;</div>
+
       <div class="spacer"></div>
   
       <button (click)="onSubmitUsername()">
@@ -43,6 +47,10 @@
       <div style="display: flex; align-items: center; justify-content: center;">
         <input #inpPasswordRef type="password" [(ngModel)]="inpPassword" placeholder="password" maxlength="255" class="main-input" (keydown.enter)="onSubmitPassword()">
       </div>
+
+      <div class="spacer"></div>
+  
+      <div class="error-message">&nbsp;{{errorMessage}}&nbsp;</div>
 
       <div class="spacer"></div>
 
@@ -102,6 +110,10 @@
       <div style="display: flex; align-items: center; justify-content: center;">
         <input #inpPasswordRef type="password" [(ngModel)]="inpPassword" placeholder="password" maxlength="255" class="main-input" (keydown.enter)="onSubmitAccount()">
       </div>
+
+      <div class="spacer"></div>
+  
+      <div class="error-message">&nbsp;{{errorMessage}}&nbsp;</div>
 
       <div class="spacer"></div>
 
