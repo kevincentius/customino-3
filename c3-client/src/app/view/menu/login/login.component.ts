@@ -13,6 +13,7 @@ import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
 import { AuthService } from 'app/main-server/api/v1/api/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
 
 enum LoginPhase {
   SUBMIT_USERNAME,
@@ -20,6 +21,7 @@ enum LoginPhase {
   SUBMIT_PASSWORD,
   SUBMIT_ACCOUNT,
   RESET_PASSWORD,
+  CHANGE_PASSWORD,
 }
 
 @Component({
@@ -40,6 +42,8 @@ export class LoginComponent implements OnInit {
   inpPassword = '';
   inpEmail = '';
   inpReset = '';
+  inpNewPassword = '';
+  passwordResetCode?: string;
 
   @ViewChild('inpUsernameRef')
   inpUsernameRef!: ElementRef<HTMLInputElement>;
@@ -56,6 +60,9 @@ export class LoginComponent implements OnInit {
   @ViewChild('btnLoginAsGuestRef')
   btnLoginAsGuestRef!: ElementRef<HTMLButtonElement>;
 
+  @ViewChild('inpNewPasswordRef')
+  inpNewPasswordRef!: ElementRef<HTMLInputElement>;
+  
   loading = false;
 
   phase = LoginPhase.SUBMIT_USERNAME;
@@ -79,22 +86,36 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private configuration: Configuration,
     private snackBar: MatSnackBar,
+    private route: ActivatedRoute,
+    private router: Router,
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.setRandomName();
+
+    this.route.queryParams.subscribe(queryParams => {
+      this.passwordResetCode = queryParams['passwordResetCode'];
+      if (this.passwordResetCode) {
+        this.phase = LoginPhase.CHANGE_PASSWORD;
+        setTimeout(() => this.inpNewPasswordRef.nativeElement.focus());
+      } else {
+        this.phase = LoginPhase.SUBMIT_USERNAME;
+      }
+      this.cd.detectChanges();
+    });
   }
 
   onShow() {
     this.inpPassword = "";
     this.inpEmail = "";
     this.errorMessage = "";
-    this.phase = LoginPhase.SUBMIT_USERNAME;
+    this.inpNewPassword = "";
+    this.phase = this.passwordResetCode ? LoginPhase.CHANGE_PASSWORD : LoginPhase.SUBMIT_USERNAME;
     this.cd.detectChanges();
     
     setTimeout(() => {
-      this.inpUsernameRef.nativeElement.focus();
-      this.inpUsernameRef.nativeElement.select();
+      this.inpUsernameRef?.nativeElement.focus();
+      this.inpUsernameRef?.nativeElement.select();
     });
   }
 
@@ -230,5 +251,22 @@ export class LoginComponent implements OnInit {
     this.cd.detectChanges();
     soundService.play('button', 0, 0);
     musicService.start();
+  }
+
+  async onSubmitChangePassword() {
+    const result = await this.authService.changePassword({
+      passwordResetCode: this.passwordResetCode!,
+      newPassword: this.inpNewPassword,
+    });
+
+    this.passwordResetCode = undefined;
+    
+    if (result) {
+      this.snackBar.open('The new password has been saved!', 'Finally');
+      this.router.navigate(['']);
+    } else {
+      this.snackBar.open('Something went wrong. Maybe try again?', ':-(');
+      this.router.navigate(['']);
+    }
   }
 }

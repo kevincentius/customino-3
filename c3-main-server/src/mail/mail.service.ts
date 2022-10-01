@@ -17,8 +17,8 @@ export class MailService {
     await this.sendEmail({
       to: email,
       subject: 'Customino password reset',
-      text: `Hi ${username}, the following link should let you create a new password: ${config.clientUrl}/password-reset?passwordResetCode=${passwordResetCode}. This link will expire after some time. Cheers!`,
-      html: `Hi <b>${username}</b>, the following link should let you create a new password: ${config.clientUrl}/password-reset?passwordResetCode=${passwordResetCode}. This link will expire after some time. Cheers!`,
+      text: `Hi ${username}, the following link should let you create a new password: ${config.clientUrl}?passwordResetCode=${passwordResetCode}. This link will only be valid for a limited time. Cheers!`,
+      html: `Hi <b>${username}</b>, the following link should let you create a new password: ${config.clientUrl}?passwordResetCode=${passwordResetCode}. This link will only be valid for a limited time. Cheers!`,
     });
   }
 

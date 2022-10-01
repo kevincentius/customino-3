@@ -167,5 +167,29 @@
         </button>
       </div>
     </ng-container>
+    
+    <ng-container *ngIf="phase == LoginPhase.CHANGE_PASSWORD">
+      <div style="text-align: center; font-size: 24px;">
+        Create your new password:
+      </div>
+  
+      <div class="spacer"></div>
+  
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <input #inpNewPasswordRef [(ngModel)]="inpNewPassword" type="password" placeholder="password" maxlength="255" class="main-input" (keydown.enter)="onSubmitChangePassword()">
+      </div>
+      
+      <div class="spacer"></div>
+  
+      <div class="error-message">&nbsp;{{errorMessage}}&nbsp;</div>
+
+      <div class="spacer"></div>
+
+      <div class="gui-button-row">
+        <button class="gui-button gui-button-main gui-button-big" (click)="onSubmitChangePassword()">
+          Confirm new password
+        </button>
+      </div>
+    </ng-container>
   </div>
 </div>

@@ -10,8 +10,9 @@ import { NgZone } from "@angular/core";
 
 export let resources: Partial<Record<string, LoaderResource>>;
 
+let loaded = false;
+
 export class PixiApplication {
-  loaded = false;
 
   game?: ClientGame;
 
@@ -124,17 +125,17 @@ export class PixiApplication {
   }
 
   private loadResources() {
-    const loader = Loader.shared;
-
-    loader
-      .add('sample', 'assets/img/sample.png')
-      .add('gameSpritesheet', 'assets/spritesheet/game/normal/texture.json')
-      .add('gameSpritesheetSmall', 'assets/spritesheet/game/small/texture.json')
-      .load((loader, res) => {
-        resources = res;
-
-        this.loaded = true;
-      });
+    if (!loaded) {
+      Loader.shared
+        .add('sample', 'assets/img/sample.png')
+        .add('gameSpritesheet', 'assets/spritesheet/game/normal/texture.json')
+        // .add('gameSpritesheetSmall', 'assets/spritesheet/game/small/texture.json')
+        .load((loader, res) => {
+          resources = res;
+  
+          loaded = true;
+        });
+    }
   }
 
   bindGame(game: ClientGame) {

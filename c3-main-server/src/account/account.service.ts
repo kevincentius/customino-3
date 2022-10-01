@@ -68,7 +68,7 @@ export class AccountService {
       id: accountId,
     }))!;
     account.resetPasswordCode = code;
-    account.resetPasswordExpiry = Date.now() + 30_000;
+    account.resetPasswordExpiry = Date.now() + 3600_000;
     await em.update(AccountEntity, { id: account.id }, account);
 
     return code;
@@ -78,6 +78,10 @@ export class AccountService {
     const account = (await em.findOneBy(AccountEntity, {
       resetPasswordCode: passwordResetCode,
     }))!;
+
+    if (!newPasswordClearText || newPasswordClearText.length < 3) {
+      return false;
+    }
 
     if (account.resetPasswordCode == passwordResetCode 
         && account.resetPasswordExpiry
