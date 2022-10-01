@@ -21,6 +21,12 @@ export class AccountEntity {
   emailConfirmCode?: string;
 
   @Column()
+  resetPasswordExpiry?: number;
+  
+  @Column()
+  resetPasswordCode?: string;
+
+  @Column()
   createdAt!: number;
   
   @Column()

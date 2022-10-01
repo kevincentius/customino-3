@@ -27,11 +27,23 @@
       <div class="error-message">&nbsp;{{errorMessage}}&nbsp;</div>
 
       <div class="spacer"></div>
-  
+
       <button (click)="onSubmitUsername()">
         <img class="banner-btn" src="assets/img/default/banner.ico"/>
       </button>  
   
+      <div class="spacer"></div>
+  
+      <div class="spacer"></div>
+  
+      <div class="spacer"></div>
+  
+      <div>
+        <button class="gui-button gui-button-small" (click)="onResetPassword()">
+          Forgot username / password?
+        </button>
+      </div>
+
       <div class="spacer"></div>
 
       <div class="version">alpha v{{clientVersion}} (user data may be lost)</div>  
@@ -120,6 +132,34 @@
       <div class="gui-button-row">
         <button class="gui-button gui-button-main gui-button-big" [disabled]="isGuestName()" (click)="onSubmitAccount()">
           Create account
+        </button>
+
+        <button class="gui-button gui-button-big" (click)="onShow()">
+          Back
+        </button>
+      </div>
+    </ng-container>
+    
+    <ng-container *ngIf="phase == LoginPhase.RESET_PASSWORD">
+      <div style="text-align: center; font-size: 24px;">
+        Enter the email address or username of the account:
+      </div>
+  
+      <div class="spacer"></div>
+  
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <input #inpResetRef [(ngModel)]="inpReset" placeholder="email or username" maxlength="255" class="main-input">
+      </div>
+      
+      <div class="spacer"></div>
+  
+      <div class="error-message">&nbsp;{{errorMessage}}&nbsp;</div>
+
+      <div class="spacer"></div>
+
+      <div class="gui-button-row">
+        <button class="gui-button gui-button-main gui-button-big" (click)="onSubmitResetPassword()">
+          Reset my password
         </button>
 
         <button class="gui-button gui-button-big" (click)="onShow()">

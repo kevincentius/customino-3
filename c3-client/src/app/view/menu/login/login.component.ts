@@ -12,12 +12,14 @@ import { clientVersion } from 'app/service/version';
 import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
 import { AuthService } from 'app/main-server/api/v1/api/auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 enum LoginPhase {
   SUBMIT_USERNAME,
   CONFIRM_REGISTER,
   SUBMIT_PASSWORD,
   SUBMIT_ACCOUNT,
+  RESET_PASSWORD,
 }
 
 @Component({
@@ -37,6 +39,7 @@ export class LoginComponent implements OnInit {
   inpUsername = '';
   inpPassword = '';
   inpEmail = '';
+  inpReset = '';
 
   @ViewChild('inpUsernameRef')
   inpUsernameRef!: ElementRef<HTMLInputElement>;
@@ -46,6 +49,9 @@ export class LoginComponent implements OnInit {
   
   @ViewChild('inpEmailRef')
   inpEmailRef!: ElementRef<HTMLInputElement>;
+
+  @ViewChild('inpResetRef')
+  inpResetRef!: ElementRef<HTMLInputElement>;
 
   @ViewChild('btnLoginAsGuestRef')
   btnLoginAsGuestRef!: ElementRef<HTMLButtonElement>;
@@ -72,6 +78,7 @@ export class LoginComponent implements OnInit {
     private accountService: AccountService,
     private authService: AuthService,
     private configuration: Configuration,
+    private snackBar: MatSnackBar,
   ) { }
 
   ngOnInit(): void {
@@ -164,6 +171,27 @@ export class LoginComponent implements OnInit {
     this.mainService.sessionInfo = await this.appService.getSessionInfo();
 
     await this.finishLogin();    
+  }
+
+  onResetPassword() {
+    this.phase = LoginPhase.RESET_PASSWORD;
+    this.inpReset = '';
+    this.cd.detectChanges();
+    setTimeout(() => this.inpResetRef.nativeElement.focus());
+  }
+
+  async onSubmitResetPassword() {
+    this.loading = true;
+    this.cd.detectChanges();
+
+    const result = await this.authService.forgotPassword(
+      this.inpReset.indexOf('@') == -1
+      ? { username: this.inpReset }
+      : { email: this.inpReset }
+      );
+    
+    this.snackBar.open('If the username or email exists, an email containing further instructions will be sent shortly.', 'Grumble');
+    this.onShow();
   }
 
   async onSubmitPassword() {

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { AccountEntity } from 'entity/account.entity';
 import { RegisterAccountDto } from 'account/dto/register-account-dto';
 import { EntityManager } from 'typeorm';
+const crypto = require("crypto");
 
 const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 
@@ -16,10 +17,14 @@ export class AccountService {
       username: registerAccountDto.username,
       password: password,
       email: registerAccountDto.email,
-      emailConfirmCode: [...Array(32)].map(() => chars.charAt(Math.floor(Math.random() * chars.length))).join(''),
+      emailConfirmCode: this.createRandomUrlSafeCode(),
       createdAt: ct,
       lastLogin: ct,
     });
+  }
+
+  private createRandomUrlSafeCode() {
+    return [...Array(128)].map(() => chars.charAt(crypto.randomInt(0, chars.length))).join('');
   }
 
   async hashPassword(passwordClearText: string) {
@@ -50,6 +55,38 @@ export class AccountService {
     if (account) {
       account.emailConfirmedAt = account.emailConfirmedAt ?? Date.now();
       await em.update(AccountEntity, { id: account.id, }, account);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  async createResetPasswordCode(em: EntityManager, accountId: number) {
+    const code = this.createRandomUrlSafeCode();
+    
+    const account = (await em.findOneBy(AccountEntity, {
+      id: accountId,
+    }))!;
+    account.resetPasswordCode = code;
+    account.resetPasswordExpiry = Date.now() + 30_000;
+    await em.update(AccountEntity, { id: account.id }, account);
+
+    return code;
+  }
+  
+  async changePassword(em: EntityManager, passwordResetCode: string, newPasswordClearText: string): Promise<boolean> {
+    const account = (await em.findOneBy(AccountEntity, {
+      resetPasswordCode: passwordResetCode,
+    }))!;
+
+    if (account.resetPasswordCode == passwordResetCode 
+        && account.resetPasswordExpiry
+        && account.resetPasswordExpiry > Date.now()) {
+      account.resetPasswordCode = undefined;
+      account.resetPasswordExpiry = undefined;
+      account.password = await this.hashPassword(newPasswordClearText);
+      em.update(AccountEntity, { id: account.id }, account);
+
       return true;
     } else {
       return false;

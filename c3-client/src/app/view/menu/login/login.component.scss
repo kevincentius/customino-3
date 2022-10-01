@@ -11,7 +11,8 @@
 }
 
 .main-input::placeholder {
-  color: #0002;
+  color: #0006;
+  opacity: 1;
 }
 
 .spacer {
@@ -33,6 +34,7 @@
 
 .banner-btn {
   cursor: pointer;
+  margin: -50px 0;
   transition: 500ms;
   &:hover {
     transition: 100ms;
