@@ -6,7 +6,9 @@ import { DebugService } from 'service/debug-service';
 import { DebugController } from './controller/debug/debug.controller';
 import { AccountModule } from './account/account.module';
 import { AuthModule } from './auth/auth.module';
-import { AuthController } from 'auth/auth.controller';
+import { APP_FILTER } from '@nestjs/core';
+import { MailModule } from './mail/mail.module';
+import { HttpExceptionFilter } from 'config/exception-filter';
 
 @Module({
   imports: [
@@ -14,12 +16,17 @@ import { AuthController } from 'auth/auth.controller';
     HttpModule,
     AccountModule,
     AuthModule,
+    MailModule,
   ],
   controllers: [
     DebugController,
     AppController,
   ],
   providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
     DebugService,
   ]
 })

@@ -23,6 +23,7 @@ import { timeoutWrapper } from 'app/util/ng-zone-util';
 import { ChatMessage } from '@shared/model/room/chat-message';
 import { RoomAutoStartCountdownComponent } from '../room-auto-start-countdown/room-auto-start-countdown.component';
 import { SystemKey } from '@shared/game/network/model/system-key';
+import { soundService } from 'app/pixi/display/sound/sound-service';
 
 interface AutoStartOption {
   label: string;
@@ -188,6 +189,7 @@ export class RoomComponent implements OnDestroy {
         this.game = undefined;
       }
       this.mainService.openScreen(MainScreen.LOBBY);
+      soundService.play('back');
     }
   }
 

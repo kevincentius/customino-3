@@ -18,6 +18,9 @@ export class AccountEntity {
   emailConfirmedAt?: number;
   
   @Column()
+  emailConfirmCode?: string;
+
+  @Column()
   createdAt!: number;
   
   @Column()
