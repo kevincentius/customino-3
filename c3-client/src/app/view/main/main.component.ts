@@ -78,8 +78,6 @@ export class MainComponent implements OnInit {
 
     this.route.params.subscribe(params => {
       this.route.queryParams.subscribe(queryParams => {
-        console.log(queryParams);
-        
         this.mainService.runOnServerInfoLoaded(() => {
           this.openScreen(params['component'] ?? MainScreen.LOGIN, queryParams);
         });
@@ -137,7 +135,6 @@ export class MainComponent implements OnInit {
     }
 
     if (screen == MainScreen.LOGIN) {
-      console.log(queryParams);
       this.login.onShow(queryParams);
     }
 

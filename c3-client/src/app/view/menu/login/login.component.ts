@@ -102,9 +102,7 @@ export class LoginComponent implements OnInit {
     this.phase = this.passwordResetCode ? LoginPhase.CHANGE_PASSWORD : LoginPhase.SUBMIT_USERNAME;
     this.cd.detectChanges();
     
-    console.log(queryParams);
     this.passwordResetCode = queryParams['passwordResetCode'];
-    console.log(this.passwordResetCode);
     if (this.passwordResetCode) {
       this.phase = LoginPhase.CHANGE_PASSWORD;
       setTimeout(() => this.inpNewPasswordRef.nativeElement.focus());
@@ -174,6 +172,7 @@ export class LoginComponent implements OnInit {
   
       if (registerResult.success) {
         await this.onSubmitPassword();
+        this.snackBar.open('We will send an email to confirm your email address.', 'Game on', { duration: 7000 });
       } else {
         this.errorMessage = registerResult.error;
         this.cd.detectChanges();
@@ -233,7 +232,7 @@ export class LoginComponent implements OnInit {
 
       await this.finishLogin();
     } catch (e: any) {
-      console.log(e);
+      console.error(e);
       this.inpPassword = '';
       this.errorMessage = 'Login failed';
     }

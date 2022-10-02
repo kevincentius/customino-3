@@ -1,5 +1,5 @@
 
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, UnauthorizedException } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 @Catch()
@@ -8,12 +8,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
     
     const ctx = host.switchToHttp();
     const statusCode = ctx?.getResponse<Response>()?.statusCode;
-    if (statusCode != 401 && statusCode != 403) {
-      console.trace(exception);
-    }
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
+    if (statusCode != 401 && statusCode != 403 && !(exception instanceof UnauthorizedException)) {
+      console.trace(exception);
+    }
+    
     response
       .status(500)
       .json({

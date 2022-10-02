@@ -45,7 +45,6 @@ export class MainService {
   }
 
   openScreen(screen: MainScreen) {
-    console.trace('openScreen via service', screen);
     this.main.openScreen(screen);
   }
 

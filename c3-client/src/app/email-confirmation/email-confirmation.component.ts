@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'app/main-server/api/v1';
 
@@ -13,15 +14,16 @@ export class EmailConfirmationComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService,
+    private snackBar: MatSnackBar,
   ) {}
 
   async ngOnInit() {
     this.route.queryParams.subscribe(async queryParams => {
-      console.log(queryParams['emailCode']);
       const success = await this.authService.confirmEmailByCode({
         emailConfirmationCode: queryParams['emailCode'] as string,
       });
       if (success) {
+        this.snackBar.open('Your email address has been confirmed!', 'Dance');
         this.router.navigate(['']);
       }
     });
