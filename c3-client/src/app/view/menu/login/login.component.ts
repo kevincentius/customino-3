@@ -95,6 +95,7 @@ export class LoginComponent implements OnInit {
   }
 
   onShow(queryParams: Params = {}) {
+    this.loading = false;
     this.inpPassword = "";
     this.inpEmail = "";
     this.errorMessage = "";
@@ -235,6 +236,7 @@ export class LoginComponent implements OnInit {
       console.error(e);
       this.inpPassword = '';
       this.errorMessage = 'Login failed';
+      this.loading = false;
     }
     this.cd.detectChanges();
   }

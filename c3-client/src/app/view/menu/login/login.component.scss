@@ -1,6 +1,15 @@
 
 @import 'font';
 
+.loading-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #0004;
+  z-index: 10000;
+  transition: 250ms;
+}
+
 .login-background {
   // background: #102;
 }

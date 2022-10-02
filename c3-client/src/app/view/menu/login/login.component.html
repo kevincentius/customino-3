@@ -3,6 +3,8 @@
 
 <div class="full-size login-background" style="background: #0008;">
   <div class="full-center">
+    <div class="loading-overlay" [style.opacity]="loading ? 1 : 0"></div>
+
     <ng-container *ngIf="phase == LoginPhase.SUBMIT_USERNAME">
       <div style="text-align: center; font-size: 24px;">
         Pick a name
