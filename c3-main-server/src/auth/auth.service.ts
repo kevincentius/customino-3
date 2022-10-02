@@ -44,13 +44,6 @@ export class AuthService {
     };
   }
 
-  async createGuestJwtToken(username: string): Promise<AuthResult> {
-    const payload = { username: username };
-    return {
-      jwtToken: this.jwtService.sign(payload),
-    };
-  }
-
   async register(em: EntityManager, body: RegisterAccountDto) {
     // validation
     if (!body.username.match(/^[a-zA-Z][a-zA-Z0-9]{2,14}$/)) {

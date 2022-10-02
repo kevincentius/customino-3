@@ -31,4 +31,7 @@ export class AccountEntity {
   
   @Column()
   lastLogin!: number;
+
+  @Column()
+  ipCsv?: string;
 }

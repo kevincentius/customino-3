@@ -13,7 +13,7 @@ import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
 import { AuthService } from 'app/main-server/api/v1/api/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 enum LoginPhase {
   SUBMIT_USERNAME,
@@ -92,20 +92,9 @@ export class LoginComponent implements OnInit {
 
   async ngOnInit() {
     this.setRandomName();
-
-    this.route.queryParams.subscribe(queryParams => {
-      this.passwordResetCode = queryParams['passwordResetCode'];
-      if (this.passwordResetCode) {
-        this.phase = LoginPhase.CHANGE_PASSWORD;
-        setTimeout(() => this.inpNewPasswordRef.nativeElement.focus());
-      } else {
-        this.phase = LoginPhase.SUBMIT_USERNAME;
-      }
-      this.cd.detectChanges();
-    });
   }
 
-  onShow() {
+  onShow(queryParams: Params = {}) {
     this.inpPassword = "";
     this.inpEmail = "";
     this.errorMessage = "";
@@ -113,10 +102,20 @@ export class LoginComponent implements OnInit {
     this.phase = this.passwordResetCode ? LoginPhase.CHANGE_PASSWORD : LoginPhase.SUBMIT_USERNAME;
     this.cd.detectChanges();
     
-    setTimeout(() => {
-      this.inpUsernameRef?.nativeElement.focus();
-      this.inpUsernameRef?.nativeElement.select();
-    });
+    console.log(queryParams);
+    this.passwordResetCode = queryParams['passwordResetCode'];
+    console.log(this.passwordResetCode);
+    if (this.passwordResetCode) {
+      this.phase = LoginPhase.CHANGE_PASSWORD;
+      setTimeout(() => this.inpNewPasswordRef.nativeElement.focus());
+    } else {
+      this.phase = LoginPhase.SUBMIT_USERNAME;
+      setTimeout(() => {
+        this.inpUsernameRef?.nativeElement.focus();
+        this.inpUsernameRef?.nativeElement.select();
+      });
+    }
+    this.cd.detectChanges();
   }
 
   setRandomName() {
@@ -234,8 +233,9 @@ export class LoginComponent implements OnInit {
 
       await this.finishLogin();
     } catch (e: any) {
+      console.log(e);
       this.inpPassword = '';
-      this.errorMessage = 'Password seems to be invalid';
+      this.errorMessage = 'Login failed';
     }
     this.cd.detectChanges();
   }
@@ -264,6 +264,7 @@ export class LoginComponent implements OnInit {
     if (result) {
       this.snackBar.open('The new password has been saved!', 'Finally');
       this.router.navigate(['']);
+      this.onShow();
     } else {
       this.snackBar.open('Something went wrong. Maybe try again?', ':-(');
       this.router.navigate(['']);

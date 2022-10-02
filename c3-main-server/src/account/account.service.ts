@@ -36,13 +36,13 @@ export class AccountService {
   }
 
   async findByUsername(em: EntityManager, username: string) {
-    return em.createQueryBuilder(AccountEntity, 'account')
+    return await em.createQueryBuilder(AccountEntity, 'account')
       .where("LOWER(account.username) = LOWER(:username)", { username })
       .getOne();
   }
 
   async findByEmail(em: EntityManager, email: string) {
-    return em.createQueryBuilder(AccountEntity, 'account')
+    return await em.createQueryBuilder(AccountEntity, 'account')
       .where("LOWER(account.email) = LOWER(:email)", { email })
       .getOne();
   }
@@ -69,7 +69,7 @@ export class AccountService {
     }))!;
     account.resetPasswordCode = code;
     account.resetPasswordExpiry = Date.now() + 3600_000;
-    await em.update(AccountEntity, { id: account.id }, account);
+    await this.update(em, account);
 
     return code;
   }
@@ -89,11 +89,27 @@ export class AccountService {
       account.resetPasswordCode = undefined;
       account.resetPasswordExpiry = undefined;
       account.password = await this.hashPassword(newPasswordClearText);
-      em.update(AccountEntity, { id: account.id }, account);
+      await this.update(em, account);
 
       return true;
     } else {
       return false;
     }
+  }
+  
+  async logIp(em: EntityManager, account: AccountEntity, ip: any) {
+    const loggedIps = (account.ipCsv ?? '').split(',');
+    loggedIps.pop();
+    
+    if (loggedIps.length < 1000 && loggedIps.indexOf(ip) == -1) {
+      loggedIps.push(ip);
+      loggedIps.sort();
+    }
+    account.ipCsv = loggedIps.join(',') + ',';
+    await this.update(em, account);
+  }
+  
+  private async update(em: EntityManager, account: AccountEntity) {
+    await em.update(AccountEntity, { id: account.id }, account);
   }
 }

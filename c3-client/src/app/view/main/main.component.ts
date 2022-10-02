@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Params } from "@angular/router";
 import { SystemKey } from "@shared/game/network/model/system-key";
 import { soundService } from "app/pixi/display/sound/sound-service";
 import { isSystemKey } from "app/service/user-settings/user-settings.service";
@@ -77,7 +77,13 @@ export class MainComponent implements OnInit {
     this.openScreen(MainScreen.PRELOGIN);
 
     this.route.params.subscribe(params => {
-      this.openScreen(params['component'] ?? MainScreen.PRELOGIN);
+      this.route.queryParams.subscribe(queryParams => {
+        console.log(queryParams);
+        
+        this.mainService.runOnServerInfoLoaded(() => {
+          this.openScreen(params['component'] ?? MainScreen.LOGIN, queryParams);
+        });
+      });
     });
   }
   
@@ -120,7 +126,7 @@ export class MainComponent implements OnInit {
     this.room.show(roomId);
   }
 
-  openScreen(screen: MainScreen) {
+  openScreen(screen: MainScreen, queryParams: Params = {}) {
     if (this.screen != MainScreen.CONTROLS) {
       this.prevScreen = this.screen;
     }
@@ -131,7 +137,8 @@ export class MainComponent implements OnInit {
     }
 
     if (screen == MainScreen.LOGIN) {
-      this.login.onShow();
+      console.log(queryParams);
+      this.login.onShow(queryParams);
     }
 
     this.cd.detectChanges();

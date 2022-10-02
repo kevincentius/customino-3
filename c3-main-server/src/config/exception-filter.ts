@@ -5,9 +5,12 @@ import { Request, Response } from 'express';
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
-    console.trace(exception);
-
+    
     const ctx = host.switchToHttp();
+    const statusCode = ctx?.getResponse<Response>()?.statusCode;
+    if (statusCode != 401 && statusCode != 403) {
+      console.trace(exception);
+    }
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 

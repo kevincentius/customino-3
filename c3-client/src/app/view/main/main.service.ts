@@ -22,6 +22,19 @@ export class MainService {
   bgIndex = this.r.int(2);
 
   private main!: MainComponent;
+
+  private serverInfoLoaded = false;
+  private serverInfoLoadedCallbacks: any[] = [];
+  runOnServerInfoLoaded(callback: any) {
+    if (this.serverInfoLoaded) {
+      callback();
+    } else {
+      this.serverInfoLoadedCallbacks.push(callback);
+    }
+  }
+  onServerInfoLoaded() {
+    this.serverInfoLoadedCallbacks.forEach(c => c());
+  }
   
   constructor(
     private idbService: IdbService,
@@ -32,6 +45,7 @@ export class MainService {
   }
 
   openScreen(screen: MainScreen) {
+    console.trace('openScreen via service', screen);
     this.main.openScreen(screen);
   }
 

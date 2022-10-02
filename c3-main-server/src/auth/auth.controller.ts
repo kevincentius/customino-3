@@ -1,10 +1,9 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Ip } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AccountService } from 'account/account.service';
 import { RegisterAccountDto } from 'account/dto/register-account-dto';
 import { AuthService, AuthResult, RegisterResult } from 'auth/auth.service';
 import { ChangePasswordRequestDto } from 'auth/dto/change.password-request-dto';
-import { ChangePasswordResponseDto } from 'auth/dto/change.password-response-dto';
 import { ConfirmEmailRequestDto } from 'auth/dto/confirm-email-request-dto';
 import { LoginDto } from 'auth/dto/login-dto';
 import { ResetPasswordRequestDto } from 'auth/dto/reset-password-request-dto';
@@ -26,10 +25,13 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'Attempt to login with an existing account.' })
   @ApiCreatedResponse({ type: AuthResult })
-  async login(@Body() body: LoginDto) {
-    return await t(async em =>
-      await this.authService.createJwtToken(
-        (await this.accountService.findByUsername(em, body.username))!));
+  async login(@Body() body: LoginDto, @Ip() ip: any): Promise<AuthResult> {
+    return await t(async em => {
+      const account = (await this.accountService.findByUsername(em, body.username))!;
+      await this.accountService.logIp(em, account, ip);
+
+      return await this.authService.createJwtToken(account);
+    });
   }
   
   @Post('register')

@@ -29,7 +29,7 @@ export class PreloginComponent implements OnInit {
     this.mainServerConnected = true;
 
     if (clientVersion.startsWith(serverInfo.version)) {
-      this.mainService.openScreen(MainScreen.LOGIN);
+      this.mainService.onServerInfoLoaded();
     } else {
       this.updateRequired = true;
       this.clientVersion = clientVersion;
