@@ -200,3 +200,14 @@ button {
 //   min-width: 1px;
 //   min-height: 1px;
 // }
+
+.mat-menu-panel {
+  background-color: #fff2;
+  backdrop-filter: blur(10px);
+  padding: 10px;
+  min-height: unset !important;
+}
+
+.mat-menu-content {
+  padding: unset !important;
+}

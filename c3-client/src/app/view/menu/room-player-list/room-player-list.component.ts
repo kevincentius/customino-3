@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { PlayerStats } from '@shared/game/engine/player/stats/player-stats';
+import { ChangeDetectionStrategy, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { RoomInfo } from '@shared/model/room/room-info';
-import { RoomSlotInfo } from '@shared/model/room/room-slot-info';
 import { RoomService } from 'app/game-server/room.service';
 import { soloStyle, teamStyles } from 'app/style/team-styles';
 import { MainService } from 'app/view/main/main.service';
@@ -16,6 +15,9 @@ export class RoomPlayerListComponent implements OnInit {
   @Input() roomInfo!: RoomInfo;
 
   displayComboCount = 5;
+
+  @ViewChild('playerInfoMenuTrigger')
+  playerInfoMenuTrigger!: MatMenuTrigger;
 
   constructor(
     private mainService: MainService,
@@ -47,5 +49,10 @@ export class RoomPlayerListComponent implements OnInit {
 
       this.roomService.changeSlotTeam(slotIndex, team);
     }
+  }
+
+  onRoomSlotRightClick(e: MouseEvent, slotIndex: number) {
+    console.log('yo');
+    this.playerInfoMenuTrigger.openMenu();
   }
 }
