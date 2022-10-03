@@ -1,16 +1,16 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AccountEntity } from 'entity/account.entity';
-import { t } from 'service/transaction';
+import { AccountEntity } from 'shared-modules/account/entity/account.entity';
+import { t } from 'util/transaction';
 import { AccountService } from './account.service';
 
 @ApiTags('account')
-@Controller('account')
+@Controller('api/account')
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
   
   @Get()
-  @ApiOperation({ summary: 'Returns ' })
+  @ApiOperation({})
   @ApiCreatedResponse({ type: AccountEntity })
   async findByUsername(@Query('username') username: string) {
     return await t(async em => {

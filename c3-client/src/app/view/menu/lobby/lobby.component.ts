@@ -1,11 +1,7 @@
-import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
 import { RoomInfo } from '@shared/model/room/room-info';
 import { LobbyService } from 'app/game-server/lobby.service';
-import { DebugService } from 'app/main-server/api/v1';
 import { soundService } from 'app/pixi/display/sound/sound-service';
-import { SocketService } from 'app/service/socket.service';
 import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
 
@@ -21,13 +17,8 @@ export class LobbyComponent implements OnInit {
   rooms!: RoomInfo[];
 
   constructor(
-    private socketService: SocketService,
     private lobbyService: LobbyService,
-    private debugService: DebugService,
     private mainService: MainService,
-
-    private location: Location,
-    private router: Router,
 
     private cd: ChangeDetectorRef,
   ) {

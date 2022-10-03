@@ -10,7 +10,10 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from 'auth/jwt-auth-guard';
 
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule],
+  imports: [
+    ConfigModule.forRoot(),
+    AuthModule
+  ],
   controllers: [],
   providers: [
     {

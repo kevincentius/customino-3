@@ -5,10 +5,6 @@ import { SampleEntity } from "entity/sample-entity";
 
 @Injectable()
 export class DebugService {
-  constructor(
-    private httpService: HttpService
-  ) {}
-
   async debugDatabase() {
     const sampleRepository = AppDataSource.getRepository(SampleEntity);
   

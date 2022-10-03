@@ -1,25 +1,40 @@
-import { Controller, Post, Body, UseGuards, Ip } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Ip, Get } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AccountService } from 'account/account.service';
-import { RegisterAccountDto } from 'account/dto/register-account-dto';
-import { AuthService, AuthResult, RegisterResult } from 'auth/auth.service';
-import { ChangePasswordRequestDto } from 'auth/dto/change.password-request-dto';
-import { ConfirmEmailRequestDto } from 'auth/dto/confirm-email-request-dto';
-import { LoginDto } from 'auth/dto/login-dto';
-import { ResetPasswordRequestDto } from 'auth/dto/reset-password-request-dto';
-import { ResetPasswordResponseDto } from 'auth/dto/reset-password-response-dto';
-import { LocalAuthGuard } from 'auth/local-auth-guard';
+import { AccountService } from 'shared-modules/account/account.service';
+import { RegisterAccountDto } from 'public-api/auth/dto/register-account-dto';
+import { AuthService, AuthResult } from 'public-api/auth/auth.service';
+import { ChangePasswordRequestDto } from 'public-api/auth/dto/change.password-request-dto';
+import { ConfirmEmailRequestDto } from 'public-api/auth/dto/confirm-email-request-dto';
+import { LoginDto } from 'public-api/auth/dto/login-dto';
+import { ResetPasswordRequestDto } from 'public-api/auth/dto/reset-password-request-dto';
+import { ResetPasswordResponseDto } from 'public-api/auth/dto/reset-password-response-dto';
+import { LocalAuthGuard } from 'public-api/auth/local-auth-guard';
 import { MailService } from 'mail/mail.service';
-import { t } from 'service/transaction';
+import { t } from 'util/transaction';
+import { RegisterResultDto } from 'shared-modules/account/dto/register-result-dto';
+import { ServerInfoDto } from 'public-api/auth/dto/server-info-dto';
+import { clientDownloadUrl, serverVersion } from 'config/version';
+import { config } from 'config/config';
 
 @ApiTags('auth')
-@Controller('auth')
+@Controller('api/auth')
 export class AuthController {
   constructor(
     private accountService: AccountService,
     private authService: AuthService,
     private mailService: MailService,
   ) {}
+
+  @Get('info')
+  @ApiOperation({ summary: 'Returns information about the server such as supported client version.' })
+  @ApiCreatedResponse({ type: ServerInfoDto })
+  getInfo(): ServerInfoDto {
+    return {
+      version: serverVersion,
+      gameServerUrl: config.gameServerUrl,
+      clientDownloadUrl: clientDownloadUrl,
+    };
+  }
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
@@ -36,8 +51,8 @@ export class AuthController {
   
   @Post('register')
   @ApiOperation({ summary: 'Attempt to create a new account.' })
-  @ApiCreatedResponse({ type: RegisterResult })
-  async register(@Body() body: RegisterAccountDto): Promise<RegisterResult> {
+  @ApiCreatedResponse({ type: RegisterResultDto })
+  async register(@Body() body: RegisterAccountDto): Promise<RegisterResultDto> {
     // DB transaction
     return await t(async em => {
       const result = await this.authService.register(em, body);
@@ -89,7 +104,7 @@ export class AuthController {
   }
 
   @Post('change-password')
-  @ApiOperation({})
+  @ApiOperation({ description: 'Changes the user\'s password. Requires a password reset token which can be sent by email.' })
   @ApiCreatedResponse({ type: Boolean })
   async changePassword(@Body() body: ChangePasswordRequestDto): Promise<boolean> {
     return await t(async em => {

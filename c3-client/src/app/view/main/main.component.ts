@@ -68,7 +68,7 @@ export class MainComponent implements OnInit {
     private cd: ChangeDetectorRef,
   ) {}
 
-  ngOnInit() {
+ngOnInit() {
     history.pushState(null, '', location.href);
     window.onpopstate = function () {
       history.go(1);

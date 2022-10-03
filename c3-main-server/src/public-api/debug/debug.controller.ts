@@ -2,8 +2,8 @@
 import { Controller, Get } from "@nestjs/common";
 import { ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { config } from "config/config";
-import { DebugResponseDto } from "model/debug-response.dto";
-import { DebugService } from "service/debug-service";
+import { DebugResponseDto } from "public-api/debug/dto/debug-response.dto";
+import { DebugService } from "public-api/debug/debug-service";
 
 @ApiTags('debug')
 @Controller('api/debug')

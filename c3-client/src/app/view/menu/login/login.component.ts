@@ -1,9 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { SessionInfo } from '@shared/model/session/session-info';
 import { shuffle } from '@shared/util/random';
 import { AccountService, Configuration } from 'app/main-server/api/v1';
 import { GameAppService } from 'app/game-server/app.service';
-import { DebugService } from 'app/main-server/api/v1';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { soundService } from 'app/pixi/display/sound/sound-service';
 import { SocketService } from 'app/service/socket.service';
@@ -13,7 +11,7 @@ import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
 import { AuthService } from 'app/main-server/api/v1/api/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Params, Router } from '@angular/router';
 
 enum LoginPhase {
   SUBMIT_USERNAME,
@@ -75,10 +73,9 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private mainService: MainService,
-    private appService: GameAppService,
+    private gameAppService: GameAppService,
     private cd: ChangeDetectorRef,
 
-    private debugService: DebugService,
     private socketService: SocketService,
     private userSettingsService: UserSettingsService,
 
@@ -86,7 +83,6 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private configuration: Configuration,
     private snackBar: MatSnackBar,
-    private route: ActivatedRoute,
     private router: Router,
   ) { }
 
@@ -185,12 +181,7 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     this.cd.detectChanges();
 
-    // connect to game server
-    const debugResponse = await this.debugService.test();
-    await this.socketService.connect(debugResponse.gameServerUrl, undefined, this.inpUsername);
-    this.mainService.sessionInfo = await this.appService.getSessionInfo();
-
-    await this.finishLogin();    
+    await this.finishLogin(undefined, this.inpUsername);
   }
 
   onResetPassword() {
@@ -227,11 +218,7 @@ export class LoginComponent implements OnInit {
       this.configuration.accessToken = loginResult.jwtToken;
 
       // connect to game server
-      const debugResponse = await this.debugService.test();
-      await this.socketService.connect(debugResponse.gameServerUrl, loginResult.jwtToken);
-      this.mainService.sessionInfo = await this.appService.getSessionInfo();
-
-      await this.finishLogin();
+      await this.finishLogin(loginResult.jwtToken);
     } catch (e: any) {
       console.error(e);
       this.inpPassword = '';
@@ -241,10 +228,15 @@ export class LoginComponent implements OnInit {
     this.cd.detectChanges();
   }
 
-  private async finishLogin() {
+  private async finishLogin(jwtToken?: string, guestName?: string) {
+    const debugResponse = await this.authService.getInfo();
+    await this.socketService.connect(debugResponse.gameServerUrl, jwtToken, guestName);
+
+    this.mainService.sessionInfo = await this.gameAppService.getSessionInfo();
+
     // user settings
     await this.userSettingsService.init();
-    this.appService.updateUserRule(getLocalSettings().userRule);
+    this.gameAppService.updateUserRule(getLocalSettings().userRule);
     
     // enter game menu
     this.loading = false;

@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { GameAppService } from 'app/game-server/app.service';
-import { AppService } from 'app/main-server/api/v1/api/app.service';
-import { UserSettingsService } from 'app/service/user-settings/user-settings.service';
+import { AuthService } from 'app/main-server/api/v1';
 import { clientVersion } from 'app/service/version';
-import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
 
 @Component({
@@ -20,12 +17,12 @@ export class PreloginComponent implements OnInit {
   mainServerConnected = false;
 
   constructor(
-    private appService: AppService,
+    private authService: AuthService,
     private mainService: MainService,
   ) { }
 
   async ngOnInit() {
-    const serverInfo = await this.appService.getInfo();
+    const serverInfo = await this.authService.getInfo();
     this.mainServerConnected = true;
 
     if (clientVersion.startsWith(serverInfo.version)) {

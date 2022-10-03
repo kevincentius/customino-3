@@ -2,7 +2,9 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from 'app.module';
+import { BackendApiModule } from 'backend-api/backend-api.module';
 import { config } from 'config/config';
+import { PublicApiModule, publicApiModules } from 'public-api/public-api.module';
 
 export async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,13 +12,25 @@ export async function bootstrap() {
     origin: config.clientUrl
   });
 
-  const openApiDocument = new DocumentBuilder()
-    .setTitle('Cultris 3')
-    .setDescription('REST API provided by the C3 Main Server.')
+  const publicApiOptions = new DocumentBuilder()
+    .setTitle('Cultris 3 Public API')
+    .setDescription('Public REST API provided by the C3 Main Server.')
     .setVersion('1.0')
     .build();
-  const document = SwaggerModule.createDocument(app, openApiDocument);
-  SwaggerModule.setup('api', app, document);
+  const publicApiDocument = SwaggerModule.createDocument(app, publicApiOptions, {
+    include: [ PublicApiModule, ...publicApiModules ],
+  });
+  SwaggerModule.setup('api', app, publicApiDocument);
+
+  const backendApiOptions = new DocumentBuilder()
+    .setTitle('Cultris 3 Backend API')
+    .setDescription('Internal REST API to be used by game servers.')
+    .setVersion('1.0')
+    .build();
+  const backendApiDocument = SwaggerModule.createDocument(app, backendApiOptions, {
+    include: [ BackendApiModule ],
+  });
+  SwaggerModule.setup('backend-api', app, backendApiDocument);
 
   await app.listen(process.env.PORT || 3000);
 }

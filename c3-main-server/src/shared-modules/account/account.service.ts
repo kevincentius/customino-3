@@ -1,7 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
-import { AccountEntity } from 'entity/account.entity';
-import { RegisterAccountDto } from 'account/dto/register-account-dto';
+import { AccountEntity } from 'shared-modules/account/entity/account.entity';
 import { EntityManager } from 'typeorm';
 const crypto = require("crypto");
 
@@ -9,14 +8,14 @@ const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
 
 @Injectable()
 export class AccountService {
-  async createAccount(em: EntityManager, registerAccountDto: RegisterAccountDto) {
-    const password = await this.hashPassword(registerAccountDto.passwordClearText);
+  async createAccount(em: EntityManager, passwordClearText: string, username: string, email: string) {
+    const password = await this.hashPassword(passwordClearText);
 
     const ct = Date.now();
     await em.insert(AccountEntity, {
-      username: registerAccountDto.username,
+      username: username,
       password: password,
-      email: registerAccountDto.email,
+      email: email,
       emailConfirmCode: this.createRandomUrlSafeCode(),
       createdAt: ct,
       lastLogin: ct,

@@ -1,24 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ApiProperty } from '@nestjs/swagger';
-import { AccountService } from 'account/account.service';
-import { RegisterAccountDto } from 'account/dto/register-account-dto';
-import { AccountEntity } from 'entity/account.entity';
-import { DataSource, EntityManager } from 'typeorm';
+import { AccountService } from 'shared-modules/account/account.service';
+import { RegisterAccountDto } from 'public-api/auth/dto/register-account-dto';
+import { AccountEntity } from 'shared-modules/account/entity/account.entity';
+import { EntityManager } from 'typeorm';
 
 export class AuthResult {
   jwtToken: any;
-}
-
-export class RegisterResult {
-  @ApiProperty()
-  success!: boolean;
-  
-  @ApiProperty()
-  error?: string;
-  
-  @ApiProperty()
-  accountId?: number;
 }
 
 @Injectable()
@@ -81,7 +69,7 @@ export class AuthService {
       }
     }
 
-    await this.accountService.createAccount(em, body);
+    await this.accountService.createAccount(em, body.passwordClearText, body.username, body.email);
 
     return {
       success: true,
