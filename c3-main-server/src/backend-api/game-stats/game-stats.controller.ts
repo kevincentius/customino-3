@@ -5,9 +5,9 @@ import { ApiKeyAuthGuard } from 'backend-api/api-key-auth-guard';
 @ApiTags('game-stats')
 @Controller('backend-api/game-stats')
 export class GameStatsController {
-  @Post('round')
+  @Post('game-result')
   @ApiOperation({ summary: 'Post a game result to be processed.' })
-  async login() {
+  async postGameResult() {
     return { test: 'Not yet supported' };
   }
 

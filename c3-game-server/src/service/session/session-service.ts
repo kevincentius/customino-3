@@ -28,24 +28,6 @@ export class SessionService {
     private authService: AuthService,
   ) {}
 
-  registerGuest(socket: Socket, username: string) {
-    const session = this.getSession(socket);
-    if (session.userId != null) { throw new Error('You must log out before logging in as a guest!'); }
-
-    if (session.username != null) {
-      this.activeGuestNames.delete(session.username);
-    }
-
-    let nextPrefix = 2;
-    let attemptUsername = username;
-    while (this.activeGuestNames.has(attemptUsername)) {
-      attemptUsername = username + ' #' + nextPrefix;
-    }
-
-    this.activeGuestNames.add(attemptUsername);
-    return attemptUsername;
-  }
-
   /**
    * Creates a new session data for the connected client.
    */

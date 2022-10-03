@@ -8,11 +8,28 @@ import { ServerRoomService } from 'service/room/server-room-service';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from 'auth/jwt-auth-guard';
+import { MsGameStatsModule } from './main-server/bu-ms-game-stats/ms-game-stats.module';
+import { ApiModule, Configuration, ConfigurationParameters } from 'main-server/api/v1';
+import { config } from 'config/config';
+
+export function apiConfigFactory(): Configuration {
+  const params: ConfigurationParameters = {
+    basePath: config.mainServerUrl,
+    apiKeys: { 'Api-Key': config.jwtConstants.secret },
+    accessToken: config.jwtConstants.secret,
+    username: 'itsme',
+    password: config.jwtConstants.secret,
+    withCredentials: true,
+  };
+  return new Configuration(params);
+}
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    AuthModule
+    AuthModule,
+    MsGameStatsModule,
+    ApiModule.forRoot(apiConfigFactory),
   ],
   controllers: [],
   providers: [

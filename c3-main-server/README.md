@@ -35,6 +35,8 @@ The `heroku-main-server` branch contains deploy config for the main server on He
 - GAME_SERVER_URL = (link to the game server, e.g. `https://customino-game-server.herokuapp.com`)
 - CLIENT_URL = (link to the game server, e.g. `https://customino.netlify.app`)
 - JWT_SECRET = a secret string that should be shared with the Game Server.
+- GMAIL_ADDRESS = noreply gmail account
+- GMAIL_APP_PASSWORD = noreplay gmail app password (must create one in google cloud)
 
 ### Manual deploy steps (not needed if heroku is connected to github)
 

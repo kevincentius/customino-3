@@ -4,6 +4,8 @@ import { UserRule } from '@shared/game/engine/model/rule/user-rule/user-rule';
 import { LobbyEvent } from '@shared/model/room/lobby-event';
 import { SessionInfo } from '@shared/model/session/session-info';
 import { config } from 'config/config';
+import { GameStatsService } from 'main-server/api/v1';
+import { firstValueFrom } from 'rxjs';
 import { RoomService } from 'service/room/room-service';
 import { SessionService } from 'service/session/session-service';
 import { Socket } from 'socket.io';
@@ -17,7 +19,12 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   constructor(
     private sessionService: SessionService,
     private roomService: RoomService,
-  ) {}
+    private gameStatsService: GameStatsService,
+  ) {
+    this.gameStatsService.defaultHeaders = {
+      'Authorization': 'Api-Key ' + config.jwtConstants.secret,
+    };
+  }
 
   @SubscribeMessage('msgToServer')
   handleMessage(message: string): void {
@@ -65,6 +72,8 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 
   async handleConnection(client: any) {
     try {
+      console.log((await firstValueFrom(this.gameStatsService.test())).data);
+
       this.logger.log(`Client connected: ${client.id}.`);
   
       await this.sessionService.createSession(client);

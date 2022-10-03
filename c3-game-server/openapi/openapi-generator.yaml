@@ -1,0 +1,11 @@
+fileNaming: kebab-case
+nestVersion: 8.0.0
+# templateDir: openapi/custom_templates
+
+removeOperationIdPrefix: true
+enumPropertyNaming: UPPERCASE
+
+# files:
+#   service.mustache:
+#     templateType: API
+#     destinationFilename: .ts
