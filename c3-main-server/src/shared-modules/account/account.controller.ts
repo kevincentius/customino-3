@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AccountEntity } from 'shared-modules/account/entity/account.entity';
+import { AccountInfoDto } from 'shared-modules/account/dto/account-info-dto';
 import { t } from 'util/transaction';
 import { AccountService } from './account.service';
 
@@ -11,15 +11,20 @@ export class AccountController {
   
   @Get()
   @ApiOperation({})
-  @ApiCreatedResponse({ type: AccountEntity })
-  async findByUsername(@Query('username') username: string) {
+  @ApiCreatedResponse({ type: AccountInfoDto })
+  async findByUsername(@Query('username') username: string): Promise<AccountInfoDto | null> {
     return await t(async em => {
       const accountEntity = await this.accountService.findByUsername(em, username);
       if (accountEntity == null) {
         return null;
       } else {
         const {password: password, ...account} = accountEntity;
-        return account;
+        return {
+          username: account.username,
+          emailConfirmed: account.emailConfirmedAt != null,
+          createdAt: account.createdAt,
+          lastLogin: account.lastLogin,
+        };
       }
     });
   }

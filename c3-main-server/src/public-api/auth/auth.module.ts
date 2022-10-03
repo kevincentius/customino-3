@@ -7,7 +7,7 @@ import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from 'public-api/auth/jwt.strategy';
 import { config } from 'config/config';
-import { MailModule } from 'mail/mail.module';
+import { MailModule } from 'shared-modules/mail/mail.module';
 
 @Module({
   imports: [

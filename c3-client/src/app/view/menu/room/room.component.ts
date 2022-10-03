@@ -131,7 +131,6 @@ export class RoomComponent implements OnDestroy {
   }
 
   private updateRoomInfo(roomInfo: RoomInfo) {
-    console.log(roomInfo);
     this.roomInfo = roomInfo;
     this.countdownEndMs = this.roomInfo.autoStartMs == undefined ? undefined : Date.now() + this.roomInfo.autoStartMs;
     this.autoStartCountdown?.updateCountdown(this.countdownEndMs);
@@ -198,8 +197,7 @@ export class RoomComponent implements OnDestroy {
     this.mainService.pixi.bindGame(this.game!);
     musicService.setVolumeGame(this.ngZone);
 
-    this.showRoomGui = false;
-    this.cd.detectChanges();
+    this.setShowRoomGui(false);
   }
 
   onStartGameClick() {

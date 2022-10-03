@@ -1,6 +1,6 @@
 import { config } from "config/config";
 import { AccountEntity } from "shared-modules/account/entity/account.entity";
-import { SampleEntity } from "entity/sample-entity";
+import { SampleEntity } from "public-api/debug/entity/sample-entity";
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 

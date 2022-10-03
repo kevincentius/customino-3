@@ -9,7 +9,7 @@ import { LoginDto } from 'public-api/auth/dto/login-dto';
 import { ResetPasswordRequestDto } from 'public-api/auth/dto/reset-password-request-dto';
 import { ResetPasswordResponseDto } from 'public-api/auth/dto/reset-password-response-dto';
 import { LocalAuthGuard } from 'public-api/auth/local-auth-guard';
-import { MailService } from 'mail/mail.service';
+import { MailService } from 'shared-modules/mail/mail.service';
 import { t } from 'util/transaction';
 import { RegisterResultDto } from 'shared-modules/account/dto/register-result-dto';
 import { ServerInfoDto } from 'public-api/auth/dto/server-info-dto';
