@@ -71,6 +71,12 @@
       "angular-build/**/*",
       "electron-app/main.js"
     ],
+    "win": {
+      "icon": "./angular-build/assets/img/icon.png",
+      "target": [
+        "portable"
+      ]
+    },
     "mac": {
       "icon": "./angular-build/assets/img/icon.png",
       "target": [

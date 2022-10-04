@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Params } from "@angular/router";
 import { SystemKey } from "@shared/game/network/model/system-key";
 import { soundService } from "app/pixi/display/sound/sound-service";
 import { isSystemKey } from "app/service/user-settings/user-settings.service";
@@ -7,6 +7,7 @@ import { MainScreen } from "app/view/main/main-screen";
 import { MainService } from "app/view/main/main.service";
 import { ControlsComponent } from "app/view/menu/controls/controls.component";
 import { LobbyComponent } from "app/view/menu/lobby/lobby.component";
+import { LoginComponent } from "app/view/menu/login/login.component";
 import { MenuComponent } from "app/view/menu/menu/menu.component";
 import { PersonalizationComponent } from "app/view/menu/personalization/personalization.component";
 import { RoomComponent } from "app/view/menu/room/room.component";
@@ -23,6 +24,9 @@ import { ThanksComponent } from "../menu/thanks/thanks.component";
 })
 export class MainComponent implements OnInit {
   MainScreen = MainScreen;
+
+  @ViewChild('login', { static: true })
+  private login!: LoginComponent;
 
   @ViewChild('menu', { static: true })
   private menu!: MenuComponent;
@@ -64,7 +68,7 @@ export class MainComponent implements OnInit {
     private cd: ChangeDetectorRef,
   ) {}
 
-  ngOnInit() {
+ngOnInit() {
     history.pushState(null, '', location.href);
     window.onpopstate = function () {
       history.go(1);
@@ -73,7 +77,11 @@ export class MainComponent implements OnInit {
     this.openScreen(MainScreen.PRELOGIN);
 
     this.route.params.subscribe(params => {
-      this.openScreen(params['component'] ?? MainScreen.PRELOGIN);
+      this.route.queryParams.subscribe(queryParams => {
+        this.mainService.runOnServerInfoLoaded(() => {
+          this.openScreen(params['component'] ?? MainScreen.LOGIN, queryParams);
+        });
+      });
     });
   }
   
@@ -116,7 +124,7 @@ export class MainComponent implements OnInit {
     this.room.show(roomId);
   }
 
-  openScreen(screen: MainScreen) {
+  openScreen(screen: MainScreen, queryParams: Params = {}) {
     if (this.screen != MainScreen.CONTROLS) {
       this.prevScreen = this.screen;
     }
@@ -124,6 +132,10 @@ export class MainComponent implements OnInit {
 
     if (screen == MainScreen.LOBBY) {
       this.lobby.onRefresh();
+    }
+
+    if (screen == MainScreen.LOGIN) {
+      this.login.onShow(queryParams);
     }
 
     this.cd.detectChanges();

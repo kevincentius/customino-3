@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { musicService } from 'app/pixi/display/sound/music-service';
 import { soundService, SoundService } from 'app/pixi/display/sound/sound-service';
+import { SocketService } from 'app/service/socket.service';
 import { MainScreen } from 'app/view/main/main-screen';
 import { MainService } from 'app/view/main/main.service';
 
@@ -15,6 +16,7 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private mainService: MainService,
+    private socketService: SocketService,
   ) { }
 
   ngOnInit(): void {
@@ -41,6 +43,7 @@ export class MenuComponent implements OnInit {
   }
 
   onLogoutClick() {
+    this.socketService.disconnect();
     this.mainService.openScreen(MainScreen.LOGIN);
     musicService.stop();
     soundService.play('back');

@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatMenuModule} from '@angular/material/menu';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 import { DebugComponent } from 'app/view/debug/debug.component';
 import { MainComponent } from 'app/view/main/main.component';
@@ -85,6 +86,7 @@ export function apiConfigFactory(): Configuration {
     FormsModule,
     MatTabsModule,
     MatMenuModule,
+    MatSnackBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

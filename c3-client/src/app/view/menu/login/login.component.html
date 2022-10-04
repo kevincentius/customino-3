@@ -3,32 +3,195 @@
 
 <div class="full-size login-background" style="background: #0008;">
   <div class="full-center">
+    <div class="loading-overlay" [style.opacity]="loading ? 1 : 0"></div>
 
-    <div style="text-align: center; font-size: 24px;">
-      Pick a name
+    <ng-container *ngIf="phase == LoginPhase.SUBMIT_USERNAME">
+      <div style="text-align: center; font-size: 24px;">
+        Pick a name
+  
+        <span style="
+            display: inline-block;
+            transform: scale(1.5) translate(0, 4px);
+            margin: 4px;
+        ">
+          <app-icon-button [iconName]="'magic'" (click)="setRandomName()"></app-icon-button>
+        </span>
+      </div>
+  
+      <div class="spacer"></div>
+  
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <input #inpUsernameRef [(ngModel)]="inpUsername" placeholder="username" maxlength="15" class="main-input" (keydown.enter)="onSubmitUsername()">
+      </div>
 
-      <span style="
-          display: inline-block;
-          transform: scale(1.5) translate(0, 4px);
-          margin: 4px;
-      ">
-        <app-icon-button [iconName]="'magic'" (click)="setRandomName()"></app-icon-button>
-      </span>
-    </div>
+      <div class="spacer"></div>
+  
+      <div class="error-message">&nbsp;{{errorMessage}}&nbsp;</div>
 
-    <div class="spacer"></div>
+      <div class="spacer"></div>
 
-    <div style="display: flex; align-items: center; justify-content: center;">
-      <input #inp [(ngModel)]="inpData" placeholder="username" maxlength="15" class="main-input" (keyup.enter)="onSubmit()">
-    </div>
-    {{ inp.focus() }}
+      <button (click)="onSubmitUsername()">
+        <img class="banner-btn" src="assets/img/default/banner.ico"/>
+      </button>  
+  
+      <div class="spacer"></div>
+  
+      <div class="spacer"></div>
+  
+      <div class="spacer"></div>
+  
+      <div>
+        <button class="gui-button gui-button-small" (click)="onResetPassword()">
+          Forgot username / password?
+        </button>
+      </div>
 
-    <div class="spacer"></div>
+      <div class="spacer"></div>
 
-    <div>
-      <img (click)="onSubmit()" class="banner-btn" src="assets/img/default/banner.ico"/>
-    </div>
+      <div class="version">alpha v{{clientVersion}} (user data may be lost)</div>  
+    </ng-container>
 
-    <div class="version">alpha v{{clientVersion}} (user data may be lost)</div>
+    <ng-container *ngIf="phase == LoginPhase.SUBMIT_PASSWORD">
+      <div style="text-align: center; font-size: 24px;">
+        Account <span class="prompt-highlight">{{username}}</span> found. Enter the password to login:
+      </div>
+  
+      <div class="spacer"></div>
+  
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <input #inpPasswordRef type="password" [(ngModel)]="inpPassword" placeholder="password" maxlength="255" class="main-input" (keydown.enter)="onSubmitPassword()">
+      </div>
+
+      <div class="spacer"></div>
+  
+      <div class="error-message">&nbsp;{{errorMessage}}&nbsp;</div>
+
+      <div class="spacer"></div>
+
+      <div class="gui-button-row">
+        <button class="gui-button gui-button-big gui-button-main" (click)="onLoginAsGuest()">
+          Login
+        </button>
+
+        <button class="gui-button gui-button-big" (click)="onShow()">
+          Back
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="phase == LoginPhase.CONFIRM_REGISTER">
+      <div *ngIf="!isGuestName()" class="prompt">Account <span class="prompt-highlight">{{inpUsername}}</span> not found.</div>
+      <div *ngIf="isGuestName()" class="prompt">Username <span class="prompt-highlight">{{inpUsername}}</span> is reserved for anonymous players.</div>
+
+      <div class="spacer"></div>
+
+      <div class="gui-button-row">
+        <button class="gui-button gui-button-main gui-button-big" [disabled]="isGuestName()" (click)="onCreateAccount()">
+          Create account
+        </button>
+
+        <button #btnLoginAsGuestRef class="gui-button gui-button-main gui-button-big" (click)="onLoginAsGuest()">
+          Play anonymously
+        </button>
+
+        <button class="gui-button gui-button-big" (click)="onShow()">
+          Back
+        </button>
+      </div>
+    </ng-container>
+    
+    <ng-container *ngIf="phase == LoginPhase.SUBMIT_ACCOUNT">
+      <div style="text-align: center; font-size: 24px;">
+        Enter your Email:
+      </div>
+  
+      <div class="spacer"></div>
+  
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <input #inpEmailRef [(ngModel)]="inpEmail" placeholder="email" maxlength="255" class="main-input">
+      </div>
+      
+      <div class="spacer"></div>
+  
+      <div class="spacer"></div>
+  
+      <div style="text-align: center; font-size: 24px;">
+        and create a password:
+      </div>
+  
+      <div class="spacer"></div>
+  
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <input #inpPasswordRef type="password" [(ngModel)]="inpPassword" placeholder="password" maxlength="255" class="main-input" (keydown.enter)="onSubmitAccount()">
+      </div>
+
+      <div class="spacer"></div>
+  
+      <div class="error-message">&nbsp;{{errorMessage}}&nbsp;</div>
+
+      <div class="spacer"></div>
+
+      <div class="gui-button-row">
+        <button class="gui-button gui-button-main gui-button-big" [disabled]="isGuestName()" (click)="onSubmitAccount()">
+          Create account
+        </button>
+
+        <button class="gui-button gui-button-big" (click)="onShow()">
+          Back
+        </button>
+      </div>
+    </ng-container>
+    
+    <ng-container *ngIf="phase == LoginPhase.RESET_PASSWORD">
+      <div style="text-align: center; font-size: 24px;">
+        Enter the email address or username of the account:
+      </div>
+  
+      <div class="spacer"></div>
+  
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <input #inpResetRef [(ngModel)]="inpReset" placeholder="email or username" maxlength="255" class="main-input">
+      </div>
+      
+      <div class="spacer"></div>
+  
+      <div class="error-message">&nbsp;{{errorMessage}}&nbsp;</div>
+
+      <div class="spacer"></div>
+
+      <div class="gui-button-row">
+        <button class="gui-button gui-button-main gui-button-big" (click)="onSubmitResetPassword()">
+          Reset my password
+        </button>
+
+        <button class="gui-button gui-button-big" (click)="onShow()">
+          Back
+        </button>
+      </div>
+    </ng-container>
+    
+    <ng-container *ngIf="phase == LoginPhase.CHANGE_PASSWORD">
+      <div style="text-align: center; font-size: 24px;">
+        Create your new password:
+      </div>
+  
+      <div class="spacer"></div>
+  
+      <div style="display: flex; align-items: center; justify-content: center;">
+        <input #inpNewPasswordRef [(ngModel)]="inpNewPassword" type="password" placeholder="password" maxlength="255" class="main-input" (keydown.enter)="onSubmitChangePassword()">
+      </div>
+      
+      <div class="spacer"></div>
+  
+      <div class="error-message">&nbsp;{{errorMessage}}&nbsp;</div>
+
+      <div class="spacer"></div>
+
+      <div class="gui-button-row">
+        <button class="gui-button gui-button-main gui-button-big" (click)="onSubmitChangePassword()">
+          Confirm new password
+        </button>
+      </div>
+    </ng-container>
   </div>
 </div>
