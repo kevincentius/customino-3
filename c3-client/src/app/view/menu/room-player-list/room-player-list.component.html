@@ -34,8 +34,16 @@
           </ng-container>
         </td>
 
-        <td class="tc-text" [class.local-player]="slot.player.sessionId == getSessionId()">
+        <td class="tc-text"
+          [class.local-player]="slot.player.sessionId == getSessionId()"
+          (click)="onRoomSlotRightClick($event, i)"
+          [matMenuTriggerFor]="playerInfoMenu"
+          #playerInfoMenuTrigger="matMenuTrigger"
+        >
           {{slot.player.username}}
+          <mat-menu #playerInfoMenu="matMenu">
+            <div>Player: {{slot.player.username}}</div>
+          </mat-menu>
         </td>
 
         <td class="tc-number">

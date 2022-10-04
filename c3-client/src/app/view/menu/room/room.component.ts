@@ -23,6 +23,7 @@ import { timeoutWrapper } from 'app/util/ng-zone-util';
 import { ChatMessage } from '@shared/model/room/chat-message';
 import { RoomAutoStartCountdownComponent } from '../room-auto-start-countdown/room-auto-start-countdown.component';
 import { SystemKey } from '@shared/game/network/model/system-key';
+import { soundService } from 'app/pixi/display/sound/sound-service';
 
 interface AutoStartOption {
   label: string;
@@ -130,7 +131,6 @@ export class RoomComponent implements OnDestroy {
   }
 
   private updateRoomInfo(roomInfo: RoomInfo) {
-    console.log(roomInfo);
     this.roomInfo = roomInfo;
     this.countdownEndMs = this.roomInfo.autoStartMs == undefined ? undefined : Date.now() + this.roomInfo.autoStartMs;
     this.autoStartCountdown?.updateCountdown(this.countdownEndMs);
@@ -150,7 +150,7 @@ export class RoomComponent implements OnDestroy {
 
     const roomInfo = (await this.roomService.getRoomInfo(this.roomId))!;
     
-    this.showRoomGui = true;
+    this.setShowRoomGui(true);
     this.showSettings = false;
     this.updateRoomInfo(roomInfo);
 
@@ -166,6 +166,10 @@ export class RoomComponent implements OnDestroy {
     this.showRoomGui = showRoomGui;
     this.mainService.pixi.keyboard.setEnabled(!this.showRoomGui);
     this.cd.detectChanges();
+
+    if (this.showRoomGui) {
+      setTimeout(() => this.chat.focus());
+    }
   }
 
   downloadDebug() {
@@ -175,12 +179,17 @@ export class RoomComponent implements OnDestroy {
   }
 
   async onBackClick() {
-    await this.roomService.leave();
-    if (this.game) {
-      this.game.destroy();
-      this.game = undefined;
+    if (!this.showRoomGui) {
+      this.setShowRoomGui(true);
+    } else {
+      await this.roomService.leave();
+      if (this.game) {
+        this.game.destroy();
+        this.game = undefined;
+      }
+      this.mainService.openScreen(MainScreen.LOBBY);
+      soundService.play('back');
     }
-    this.mainService.openScreen(MainScreen.LOBBY);
   }
 
   private startGame() {
@@ -188,8 +197,7 @@ export class RoomComponent implements OnDestroy {
     this.mainService.pixi.bindGame(this.game!);
     musicService.setVolumeGame(this.ngZone);
 
-    this.showRoomGui = false;
-    this.cd.detectChanges();
+    this.setShowRoomGui(false);
   }
 
   onStartGameClick() {
@@ -243,6 +251,8 @@ export class RoomComponent implements OnDestroy {
     setTimeout(() => {
       this.showRoomGui = true;
       this.cd.detectChanges();
+
+      setTimeout(() => this.chat.focus());
     }, 500);
   }
 

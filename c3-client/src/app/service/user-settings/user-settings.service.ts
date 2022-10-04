@@ -135,5 +135,5 @@ export function getLocalSettings() {
 }
 
 export function isSystemKey(ev: KeyboardEvent, systemKey: SystemKey) {
-  return localSettings.control.systemKeyMap.get(systemKey)![0] == ev.code;
+  return localSettings?.control?.systemKeyMap?.get(systemKey)![0] == ev.code;
 }
