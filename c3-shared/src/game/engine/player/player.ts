@@ -76,7 +76,7 @@ export abstract class Player {
   ) {
     this.playerInfo = {
       name: startPlayerData.clientInfo.username,
-      userId: startPlayerData.clientInfo.userId,
+      accountId: startPlayerData.clientInfo.accountId,
     };
 
     this.init();

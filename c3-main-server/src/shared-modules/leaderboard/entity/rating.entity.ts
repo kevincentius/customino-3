@@ -1,18 +1,14 @@
-import { AccountEntity } from "shared-modules/account/entity/account.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, RelationId } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('rating')
-export class Rating {
+export class RatingEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
   gameModeSeasonId!: number;
 
-  @ManyToOne(() => AccountEntity, a => a.id)
-  account!: AccountEntity;
-
-  @RelationId((r: Rating) => r.account)
+  @Column()
   accountId!: number;
 
   @Column({ type: 'double precision' })
@@ -24,6 +20,9 @@ export class Rating {
   @Column({ type: 'double precision' })
   vol!: number;
   
+  @Column({ type: 'double precision' })
+  score!: number;
+
   @Column()
   matches!: number;
 

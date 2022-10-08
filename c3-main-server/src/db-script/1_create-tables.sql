@@ -30,9 +30,11 @@ CREATE TABLE RATING (
     rating DOUBLE PRECISION NOT NULL,
     rd DOUBLE PRECISION NOT NULL,
     vol DOUBLE PRECISION NOT NULL,
+    score DOUBLE PRECISION NOT NULL,
     matches INTEGER,
     last_match_timestamps TEXT,
     UNIQUE (game_mode_season_id, account_id)
 );
-CREATE INDEX index_rating_account_id ON RATING (game_mode_season_id);
+CREATE INDEX index_rating_game_mode_season_id ON RATING (game_mode_season_id);
 CREATE INDEX index_rating_account_id ON RATING (account_id);
+CREATE INDEX index_rating_score ON RATING (score);

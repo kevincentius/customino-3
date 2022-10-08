@@ -15,6 +15,7 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
 import { Observable } from 'rxjs';
+import { ServerGameStatsDto } from '../model/server-game-stats-dto';
 import { Configuration } from '../configuration';
 
 
@@ -42,11 +43,16 @@ export class GameStatsService {
     /**
      * Post a game result to be processed.
      * 
+     * @param serverGameStatsDto 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public postGameResult(): Observable<AxiosResponse<any>>;
-    public postGameResult(): Observable<any> {
+    public postGameResult(serverGameStatsDto: ServerGameStatsDto, ): Observable<AxiosResponse<any>>;
+    public postGameResult(serverGameStatsDto: ServerGameStatsDto, ): Observable<any> {
+
+        if (serverGameStatsDto === null || serverGameStatsDto === undefined) {
+            throw new Error('Required parameter serverGameStatsDto was null or undefined when calling postGameResult.');
+        }
 
         let headers = this.defaultHeaders;
 
@@ -60,9 +66,14 @@ export class GameStatsService {
 
         // to determine the Content-Type header
         const consumes: string[] = [
+            'application/json'
         ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers['Content-Type'] = httpContentTypeSelected;
+        }
         return this.httpClient.post<any>(`${this.basePath}/backend-api/game-stats/game-result`,
-            null,
+            serverGameStatsDto,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers

@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RoomSettings } from "@shared/game/engine/model/room-settings";
 import { RoomInfo } from "@shared/model/room/room-info";
+import { GameStatsService } from "main-server/api/v1";
 import { Room } from "service/room/room";
 import { Session } from "service/session/session";
 import { SessionService, SessionServiceEvent } from "service/session/session-service";
@@ -16,7 +17,8 @@ export class RoomService {
   nextRoomId = 1;
 
   constructor(
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private gameStatsService: GameStatsService,
   ) {}
 
   onModuleInit() {
@@ -39,7 +41,7 @@ export class RoomService {
     
     this.leave(session);
 
-    const room = new Room(roomId, `${session.username}'s Room`, session, this.sessionService);
+    const room = new Room(roomId, `${session.username}'s Room`, session, this.sessionService, this.gameStatsService);
     this.roomMap.set(room.id, room);
 
     session.roomId = room.id;
@@ -47,10 +49,10 @@ export class RoomService {
     return room;
   }
 
-  createServerRoom(name: string, roomSettings: RoomSettings): Room {
+  createServerRoom(name: string, roomSettings: RoomSettings, gameModeSeasonId?: number): Room {
     const roomId = this.nextRoomId++;
 
-    const room = new Room(roomId, name, null, this.sessionService);
+    const room = new Room(roomId, name, null, this.sessionService, this.gameStatsService, gameModeSeasonId);
     room.changeRoomSettings(null, roomSettings);
 
     this.roomMap.set(room.id, room);

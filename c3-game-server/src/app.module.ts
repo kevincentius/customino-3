@@ -8,7 +8,6 @@ import { ServerRoomService } from 'service/room/server-room-service';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from 'auth/jwt-auth-guard';
-import { MsGameStatsModule } from './main-server/bu-ms-game-stats/ms-game-stats.module';
 import { ApiModule, Configuration, ConfigurationParameters } from 'main-server/api/v1';
 import { config } from 'config/config';
 import { GlobalDataService } from './service/global-data/global-data.service';
@@ -29,7 +28,6 @@ export function apiConfigFactory(): Configuration {
   imports: [
     ConfigModule.forRoot(),
     AuthModule,
-    MsGameStatsModule,
     ApiModule.forRoot(apiConfigFactory),
   ],
   controllers: [],

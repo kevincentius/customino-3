@@ -22,6 +22,9 @@ const mailTransportOptions: Options = {
   auth: {
     user: process.env.GMAIL_ADDRESS,
     pass: process.env.GMAIL_APP_PASSWORD,
+
+    // accessToken: process.env.GMAIL_APP_PASSWORD,
+    // clientSecret: process.env.GMAIL_APP_PASSWORD,
   }
 }
 
@@ -31,8 +34,10 @@ export const config = {
   gameServerUrl: process.env.GAME_SERVER_URL ?? 'http://localhost:3001',
   jwtConstants: {
     secret: process.env.JWT_SECRET ?? 'ndZ0WMJ5RzZrDMxephDAK2E4wcBntAaBq33GCmMhhRXnVc3BHD2ZhmOMTWC9K6Ol',
-    expiresIn: '60s'
+    expiresIn: '2592000s'
   },
   backendApiSecret: process.env.JWT_SECRET ?? 'ndZ0WMJ5RzZrDMxephDAK2E4wcBntAaBq33GCmMhhRXnVc3BHD2ZhmOMTWC9K6Ol',
   mailTransportOptions: mailTransportOptions
 }
+
+console.log(config);

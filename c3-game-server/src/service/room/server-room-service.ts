@@ -19,8 +19,9 @@ export class ServerRoomService implements OnModuleInit {
         gameMode.roomName,
         {
           gameRule: JSON.parse(gameModeSeason.ruleJson),
-        }
-      )
+        },
+        gameModeSeason.id,
+      );
     }
   }
 }

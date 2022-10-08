@@ -59,7 +59,7 @@ export class SessionService {
     this.idToSessionMap.delete(session.sessionId);
 
     // unregister guest
-    if (session.userId == null && session.username != null) {
+    if (session.accountId == null && session.username != null) {
       this.activeGuestNames.delete(session.username);
     }
   }
