@@ -3,9 +3,14 @@
 README.md
 api.module.ts
 api/api.ts
+api/data.service.ts
 api/game-stats.service.ts
 configuration.ts
 git_push.sh
 index.ts
+model/game-mode-season.ts
+model/game-mode.ts
+model/global-data.ts
 model/models.ts
+model/server-room-config.ts
 variables.ts

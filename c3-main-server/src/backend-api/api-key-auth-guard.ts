@@ -8,7 +8,6 @@ export class ApiKeyAuthGuard implements CanActivate {
   ): boolean {
     const request = context.switchToHttp().getRequest();
     const headers: string[] = request.rawHeaders;
-    console.log(headers);
     return headers.indexOf('Api-Key ' + config.backendApiSecret) != -1;
   }
 }

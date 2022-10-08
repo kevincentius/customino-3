@@ -7,7 +7,9 @@ import { ApiKeyAuthGuard } from 'backend-api/api-key-auth-guard';
 export class GameStatsController {
   @Post('game-result')
   @ApiOperation({ summary: 'Post a game result to be processed.' })
+  // @ApiCreatedResponse({ type: GlobalData })
   async postGameResult() {
+
     return { test: 'Not yet supported' };
   }
 

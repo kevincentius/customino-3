@@ -15,11 +15,12 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
 import { Observable } from 'rxjs';
+import { GlobalData } from '../model/global-data';
 import { Configuration } from '../configuration';
 
 
 @Injectable()
-export class GameStatsService {
+export class DataService {
 
     protected basePath = 'http://localhost';
     public defaultHeaders: Record<string,string> = {};
@@ -40,18 +41,19 @@ export class GameStatsService {
     }
 
     /**
-     * Post a game result to be processed.
+     * Gets static / hardcoded data for the current server version.
      * 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public postGameResult(): Observable<AxiosResponse<any>>;
-    public postGameResult(): Observable<any> {
+    public getGlobalData(): Observable<AxiosResponse<GlobalData>>;
+    public getGlobalData(): Observable<any> {
 
         let headers = this.defaultHeaders;
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'application/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -61,37 +63,7 @@ export class GameStatsService {
         // to determine the Content-Type header
         const consumes: string[] = [
         ];
-        return this.httpClient.post<any>(`${this.basePath}/backend-api/game-stats/game-result`,
-            null,
-            {
-                withCredentials: this.configuration.withCredentials,
-                headers: headers
-            }
-        );
-    }
-    /**
-     * test
-     * 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public test(): Observable<AxiosResponse<any>>;
-    public test(): Observable<any> {
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers['Accept'] = httpHeaderAcceptSelected;
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-        ];
-        return this.httpClient.get<any>(`${this.basePath}/backend-api/game-stats/test`,
+        return this.httpClient.get<GlobalData>(`${this.basePath}/data/global-data`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers

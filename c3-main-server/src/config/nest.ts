@@ -2,7 +2,7 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from 'app.module';
-import { BackendApiModule } from 'backend-api/backend-api.module';
+import { BackendApiModule, backendApiModules } from 'backend-api/backend-api.module';
 import { config } from 'config/config';
 import { PublicApiModule, publicApiModules } from 'public-api/public-api.module';
 
@@ -28,7 +28,7 @@ export async function bootstrap() {
     .setVersion('1.0')
     .build();
   const backendApiDocument = SwaggerModule.createDocument(app, backendApiOptions, {
-    include: [ BackendApiModule ],
+    include: [ BackendApiModule, ...backendApiModules ],
   });
   SwaggerModule.setup('backend-api', app, backendApiDocument);
 

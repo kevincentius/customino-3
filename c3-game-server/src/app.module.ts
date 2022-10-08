@@ -11,6 +11,7 @@ import { JwtAuthGuard } from 'auth/jwt-auth-guard';
 import { MsGameStatsModule } from './main-server/bu-ms-game-stats/ms-game-stats.module';
 import { ApiModule, Configuration, ConfigurationParameters } from 'main-server/api/v1';
 import { config } from 'config/config';
+import { GlobalDataService } from './service/global-data/global-data.service';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -44,6 +45,7 @@ export function apiConfigFactory(): Configuration {
     SessionService,
     RoomService,
     ServerRoomService,
+    GlobalDataService,
   ],
 })
 export class AppModule {}
