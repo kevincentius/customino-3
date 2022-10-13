@@ -62,6 +62,7 @@ export class MainComponent implements OnInit {
   // view model
   screen = MainScreen.PRELOGIN;
   initialized = false;
+  fullscreen = false;
 
   // icon bar
   prevScreen!: MainScreen;
@@ -88,7 +89,17 @@ ngOnInit() {
       });
     });
   }
-  
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    const oldFullscreen = this.fullscreen;
+    this.fullscreen = 1 >= outerHeight - innerHeight;
+
+    if (oldFullscreen != this.fullscreen) {
+      this.cd.detectChanges();
+    }
+  }
+
   @HostListener('window:keydown', ['$event'])
   onKeyDown(ev: KeyboardEvent) {
     let handled = true;
@@ -171,5 +182,13 @@ ngOnInit() {
 
   onDebugClick() {
     this.room.downloadDebug();
+  }
+
+  onToggleFullscreenClick() {
+    if (this.fullscreen) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen()
+    }
   }
 }

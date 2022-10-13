@@ -34,7 +34,6 @@ export class LeaderboardComponent implements OnInit {
       .filter(season => season.gameModeId == this.gameMode.id)
       .sort((a, b) => a.id - b.id)[0];
     this.entries = await this.leaderboardService.getLeaderboardEntries(gameModeSeason.id, 0);
-    this.entries = [...this.entries, ...this.entries, ...this.entries, ...this.entries, ...this.entries, ...this.entries, ...this.entries, ...this.entries, ...this.entries, ...this.entries, ...this.entries, ...this.entries, ...this.entries, ...this.entries, ...this.entries]
 
     this.cd.detectChanges();
   }

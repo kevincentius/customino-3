@@ -21,6 +21,7 @@ import { Subject } from "rxjs";
 import { GameStatsService } from "main-server/api/v1";
 import { ClientInfo } from "@shared/model/session/client-info";
 import { p } from "service/util/api-util";
+import { GameResult } from "@shared/game/engine/game/game-result";
 
 export class Room {
   slotsChangeSubject = new Subject<void>(); // roomInfo must be broadcast right after this subject is emitted due to change by RoomAutoStart
@@ -183,6 +184,8 @@ export class Room {
         }
       }
 
+      this.kickAfkPlayers(gameResult);
+
       this.gameOverSubject.next();
 
       for (const slot of this.slots) {
@@ -220,6 +223,19 @@ export class Room {
 
     game.start();
     return game;
+  }
+
+  private kickAfkPlayers(gameResult: GameResult) {
+    let slotsChanged = false;
+    this.slots.forEach(slot => {
+      if (slot.playerIndex != null && gameResult.players[slot.playerIndex].afk) {
+        slot.settings.playing = false;
+        slotsChanged = true;
+      }
+    });
+    if (slotsChanged) {
+      this.slotsChangeSubject.next();
+    }
   }
 
   changeRoomSettings(session: Session | null, roomSettings: RoomSettings) {

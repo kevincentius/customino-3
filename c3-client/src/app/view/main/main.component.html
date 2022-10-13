@@ -33,7 +33,9 @@
   
   <mat-icon *ngIf="screen == MainScreen.REPLAY" class="icon-button" (click)="replay.onBackClick()">logout</mat-icon>
 
-  <mat-icon *ngIf="screen != MainScreen.PRELOGIN" class="icon-button" (click)="onDownloadClick()">download</mat-icon>
+  <mat-icon class="icon-button" (click)="onDownloadClick()">download</mat-icon>
+
+  <mat-icon class="icon-button" (click)="onToggleFullscreenClick()">{{fullscreen ? 'fullscreen_exit' : 'fullscreen'}}</mat-icon>
 </div>
 
 <div

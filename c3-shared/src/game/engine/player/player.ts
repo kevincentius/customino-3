@@ -36,6 +36,7 @@ export abstract class Player {
   playerRule: PlayerRule;
   frame = 0;
   alive = true;
+  afkFlag = true;
   pieceQueue: Piece[] = [];
   attackRule: AttackRule;
   playerInfo: PlayerInfo;
@@ -113,6 +114,7 @@ export abstract class Player {
     return {
       frame: this.frame,
       alive: this.alive,
+      afkFlag: this.afkFlag,
       pieceQueue: this.pieceQueue.map(p => p.serialize()),
       attackRule: this.attackRule.serialize(),
 
@@ -128,6 +130,7 @@ export abstract class Player {
   load(playerState: PlayerState) {
     this.frame = playerState.frame;
     this.alive = playerState.alive;
+    this.afkFlag = playerState.afkFlag;
     this.pieceQueue.splice(0, this.pieceQueue.length, ...playerState.pieceQueue.map(p => Piece.from(p)));
     this.attackRule.load(playerState.attackRule);
 
@@ -156,8 +159,9 @@ export abstract class Player {
     this.gameEventSubject.next(event);
 
     if (event.type == GameEventType.INPUT) {
+      this.afkFlag = false;
+
       const inputEvent = event as InputEvent;
-      
       return this.actionMap.get(inputEvent.key)!();
     } else if (event.type == GameEventType.ATTACK_ACK) {
       const gbEvent = event as AttackAckEvent;
