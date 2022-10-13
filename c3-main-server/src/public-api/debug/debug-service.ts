@@ -1,7 +1,7 @@
 import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { AppDataSource } from "config/data-source";
-import { SampleEntity } from "public-api/debug/entity/sample-entity";
+import { SampleEntity } from "public-api/debug/entity/sample.entity";
 
 @Injectable()
 export class DebugService {

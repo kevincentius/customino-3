@@ -8,6 +8,7 @@ import { GameStatsService } from 'main-server/api/v1';
 import { firstValueFrom } from 'rxjs';
 import { RoomService } from 'service/room/room-service';
 import { SessionService } from 'service/session/session-service';
+import { p } from 'service/util/api-util';
 import { Socket } from 'socket.io';
 
 @WebSocketGateway(config.webSocketGatewayOptions)
@@ -19,6 +20,7 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
   constructor(
     private sessionService: SessionService,
     private roomService: RoomService,
+    
     private gameStatsService: GameStatsService,
   ) {
     this.gameStatsService.defaultHeaders = {
@@ -72,13 +74,9 @@ export class AppGateway implements OnGatewayInit, OnGatewayConnection, OnGateway
 
   async handleConnection(client: any) {
     try {
-      console.log((await firstValueFrom(this.gameStatsService.test())).data);
-
       this.logger.log(`Client connected: ${client.id}.`);
   
       await this.sessionService.createSession(client);
-
-      client.emit('debugMessage', 'Hello from the server.');
     } catch (error) {
       this.logger.error(error);
     }

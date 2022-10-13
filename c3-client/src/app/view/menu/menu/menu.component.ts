@@ -37,6 +37,11 @@ export class MenuComponent implements OnInit {
     soundService.play('button', 0, 1);
   }
 
+  onLeaderboardClick() {
+    this.mainService.openScreen(MainScreen.LEADERBOARD);
+    soundService.play('button', 0, 1);
+  }
+
   onThanksClick() {
     this.mainService.openScreen(MainScreen.THANKS);
     soundService.play('button', 0, 1);

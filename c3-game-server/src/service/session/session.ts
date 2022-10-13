@@ -11,14 +11,14 @@ export class Session {
   constructor(
     public socket: Socket,
     public sessionId: number,
-    public userId: number | null,
+    public accountId: number | null,
     public username: string | null,
   ) {}
   
   getClientInfo(): ClientInfo {
     return {
       sessionId: this.sessionId,
-      userId: this.userId,
+      accountId: this.accountId,
       username: this.username!,
     };
   }

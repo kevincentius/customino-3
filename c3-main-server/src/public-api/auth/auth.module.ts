@@ -15,7 +15,7 @@ import { MailModule } from 'shared-modules/mail/mail.module';
     PassportModule,
     JwtModule.register({
       secret: config.jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '2592000s' },
     }),
     MailModule,
   ],

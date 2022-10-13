@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ApiKeyStrategy } from 'backend-api/api-key.strategy';
-import { GameStatsController } from './game-stats/game-stats.controller';
+import { GameStatsModule } from 'backend-api/game-stats/backend-api.module';
+import { DataModule } from 'shared-modules/data/data.module';
 
+export const backendApiModules = [
+  GameStatsModule,
+  DataModule,
+];
 @Module({
-  controllers: [GameStatsController],
+  imports: backendApiModules,
   providers: [ApiKeyStrategy],
 })
-export class BackendApiModule {
-
-}
+export class BackendApiModule {}

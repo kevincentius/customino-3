@@ -7,6 +7,6 @@
 export interface ClientInfo {
   sessionId: number;
 
-  userId: number | null;
+  accountId: number | null;
   username: string;
 }

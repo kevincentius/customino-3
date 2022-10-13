@@ -1,8 +1,9 @@
 import { config } from "config/config";
 import { AccountEntity } from "shared-modules/account/entity/account.entity";
-import { SampleEntity } from "public-api/debug/entity/sample-entity";
+import { SampleEntity } from "public-api/debug/entity/sample.entity";
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import { RatingEntity } from "shared-modules/rating/entity/rating.entity";
 
 
 export const AppDataSource = new DataSource({
@@ -15,6 +16,7 @@ export const AppDataSource = new DataSource({
   entities: [
     SampleEntity,
     AccountEntity,
+    RatingEntity,
   ],
   ssl: process.env.DEPLOYMENT == 'LIVE' ? { rejectUnauthorized: false } : false,
 })

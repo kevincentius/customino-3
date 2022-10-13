@@ -2,6 +2,7 @@ import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { AccountEntity } from 'shared-modules/account/entity/account.entity';
 import { EntityManager } from 'typeorm';
+import { AccountInfo } from 'shared-modules/account/dto/account-info-dto';
 const crypto = require("crypto");
 
 const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
@@ -110,5 +111,15 @@ export class AccountService {
   
   private async update(em: EntityManager, account: AccountEntity) {
     await em.update(AccountEntity, { id: account.id }, account);
+  }
+
+  toAccountInfo(account: AccountEntity): AccountInfo {
+    return {
+      id: account.id,
+      username: account.username,
+      emailConfirmed: account.emailConfirmedAt != null,
+      createdAt: account.createdAt,
+      lastLogin: account.lastLogin,
+    }
   }
 }

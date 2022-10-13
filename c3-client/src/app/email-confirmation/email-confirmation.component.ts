@@ -23,7 +23,7 @@ export class EmailConfirmationComponent implements OnInit {
         emailConfirmationCode: queryParams['emailCode'] as string,
       });
       if (success) {
-        this.snackBar.open('Your email address has been confirmed!', 'Dance');
+        this.snackBar.open('Your email address has been confirmed!', 'Dance', { duration: 7000 });
         this.router.navigate(['']);
       }
     });
