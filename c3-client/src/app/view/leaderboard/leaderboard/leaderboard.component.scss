@@ -1,0 +1,32 @@
+
+@import 'styles/font';
+
+.main-table {
+  min-width: 80%;
+  position: relative;
+
+  border-collapse: separate; 
+  border-spacing: 0 5px;
+  font-size: $font-size-default;
+  backdrop-filter: blur(8px);
+
+  th {
+    position: sticky;
+    top: 0px;
+    z-index: 1;
+    text-align: left;
+    padding: 0 15px;
+    background: #000d;
+    font-weight: normal;
+    padding: 5px;
+  }
+
+  td {
+    padding: 15px;
+    background: #0004;
+  }
+
+  tr:hover td {
+    background: #fff4;
+  }
+}

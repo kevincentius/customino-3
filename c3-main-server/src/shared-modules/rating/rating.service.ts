@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { scoreCalc } from 'backend-api/game-stats/score-calc';
-import { RatingEntity } from 'shared-modules/leaderboard/entity/rating.entity';
+import { RatingInfo } from 'shared-modules/rating/dto/rating-info-dto';
+import { RatingEntity } from 'shared-modules/rating/entity/rating.entity';
 import { In } from 'typeorm';
 import { t } from 'util/transaction';
 const Glicko2 = require('glicko2').Glicko2;
@@ -20,6 +21,7 @@ export class RatingService {
       const ratings: RatingEntity[] = accountIdsByRanking.map(accountId => ratingsMap.get(accountId) ?? {
         id: undefined!,
         gameModeSeasonId: gameModeSeasonId,
+        account: undefined!,
         accountId: accountId,
         rating: undefined!,
         rd: undefined!,
@@ -60,9 +62,7 @@ export class RatingService {
         rating.score = scoreCalc.calc(rating, lastMatchTimestamps.map(ts => parseInt(ts)), ct);
       });
 
-      await em.upsert(RatingEntity, ratings, {
-        conflictPaths: [ 'accountId', 'gameModeSeasonId' ],
-      });
+      await em.save(RatingEntity, ratings);
     });
   }
 
@@ -83,5 +83,16 @@ export class RatingService {
       rd: 200,
       vol: 0.01,
     });
+  }
+
+  toRatingInfo(rating: RatingEntity): RatingInfo {
+    return {
+      rating: rating.rating,
+      rd: rating.rd,
+      vol: rating.vol,
+      score: rating.score,
+      matches: rating.matches,
+      lastMatchTimestamp: rating.lastMatchTimestamps.trim().length == 0 ? undefined : parseInt(rating.lastMatchTimestamps.split(',').at(-1)!),
+    };
   }
 }

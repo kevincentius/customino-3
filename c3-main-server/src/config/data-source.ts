@@ -3,7 +3,7 @@ import { AccountEntity } from "shared-modules/account/entity/account.entity";
 import { SampleEntity } from "public-api/debug/entity/sample.entity";
 import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
-import { RatingEntity } from "shared-modules/leaderboard/entity/rating.entity";
+import { RatingEntity } from "shared-modules/rating/entity/rating.entity";
 
 
 export const AppDataSource = new DataSource({

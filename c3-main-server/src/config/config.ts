@@ -22,9 +22,6 @@ const mailTransportOptions: Options = {
   auth: {
     user: process.env.GMAIL_ADDRESS,
     pass: process.env.GMAIL_APP_PASSWORD,
-
-    // accessToken: process.env.GMAIL_APP_PASSWORD,
-    // clientSecret: process.env.GMAIL_APP_PASSWORD,
   }
 }
 
@@ -39,5 +36,3 @@ export const config = {
   backendApiSecret: process.env.JWT_SECRET ?? 'ndZ0WMJ5RzZrDMxephDAK2E4wcBntAaBq33GCmMhhRXnVc3BHD2ZhmOMTWC9K6Ol',
   mailTransportOptions: mailTransportOptions
 }
-
-console.log(config);

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/main.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
     "reset-database": "npx ts-node src/db-script/install.ts"
   },
   "author": "",
@@ -18,7 +19,9 @@
     "@types/passport-jwt": "^3.0.6",
     "@types/passport-local": "^1.0.34",
     "fs": "^0.0.1-security",
+    "jest": "^28.1.1",
     "path": "^0.12.7",
+    "ts-jest": "^28.0.5",
     "typescript": "^4.6.4",
     "typescript-transform-paths": "^3.3.1"
   },

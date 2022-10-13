@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { GameStatsController } from 'backend-api/game-stats/game-stats.controller';
-import { RatingService } from 'backend-api/game-stats/rating.service';
+import { RatingModule } from 'shared-modules/rating/rating.module';
 
 @Module({
+  imports: [RatingModule],
   controllers: [
     GameStatsController,
   ],
-  providers: [RatingService],
 })
 export class GameStatsModule {}

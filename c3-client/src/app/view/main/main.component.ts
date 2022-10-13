@@ -3,6 +3,7 @@ import { ActivatedRoute, Params } from "@angular/router";
 import { SystemKey } from "@shared/game/network/model/system-key";
 import { soundService } from "app/pixi/display/sound/sound-service";
 import { isSystemKey } from "app/service/user-settings/user-settings.service";
+import { LeaderboardComponent } from "app/view/leaderboard/leaderboard/leaderboard.component";
 import { MainScreen } from "app/view/main/main-screen";
 import { MainService } from "app/view/main/main.service";
 import { ControlsComponent } from "app/view/menu/controls/controls.component";
@@ -45,6 +46,9 @@ export class MainComponent implements OnInit {
 
   @ViewChild('controls', { static: true })
   private controls!: ControlsComponent;
+
+  @ViewChild('leaderboard', { static: true })
+  private leaderboard!: LeaderboardComponent;
 
   @ViewChild('personalization', { static: true })
   private personalization!: PersonalizationComponent;
@@ -98,6 +102,8 @@ ngOnInit() {
         this.personalization.onBackClick();
       } else if (this.screen == MainScreen.CONTROLS) {
         this.controls.onBackClick();
+      } else if (this.screen == MainScreen.LEADERBOARD) {
+        this.leaderboard.onBackClick();
       } else if (this.screen == MainScreen.REPLAY) {
         this.replay.onBackClick();
       } else if (this.screen == MainScreen.THANKS) {

@@ -11,7 +11,7 @@ import { ResetPasswordResponseDto } from 'public-api/auth/dto/reset-password-res
 import { LocalAuthGuard } from 'public-api/auth/local-auth-guard';
 import { MailService } from 'shared-modules/mail/mail.service';
 import { t } from 'util/transaction';
-import { RegisterResultDto } from 'shared-modules/account/dto/register-result-dto';
+import { RegisterResult } from 'shared-modules/account/dto/register-result-dto';
 import { ServerInfoDto } from 'public-api/auth/dto/server-info-dto';
 import { clientDownloadUrl, serverVersion } from 'config/version';
 import { config } from 'config/config';
@@ -51,8 +51,8 @@ export class AuthController {
   
   @Post('register')
   @ApiOperation({ summary: 'Attempt to create a new account.' })
-  @ApiCreatedResponse({ type: RegisterResultDto })
-  async register(@Body() body: RegisterAccountDto): Promise<RegisterResultDto> {
+  @ApiCreatedResponse({ type: RegisterResult })
+  async register(@Body() body: RegisterAccountDto): Promise<RegisterResult> {
     // DB transaction
     return await t(async em => {
       const result = await this.authService.register(em, body);

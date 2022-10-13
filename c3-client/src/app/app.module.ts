@@ -38,6 +38,7 @@ import { ChatMessageComponent } from './view/chat/chat-message/chat-message.comp
 import { RoomPlayerListComponent } from './view/menu/room-player-list/room-player-list.component';
 import { PreloginComponent } from './view/menu/prelogin/prelogin.component';
 import { RoomAutoStartCountdownComponent } from './view/menu/room-auto-start-countdown/room-auto-start-countdown.component';
+import { LeaderboardComponent } from './view/leaderboard/leaderboard/leaderboard.component';
 
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
@@ -75,6 +76,7 @@ export function apiConfigFactory(): Configuration {
     RoomPlayerListComponent,
     PreloginComponent,
     RoomAutoStartCountdownComponent,
+    LeaderboardComponent,
   ],
   imports: [
     ApiModule.forRoot(apiConfigFactory),

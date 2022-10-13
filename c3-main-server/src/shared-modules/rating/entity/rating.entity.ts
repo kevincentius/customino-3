@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { AccountEntity } from "shared-modules/account/entity/account.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, RelationId } from "typeorm";
 
 @Entity('rating')
 export class RatingEntity {
@@ -8,6 +9,11 @@ export class RatingEntity {
   @Column()
   gameModeSeasonId!: number;
 
+  @ManyToOne(() => AccountEntity, a => a.id)
+  @JoinColumn({ name: 'account_id' })
+  account!: AccountEntity;
+
+  // @RelationId((r: RatingEntity) => r.account)
   @Column()
   accountId!: number;
 
