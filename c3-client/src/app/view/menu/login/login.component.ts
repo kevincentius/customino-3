@@ -192,17 +192,22 @@ export class LoginComponent implements OnInit {
   }
 
   async onSubmitResetPassword() {
-    this.loading = true;
-    this.cd.detectChanges();
-
-    const result = await this.authService.forgotPassword(
-      this.inpReset.indexOf('@') == -1
-      ? { username: this.inpReset }
-      : { email: this.inpReset }
-      );
-    
-    this.snackBar.open('If the username or email exists, an email containing further instructions will be sent shortly.', 'Grumble');
-    this.onShow();
+    if (this.inpReset.trim().length > 0) {
+      this.loading = true;
+      this.cd.detectChanges();
+  
+      const result = await this.authService.forgotPassword(
+        this.inpReset.indexOf('@') == -1
+        ? { username: this.inpReset }
+        : { email: this.inpReset }
+        );
+      
+      this.snackBar.open('If the username or email exists, an email containing further instructions will be sent shortly.', 'Grumble', { duration: 7000 });
+      this.onShow();
+    } else {
+      this.inpResetRef.nativeElement.focus();
+      this.inpResetRef.nativeElement.select();
+    }
   }
 
   async onSubmitPassword() {
@@ -255,11 +260,11 @@ export class LoginComponent implements OnInit {
     this.passwordResetCode = undefined;
     
     if (result) {
-      this.snackBar.open('The new password has been saved!', 'Finally');
+      this.snackBar.open('The new password has been saved!', 'Finally', { duration: 7000 });
       this.router.navigate(['']);
       this.onShow();
     } else {
-      this.snackBar.open('Something went wrong. Maybe try again?', ':-(');
+      this.snackBar.open('Something went wrong. Maybe try again?', ':-(', { duration: 7000 });
       this.router.navigate(['']);
     }
   }

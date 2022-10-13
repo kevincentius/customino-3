@@ -80,6 +80,7 @@ export abstract class Game {
           return {
             rank: 0,
             score: abort ? 0 : deadPlayers,
+            afk: false,
           };
         } else {
           const worsePlayers = this.players.filter(
@@ -90,6 +91,7 @@ export abstract class Game {
           return {
             rank: abort ? 0 : this.players.length - 1 - worsePlayers,
             score: abort ? 0 : worsePlayers,
+            afk: !abort && player.afkFlag,
           };
         }
       });

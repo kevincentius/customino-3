@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class RegisterResultDto {
+export class RegisterResult {
   @ApiProperty()
   success!: boolean;
   

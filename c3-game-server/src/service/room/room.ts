@@ -18,6 +18,10 @@ import { StartPlayerData } from "@shared/game/network/model/start-game/start-pla
 import { ChatMessage } from "@shared/model/room/chat-message";
 import { RoomAutoStart } from "./room-auto-start";
 import { Subject } from "rxjs";
+import { GameStatsService } from "main-server/api/v1";
+import { ClientInfo } from "@shared/model/session/client-info";
+import { p } from "service/util/api-util";
+import { GameResult } from "@shared/game/engine/game/game-result";
 
 export class Room {
   slotsChangeSubject = new Subject<void>(); // roomInfo must be broadcast right after this subject is emitted due to change by RoomAutoStart
@@ -36,7 +40,7 @@ export class Room {
   provideReplay = true;
   lastGameReplay?: GameReplay;
 
-  autoStart: RoomAutoStart = new RoomAutoStart(this);
+  autoStart = new RoomAutoStart(this);
   // only for the current game session:
   game?: ServerGame;
   r = new RandomGen();
@@ -46,6 +50,8 @@ export class Room {
     public name: string,
     public creator: Session | null,
     private sessionService: SessionService,
+    private gameStatsService: GameStatsService,
+    private gameModeSeasonId?: number,
   ) {
     this.slots = creator == null ? [] : [new RoomSlot(creator)];
     this.host = creator;
@@ -143,52 +149,92 @@ export class Room {
       if (this.game) {
         this.game.destroy();
       }
-      this.game = new ServerGame(startGameData, players);
-      
-      this.game.gameOverSubject.subscribe(gameResult => {
-        for (const slot of this.slots) {
-          if (slot.playerIndex != null) {
-            slot.addScore(gameResult.players[slot.playerIndex].score);
-            slot.updateStats(this.game!.players[slot.playerIndex].statsTracker.stats);
-          }
-        }
+      this.game = this.createNewGame(startGameData, players);
 
-        this.gameOverSubject.next();
-        
-        for (const slot of this.slots) {
-          slot.session.socket.emit(LobbyEvent.GAME_OVER, this.getRoomInfo());
-        }
-      });
+    }
+  }
 
-      for (const player of this.game.players) {
-        player.serverEventSubject.subscribe(map => {
-          this.slots.forEach(slot => {
-            const serverPlayerEvent = map.get(slot.playerIndex == null ? -1 : slot.playerIndex);
-            if (serverPlayerEvent) {
-              const serverEvent: ServerEvent = {
-                roomId: this.id,
-                playerEvents: [ serverPlayerEvent ],
-              };
-              slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
-              
-              if (serverPlayerEvent.serverEvent?.disconnect == true && slot.playerIndex == serverPlayerEvent.playerIndex) {
-                console.log('disconnect drop player');
-                this.postChatMessage(null, `${slot.session.username} was dropped from the round due to lag.`);
-              }
+  private createNewGame(startGameData: StartGameData, players: ClientInfo[]) {
+    p(this.gameStatsService.test()).then(c => console.log('test', c));
+
+    const game = new ServerGame(startGameData, players);
+
+    game.gameOverSubject.subscribe(gameResult => {
+      if (this.gameModeSeasonId) {
+        const accountIdsByRanking = this.slots
+          .filter(slot => slot.playerIndex != null && slot.session.accountId != null)
+          .map(slot => ({
+            accountId: slot.session.getClientInfo().accountId,
+            rank: gameResult.players[slot.playerIndex!].rank,
+          }))
+          .sort((a, b) => a.rank - b.rank)
+          .map(x => x.accountId!);
+
+        // no await here - continue game
+        p(this.gameStatsService.postGameResult(JSON.parse(JSON.stringify({
+          accountIdsByRanking: accountIdsByRanking,
+          gameModeSeasonId: this.gameModeSeasonId,
+        }))));
+      }
+
+      for (const slot of this.slots) {
+        if (slot.playerIndex != null) {
+          slot.addScore(gameResult.players[slot.playerIndex].score);
+          slot.updateStats(game!.players[slot.playerIndex].statsTracker.stats);
+        }
+      }
+
+      this.kickAfkPlayers(gameResult);
+
+      this.gameOverSubject.next();
+
+      for (const slot of this.slots) {
+        slot.session.socket.emit(LobbyEvent.GAME_OVER, this.getRoomInfo());
+      }
+    });
+
+    for (const player of game.players) {
+      player.serverEventSubject.subscribe(map => {
+        this.slots.forEach(slot => {
+          const serverPlayerEvent = map.get(slot.playerIndex == null ? -1 : slot.playerIndex);
+          if (serverPlayerEvent) {
+            const serverEvent: ServerEvent = {
+              roomId: this.id,
+              playerEvents: [serverPlayerEvent],
+            };
+            slot.session.socket.emit(LobbyEvent.SERVER_EVENT, serverEvent);
+
+            if (serverPlayerEvent.serverEvent?.disconnect == true && slot.playerIndex == serverPlayerEvent.playerIndex) {
+              console.log('disconnect drop player');
+              this.postChatMessage(null, `${slot.session.username} was dropped from the round due to lag.`);
             }
-          });
+          }
         });
+      });
+    }
+
+    // debug replay
+    if (this.provideReplay) {
+      const recorder = new GameRecorder(game);
+      game.gameOverSubject.subscribe(gameResult => {
+        this.lastGameReplay = recorder.asReplay();
+      });
+    }
+
+    game.start();
+    return game;
+  }
+
+  private kickAfkPlayers(gameResult: GameResult) {
+    let slotsChanged = false;
+    this.slots.forEach(slot => {
+      if (slot.playerIndex != null && gameResult.players[slot.playerIndex].afk) {
+        slot.settings.playing = false;
+        slotsChanged = true;
       }
-      
-      // debug replay
-      if (this.provideReplay) {
-        const recorder = new GameRecorder(this.game);
-        this.game.gameOverSubject.subscribe(gameResult => {
-          this.lastGameReplay = recorder.asReplay();
-        });
-      }
-      
-      this.game.start();
+    });
+    if (slotsChanged) {
+      this.slotsChangeSubject.next();
     }
   }
 
@@ -279,13 +325,13 @@ export class Room {
       return;
     }
 
-    const playerIndex = this.game!.players.findIndex(player => player.startPlayerData.clientInfo.sessionId == session.sessionId);
+    const playerIndex = this.game.players.findIndex(player => player.startPlayerData.clientInfo.sessionId == session.sessionId);
     if (playerIndex == -1) {
       return;
     }
 
     // simulate game immediately
-    this.game!.players[playerIndex].handleEvent(clientEvent);
+    this.game.players[playerIndex].handleEvent(clientEvent);
   }
 
   postChatMessage(session: Session | null, message: string) {

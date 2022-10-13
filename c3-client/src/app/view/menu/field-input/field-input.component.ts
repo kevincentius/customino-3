@@ -95,6 +95,7 @@ export class FieldInputComponent implements OnInit {
 
   // CHOICE
   getChoiceLabel() {
+    console.log(this.field);
     return this.field.choices![this.getChoiceIndex()].label;
   }
 
@@ -109,6 +110,7 @@ export class FieldInputComponent implements OnInit {
   }
 
   private getChoiceIndex() {
+    console.log(JSON.stringify(this.field), JSON.stringify(this.fieldValue));
     return this.field.choices!.findIndex(choice => choice.value == this.fieldValue);
   }
 

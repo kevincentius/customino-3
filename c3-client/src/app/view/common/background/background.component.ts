@@ -15,5 +15,4 @@ export class BackgroundComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
 }
