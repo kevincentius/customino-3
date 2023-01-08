@@ -6,6 +6,7 @@ import { gravityRuleFields } from "@shared/game/engine/model/rule/room-rule/grav
 import { lineClearEffectRuleFields } from "@shared/game/engine/model/rule/room-rule/line-clear-effect-rule-fields";
 import { sonicDropEffectRuleFields } from "@shared/game/engine/model/rule/room-rule/sonic-drop-effect-fields";
 import { starsRuleFields } from "@shared/game/engine/model/rule/room-rule/stars-rule-fields";
+import { victoryConditionRuleFields } from "@shared/game/engine/model/rule/room-rule/victory-condition-rule-fields";
 import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
 
 export const playerRuleFields: DataField[] = [
@@ -297,6 +298,7 @@ export const playerRuleFields: DataField[] = [
   ...starsRuleFields,
   ...sonicDropEffectRuleFields,
   ...lineClearEffectRuleFields,
+  ...victoryConditionRuleFields,
   {
     property: 'playerDisplayDupes',
     fieldType: FieldType.NUMBER_SCROLL,

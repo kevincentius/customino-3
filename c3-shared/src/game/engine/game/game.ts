@@ -26,7 +26,7 @@ export abstract class Game {
   abstract createPlayers(startGameData: StartGameData): Player[];
   destroy(): void {
     clearTimeout(this.clockStartTimeout);
-  };
+  }
 
   constructor(
     protected setTimeoutWrapper: (callback: () => void, ms?: number | undefined) => any = setTimeout,

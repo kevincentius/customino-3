@@ -26,10 +26,10 @@ export class LobbyGateway {
   }
 
   @SubscribeMessage(LobbyEvent.CREATE_ROOM)
-  createRoom(socket: Socket) {
+  createRoom(socket: Socket, visible=true) {
     const session = this.sessionService.getSession(socket);
     return this.roomService
-      .createUserRoom(session)
+      .createUserRoom(session, visible)
       .getRoomInfo();
   }
 

@@ -4,6 +4,7 @@ import { LineClearEffectRule } from "@shared/game/engine/model/rule/room-rule/li
 import { playerRuleFields } from "@shared/game/engine/model/rule/room-rule/player-rule-fields";
 import { SonicDropEffectConfig } from "@shared/game/engine/model/rule/room-rule/sonic-drop-effect-config";
 import { StarsRule } from "@shared/game/engine/model/rule/room-rule/stars-rule";
+import { VictoryConditionRule } from "@shared/game/engine/model/rule/room-rule/victory-condition-rule";
 import { RotationSystemType } from "@shared/game/engine/player/rotation/rotation-system";
 
 export interface RoomRule {
@@ -44,6 +45,9 @@ export interface RoomRule {
     
   sonicDropEffect: SonicDropEffectConfig;
   lineClearEffect: LineClearEffectRule;
+
+  // victory condition
+  victoryCondition: VictoryConditionRule;
 
   // debug
   playerDisplayDupes: number;

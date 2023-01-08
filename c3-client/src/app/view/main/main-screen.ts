@@ -10,4 +10,6 @@ export enum MainScreen {
   LEADERBOARD='leaderboard',
   REPLAY='replay',
   THANKS='thanks',
+  
+  SINGLEPLAYER='singleplayer',
 }
