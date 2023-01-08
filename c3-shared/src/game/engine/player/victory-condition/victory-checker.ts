@@ -24,11 +24,9 @@ export class VictoryChecker {
     }
 
     this.checkers.forEach(checker => checker.completeSubject.subscribe(() => {
-      console.log('checker');
       this.checkers.delete(checker);
       if (this.checkers.size == 0) {
-        console.log('win');
-        this.player.win();
+        this.player.winByPlayer();
       }
     }));
   }

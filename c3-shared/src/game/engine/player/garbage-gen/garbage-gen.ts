@@ -26,6 +26,9 @@ export class GarbageGen {
   private spawnRateFrameCounter = 0;
   private cleanRow: (Tile | null)[] | null = null;
 
+  digLineSpawnProgress = 0;
+  digLinesSpawned = 0;
+
   blockCarryOver = 0;
   pierceCarryOver = 0;
 
@@ -33,7 +36,7 @@ export class GarbageGen {
     private player: Player,
     private playerRule: PlayerRule,
   ) {
-    
+    this.player.clockStartSubject.subscribe(() => this.spawnInitialDigLines());
   }
 
   serialize() {
@@ -176,6 +179,40 @@ export class GarbageGen {
     //   }]);
     //   this.tmpNextFrame += gameLoopRule.fps * pow / powPerSec;
     // }
+
+    this.runFrameSpawnDigLines();
+  }
+
+  private spawnInitialDigLines() {
+    if (this.playerRule.victoryCondition.digLinesCleared) {
+      const spawnAmount = Math.min(
+        this.getMaxVisibleDigLines(),
+        this.playerRule.victoryCondition.digLinesCleared,
+      );
+
+      this.spawnDigLines(spawnAmount);
+    }
+  }
+
+  private runFrameSpawnDigLines() {
+    const digLinesLeft = this.playerRule.victoryCondition.digLinesCleared - this.digLinesSpawned;
+    const digLinesOnBoard = this.digLinesSpawned - this.player.statsTracker.stats.digLinesCleared;
+    const spawnAmount = Math.min(digLinesLeft, this.getMaxVisibleDigLines() - digLinesOnBoard);
+    this.spawnDigLines(spawnAmount);
+  }
+
+  private spawnDigLines(spawnAmount: number) {
+    this.player.board.addBottomRows(
+      Array(spawnAmount)
+        .fill(null)
+        .map(_ => this.generateRow(TileType.CHEESE))
+    );
+
+    this.digLinesSpawned += spawnAmount;
+  }
+
+  private getMaxVisibleDigLines() {
+    return Math.floor(this.playerRule.height / 2);
   }
 
   /* Spawns up to spawnAmount lines of garbage.
@@ -226,14 +263,14 @@ export class GarbageGen {
     }
   }
 
-  generateRow(): (Tile | null)[] {
+  generateRow(solidTileType=TileType.GARBAGE, holeTileType: TileType | null=null): (Tile | null)[] {
     const holePos = this.player.r.int(this.playerRule.width);
     let row: (Tile | null)[] = Array(this.playerRule.width);
     for (let j = 0; j < this.playerRule.width; j++) {
       if (j != holePos) {
-        row[j] = this.createTile(TileType.GARBAGE);
+        row[j] = this.createTile(solidTileType);
       } else {
-        row[j] = null;
+        row[j] = holeTileType == null ? null : this.createTile(holeTileType);
       }
     }
     return row;

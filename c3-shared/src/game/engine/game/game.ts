@@ -59,7 +59,6 @@ export abstract class Game {
     if (alivePlayers.length <= 1 || (aliveTeams.size <= 1 && !aliveTeams.has(null))) {
       this.running = false;
 
-      this.players.filter(p => p.alive).forEach(p => p.win());
       this.gameOverSubject.next({ players: this.createPlayerResults() });
     }
   }
