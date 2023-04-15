@@ -8,7 +8,8 @@ import { RatingEntity } from "shared-modules/rating/entity/rating.entity";
 
 export const AppDataSource = new DataSource({
   url: config.databaseUrl,
-  type: "postgres",
+  type: "mysql",
+  // type: "postgres",
   synchronize: false,
   logging: false,
   dropSchema: false,

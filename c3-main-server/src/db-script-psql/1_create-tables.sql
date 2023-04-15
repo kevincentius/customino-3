@@ -13,9 +13,9 @@ CREATE TABLE GLOBAL_VARIABLES (
 
 CREATE TABLE ACCOUNT (
   id SERIAL PRIMARY KEY,
-  username VARCHAR(255) UNIQUE NOT NULL,
+  username TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
-  email VARCHAR(255) UNIQUE,
+  email TEXT UNIQUE,
   email_confirmed_at BIGINT,
   email_confirm_code TEXT,
   reset_password_expiry BIGINT,
@@ -24,10 +24,10 @@ CREATE TABLE ACCOUNT (
   last_login BIGINT NOT NULL,
   ip_csv TEXT
 );
-CREATE INDEX index_account_username ON ACCOUNT (username(255));
-CREATE INDEX index_account_email ON ACCOUNT (email(255));
-CREATE INDEX index_account_email_confirm_code ON ACCOUNT (email_confirm_code(255));
-CREATE INDEX index_account_reset_password_code ON ACCOUNT (reset_password_code(255));
+CREATE INDEX index_account_username ON ACCOUNT (username);
+CREATE INDEX index_account_email ON ACCOUNT (email);
+CREATE INDEX index_account_email_confirm_code ON ACCOUNT (email_confirm_code);
+CREATE INDEX index_account_reset_password_code ON ACCOUNT (reset_password_code);
 
 CREATE TABLE RATING (
     id SERIAL PRIMARY KEY,
