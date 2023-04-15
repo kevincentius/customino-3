@@ -3,6 +3,7 @@ import { BoardState } from "@shared/game/engine/serialization/board-state";
 export interface PlayerState {
   frame: number;
   alive: boolean;
+  finalScore?: number;
   afkFlag: boolean;
   pieceQueue: number[][];
   attackRule: any;
@@ -12,4 +13,5 @@ export interface PlayerState {
   activePiece: any;
   garbageGen: any;
   stats: any;
+  victoryChecker: any;
 }

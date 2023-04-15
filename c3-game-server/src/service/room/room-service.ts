@@ -28,6 +28,7 @@ export class RoomService {
   getRoomInfos(): RoomInfo[] {
     return Array
       .from(this.roomMap.values())
+      .filter(room => room.visible)
       .map(room => room.getRoomInfo());
   }
   
@@ -36,12 +37,12 @@ export class RoomService {
    * 
    * If the client was already in another room, the client is considered as leaving that room.
    */
-  createUserRoom(session: Session): Room {
+  createUserRoom(session: Session, visible: boolean): Room {
     const roomId = this.nextRoomId++;
     
     this.leave(session);
 
-    const room = new Room(roomId, `${session.username}'s Room`, session, this.sessionService, this.gameStatsService);
+    const room = new Room(roomId, `${session.username}'s Room`, session, visible, this.sessionService, this.gameStatsService);
     this.roomMap.set(room.id, room);
 
     session.roomId = room.id;
@@ -52,7 +53,7 @@ export class RoomService {
   createServerRoom(name: string, roomSettings: RoomSettings, gameModeSeasonId?: number): Room {
     const roomId = this.nextRoomId++;
 
-    const room = new Room(roomId, name, null, this.sessionService, this.gameStatsService, gameModeSeasonId);
+    const room = new Room(roomId, name, null, true, this.sessionService, this.gameStatsService, gameModeSeasonId);
     room.changeRoomSettings(null, roomSettings);
 
     this.roomMap.set(room.id, room);
