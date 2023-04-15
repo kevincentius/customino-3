@@ -23,9 +23,11 @@ import { PlayerInfo } from "@shared/game/engine/player/player-info";
 import { PlayerStatsTracker } from "@shared/game/engine/player/stats/player-stats-tracker";
 import { PlayerStats } from "@shared/game/engine/player/stats/player-stats";
 import { LocalRule } from "@shared/game/engine/model/rule/local-rule/local-rule";
+import { VictoryChecker } from "@shared/game/engine/player/victory-condition/victory-checker";
 
 export abstract class Player {
   // event emitters
+  clockStartSubject = new Subject<void>(); // echoes clockStart event from the game
   gameOverCheckSubject = new Subject<void>(); // fired when global game over needs to be checked
   gameOverSubject = new Subject<PlayerStats>();
   gameEventSubject = new Subject<GameEvent>();
@@ -35,6 +37,7 @@ export abstract class Player {
   // state
   playerRule: PlayerRule;
   frame = 0;
+  finalScore: number | undefined = undefined; // finalScore stays undefined until the game is over for this player
   alive = true;
   afkFlag = true;
   pieceQueue: Piece[] = [];
@@ -48,6 +51,7 @@ export abstract class Player {
   activePiece: ActivePiece;
   garbageGen: GarbageGen;
   statsTracker: PlayerStatsTracker;
+  victoryChecker: VictoryChecker;
   
   // transient
   lastFrameMs = Date.now();
@@ -93,8 +97,19 @@ export abstract class Player {
     this.garbageGen = new GarbageGen(this, this.playerRule);
     this.attackRule = new AttackRule(this);
     this.statsTracker = new PlayerStatsTracker(this);
+    this.victoryChecker = new VictoryChecker(this);
 
     this.spawnPiece();
+
+    this.game.clockStartSubject.subscribe(() => {
+      this.clockStartSubject.next();
+    });
+
+    this.game.gameOverSubject.subscribe(() => {
+      if (this.alive && !this.finalScore) {
+        this.gameOverSubject.next(this.statsTracker.stats);
+      }
+    });
   }
 
   abstract update(): void;
@@ -115,6 +130,7 @@ export abstract class Player {
       frame: this.frame,
       alive: this.alive,
       afkFlag: this.afkFlag,
+      finalScore: this.finalScore,
       pieceQueue: this.pieceQueue.map(p => p.serialize()),
       attackRule: this.attackRule.serialize(),
 
@@ -124,6 +140,7 @@ export abstract class Player {
       activePiece: this.activePiece.serialize(),
       garbageGen: this.garbageGen.serialize(),
       stats: this.statsTracker.serialize(),
+      victoryChecker: this.victoryChecker.serialize(),
     };
   }
 
@@ -131,6 +148,7 @@ export abstract class Player {
     this.frame = playerState.frame;
     this.alive = playerState.alive;
     this.afkFlag = playerState.afkFlag;
+    this.finalScore = playerState.finalScore;
     this.pieceQueue.splice(0, this.pieceQueue.length, ...playerState.pieceQueue.map(p => Piece.from(p)));
     this.attackRule.load(playerState.attackRule);
 
@@ -140,6 +158,7 @@ export abstract class Player {
     this.activePiece.load(playerState.activePiece);
     this.garbageGen.load(playerState.garbageGen);
     this.statsTracker.load(playerState.stats);
+    this.victoryChecker.load(playerState.victoryChecker);
   }
 
   protected runFrame() {
@@ -183,18 +202,23 @@ export abstract class Player {
 
   die() {
     if (this.alive) {
+      // TODO: scoring rules
+      this.finalScore = this.game.players.filter(p => !p.alive).length;
+
       this.alive = false;
       this.gameOverSubject.next(this.statsTracker.stats);
       this.gameOverCheckSubject.next();
     }
   }
 
-  win() {
+  winByPlayer() {
+    this.finalScore = Math.random(); // TODO: score
     this.gameOverSubject.next(this.statsTracker.stats);
+    this.gameOverCheckSubject.next();
   }
 
   canMove(move: InputKey) {
-    return this.alive && true;
+    return this.alive;
   }
 
   isRunning() {
@@ -224,13 +248,15 @@ export abstract class Player {
     
     // check line clear
     const clearedLines = this.board.checkLineClear(this.activePiece.y, this.activePiece.y + this.activePiece.piece.tiles.length);
-    this.board.clearLines(clearedLines, this.activePiece.x + this.activePiece.piece.tiles[0].length / 2);
-
-    // calculate and apply move result
     const clearedGarbageLines = clearedLines.filter(line => this.board.isGarbage(line));
+    const clearedDigLines = clearedLines.filter(line => this.board.isDigLine(line));
+    this.board.clearLines(clearedLines, this.activePiece.x + this.activePiece.piece.tiles[0].length / 2);
+    
+    // calculate and apply move result
     const lockResult: LockPlacementResult = {
       clearedLines,
       clearedGarbageLines,
+      clearedDigLines,
       dropDistance: dropDistance,
     }
     

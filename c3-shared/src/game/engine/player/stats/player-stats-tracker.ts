@@ -1,11 +1,17 @@
 import { gameLoopRule } from "@shared/game/engine/game/game-loop-rule";
 import { Player } from "@shared/game/engine/player/player";
 import { PlayerStats } from "@shared/game/engine/player/stats/player-stats";
+import { Subject } from "rxjs";
 
 export class PlayerStatsTracker {
+  afterPieceLockSubject = new Subject<void>();
+
   public stats: PlayerStats = {
     activeTime: 0,
     pieces: 0,
+    linesCleared: 0,
+    garbageLinesCleared: 0,
+    digLinesCleared: 0,
     combos: [],
     maxCombo: 0,
 
@@ -23,12 +29,17 @@ export class PlayerStatsTracker {
   ) {
     this.player.pieceLockSubject.subscribe(e => {
       this.stats.pieces++;
+      this.stats.linesCleared += e.clearedLines.length;
+      this.stats.garbageLinesCleared += e.clearedGarbageLines.length;
+      this.stats.digLinesCleared += e.clearedDigLines.length;
 
       const power = e.powers.reduce((sum, x) => sum + x.power, 0);
       const attack = e.attacks.reduce((sum, x) => sum + x.power, 0);
       this.stats.powerGenerated += power;
       this.stats.attackGenerated += attack;
       this.stats.blockGenerated += power - attack;
+
+      this.afterPieceLockSubject.next();
     });
 
     if (this.player.attackRule.comboTimer) {

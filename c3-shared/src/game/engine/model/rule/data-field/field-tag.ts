@@ -8,6 +8,7 @@
 
   // by coarse topic
   GENERAL='general',
+  VICTORY_CONDITION='victory_condition',
   ATTACK='attack',
   DEFENSE='defense',
   GFX_GLOBAL='gfx_global',

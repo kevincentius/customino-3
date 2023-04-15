@@ -13,6 +13,10 @@ export class MinoDisplay extends Container {
       this.createSprite(this.tile.color);
     } else if (this.tile.type == TileType.GARBAGE) {
       this.createSprite(7);
+    } else if (this.tile.type == TileType.CHEESE) {
+      this.createSprite(8);
+    } else if (this.tile.type == TileType.CHEESE_HOLE) {
+      this.createSprite(9);
     } else {
       throw new Error('Unknown tile type.');
     }

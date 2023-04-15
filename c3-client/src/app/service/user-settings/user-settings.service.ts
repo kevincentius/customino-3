@@ -98,7 +98,7 @@ export class UserSettingsService {
       keyMap: this.createDefaultInputKeyMap(),
       systemKeyMap: this.createDefaultSystemKeyMap(),
       arr: 15,
-      das: 100,
+      das: 150,
       sdr: 10,
     }
   }

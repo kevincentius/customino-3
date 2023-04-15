@@ -49,6 +49,7 @@ export class Room {
     public id: number,
     public name: string,
     public creator: Session | null,
+    public visible: boolean,
     private sessionService: SessionService,
     private gameStatsService: GameStatsService,
     private gameModeSeasonId?: number,

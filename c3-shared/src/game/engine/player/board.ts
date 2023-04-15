@@ -99,7 +99,17 @@ export class Board {
 
   isGarbage(row: number) {
     for (let cell of this.tiles[row]) {
-      if (cell != null && (cell.type == TileType.GARBAGE || cell.type == TileType.CHEESE)) {
+      if (cell != null && (cell.type == TileType.GARBAGE)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  isDigLine(row: number) {
+    for (let cell of this.tiles[row]) {
+      if (cell != null && (cell.type == TileType.CHEESE || cell.type == TileType.CHEESE_HOLE)) {
+        console.log("it is a dig line");
         return true;
       }
     }
