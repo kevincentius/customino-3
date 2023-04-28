@@ -7,7 +7,8 @@
     "start": "ts-node src/main.ts",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
-    "reset-database": "npx ts-node src/db-script/install.ts"
+    "reset-database": "npx ts-node src/db-script/install.ts",
+    "build": "nest build"
   },
   "author": "",
   "devDependencies": {

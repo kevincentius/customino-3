@@ -12,6 +12,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "lib": [ "es6" ],
+    "outDir": "dist/",
 
     "paths": {
       "@shared/*": ["../../c3-shared/src/*"],

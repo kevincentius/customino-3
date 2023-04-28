@@ -1,17 +1,17 @@
 
-CREATE TABLE SAMPLE_ENTITY (
+CREATE TABLE sample_entity (
   id SERIAL PRIMARY KEY,
   full_name TEXT,
   likes_to_play BOOLEAN
 );
 
-CREATE TABLE GLOBAL_VARIABLES (
+CREATE TABLE global_variables (
   id SERIAL PRIMARY KEY,
   variable TEXT NOT NULL,
   double_value DOUBLE PRECISION NOT NULL
 );
 
-CREATE TABLE ACCOUNT (
+CREATE TABLE account (
   id SERIAL PRIMARY KEY,
   username VARCHAR(255) UNIQUE NOT NULL,
   password TEXT NOT NULL,
@@ -24,12 +24,12 @@ CREATE TABLE ACCOUNT (
   last_login BIGINT NOT NULL,
   ip_csv TEXT
 );
-CREATE INDEX index_account_username ON ACCOUNT (username(255));
-CREATE INDEX index_account_email ON ACCOUNT (email(255));
-CREATE INDEX index_account_email_confirm_code ON ACCOUNT (email_confirm_code(255));
-CREATE INDEX index_account_reset_password_code ON ACCOUNT (reset_password_code(255));
+CREATE INDEX index_account_username ON account (username(255));
+CREATE INDEX index_account_email ON account (email(255));
+CREATE INDEX index_account_email_confirm_code ON account (email_confirm_code(255));
+CREATE INDEX index_account_reset_password_code ON account (reset_password_code(255));
 
-CREATE TABLE RATING (
+CREATE TABLE rating (
     id SERIAL PRIMARY KEY,
     game_mode_season_id INTEGER,
     account_id INTEGER REFERENCES account(id),
@@ -41,6 +41,6 @@ CREATE TABLE RATING (
     last_match_timestamps TEXT,
     UNIQUE (game_mode_season_id, account_id)
 );
-CREATE INDEX index_rating_game_mode_season_id ON RATING (game_mode_season_id);
-CREATE INDEX index_rating_account_id ON RATING (account_id);
-CREATE INDEX index_rating_score ON RATING (score);
+CREATE INDEX index_rating_game_mode_season_id ON rating (game_mode_season_id);
+CREATE INDEX index_rating_account_id ON rating (account_id);
+CREATE INDEX index_rating_score ON rating (score);
